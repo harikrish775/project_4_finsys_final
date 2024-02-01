@@ -1,0 +1,283 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Fin sYs</title>
+        <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        
+        <style>
+            /*custom font*/
+            @import url(https://fonts.googleapis.com/css?family=Montserrat);
+   
+        @media (max-width:768px) {
+            #head{
+                font-size: 20px !important;
+            }
+            form{
+                padding: 5px !important;
+            }
+            .h3{
+                font-size: 20px;
+            }
+            .body-wrapper{
+                padding: 20px !important;
+            }
+            .action-button{
+                width: 50% !important;
+            }
+        }
+        .container {
+            background: white;
+            border: 0 none;
+            border-radius: 0px;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+            padding: 20px 30px;
+            box-sizing: border-box;
+            width: 90%;
+            /* margin: 0 10%; */
+
+            /*stacking fieldsets above each other*/
+            position: relative;
+        }
+        .action-button {
+            width: 100px;
+            background: #213b52;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+       .action-button:hover,.action-button:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #213b52;
+        }
+
+       
+    </style>
+
+
+       
+        
+        
+      </head>
+<body style="background-color: #213b52;  font-family: montserrat, arial, verdana;">
+    <div class="body-wrapper" style=" padding: 120px;padding-top: 30px;">
+        <div class="container">
+            <form action="{% url 'Fin_Add_Modules' data.id %}" method="post" style="padding: 30px;padding: 20px;">
+                {% csrf_token %}
+                <div class="head " style="border-bottom: 1px solid gray;margin-bottom: 30px;">
+                    <h2 class="mb-4 pb-4 text-center" id="head" style="margin-bottom: 30px; font-family: montserrat, arial, verdana;font-weight: bold;">Choose Your Modules..!</h2>
+                
+                </div>
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>ITEM</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c1" name="c1" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Items</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c2" name="c2" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Price List</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c3" name="c3" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Stock Adjustment </b>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+                <hr>
+
+
+
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 30px;"><b><u>CASH & BANK</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c4" name="c4" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Cash in hand</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c5" name="c5" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Offline Banking</b>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c6" name="c6" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Bank Reconciliation</b>
+                    </div> -->
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c7" name="c7" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">UPI</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c8" name="c8" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Bank Holders</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c9" name="c9" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Cheque</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c10" name="c10" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Loan Account</b>
+                    </div>
+                </div>
+                <hr>
+
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 30px;"><b><u>SALES</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c11" name="c11" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Customers</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c12" name="c12" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Invoice</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c13" name="c13" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Estimate</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c14" name="c14" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Sales Order</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c15" name="c15" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Recurring Invoice</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c16" name="c16" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Retainer Invoice</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c17" name="c17" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Credit Note</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c18" name="c18" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Payment_Received</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c19" name="c19" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Delivery Challan</b>
+                    </div>
+                </div>
+                <hr>
+
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 30px;"><b><u>PURCHASE</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c20" name="c20" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Vendors</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c21" name="c21" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Bills</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c22" name="c22" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Recurring Bills</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c23" name="c23" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Debit Note</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c24" name="c24" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Purchase Order</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c25" name="c25" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Expenses</b>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c26" name="c26" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Recurring Expenses</b>
+                    </div> -->
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c27" name="c27" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Payment Made</b>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c28" name="c28" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">EWay Bill</b>
+                    </div> -->
+                </div>
+                <hr>
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>EWAY BILL</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c28" name="c28" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">EWay Bill</b>
+                    </div>
+                </div>    
+                <hr>    
+
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>ACCOUNTS</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c29" name="c29" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Chart of Accounts</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c30" name="c30" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Manual Journal</b>
+                    </div>
+                    <!-- <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c36" name="c36" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Reconcile</b>
+                    </div> -->
+                    
+                </div>
+                <hr>
+
+                <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>PAYROLL</u></b></h4>
+                <div class="row" style="font-size: 15px;">
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c31" name="c31" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Employees</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c32" name="c32" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Employees Loan</b>
+                    </div>
+                    <div class="col-md-3" >   
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c33" name="c33" value="1"> 
+                        <b style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Holiday</b>   
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c34" name="c34" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Attendance</b>
+                    </div>
+                    <div class="col-md-3">
+                        <input  type="checkbox" style="margin-right: 10px; margin-bottom: 20px;width: 20px;height: 20px;" id="c35" name="c35" value="1"> 
+                        <b  style="color: rgb(84, 84, 84);font-family: 'Times New Roman', Times, serif;">Salary Details</b>
+                    </div>
+                    
+                </div>
+                <hr>
+
+                <center><input type="submit" class="next action-button" value="Submit" style="width: 20%;" /></center>
+           
+            <!-- <center><input type="submit" class="btn btn-danger p-2 mt-5 mb-3" style="width: 30%;font-weight: bold;border-radius: 10px;"></center> -->
+            
+        </form>    
+        </div>
+    </div>        
+    
+</body>
+</html>

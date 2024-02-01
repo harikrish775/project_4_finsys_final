@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from codervent.com/syntrans/demo/horizontal/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 07 Jan 2021 05:00:52 GMT -->
+
+<head>
+  {% load static %}
+  <!-- Required meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Reset styles -->
+  <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css" />
+  <!-- Google Fonts Muli -->
+  <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Fin sYs</title>
+  <!--favicon-->
+  <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png" />
+  <!-- Vector CSS -->
+  <link href="{% static 'assets/plugins/vectormap/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
+  <!--plugins-->
+  <link href="{% static 'assets/plugins/simplebar/css/simplebar.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/plugins/metismenu/css/metisMenu.min.css' %}" rel="stylesheet" />
+  <!-- loader-->
+  <link href="{% static 'assets/css/pace.min.css' %}" rel="stylesheet" />
+  <script src="{% static 'assets/js/pace.min.js' %}"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+  <!-- Icons CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}" />
+  <!-- App CSS -->
+  
+  <!--Fa icon -->
+ <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
+
+  <link rel="stylesheet" href="{% static 'assets/css/app.css' %}" />
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+
+  <style>
+    .a {
+      font-family: "Poppins", sans-serif;
+    }
+
+    li {
+      list-style: none;
+      padding-top: 10px;
+    }
+
+    .one {
+      border-collapse: separate;
+      white-space: normal;
+      line-height: normal;
+      font-weight: normal;
+      font-size: medium;
+      font-style: normal;
+      color: -internal-quirk-inherit;
+      text-align: start;
+      border-spacing: 0px !important;
+      font-variant: normal;
+    }
+
+
+    .submenu {
+      max-height: 500px;
+      overflow: auto;
+    }
+
+    .submenu::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var $select1 = $('#select1'),
+        $select2 = $('#select2'),
+        $select3 = $('#name'),
+        $options = $select2.find('option'),
+        $options1 = $select3.find('option');
+      $select1.on('change', function () {
+        $select2.html($options.filter('[text="' + this.value + '"]'));
+        $select3.html($options1.filter('[text="' + this.value + '"]'));
+      }).trigger('change');
+    });
+  </script>
+</head>
+
+<body style="background-color: #2f516f;">
+  <!-- wrapper -->
+  <div class="wrapper">
+    <!--header-->
+    <div class="wrapper">
+      <!--header-->
+      <header class="top-header" style="background-color: #213b52;">
+        <nav class="navbar navbar-expand">
+          <div class="sidebar-header">
+            <div class="d-none d-lg-flex">
+              <img src="{% static 'assets/images/logo-icon.png' %}" class="logo-icon-2" alt="" />
+            </div>
+            <div class="a">
+              <h4><b>Fin sYs</b></h4>
+            </div>
+            <a href="javascript:;" class="toggle-btn ml-lg-auto"> <i class="bx bx-menu"></i>
+            </a>
+          </div>
+          <div class="flex-grow-1 search-bar">
+            <div class="input-group">
+              <div class="input-group-prepend search-arrow-back">
+                <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i>
+                </button>
+              </div>
+              <input type="text" autocomplete="off" id="myInput" onkeyup="filter(this);" onclick="myFunction1()"
+                class="form-control" placeholder="search" />
+              <div class="input-group-append">
+                <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i>
+                </button>
+              </div>
+              <div class=" mt-5" id="myDIV" style="z-index:1;position:absolute; 
+              background-color: #213b52;width:550px;height:1px;">
+
+                <ul id="myList" class="one" style="background-color: #213b52;">
+                  <li><a href="">Dashboard</a></li>
+                  <li><a href="">Item</a></li>
+                  <li><a href="">Online Banking</a></li>
+                  <li><a href="">Bank Reconcilation</a></li>
+                  <li><a href="">Sales Records</a></li>
+                  <li><a href="">Invoices</a></li>
+                  <li><a href="">Customers</a></li>
+                  <li><a href="">Product and Services</a></li>
+                  <li><a href="">Expenses</a></li>
+                  <li><a href="">Suppliers</a></li>
+                  <li><a href="">Chart of Accounts</a></li>
+                  <li><a href="">Reconcile</a></li>
+                  <li><a href="">Cash Position</a></li>
+                  <li><a href="">Reconcile</a></li>
+                  <li><a href="">Cash Position</a></li>
+                  <li><a href="">Vendor</li>
+                  <li><a href="">Purchase Order</li>
+                  <li><a href="">Bill</li>
+                  <li><a href="">Cash In Hand</a></li>
+                  <li><a href="">Offline Banking</a></li>
+                  <li><a href="">Loan Account</a>
+                    <li><a href="">Sales</a></li>                   
+                  <li><a href="">Employee</a></li>
+                  <li><a href="">Employee Loan</a></li>
+
+                </ul>
+              </div>
+
+
+
+            </div>
+          </div>
+          <div class="right-topbar ml-auto">
+            <ul class="navbar navbar-expand" style="list-style-type: none; margin: 0; padding: 0;">
+              <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;"
+                data-toggle="dropdown" style=" display: block; padding: 8px 16px; text-decoration: none;">
+                <i class="fa fa-gear" style="font-size:24px"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <ul class="a" style=" list-style-type: none; margin: 0; padding: 0; width: 200px;">
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Company Profile</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Users</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Branches</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Currencies</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Tax</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Templates</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Accounts and Settings</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Customize Form Style</a></li>
+                  <li><a href="" style="display: block; padding: 8px 16px; text-decoration: none">Chart
+                      of Accounts</a></li>
+                  <li><a href="" style="display: block; padding: 8px 16px; text-decoration: none">
+                        Module Settings</a></li>
+                </ul>
+              </div>
+            </ul>
+          </div>
+          <div class="right-topbar ml-auto">
+            <ul class="navbar-nav">
+              {% if  data.User_Type == 'Company' %}
+              <li class="nav-item dropdown dropdown-lg">
+                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;"
+                  data-toggle="dropdown"> <i class="bx bx-bell vertical-align-middle"></i>
+                  <span class="msg-count">{{n}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="javascript:;">
+                    <div class="msg-header">
+                      <h6 class="msg-header-title">{{n}} New</h6>
+                      <p class="msg-header-subtitle">Application Notifications</p>
+                    </div>
+                  </a>
+                  <div class="header-notifications-list">
+                    {% if stockAlert %}
+                    {% for data in stockLow %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if creditLimitAlert %}
+                    {% for data in creditLimit %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if noti %}
+                    {% for i in noti %}
+                    <a class="dropdown-item" href="{% url 'Fin_Cnotification' %}">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class="bx bx-file"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{i.Title}}<span class="msg-time float-right">{{i.Noti_date}}</span></h6>
+                          <p class="msg-info">{{i.Discription}}</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}                    
+                    
+                  </div>
+                  <a href="{% url 'Fin_Cnotification' %}">
+                    <div class="text-center msg-footer">View All Notifications</div>
+                  </a>
+                  {% endif %}
+                </div>
+              </li>
+              {% else %}
+              <li class="nav-item dropdown dropdown-lg">
+                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;"
+                  data-toggle="dropdown"> <i class="bx bx-bell vertical-align-middle"></i>
+                  <span class="msg-count">{{n}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="javascript:;">
+                    <div class="msg-header">
+                      <h6 class="msg-header-title">{{n}} New</h6>
+                      <p class="msg-header-subtitle">Application Notifications</p>
+                    </div>
+                  </a>
+                  <div class="header-notifications-list">
+                    {% if stockAlert %}
+                    {% for data in stockLow %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if creditLimitAlert %}
+                    {% for data in creditLimit %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class="bx bx-group"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">New Customers<span class="msg-time float-right">14 Sec
+                              ago</span></h6>
+                          <p class="msg-info">5 new user registered</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-danger text-danger"><i class="bx bx-cart-alt"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">New Orders <span class="msg-time float-right">2 min
+                              ago</span></h6>
+                          <p class="msg-info">You have recived new orders</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-shineblue text-shineblue"><i class="bx bx-file"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">24 PDF File<span class="msg-time float-right">19 min
+                              ago</span></h6>
+                          <p class="msg-info">The pdf files generated</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-shineblue text-shineblue"><i class="bx bx-file"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">24 PDF File<span class="msg-time float-right">19 min
+                              ago</span></h6>
+                          <p class="msg-info">The pdf files generated</p>
+                        </div>
+                      </div>
+                    </a>
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-cyne text-cyne"><i class="bx bx-send"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">Time Response <span class="msg-time float-right">28 min
+                              ago</span></h6>
+                          <p class="msg-info">5.1 min avarage time response</p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <a href="javascript:;">
+                    <div class="text-center msg-footer">View All Notifications</div>
+                  </a>
+                </div>
+              </li>
+              {% endif %}
+              <li class="nav-item dropdown dropdown-user-profile">
+                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-toggle="dropdown">
+                  
+                  <div class="media user-box align-items-center">
+                    <div class="media-body user-info">
+                      <p class="user-name mb-0">
+                      
+                        <label style="text-align: center; font-size: 15px;">
+                          {% if  data.User_Type == 'Company' %}
+                            {{ com.Company_name }}
+                          {% else %}  
+                            {{ com.Login_Id.First_name }} {{ com.Login_Id.Last_name }}
+                          {% endif %}
+                        </label>
+                        
+                      </p>
+                      <p class="designattion mb-0">Online</p>
+                    </div>
+                    {% if  data.User_Type == 'Company' %}
+                      {% if com.Image %}
+                      <img src="{{ com.Image.url }}" class="user-img">
+                      {% else %}
+                      <img src="{% static 'assets\images\user-1.jpg'%}" class="user-img">
+                      {% endif %}
+                    {% else %}  
+                      {% if com.img %}
+                      <img src="{{ com.img.url }}" class="user-img">
+                      {% else %}
+                      <img src="{% static 'assets\images\user-1.jpg'%}" class="user-img">
+                      {% endif %}
+                    {% endif %}  
+
+                  </div>
+                 
+                </a>
+                
+                <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item"
+                    href="{% url 'Fin_Company_Profile' %}"><i class="bx bx-user"></i><span>Profile</span></a>
+                  <a class="dropdown-item" href=""><i
+                      class="bx bx-tachometer"></i><span>Dashboard</span></a>
+                  <div class="dropdown-divider mb-0"></div>
+                  <a class="dropdown-item" href="{% url 'logout' %}"><i class="bx bx-power-off"></i><span>Logout</span></a>
+                </div>
+                
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--end header-->
+
+
+      <!--navigation-->
+      
+      <div id="nav1" class="nav-container" style="background-color: #213b52;">
+        <nav class="topbar-nav">
+          <ul class="metismenu" id="menu">
+            <li>
+              <a href="{% url 'Fin_Com_Home' %}">
+                <div class="menu-title">Dashboard</div>
+              </a>
+            </li>
+            {% if data.User_Type == 'Company' %}
+            <li>
+              <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class='bx bxs-user'></i>
+                </div>
+                <div class="menu-title">Staff</div>
+              </a>
+              <ul>
+                <li id="items"><a href="{% url 'Fin_Staff_Req' %}"><i class="bx bx-right-arrow-alt"></i>Staff Requests</a>
+                </li>
+                <li id="pricelist">
+                  <a href="{% url 'Fin_All_Staff' %}"><i class="bx bx-right-arrow-alt"></i>All Staff</a>
+                </li>
+                
+
+              </ul>
+
+            </li>
+            {% endif %}
+            <li>
+              <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class='bx bxs-package'></i>
+                </div>
+                <div class="menu-title">Item</div>
+              </a>
+              <ul>
+                {% if allmodules.Items == 1 %}
+                <li id="items"><a href=""><i class="bx bx-right-arrow-alt"></i>Items</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Price_List == 1 %}
+                <li id="pricelist">
+                  <a href=""><i class="bx bx-right-arrow-alt"></i>Price Lists</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Stock_Adjustment == 1 %}
+                <li id="stockadjustment"><a href=""><i class="bx bx-right-arrow-alt"></i>Stock
+                    Adjustments</a>
+                </li>
+                {% endif %}
+
+              </ul>
+
+            </li>
+            <li>
+              <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-home-alt"></i>
+                </div>
+                <div class="menu-title" style="margin-right: 20px;">Cash&Bank</div>
+              </a>
+              <ul class="submenu">
+                
+
+                {% if allmodules.Offline_Banking == 1 %}
+                
+                <li id="Offlinebanking"><a href=""><i class="bx bx-right-arrow-alt"></i>Offline
+                    Banking</a>
+                </li>
+                {% endif %}
+
+                
+
+                {% if allmodules.Bank_Holders == 1 %}
+                <li id="Fin_bankholder"><a href=""><i class="bx bx-right-arrow-alt"></i>Bank
+                    Holders</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Cash_in_hand == 1 %}
+                <li id="cashinhands"><a href=""><i class="bx bx-right-arrow-alt"></i>Cash
+                    In Hand</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Cheque == 1 %}
+                <li id="cheques"><a href=""><i class="bx bx-right-arrow-alt"></i>Cheques
+                  </a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Loan_Account == 1 %}
+                <li><a href=""><i class="bx bx-right-arrow-alt"></i>Loan Account</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.UPI == 1 %}
+                <li><a href=""><i class="bx bx-right-arrow-alt"></i>UPI</a>
+                </li>
+                {% endif %}
+              </ul>
+            </li>
+            <li>
+              <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bx bx-file"></i>
+                </div>
+                <div class="menu-title">Sales</div>
+              </a>
+              <ul class="submenu">
+                {% if allmodules.Customers == 1 %}
+                <li id="customers"><a href=""><i class="bx bx-right-arrow-alt"></i>Customers</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Estimate == 1 %}
+
+                <li id="estimate"><a href=""><i class="bx bx-right-arrow-alt"></i>Estimate</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Sales_Order == 1 %}
+                <li id="salesorder"><a href=""><i class="bx bx-right-arrow-alt"></i>Sales Order</a>
+                </li>
+                {% endif %}
+
+                {% if allmodules.Invoice == 1 %}
+                
+                <li id="invoices"><a href=""><i class="bx bx-right-arrow-alt"></i>Invoices</a>
+                </li>
+                {% endif %}
+            </li>
+           
+
+            {% if allmodules.Credit_Note == 1 %}
+            <li id="creditnote">
+              <a href=""><i class="bx bx-right-arrow-alt"></i>Credit Note</a>
+            </li>
+            {% endif %}
+
+            {% if allmodules.Payment_Received == 1 %}
+            <li id="paymentsreceived"><a href=""><i class="bx bx-right-arrow-alt"></i>Payments Received</a>
+            </li>
+            {% endif %}
+
+            {% if allmodules.Retainer_Invoice == 1 %}
+            <li id="retainerinvoices"><a href=""><i class="bx bx-right-arrow-alt"></i>Retainer Invoices</a>
+            </li>
+            {% endif %}
+
+            {% if allmodules.Delivery_Challan == 1 %}
+            <li id="deliverychallan"><a href=""><i class="bx bx-right-arrow-alt"></i> Delivery Challan</a>
+            </li>
+            {% endif %}
+
+            {% if allmodules.Recurring_Invoice == 1 %}
+            <li id="reccuringinvoices"><a href=""><i class="bx bx-right-arrow-alt"></i> Reccuring Invoices</a>
+            </li>
+            {% endif %}
+
+           
+            </li>
+          </ul>
+          </li>
+          <li>
+            <a href="javascript:;" class="has-arrow">
+              <div class="parent-icon"><i class='bx bx-briefcase-alt'></i>
+              </div>
+              <div class="menu-title">Purchase</div>
+            </a>
+            <ul class="submenu">
+              
+
+              {% if allmodules.Vendors == 1 %}
+              <li id="vendor"><a href=""><i class="bx bx-right-arrow-alt"></i>Vendor</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Purchase_Order == 1 %}
+              <li id="purchaseorder"><a href=""><i class="bx bx-right-arrow-alt"></i>Purchase Order</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Bills == 1 %}
+              <li id="bill"><a href=""><i class="bx bx-right-arrow-alt"></i>Bill</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Expenses == 1 %}
+              <li id="expense"><a href=""><i class="bx bx-right-arrow-alt"></i>Expense</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Payment_Made == 1 %}
+              <li id="payment"><a href=""><i class="bx bx-right-arrow-alt"></i>Payment Made</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Debit_Note == 1 %}
+              <li id="debitnote"><a href=""><i class="bx bx-right-arrow-alt"></i>Debit Note</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Recurring_Bills == 1 %}
+              <li id="recurringbill"><a href="{% url 'recurring_bill_list' %}"><i class="bx bx-right-arrow-alt"></i>Recurring Bill</a>
+              </li>
+              {% endif %}
+
+              
+
+              
+            </ul>
+          </li>
+          
+
+
+          <li>
+            <a href="javascript:;" class="has-arrow">
+              <div class="parent-icon"><i class="bx bx-comment-edit"></i></div>
+              <div class="menu-title">Reports</div>
+            </a>
+            <ul class="submenu">
+              <li id="transactonreport">
+                <a><i class="bx bx-right-arrow-alt"></i>Transaction Reports</a>
+                <ul class="px-4">
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Sales</a></li>
+
+                    <ul class="px-4">
+                      <li><a href=""><i class="bx bx-right-arrow-alt"></i>Sales by Customer</a></li>
+                      <li><a href=""><i class="bx bx-right-arrow-alt"></i>Sales By Item</a></li>
+                    </ul>
+                  </li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Purchase
+                    </a>
+                  </li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>All Transactions
+                    </a>
+                  </li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Profit and Loss</a></li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Balance Sheet</a></li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Cash Flow</a></li>
+                  <li><a href=""><i class="bx bx-right-arrow-alt"></i>Day Book</a></li>
+                </ul>
+              </li>
+              <li id="party">
+                <a><i class="bx bx-right-arrow-alt"></i>Party </a>
+                <ul class="px-4">
+                  <li><a href="">Party Statements</a></li>
+                <li><a href="">All Parties</a></li>
+                
+                </ul>
+              </li>
+              <li id="gstreports">
+                <a><i class="bx bx-right-arrow-alt"></i>GST Reports</a>
+                <ul class="px-4">
+                  <li><a href="">GSTR-1</a></li>
+                  <li><a href="">GSTR-2</a></li>
+                  <li><a href="">GSTR-3B</a></li>
+                  <li><a href="">GSTR-9</a></li>
+                  <li><a href=""></i>Sale Summary by HSN</a></li>
+                </ul>
+              </li>
+              <li id="profitandloss"><a href=""><i class="bx bx-right-arrow-alt"></i>Profit and Loss</a></li>
+              <li id="balancesheet"><a href=""><i class="bx bx-right-arrow-alt"></i>Balance Sheet</a></li>
+              <li id="trialbalance"><a href=""><i class="bx bx-right-arrow-alt"></i>Trial Balance</a></li>
+              <li id="accountsreceivables"><a href=""><i class="bx bx-right-arrow-alt"></i>Accounts Receivables</a>
+              </li>
+              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Creditnote Details</a></li>
+                            <li><a href=""><i class="bx bx-right-arrow-alt"></i>Debitnote Report</a></li>
+              <li id="accountspayables"><a href=""><i class="bx bx-right-arrow-alt"></i>Accounts Payables</a></li>
+
+              <li id="stocksummary"><a href=""><i class="bx bx-right-arrow-alt"></i>Stock Summary </a></li>
+              <li id="stockvaluation"><a href=""><i class="bx bx-right-arrow-alt"></i>Stock Valuation</a></li>
+              <li id="salessummaryreport"><a href=""><i class="bx bx-right-arrow-alt"></i>Sales Summary Report</a></li>
+              <li id="salessummaryreport"><a href=""><i class="bx bx-right-arrow-alt"></i>Purchase Order Details</a></li>
+              <li id="salessummaryreport"><a href=""><i class="bx bx-right-arrow-alt"></i>Purchase Order By Vendor</a></li>
+              <li id="salessummaryreport"><a href=""><i class="bx bx-right-arrow-alt"></i> Recurring Bill Report</a></li>
+            </ul>
+          </li>
+
+          {% if allmodules.EWay_Bill == 1 %}
+
+          <li>
+            <a href="javascript:;" class="has-arrow">
+              <div class="parent-icon"><i class="bx bx-file"></i>
+              </div>
+              <div class="menu-title">Eway Bill</div>
+            </a>
+            
+          </li>
+          {% endif %}
+          
+          <li>
+            <a href="javascript:;" class="has-arrow">
+              <div class="parent-icon"><i class="bx bx-line-chart"></i>
+              </div>
+              <div class="menu-title">Accounting</div>
+            </a>
+            <ul class="submenu">
+              
+
+              {% if allmodules.Chart_of_Accounts == 1 %}
+              <li id="chartofaccounts"><a href=""><i class="bx bx-right-arrow-alt"></i>Chart of
+                  Accounts</a>
+              </li>
+              {% endif %}
+
+              {% if allmodules.Manual_Journal == 1 %}
+              <li id="manualjournal"><a href=""><i class="bx bx-right-arrow-alt"></i>Manual Journal
+                </a>
+              </li>
+              {% endif %}
+
+              
+            </ul>
+          </li>
+         
+          <li>
+            <a href="javascript:;" class="has-arrow">
+              <div class="parent-icon"><i class="bx bx-money"></i>
+              </div>
+              <div class="menu-title">Payroll</div>
+            </a>
+            <ul class="submenu">
+              
+
+              {% if allmodules.Employees == 1 %}
+              <li id="employee"><a href=""><i class="bx bx-right-arrow-alt"></i>Employee</a> </li>
+              {% endif %}
+
+              {% if allmodules.Employees_Loan == 1 %}
+              <li id="employeeloan"><a href=""><i class="bx bx-right-arrow-alt"></i>Employee Loan</a> </li>
+              {% endif %}
+
+              {% if allmodules.Holiday == 1 %}
+              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Holidays</a> </li>
+              {% endif %}
+
+              {% if allmodules.Attendance == 1 %}
+              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Attendance</a> </li>
+              {% endif %}
+              {% if allmodules.Salary_Details == 1 %}
+              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Salary Details</a> </li>
+              {% endif %}
+            </ul>
+          </li>
+          </ul>
+        </nav>
+      </div>
+     
+      <div class="page-wrapper">
+        <div class="page-content-wrapper" style="background-color: #2f516f;">
+          <div class="container pt-3">
+            {% for message in messages %}
+            {% if message %}
+            <div class="alert" onclick="this.parentElement.style.display='none';">
+              <div class="row d-flex">
+                <div class="col-md-12">
+                  <center>
+                    <h5 style="color: goldenrod;">{{ message }}</h5>
+                  </center>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          <div></div>
+
+          {% block body %}
+
+          {% endblock %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Get the list from the context passed by the view
+    const selected_options = JSON.parse(localStorage.getItem('selectedCheckboxes'));
+
+    function disableOptions() {
+      selected_options.forEach(function (id) {
+        var optionelement = document.getElementById(id)
+        if(optionelement){
+          optionelement.style.display= "none";
+        }
+      })
+    };
+
+  // Call the function to disable options when the page loads
+  disableOptions();   
+</script>
+
+
+  <script>
+
+    $(document).ready(function () {
+      $("#myList li").hide();
+
+      $("#myInput").on("keyup", function () {
+
+        var value = $(this).val().toLowerCase();
+        if (value !== '') {
+          $("#myList li").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        } else {
+          $("#myList li").hide();
+        }
+      });
+    });
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+  <!-- end wrapper -->
+  <!-- JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/js/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <!--plugins-->
+  <script src="{% static 'assets/plugins/simplebar/js/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/metismenu/js/metisMenu.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js' %}"></script>
+  <!-- Vector map JavaScript -->
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-in-mill.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-us-aea-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-uk-mill-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-au-mill.js' %}"></script>
+  <script src="{% static 'assets/plugins/apexcharts-bundle/js/apexcharts.min.js' %}"></script>
+  <script src="{% static 'assets/js/index.js' %}"></script>
+  <!-- App JS -->
+  <script src="{% static 'assets/js/app.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js" integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+
+  <script>
+    new PerfectScrollbar('.dashboard-social-list');
+    new PerfectScrollbar('.dashboard-top-countries');
+  </script>
+</body>
+
+
+<!-- Mirrored from codervent.com/syntrans/demo/horizontal/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 07 Jan 2021 05:00:53 GMT -->
+
+</html>

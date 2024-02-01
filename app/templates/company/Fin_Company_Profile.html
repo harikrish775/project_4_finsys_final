@@ -1,0 +1,355 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+                        <h3 class="mb-0" style="font-weight: bolder;">MY PROFILE</h3>
+                    {% if  data.User_Type == 'Company' %}    
+                        {% if com.Image %}
+                        <img src="{{ com.Image.url }}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% else %}
+                        <img src="{% static 'assets\images\user-1.jpg'%}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% endif %}
+                    {% else %}  
+                        {% if com.img %}
+                        <img src="{{ com.img.url }}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% else %}
+                        <img src="{% static 'assets\images\user-1.jpg'%}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% endif %}
+                    {% endif %}    
+
+
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 col-md-offset-3">
+                            {% if  data.User_Type == 'Company' %} 
+                            <label for="last_name">Company Code</label>
+                            <input type="text" name="last_name" id="last_name" value="{{ com.Company_Code }}"
+                           class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                           
+                           {% endif %}
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    </center>
+                    <hr>
+                    <form method="post" action="" class="mb-5" novalidate>
+                        {% csrf_token %}
+                        <h4 class="m-4">Personal Info</h4>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="first_name">First Name</label>
+                                <input type="text" name="first_name" id="first_name" value="{{ com.Login_Id.First_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" value="{{ com.Login_Id.Last_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="email">E-mail</label>
+                                <input type="email" name="email" id="email" value="{{ com.Email }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="username">Username</label>
+                                <input type="text" name="username" id="username" value="{{ com.Login_Id.User_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="email">Contact</label>
+                                {% if  data.User_Type == 'Company' %} 
+                                <input type="email" name="email" id="email" value="{{ com.Contact }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                                {% else %}  
+                                <input type="email" name="email" id="email" value="{{ com.contact }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly> 
+                                {% endif %}    
+                            </div>
+                            <div class="col-md-6">
+                               
+                            </div>
+                        </div>
+
+
+                        <h4 class="m-4">Company Info</h4>
+
+                        {% if  data.User_Type == 'Company' %} 
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="cname">Company Name</label>
+                                <input type="text" name="cname" id="cname" value="{{ com.Company_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="caddress">Company Address</label>
+                                <input type="text" name="caddress" id="caddress" value="{{ com.Address }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="city">City</label>
+                                <input type="text" name="city" id="city" value="{{ com.City }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state">State</label>
+                                <input type="text" name="state" id="state" value="{{ com.State }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" name="pincode" id="pincode" value="{{ com.Pincode }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone">Phone Number</label>
+                                <input type="text" name="phone" id="phone" value="{{ com.Contact }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="bname">Legal Business Name</label>
+                                <input type="text" name="bname" id="bname" value="{{ com.Business_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ctype">Pan Number</label>
+                                <input type="text" name="pannum" id="pannum" value="{{ com.Pan_NO}}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                                
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="industry">GST Type</label>
+                                
+                                <input type="text" name="gsttype" id="gsttype" value="{{ com.GST_Type}}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6 d-none gstrow" >
+                                <label for="ctype">GST Number</label>
+                                <input type="text" name="gstnum" id="gstnum" value="{{ com.GST_NO }}"
+                                       class="form-control " style="background-color: #2f516f;color: white;" readonly>
+                                
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="industry">Your Industry</label>
+                                <input type="text" name="industry" id="industry" value="{{ com.Industry }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ctype">Company Type</label>
+                                <input type="text" name="ctype" id="ctype" value="{{ com.Company_Type }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="industry">Payment Term</label>
+                                <div class="d-flex">
+                                    
+                                    <input type="text" name="Payment_Term" id="Payment_Term" value="{{ com.Payment_Term.payment_terms_number }} {{ com.Payment_Term.payment_terms_value }}"
+                                       class="form-control" style="border-radius: 10px 0px 0px 10px;background-color: #2f516f;color: white;" readonly>
+
+                                       <!-- <button id="modal_closing" style="border-radius: 0px 10px 10px 0px;"
+                                    title="change Payment Term" type="button" class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#partycreation" data-bs-whatever="@mdo"><i class="bx bx-plus"
+                                        style="font-weight: bold;"></i></button> -->
+                                        <button type="button" style="border-radius: 0px 10px 10px 0px;"
+                                        title="change Payment Term" type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <i class='bx bx-right-arrow-circle'></i>
+                                          </button>
+                                </div>
+                            </div>
+                            
+                            
+
+
+                                
+                            
+                            <div class="col-md-6">
+                                <label for="ctype">End Date</label>
+                                <input type="text" name="end" id="end" value="{{ com.End_date }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <a href="{% url 'Fin_Edit_Company_profile' %}">
+                                <button class="btn btn-outline-info rounded-pill w-100 h-100 text-light" type="button">
+                                    Edit Profile
+                                </button>
+                            </a>
+                            </div>
+                            <div class="col-md-3">
+                                <a href="{% url 'Fin_Edit_Modules' %}"> 
+                                <button class="btn btn-outline-danger rounded-pill w-100 h-100 text-light" type="button">
+                                     Edit Modules 
+                                </button>
+                            </a>
+                            </div>
+                            <div class="col-md-3"></div>
+                        </div>
+                        {% else %}
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="cname">Company Name</label>
+                                <input type="text" name="cname" id="cname" value="{{ com.company_id.Company_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="caddress">Company Code</label>
+                                <input type="text" name="caddress" id="caddress" value="{{ com.company_id.Company_Code }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="cname">Company Email</label>
+                                <input type="text" name="cname" id="cname" value="{{ com.company_id.Email }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="caddress">Company Address</label>
+                                <input type="text" name="caddress" id="caddress" value="{{ com.company_id.Address }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="city">City</label>
+                                <input type="text" name="city" id="city" value="{{ com.company_id.City }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state">State</label>
+                                <input type="text" name="state" id="state" value="{{ com.company_id.State }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="pincode">Pincode</label>
+                                <input type="text" name="pincode" id="pincode" value="{{ com.company_id.Pincode }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone">Phone Number</label>
+                                <input type="text" name="phone" id="phone" value="{{ com.company_id.Contact }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <a href="{% url 'Fin_Edit_Staff_profile' %}">
+                                <button class="btn btn-outline-info rounded-pill w-100 h-100 text-light" type="button">
+                                    Edit Profile
+                                </button>
+                            </a>
+                            </div>
+                            
+                            <div class="col-md-4"></div>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content" style="background-color: white;">
+            <div class="modal-header" style="border-bottom: 1px solid gray;">
+            <h5 class="modal-title fs-5 " id="exampleModalLabel" style="color: black;"><b>Change Payment Terms</b></h5>
+            <button type="button" class="btn-close text-danger" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;border: none;">
+                <i class='bx bx-right-arrow-circle' style="font-size: 22px;"></i>
+            </button>
+            
+            </div>
+            
+            <div class="modal-body">
+                <form action="{% url 'Fin_Change_payment_terms' %}" method="post" style="padding: 10px;">
+                    {% csrf_token %}
+                    <label for="" style="color: black;margin-left: 20px;">current Payment Term</label><br>
+                    <input type="text" value="{{ com.Payment_Term.payment_terms_number }} {{ com.Payment_Term.payment_terms_value }}" 
+                    style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly> <br>
+
+
+                    <label for="" style="color: black;margin-left: 20px;">End Date</label><br>
+                    <input type="text" value="{{ com.End_date }}" 
+                    style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly>
+
+
+                    <label for="" style="color: black;margin-left: 20px;">Choose New</label><br>
+                    <select name="payment_term" id="" 
+                    style="margin-bottom: 20px; border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;" >
+                        <option value="" style="background-color: white;">Choose Payment terms</option>
+                        {% for t in terms %}
+                        <option value="{{t.id}}" style="background-color: white;">{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <center><button type="submit" class="btn btn-info" style="border-radius: 30px;width: 50%;"><b>Submit</b></button></center>
+                </form>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid black;">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function() {
+         
+        var x=$('#gsttype').val();
+        if(x=="unregistered Business") 
+        {
+            $(".gstrow").removeClass('d-block');
+            $(".gstrow").addClass('d-none');
+
+        }
+        else if(x == 'Overseas'){
+            $(".gstrow").removeClass('d-block');
+            $(".gstrow").addClass('d-none');
+        }
+        else 
+        {
+            $(".gstrow").removeClass('d-none');
+            $(".gstrow").addClass('d-block');
+        }
+        
+         
+    });
+  </script>
+{% endblock %}

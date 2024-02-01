@@ -1,0 +1,305 @@
+{% extends 'Admin/Fin_AdminBase.html' %}
+{% block body %}
+{% if user.is_authenticated %}
+{% load static %}
+<style>
+    @media (max-width:768px) {
+        .h3 {
+            font-size: 20px;
+        }
+
+        .h4 {
+            font-size: 15px;
+        }
+    }
+</style>
+
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="card radius-15">
+
+                <div class="card-body">
+                    <div class="card-title">
+
+                        <h2 class="card-title mb-9 fw-semibold text-center"><b>COMPANY DETAILS</b></h2>
+                        <hr>
+                    </div>
+                    <center>
+                        {% if data.Image %}
+                        <img class="img-thumbnail" width="30%" src="{{ data.Image.url }}" alt="">
+                        {% else %}
+                        <img src="{% static 'assets/images/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
+                        {% endif %}
+                    </center>
+                    <h3 class="h3 text-center"><b>{{data.Company_name}}</b></h3>
+                    <!-- <h3 class="h3 text-center"><b>AthulMon Gp</b></h3> -->
+
+                    <hr>
+                    <div class="row  pb-2 pt-2 p-5">
+                        <div class="col-md-6">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b>Company Code </h5>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="h4"><b>: {{data.Company_Code}}</b></h4>
+                        </div>
+                    </div>
+
+                    <div class="row  pb-2 pt-2 p-5">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Email </h5>
+                        </div>
+                        <div class="col">
+                            <h4 class="h4"><b>: {{data.Email}}</b></h4>
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> User Name</h5>
+                        </div>
+                        <div class="col">
+                            <h4 class="h4"><b> : {{data.Login_Id.User_name}}</b></h4>
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Contact </h5>
+                        </div>
+                        <div class="col">
+                            <h4 class="h4"> <b>: {{data.Contact}}</b></h4>
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
+                        </div>
+                        <div class="col">
+                            <h4 class="h4"> <b>: {{data.Payment_Term.payment_terms_number}}
+                                    {{data.Payment_Term.payment_terms_value}}</b></h4>
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> End Date</h5>
+                        </div>
+                        <div class="col">
+                            <h4 class="h4"> <b> : {{data.End_date}}</b></h4>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <h3 class="h3 p-5 pb-3 pt-3"><b>Modules</b></h3>
+                    <div class="row p-3" style="margin-left: 20px;">
+                        <div class="col-md-3 p-3">
+                            <h5><u>ITEMS</u></h5>
+    
+                            {% if allmodules.Items != NULL %}
+                            <b>-> </b> Items <br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Price_List != NULL %}
+                            <b>-> </b>Price List <br>
+                            {% endif %}
+    
+                            {% if allmodules.Stock_Adjustment != NULL %}
+                            <b>-> </b> Stock Adjustment <br>
+                            {% endif %}
+    
+                           
+    
+                        </div>
+    
+                        <div class="col-md-3 p-3">
+                            <h5><u>CASH & BANK</u></h5>
+    
+                            {% if allmodules.Cash_in_hand != NULL %}
+                            <b>-> </b> Cash in hand <br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Offline_Banking  != NULL %}
+                            <b>-> </b>Offline Banking  <br>
+                            {% endif %}
+    
+                            
+    
+                            {% if allmodules.UPI != NULL %}
+                            <b>-> </b>UPI<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Bank_Holders  != NULL %}
+                            <b>-> </b> Bank Holders  <br>
+                            {% endif %}
+    
+                            {% if allmodules.Cheque  != NULL %}
+                            <b>-> </b> Cheque  <br>
+                            {% endif %}
+    
+                            {% if allmodules.Loan_Account  != NULL %}
+                            <b>-> </b> Loan Account  <br>
+                            {% endif %}
+    
+                           
+    
+                        </div>
+    
+                        <div class="col-md-3 p-3">
+                            <h5><u>SALES</u></h5>
+    
+                            {% if allmodules.Customers != NULL %}
+                            <b>-> </b> Customers<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Invoice  != NULL %}
+                            <b>-> </b>Invoice<br>
+                            {% endif %}
+    
+                            {% if allmodules.Estimate != NULL %}
+                            <b>-> </b>Estimate <br>
+                            {% endif %}
+    
+                            {% if allmodules.Sales_Order != NULL %}
+                            <b>-> </b>Sales Order<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Recurring_Invoice != NULL %}
+                            <b>-> </b> Recurring Invoice  <br>
+                            {% endif %}
+    
+                            {% if allmodules.Retainer_Invoice != NULL %}
+                            <b>-> </b> Retainer Invoice  <br>
+                            {% endif %}
+    
+                            {% if allmodules.Credit_Note  != NULL %}
+                            <b>-> </b> Credit Note <br>
+                            {% endif %}
+    
+                            {% if allmodules.Payment_Received  != NULL %}
+                            <b>-> </b> Payment Received <br>
+                            {% endif %}
+    
+                            {% if allmodules.Delivery_Challan != NULL %}
+                            <b>-> </b> Delivery Challan <br>
+                            {% endif %}
+    
+                        </div>
+    
+                        <div class="col-md-3 p-3">
+                            <h5><u>PURCHASE</u></h5>
+    
+                            {% if allmodules.Vendors != NULL %}
+                            <b>-> </b>Vendors<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Bills  != NULL %}
+                            <b>-> </b>Bills<br>
+                            {% endif %}
+    
+                            {% if allmodules.Recurring_Bills != NULL %}
+                            <b>-> </b>Recurring Bills <br>
+                            {% endif %}
+    
+                            {% if allmodules.Debit_Note != NULL %}
+                            <b>-> </b>Debit Note<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Purchase_Order != NULL %}
+                            <b>-> </b> Purchase Order  <br>
+                            {% endif %}
+    
+                            {% if allmodules.Expenses != NULL %}
+                            <b>-> </b> Expenses  <br>
+                            {% endif %}
+    
+                            
+    
+                            {% if allmodules.Payment_Made  != NULL %}
+                            <b>-> </b> Payment Made <br>
+                            {% endif %}
+    
+                            
+    
+                        </div>
+                        <div class="col-md-3 p-3 mt-4">
+                            
+                            {% if allmodules.EWay_Bill != NULL %}
+                            <h5><u>EWAY BILL</u></h5>
+                            <b>-> </b> EWay Bill <br>
+                            {% endif %}
+                        </div>
+    
+                        <div class="col-md-3 p-3 mt-4">
+                            <h5><u>ACCOUNTS</u></h5>
+    
+                            {% if allmodules.Chart_of_Accounts != NULL %}
+                            <b>-> </b>Chart of Accounts<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Manual_Journal  != NULL %}
+                            <b>-> </b>Manual Journal<br>
+                            {% endif %}
+    
+    
+                        </div>
+    
+                        <div class="col-md-3 p-3 mt-4">
+                            <h5><u>PAYROLL</u></h5>
+    
+                            {% if allmodules.Employees != NULL %}
+                            <b>-> </b>Employees<br>
+                            {% endif %}
+    
+    
+                            {% if allmodules.Employees_Loan  != NULL %}
+                            <b>-> </b>Employees Loan<br>
+                            {% endif %}
+    
+                            {% if allmodules.Holiday != NULL %}
+                            <b>-> </b>Holiday<br>
+                            {% endif %}
+    
+                            {% if allmodules.Attendance != NULL %}
+                            <b>-> </b>Attendance<br>
+                            {% endif %}
+    
+                            {% if allmodules.Salary_Details != NULL %}
+                            <b>-> </b>Salary Details<br>
+                            {% endif %}
+    
+    
+                        </div>
+                    </div>    
+                <hr>
+                    
+                    <div class="row pb-5">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <a href="{% url 'Fin_Client_Req_Accept' data.id %}" class="btn btn-success" style="width: 100%;">ACCEPT</a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'Fin_Client_Req_Reject' data.id %}" class="btn btn-danger"  style="width: 100%;">REJECT</a>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+
+            
+
+
+
+        </div>
+    </div>
+</body>
+{% endif %}
+{% endblock %}
