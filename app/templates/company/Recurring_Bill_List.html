@@ -28,7 +28,7 @@
     <div class="page-content ">
         <div class="card radius-15">
             <div class="card-body">
-                <center><h2>All Employee's </h2></center><br>
+                <center><h2>RECURRING BILL </h2></center><br>
 
                 <div class="row">
                     <div class="col-3 ml-1">
@@ -44,8 +44,8 @@
                       
                         <div class="dropdown-menu"  id="sort">
                           <a class="dropdown-item" id="drop1" style="cursor: pointer;" >All</a>
-                          <a class="dropdown-item" id="drop2" style="cursor: pointer;" onclick="sortByColumn(1)">Sort By Name</a>
-                          <a class="dropdown-item" id="drop3" style="cursor: pointer;" onclick="sortByColumn(7)">Sort By Salary</a>
+                          <a class="dropdown-item" id="drop2" style="cursor: pointer;" onclick="sortByColumn(3)">Sort By Vendor Name</a>
+                          <a class="dropdown-item" id="drop3" style="cursor: pointer;" onclick="sortByColumn(2)">Sort By Recurring Bill</a>
                         </div>
                       </div>
 
@@ -62,8 +62,8 @@
                           
                             <div class="dropdown-menu"  id="filter" >
                                 <a class="dropdown-item" style="cursor: pointer;" data-status="All">All</a>
-                                <a class="dropdown-item" style="cursor: pointer;" data-status="Active">Active</a>
-                                <a class="dropdown-item" style="cursor: pointer;" data-status="Inactive">Inactive</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Save">Saved</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Draft">Draft</a>
                             </div>
 
                             <a class="btn btn-outline-secondary text-grey" href=""><i class="fa fa-plus font-weight-light"></i> New </a>
@@ -75,22 +75,22 @@
                 <br><br><br>
 
                 <div class="table-responsive">
-                    <table class="table " id="employList">
+                    <table class="table " id="Bill_List">
                         <thead>
                             <tr>
                                 <th >#</th>
-                                <th >NAME</th>
-                                <th >EMAIL</th>
-                                <th >EMPLOYEE ID</th>
-                                <th >DESIGNATION</th>
-                                <th >SALARY TYPE</th>
-                                <th >STATUS</th>
-                                <th >SALARY</th>
+                                <th >Date</th>
+                                <th >Bill Number</th>
+                                <th >Vendor Name</th>
+                                <th >Vendor Mail</th>
+                                <th >Amount</th>
+                                <th >Status</th>
+                                <th >Balance</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {% for i in employee %}
+                            {% for i in bill %}
                             <tr  onclick="window.location.href='/employee_overview/{{ i.id }}';" style="cursor: pointer;">
                                 
                                 
@@ -125,7 +125,7 @@
     });
 
     function filterTableByStatus(status) {
-        var tableRows = document.querySelectorAll('#employList tbody tr');
+        var tableRows = document.querySelectorAll('#Bill_List tbody tr');
 
         tableRows.forEach(function (row) {
             var rowStatus = row.children[6].innerText.toLowerCase(); // Assuming status is in the 7th column
@@ -147,7 +147,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
     // Get the table element
-    var table = document.getElementById('employList');
+    var table = document.getElementById('Bill_List');
 
     // Get all rows in the table body
     var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -165,7 +165,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
         // Get the table element
-        var table = document.getElementById('employList');
+        var table = document.getElementById('Bill_List');
 
         // Get all rows in the table body
         var rows = table.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var input, filter, table, tbody, tr, td, i, txtValue;
         input = document.getElementById("employeeSearchInput");
         filter = input.value.toUpperCase();
-        table = document.getElementById("employList");
+        table = document.getElementById("Bill_List");
         tbody = table.getElementsByTagName("tbody")[0];
         tr = tbody.getElementsByTagName("tr");
 
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // sort function
 
 // Declare table variable globally
-var table = document.getElementById("employList");
+var table = document.getElementById("Bill_List");
 
 // Function to sort the table based on the selected column
 function sortByColumn(columnIndex) {
@@ -265,7 +265,7 @@ document.getElementById("drop1").addEventListener("click", function () {
 // excel
 
 document.getElementById('exportButton').addEventListener('click', function () {
-        exportToExcel('employList');
+        exportToExcel('Bill_List');
     });
 
     function exportToExcel(tableId) {
