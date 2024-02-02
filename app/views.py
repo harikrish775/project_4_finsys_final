@@ -1601,4 +1601,28 @@ def Fin_Edit_Staff_profile_Action(request):
 # harikrishnan-------------------------
 
 def recurring_bill_list(request):
-    return render(request,'company/Recurring_Bill_List.html')
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    
+    if loginn.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+    elif loginn.User_Type == 'Staff' :
+        com = Fin_Staff_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)        
+    return render(request,'company/Recurring_Bill_List.html',{'allmodules':allmodules})
+
+
+def recurring_bill_create(request):
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    
+    if loginn.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.id)
+    elif loginn.User_Type == 'Staff' :
+        com = Fin_Staff_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors})

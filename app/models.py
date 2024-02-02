@@ -659,44 +659,7 @@ class Holiday_History(models.Model):
 # ---------------------------------------------------------------
     
 
-class Fin_Customers(models.Model):
-    Company = models.ForeignKey(Fin_Company_Details, on_delete=models.CASCADE, null=True)
-    LoginDetails = models.ForeignKey(Fin_Login_Details, on_delete=models.CASCADE, null=True)
-    title = models.CharField(max_length=10,null=True,blank=True)
-    first_name = models.CharField(max_length=100,null=True,blank=True)
-    last_name = models.CharField(max_length=100,null=True,blank=True)
-    company = models.CharField(max_length=100,null=True,blank=True)
-    location = models.CharField(max_length=100,null=True,blank=True)
-    place_of_supply = models.CharField(max_length=100,null=True,blank=True)
-    gst_type = models.CharField(max_length=100, null=True)
-    gstin = models.CharField(max_length=100,null=True,blank=True,default=None)
-    pan_no = models.CharField(max_length=100, null=True, blank=True)
-    email = models.EmailField(null=True,blank=True)
-    website = models.CharField(max_length=100, default='',null=True,blank=True)
-    mobile = models.CharField(max_length=20,null=True,blank=True)
-    price_list = models.ForeignKey(Fin_Price_List, on_delete = models.SET_NULL, null = True)
-    payment_terms = models.ForeignKey(Fin_Company_Payment_Terms, on_delete = models.SET_NULL,null=True)
-    billing_street = models.CharField(max_length=100,null=True,blank=True)
-    billing_city = models.CharField(max_length=100,null=True,blank=True)
-    billing_state = models.CharField(max_length=100,null=True,blank=True)
-    billing_pincode = models.CharField(max_length=100,null=True,blank=True)
-    billing_country = models.CharField(max_length=100,null=True,blank=True)
-    ship_street = models.CharField(max_length=100,null=True,blank=True)
-    ship_city = models.CharField(max_length=100,null=True,blank=True)
-    ship_state = models.CharField(max_length=100,null=True,blank=True)
-    ship_pincode = models.CharField(max_length=100,null=True,blank=True)
-    ship_country = models.CharField(max_length=100,null=True,blank=True)
-    opening_balance = models.FloatField(null=True, blank=True, default=0.0)
-    opening_balance_due = models.FloatField(null=True, blank=True, default=0.0)
-    open_balance_type = models.CharField(max_length=100,null=True,blank=True)
-    current_balance = models.FloatField(null=True, blank=True, default=0.0)
-    credit_limit = models.FloatField(null=True, blank=True, default=0.0)
-    date = models.DateField(null=True, auto_now_add=True,auto_now=False)
-    customer_status = (
-        ('Active','Active'),
-        ('Inactive','Inactive'),
-    )
-    status =models.CharField(max_length=150,choices=customer_status,default='Active',null=True,blank=True)
+
 
 
 
@@ -793,7 +756,7 @@ class Recurring_Bill_Reference(models.Model):
     login_details = models.ForeignKey(Fin_Login_Details,on_delete=models.CASCADE,null=True,blank=True)
 
 
-class Recurring_Bill_Reference(models.Model):
+class Recurring_Bill_History(models.Model):
     company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
     login_details = models.ForeignKey(Fin_Login_Details,on_delete=models.CASCADE,null=True,blank=True)
     recurring_bill = models.ForeignKey(Recurring_Bills,on_delete=models.CASCADE,null=True,blank=True)
