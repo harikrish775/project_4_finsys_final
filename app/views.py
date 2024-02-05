@@ -76,7 +76,7 @@ def Fin_login(request):
                     messages.info(request, 'Approval is Pending..')
                     return redirect('Fin_DistributorReg')
                       
-            if data.User_Type == 'Company':
+            if data.User_Type == 'Fin_Company_Details':
                 cid = Fin_Company_Details.objects.get(Login_Id=data.id) 
                 if cid.Admin_approval_status == 'Accept' or cid.Distributor_approval_status == 'Accept':
                     request.session["s_id"]=data.id
@@ -1621,8 +1621,49 @@ def recurring_bill_create(request):
         com = Fin_Company_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
         vendors = Fin_Vendors.objects.filter(Company_id=com.id)
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
         vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors})
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
+
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms})
+
+def recurring_bill_save(request):
+    if request == 'POST':
+        vendor = request.POST['select_vendor']
+        recurring_bill_number = request.POST['RecurringBillNo']
+        profile_name = request.POST['']
+        reference_number = request.POST['ReferenceNo']
+        bill_number = request.POST['']
+        date = request.POST['']
+        company_payment_terms = request.POST['payment_terms']
+        expected_shipment_date = request.POST['']
+        purchase_order_number = request.POST['PurchaseOrderNo']
+        payment_method = request.POST['paymentType']
+        cheque_number = request.POST[''] 
+        upi_id = request.POST[''] 
+        bank_account = request.POST[''] 
+        customer = request.POST['Customer'] 
+        description = request.POST['Note']
+        document = request.POST['Document'] 
+        sub_total = request.POST['subTotal'] 
+        cgst = request.POST['cgst'] 
+        sgst = request.POST['sgst'] 
+        taxAmount_igst = request.POST['taxAmount']
+        shipping_charge = request.POST['shippingCharge'] 
+        adjustment = request.POST['adjustment'] 
+        grand_total = request.POST['grandTotal'] 
+        advanceAmount_paid = request.POST['paidAmount'] 
+        balance = request.POST['balanceDue']
+        status = request.POST['button'] 
+        repeat_every = request.POST['RepeatEvery']
+
+        newBill = Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,profile_name = profile_name,reference_number = reference_number,
+                                  date = '=====',company_payment_terms =company_payment_terms,expected_shipment_date =expected_shipment_date,
+                                  purchase_order_number =purchase_order_number,payment_method = payment_method,cheque_number = cheque_number,upi_id = upi_id,
+                                  bank_account = bank_account,customer = customer,description = description,document = document,sub_total = sub_total,cgst = cgst,
+                                  sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,grand_total = grand_total,
+                                  advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
+        newBill.save()

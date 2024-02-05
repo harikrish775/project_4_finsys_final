@@ -711,7 +711,12 @@ class Fin_Vendors(models.Model):
 
 # harikrishnan-------------
 
-
+class Fin_CompanyRepeatEvery(models.Model):
+    company = models.ForeignKey(Fin_Company_Details, on_delete=models.CASCADE,null=True,blank=True)
+    repeat_every = models.CharField(max_length=100,null=True,blank=True) 
+    repeat_type = models.CharField(max_length=100,null=True,blank=True) 
+    duration = models.IntegerField(null=True,blank=True)
+    days = models.IntegerField(null=True,blank=True)
 
 class Recurring_Bills(models.Model):
     vendor = models.ForeignKey(Fin_Vendors,on_delete=models.CASCADE,null=True,blank=True)
@@ -740,6 +745,7 @@ class Recurring_Bills(models.Model):
     advanceAmount_paid = models.IntegerField(null=True,blank=True)
     balance = models.IntegerField(null=True,blank=True)
     status = models.CharField(max_length=255,null=True,blank=True)
+    repeat_every = models.ForeignKey(Fin_CompanyRepeatEvery,on_delete=models.CASCADE,null=True,blank=True)
 
 class Recurring_Bill_Items(models.Model):
     items = models.CharField(max_length=255,null=True,blank=True)
@@ -763,6 +769,11 @@ class Recurring_Bill_History(models.Model):
     date = models.DateField(null=True,blank=True)
     action = models.CharField(max_length=255,null=True,blank=True)
     
+
+
+
+
+
 
     
 

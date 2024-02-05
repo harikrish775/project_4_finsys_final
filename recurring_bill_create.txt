@@ -224,8 +224,8 @@
                                                 <div class="row m-md-2">
                                                     <div class="col-md-6 mt-4">
                                                         <label for="">Note</label>
-                                                        <textarea name="Note" id="" class="form-control" cols="30" rows="5"></textarea><br>
-                                                        <input type="file" class="form-control" name="Document" id="">
+                                                        <textarea name="" id="" class="form-control" cols="30" rows="5"></textarea><br>
+                                                        <input type="file" class="form-control" name="" id="">
                                                     </div>
                                                     <div class="col-md-1 mb-5"></div>
                                                     <div class="col-md-4 mb-3 m-md-5 p-4" style="background-color: rgba(22,37,50,255);border-radius: 5px;">
