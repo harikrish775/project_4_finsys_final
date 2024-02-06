@@ -38,8 +38,7 @@ def Fin_login(request):
         user_name = request.POST['username']
         passw = request.POST['password']
     
-        log_user = auth.authenticate(username = user_name,
-                                  password = passw)
+        log_user = auth.authenticate(username = user_name,password = passw)
     
         if log_user is not None:
             auth.login(request, log_user)
@@ -76,7 +75,7 @@ def Fin_login(request):
                     messages.info(request, 'Approval is Pending..')
                     return redirect('Fin_DistributorReg')
                       
-            if data.User_Type == 'Fin_Company_Details':
+            if data.User_Type == 'Company':
                 cid = Fin_Company_Details.objects.get(Login_Id=data.id) 
                 if cid.Admin_approval_status == 'Accept' or cid.Distributor_approval_status == 'Accept':
                     request.session["s_id"]=data.id
@@ -1613,7 +1612,7 @@ def recurring_bill_list(request):
     return render(request,'company/Recurring_Bill_List.html',{'allmodules':allmodules})
 
 
-def recurring_bill_create(request):
+def recurring_bill_create_page(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     
@@ -1667,3 +1666,8 @@ def recurring_bill_save(request):
                                   sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,grand_total = grand_total,
                                   advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
         newBill.save()
+        return render(request,'recurring_bill_list')
+    
+    
+def recurring_bill_overview(request):
+    return render(request,'company/Recurring_Bill_Overview.html')

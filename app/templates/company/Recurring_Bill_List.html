@@ -52,7 +52,8 @@
                     <div class="col-4 ml-auto">
                         
                         <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
-                        <!-- <button class="btn btn-secondary">Import</button> -->
+                        <a href="{% url 'recurring_bill_overview' %}" class="btn btn-secondary">overview</a>
+
                         <!-- <a class="btn btn-secondary dropdown-toggle" href="">Filter</a> -->
                         
                         
@@ -66,7 +67,7 @@
                                 <a class="dropdown-item" style="cursor: pointer;" data-status="Draft">Draft</a>
                             </div>
 
-                            <a class="btn btn-outline-secondary text-grey" href="{% url 'recurring_bill_create' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
+                            <a class="btn btn-outline-secondary text-grey" href="{% url 'recurring_bill_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
                           
                     </div>
                     

@@ -91,8 +91,8 @@ urlpatterns = [
     # harikrishnan---------------------
 
     path('recurring_bill_list',views.recurring_bill_list,name="recurring_bill_list"),
-    path('recurring_bill_create',views.recurring_bill_create,name="recurring_bill_create"),
-    # path('abc',views.abc,name="abc"),
+    path('recurring_bill_create_page',views.recurring_bill_create_page,name="recurring_bill_create_page"),
+    path('recurring_bill_overview',views.recurring_bill_overview,name="recurring_bill_overview"),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),

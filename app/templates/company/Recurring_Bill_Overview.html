@@ -1,0 +1,1751 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+    
+
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+   
+    <style>
+
+     
+    .ribbon .ribbon-inner {
+    text-align: center;
+    color: #fff;
+    top: -20px;
+    left: -90px;
+    width: 120px;
+    padding: 3px;
+    /* position: relative;
+    transform: rotate(-45deg); */
+}
+.ribbon .ribbon-open {
+    background-color: #268ddd;
+    border-color: #1c72b4;
+}
+
+:root {
+    --body-bg: rgb(204, 204, 204);
+    --white: #ffffff;
+    --darkWhite: #ccc;
+    --black: #000000;
+    --dark: #615c60;
+    --themeColor: #22b8d1;
+    --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+/* Font Include */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+body {
+    background-color: var(--body-bg);
+}
+
+.page {
+    background: var(--white);
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--pageShadow);
+}
+
+.page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    overflow: hidden;
+}
+
+.bb {
+    border-bottom: 3px solid var(--darkWhite);
+}
+
+/* Top Section */
+.top-content {
+    padding-bottom: 15px;
+}
+
+.logo img {
+    height: 60px;
+}
+
+.top-left p {
+    margin: 0;
+    color: #000000;
+}
+
+.top-left .graphic-path {
+    height: 40px;
+    position: relative;
+}
+
+.top-left .graphic-path::before {
+    content: "";
+    height: 20px;
+    background-color: var(--dark);
+    position: absolute;
+    left: 15px;
+    right: 0;
+    top: -15px;
+    z-index: 2;
+}
+
+.top-left .graphic-path::after {
+    content: "";
+    height: 22px;
+    width: 17px;
+    background: var(--black);
+    position: absolute;
+    top: -13px;
+    left: 6px;
+    transform: rotate(45deg);
+}
+
+.top-left .graphic-path p {
+    /* color: var(--white); */
+    height: 40px;
+    left: 0;
+    right: -100px;
+    text-transform: uppercase;
+    background-color: var(--themeColor);
+    font: 26px;
+    z-index: 3;
+    position: absolute;
+    padding-left: 10px;
+}
+
+/* User Store Section */
+.store-user {
+    padding-bottom: 25px;
+}
+
+.store-user p {
+    margin: 0;
+    font-weight: 600;
+    color: #000000;
+}
+
+.store-user .address {
+    font-weight: 400;
+}
+
+.store-user h5 {
+    color: var(--themeColor);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.extra-info p span {
+    font-weight: 400;
+   
+}
+
+/* Product Section */
+thead {
+    color: var(--white);
+    background: var(--themeColor);
+}
+
+.table td,
+.table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr th:first-child,
+tr td:first-child {
+    text-align: left;
+}
+
+.media img {
+    height: 60px;
+    width: 60px;
+}
+
+.media p {
+    font-weight: 400;
+    margin: 0;
+ 
+}
+
+.media p.title {
+    font-weight: 600;
+    
+}
+
+/* Balance Info Section */
+.balance-info .table td,
+.balance-info .table th {
+    padding: 0;
+    border: 0;
+}
+
+.balance-info tr td:first-child {
+    font-weight: 600;
+}
+
+tfoot {
+    border-top: 2px solid var(--darkWhite);
+}
+
+tfoot td {
+    font-weight: 600;
+}
+
+/* Cart BG */
+.cart-bg {
+    height: 250px;
+    bottom: 32px;
+    left: -40px;
+    opacity: 0.3;
+    position: absolute;
+}
+
+/* Footer Section */
+footer {
+    text-align: center;
+    position: absolute;
+    bottom: 30px;
+    left: 75px;
+}
+
+footer hr {
+    margin-bottom: -22px;
+    border-top: 3px solid var(--darkWhite);
+}
+
+footer a {
+    color: var(--themeColor);
+}
+
+footer p {
+    padding: 6px;
+    border: 3px solid var(--darkWhite);
+    background-color: var(--white);
+    display: inline-block;
+    color: #000000;
+}
+
+
+.print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+    }
+
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+
+        .equal-length-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%; /* Make the container fill the height of the column */
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .equal-length-item {
+            flex: 1;
+            text-align: center;
+        }
+        .element {
+    background-color: orange; /* Set the background color you want */
+    clip-path: circle(80% at right -150%);
+    border-radius: 5px;
+}
+
+/* Apply clip-path to the text within the curved-background element */
+.curved-background {
+    background-clip: text;
+    -webkit-background-clip: text; /* For compatibility with some browsers */
+    color: transparent; /* Make the text transparent */
+}
+
+    </style>
+
+
+
+<script>
+
+
+    async function generatePDF() {
+        // document.getElementById("downloadButton").innerHTML = "Currently downloading, please wait";
+
+        //Downloading
+        var downloading = document.getElementById("whatToPrint");
+        var doc = new jsPDF('l', 'pt');
+
+        await html2canvas(downloading, {
+            //allowTaint: true,
+            //useCORS: true,
+            // width: 600
+            
+        }).then((canvas) => {
+            //Canvas (convert to PNG)
+            doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+        })
+
+        doc.save("Document.pdf");
+
+        //End of downloading
+
+        // document.getElementById("downloadButton").innerHTML = "Click to download";
+    }
+
+
+    
+</script>
+
+
+	
+	
+        <!-- modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <div class="modal-body">
+                  <input type="file" class="form-control" name="file">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+              </div>
+            </div>
+          </div>
+
+
+    
+
+    <div class="page-content"  id="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">RECURRING BILL</h2> <h4></h4></center>
+                    <hr>
+                </div>
+                <div class="row">
+                    <div class="col-md-3" style="margin-top: 3vh; font-size: medium;">
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="showOverview()" id="overviewlink" >Overview</a>&nbsp;&nbsp;
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showTemplate()" id="templatelink" >Template</a>
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showSlip()" id="sliplink" >Order Slip</a>
+                    </div>
+                    <div class="col-md-9">
+                        <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarScroll">
+                                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                                    <li class="nav-item mx-1">
+                                        <a href="" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1 "> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
+                                      </li>
+                                      <li class="nav-item mx-1">
+                                        <a  href="" role="button"id="deleteButton" class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;<i class="fa fa-trash"></i> &nbsp;Delete&nbsp;&nbsp; 
+                                        </a>
+                                      </li>
+                                      <li class="nav-item active mx-1" >
+                                        <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="window.printfun()">&nbsp;<i class="fa fa-print"></i>&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
+                                        </li>
+              
+                                        <li class="nav-item mx-1">
+                                            <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
+                                          </li>
+                                         
+                                         
+                                         
+                                     {% if  rbill.status == "Draft" %}
+                                      <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Convert&nbsp;&nbsp;</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            
+                                            <li style="margin-left: 50px;" ><a href="">Save</a> </li>
+                                          
+                                        </ul>
+                                      </div>
+                                      {% else %}
+                                      <td></td>
+                                      {% endif %}
+        
+                                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                      <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
+                                      <ul class="dropdown-menu" style="background-color: black;">
+              
+                                          <li style="margin-left: 50px;" > </li>
+                                          <li style="margin-left: 50px;" ></li>
+                                          
+                                      </ul>
+                                    </div>
+          
+                                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
+                                            {% if rbill.file != "default.png" %}
+                                            <a class="dropdown-item" download  href=""><i class="fa fa-download">&nbsp;Download File</i></a>
+                                        {% endif %}
+                                        </ul>
+                                    </div>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="overviewdiv">
+            <div id="details">
+                <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
+                    <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
+                        <div class="p-5">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Company</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ cmp1.cname}}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ cmp1.cemail }}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ cmp1.phone }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ cmp1.caddress }} <br>
+                                        {{cmp1.city}},
+                                        {{cmp1.state}}
+                                        {{cmp1.pincode}}</p>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Billing Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Bill No</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ rbill.billno }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Payment Terms</h6>
+                                </div>
+                                <!-- <div class="col-md-3 mt-3">
+                                    <p class="mb-0">NET {{ rbill.payment_terms }}</p>
+                                </div> -->
+                                <div class="col-md-3 mt-3">
+                                    {% if rbill.payment_terms == "0" %}
+                                        <p class="mb-0">Due on Receipt</p>
+                                    {% else %}
+                                        <p class="mb-0">NET {{ rbill.payment_terms }}</p>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Purchase Order</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0">{{ rbill.purchase_order }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0"></p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0"></p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Repeat Every</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0">{{ rbill.repeat_every }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Start Date</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0">{{ rbill.start_date }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">End date</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0">{{ rbill.end_date }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                         
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Other Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Vendor</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{rbill.vendor_name}}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Customer</h6>
+                                </div>
+                                <div class="col-md-4 mt-3 ">
+                                    <p class="mb-0">{{ rbill.customer_name }}</p>
+                                </div>
+                               
+                            </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                        
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor Email</h6>
+                                </div>
+                               
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{vendor_email}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer Email</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{customer_email}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                               
+                
+                               
+                               
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{vendor_gsttype}}</p>
+                                </div>
+
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0">{{ customer_gsttype }}</p>
+                                </div>
+                               
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                           
+                     
+                                {% if vendor_gstin %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0">{{vendor_gstin}}</p>
+                                </div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
+                                {% if customer_gstin %}
+                                
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0">{{ customer_gstin }}</p>
+                                </div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-12 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
+
+                                    {% for j in ritem  %}
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-3 mt-3">
+                                                <h6 class="mb-0">Name</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.item}}</p>
+                                            </div>
+            
+                                            <div class="col-md-3 mt-3 vl">
+                                                <h6 class="mb-0">Price</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.price}}</p>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-3 mt-3">
+                                                <h6 class="mb-0">Quantity</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{ j.qty }}</p>
+                                            </div>
+                                            <div class="col-md-3 mt-3 vl">
+                                                <h6 class="mb-0">Tax Amount</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.tax}} %</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                            <div class="col-md-3 mt-3"> 
+                                                <h6 class="mb-0">Discount</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.discount}}</p>
+                                            </div>
+                                            <div class="col-md-3 mt-3 vl"> 
+                                                <h6 class="mb-0">Total</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.total}}</p>
+                                            </div>
+                                        </div>
+                                        <hr class="my-4" style="width: 50%;">
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
+                        <div class="p-5">
+                          
+                            <h3 class="fw-bold mb-5 mt-2 pt-1">BILL</h3>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Grand Total</h5>
+                                <h6>{{ rbill.grand_total }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Paid Amount</h5>
+                                <h6>{{ rbill.paid_amount }}</h6>
+                            </div>
+                           
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Balance</h5>
+                                <h6>{{ rbill.balance }}</h6>
+                            </div>
+                            {%if rbill.igst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">IGST</h5>
+                                <h6>{{ rbill.igst }}</h6>
+                            </div>
+                            {%endif%}
+                            {%if rbill.cgst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">CGST</h5>
+                                <h6>{{ rbill.cgst }}</h6>
+                            </div>
+                            {%endif%}
+                            {%if rbill.sgst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">SGST</h5>
+                                <h6>{{ rbill.sgst }}</h6>
+                            </div>
+                            {%endif%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Tax Amount</h5>
+                                <h6>{{rbill.tax_amount }}</h6>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Adjustment</h5>
+                                <h6>{{rbill.adjustment }}</h6>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Shipping Charge</h5>
+                                <h6>{{ rbill.shipping_charge}}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Status</h5>
+                                <h6>{{ rbill.status }}</h6>
+                            </div>
+                            <hr class="my-4">
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+
+        <div id="templatediv" style="display: none; background-color: #243e54; border-radius: 2vh;" >
+            <div  id="whatToPrint" class="print-only">
+            
+                <!-- template1 -->
+                <div id="whatToPrint1" class="printTemplates template1">
+                    <div class="my-5 page" size="A4" >
+                        <div class="p-5" id="printdiv1">
+                            <div id="ember2512" class="tooltip-container ember-view  text-ellipsis"> <!-- ribbon -->
+                                <div class="ribbon-inner ribbon-open">{{rbill.status}}<!----></div></div>
+                            <section class="top-content bb d-flex justify-content-between">
+                                <div class="logo">
+                                    <img src="logo.png" alt="" class="img-fluid">
+                                    
+                                </div>
+                                <div class="top-left">
+                                    <!-- <div class="graphic-path">
+                                        <p>Recurring Bill</p>
+                                    </div> -->
+                                    <div class="position-relative">
+                                        <p>Recurring Bill. <span>{{  rbill.billno }}</span></p>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="store-user mt-5">
+                                <div class="col-12">
+                                    <div class="row bb pb-3">
+                                        <div class="col-7">
+                                            <p>FROM,</p>
+                                            <h5>{{cmp1.cname }}</h5>
+                                            <p class="address "> {{cmp1.caddress}}<br>
+                                                {{cmp1.city}},
+                                                {{cmp1.state}}<br>
+                                                {{cmp1.pincode}}<br>
+                                            </p>
+                                            
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">TO,</p>
+                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <p class="address " style="color:#000">{{vendor_email}}<br>
+                                                {% if vendor_gstin %}
+                                                  GSTIN:{{ vendor_gstin }}
+                                                {% endif %}
+                                                <p class="address "> {{vendor_street}}<br>
+                                                    {{vendor_city}},
+                                                    {{vendor_state}}<br>
+                                                    {{vendor_pincode}}<br>
+                                                </p>
+                                        </div>
+                                    </div>
+                                    <div class="row extra-info pt-3">
+                                        <div class="col-7">
+                                            <p style="color:#000">Deliver To Details: </p>
+                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                                {{customer_email}}<br>
+                                                {% if customer_gstin %}
+                                                  GSTIN:{{ customer_gstin }}
+                                                {% endif %}</p>
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
+                                            <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="product-area mt-4">
+                                <table class=" table table-hover table-bordered " id="table1">
+                                    <thead >
+                                        <tr>
+                                            <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                            <td style="font-weight:bold; color:black">Hsn</td>
+                                            <td style="font-weight:bold; color:black ">Price</td>
+                                            <td style="font-weight:bold; color:black">Quantity</td>
+                                            <td style="font-weight:bold; color:black">Tax</td>
+                                            <td style="font-weight:bold; color:black">Discount</td>
+                                            <td style="font-weight:bold; color:black">Total</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        
+                                        {% for j in ritem  %}
+                                        <tr>
+                                            <td style="color:black; text-align: center;">
+                                                {{j.item}}
+                                                
+                                            </td>
+                                            <td style="color:black">{{j.hsn}}</td>
+                                            <td style="color:black">{{j.price}}</td>
+                                            <td style="color:black">{{j.qty}}</td>
+                                            <td style="color:black">{{j.tax}} %</td>
+                                            <td style="color:black">{{j.discount}} </td>
+                                            <td style="color:black">{{j.total}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br><br>
+                            </section>
+                
+                            <section class="balance-info">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                                        <p style="color:black">{{rbill.note}}</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table border-0 table-hover">
+                                            <tr >
+                                                <td style="color:black">Sub Total :</td>
+                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                            </tr>
+                                            <!-- {% if rbill.discount != "0" %}
+                                            <tr>
+                                                <td style="color:black">Discount</td>
+                                                <td style="color:black">{{rbill.discount}}</td>
+                                            </tr>
+                                            {% endif %} -->
+                                            {% if rbill.igst != 0 %}
+                                            <tr>
+                                                <td style="color:black">IGST :</td>
+                                                <td style="color:black">{{rbill.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.cgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">CGST :</td>
+                                                <td style="color:black">{{rbill.cgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                            {% if rbill.sgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">SGST :</td>
+                                                <td style="color:black">{{rbill.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
+                                            {% if rbill.shipping_charge != 0 %}
+                                            <tr>
+                                                <td style="color:black">Shipping Charge :</td>
+                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.adjustment != 0 %}
+                                            <tr>
+                                                <td style="color:black">Adjustment :</td>
+                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                            </tr>
+                                            {% endif %}
+                                           
+                                            <tfoot>
+                                                <tr>
+                                                    <td style="color:black">Grand Total:</td>
+                                                    <td style="color:black ;">{{rbill.grand_total}}</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div> 
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                            </section>
+                
+                            <!-- Cart BG -->
+                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                
+                            <!-- <footer>
+                                <hr>
+                                <p class="m-0 text-center">
+                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                                </p>
+                                <div class="social pt-3">
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-mobile-alt"></i>
+                                        <span>0123456789</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-envelope"></i>
+                                        <span>me@saburali.com</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>/sabur.7264</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>/abdussabur</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-github"></i>
+                                        <span>/example</span>
+                                    </span>
+                                </div>
+                            </footer> -->
+                        </div>
+                    </div>
+                </div>
+    
+
+                <!-- template2 -->
+                <div  id="whatToPrint2"  class="printTemplates template2" style="display: none;">
+                    <div class="my-5 page" size="A4" >
+                        <div class="" id="printdiv2">
+
+                            <section class="top-content bb d-flex justify-content-between p-3" style="background-color: greenyellow;">
+                                <div class="logo mt-4">
+                                    <div class="position-relative">
+                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  rbill.billno }}</span></h5>
+                                        <p class="ml-2 text-dark"><b>{{rbill.status}}</b></p>
+                                    </div>
+                                </div>
+                                <div class="top-left">
+                                    <div class="top-left">
+                                       
+                                       
+                                    </div>
+                                    <h5 style="color: rgb(0, 0, 0);">{{cmp1.cname }}</h5>
+                                            <p style="color: rgb(0, 0, 0);" class="address "> {{cmp1.caddress}}<br>
+                                                {{cmp1.city}},
+                                                {{cmp1.state}}<br>
+                                                {{cmp1.pincode}}<br>
+                                            </p>
+                                </div>
+                            </section>
+                
+                            <section class="store-user mt-5 p-2">
+                                <div class="col-12">
+                                    <div class="row bb pb-3">
+                                        <div class="col-7">
+                                            <p>Bill To,</p>
+                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <p class="address " style="color:#000">{{vendor_email}}<br>
+                                                {% if vendor_gstin %}
+                                                  GSTIN:{{ vendor_gstin }}
+                                                {% endif %}
+                                                <p class="address "> {{vendor_street}}<br>
+                                                    {{vendor_city}},
+                                                    {{vendor_state}}<br>
+                                                    {{vendor_pincode}}<br>
+                                                </p>
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">Deliver To Details: </p>
+                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                                {{customer_email}}<br>
+                                                {% if customer_gstin %}
+                                                  GSTIN:{{ customer_gstin }}
+                                                {% endif %}</p>
+                                                <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
+                                                <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                               
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                            </section>
+                
+                            <section class="product-area p-2">
+                                <table class=" table table-hover table-bordered " id="table1">
+                                    <thead >
+                                        <tr >
+                                            <td style="text-align: center; font-weight:bold; color:black;background-color: greenyellow; ">Items</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Hsn</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Price</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Quantity</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Tax</td>
+                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Discount</td>
+                                            <td style="font-weight:bold; color:black;background-color: greenyellow;">Total</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        
+                                        {% for j in ritem  %}
+                                        <tr >
+                                            <td style="color:black; text-align: center;background-color: greenyellow;">
+                                                {{j.item}}
+                                                
+                                            </td>                                            
+                                            <td style="color:black;background-color: #ccc; ">{{j.hsn}}</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.price}}</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.qty}}</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.tax}} %</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.discount}} </td>
+                                            <td style="color:black;background-color: greenyellow;">{{j.total}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br><br>
+                            </section>
+                
+                            <section class="balance-info">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                                        <p style="color:black">{{rbill.note}}</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table border-0 table-hover">
+                                            <tr >
+                                                <td style="color:black">Sub Total :</td>
+                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                            </tr>
+                                            <!-- {% if rbill.discount != "0" %}
+                                            <tr>
+                                                <td style="color:black">Discount</td>
+                                                <td style="color:black">{{rbill.discount}}</td>
+                                            </tr>
+                                            {% endif %} -->
+                                            {% if rbill.igst != 0 %}
+                                            <tr>
+                                                <td style="color:black">IGST :</td>
+                                                <td style="color:black">{{rbill.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.cgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">CGST :</td>
+                                                <td style="color:black">{{rbill.cgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                            {% if rbill.sgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">SGST :</td>
+                                                <td style="color:black">{{rbill.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
+                                            {% if rbill.shipping_charge != 0 %}
+                                            <tr>
+                                                <td style="color:black">Shipping Charge :</td>
+                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.adjustment != 0 %}
+                                            <tr>
+                                                <td style="color:black">Adjustment :</td>
+                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tfoot>
+                                                <tr>
+                                                    <td style="color:rgb(102, 168, 3)">Grand Total:</td>
+                                                    <td style="color:rgb(103, 170, 3) ;">{{rbill.grand_total}}</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div> 
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+<center>
+    <div class="col-sm-12 m-0 p-0 text-dark">This is system generated bill Its not required signature</div>
+
+</center>                                </div>
+                            </section>
+                
+                            <!-- Cart BG -->
+                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                
+                            <!-- <footer>
+                                <hr>
+                                <p class="m-0 text-center">
+                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                                </p>
+                                <div class="social pt-3">
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-mobile-alt"></i>
+                                        <span>0123456789</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-envelope"></i>
+                                        <span>me@saburali.com</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>/sabur.7264</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>/abdussabur</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-github"></i>
+                                        <span>/example</span>
+                                    </span>
+                                </div>
+                            </footer> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- template3 -->
+                <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
+                    <div class="my-5 page"  size="A4" >
+                        <div class="" id="printdiv3">
+                    
+                            <div class="logo">
+                                <div class="position-absolute m-5">
+                                    <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{ rbill.billno }}</span></h5>
+                                    <p class="ml-2 text-dark"><b>{{ rbill.status }}</b></p>
+                                </div>
+                            </div>
+                            <section class="top-content bb d-flex justify-content-between p-3 element">
+                                <div class="logo mt-4">
+                                    <div class="position-relative">
+                                        <h5 style="color:orange;visibility: hidden;">Recurring Bill. <span>{{ rbill.billno }}</span></h5>
+                                        <p class="ml-2 text-dark" style="visibility: hidden;"><b>{{ rbill.status }}</b></p>
+                                    </div>
+                                </div>
+                                <div class="top-left curved-background">
+                                    <h5 style="color: rgb(0, 0, 0);">{{ cmp1.cname }}</h5>
+                                    <p style="color: rgb(0, 0, 0);" class="address"> {{ cmp1.caddress }}<br>
+                                        {{ cmp1.city }},
+                                        {{ cmp1.state }}<br>
+                                        {{ cmp1.pincode }}<br>
+                                    </p>
+                                </div>
+                            </section>
+                            
+                            
+                
+                            <section class="store-user mt-5 p-2">
+                                <div class="col-12">
+                                    <div class="row bb pb-3">
+                                        <div class="col-7">
+                                            <p>Bill To,</p>
+                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <p class="address " style="color:#000">{{vendor_email}}<br>
+                                                {% if vendor_gstin %}
+                                                  GSTIN:{{ vendor_gstin }}
+                                                {% endif %}
+                                                <p class="address "> {{vendor_street}}<br>
+                                                    {{vendor_city}},
+                                                    {{vendor_state}}<br>
+                                                    {{vendor_pincode}}<br>
+                                                </p>
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">Deliver To Details: </p>
+                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                                {{customer_email}}<br>
+                                                {% if customer_gstin %}
+                                                  GSTIN:{{ customer_gstin }}
+                                                {% endif %}</p>
+                                                <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
+                                                <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                               
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                            </section>
+                
+                            <section class="product-area p-2">
+                                <table class=" table table-hover table-bordered " id="table1">
+                                    <thead >
+                                        <tr >
+                                            <td style="text-align: center; font-weight:bold; background-color: orange; color: #000;">Items</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Hsn</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Price</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Quantity</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Tax</td>
+                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Discount</td>
+                                            <td style="font-weight:bold;background-color: orange; color: #000;">Total</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+        
+                                        {% for j in ritem  %}
+                                        <tr style="background-color: orange; color: #000;" >
+                                            <td style="color:black; text-align: center;">
+                                                {{j.item}}
+                                                
+                                            </td>
+                                            <td style="color:black;">{{j.hsn}}</td>
+                                            <td style="color:black;">{{j.price}}</td>
+                                            <td style="color:black;">{{j.qty}}</td>
+                                            <td style="color:black;">{{j.tax}} %</td>
+                                            <td style="color:black; ">{{j.discount}} </td>
+                                            <td style="color:black;">{{j.total}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br><br>
+                            </section>
+                
+                            <section class="balance-info">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                                        <p style="color:black">{{rbill.note}}</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table border-0 table-hover">
+                                            <tr >
+                                                <td style="color:black">Sub Total :</td>
+                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                            </tr>
+                                            <!-- {% if rbill.discount != "0" %}
+                                            <tr>
+                                                <td style="color:black">Discount</td>
+                                                <td style="color:black">{{rbill.discount}}</td>
+                                            </tr>
+                                            {% endif %} -->
+                                            {% if rbill.igst != 0 %}
+                                            <tr>
+                                                <td style="color:black">IGST :</td>
+                                                <td style="color:black">{{rbill.igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.cgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">CGST :</td>
+                                                <td style="color:black">{{rbill.cgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                            {% if rbill.sgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">SGST :</td>
+                                                <td style="color:black">{{rbill.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                            </tr>
+                                            {% if rbill.shipping_charge != 0 %}
+                                            <tr>
+                                                <td style="color:black">Shipping Charge :</td>
+                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if rbill.adjustment != 0 %}
+                                            <tr>
+                                                <td style="color:black">Adjustment :</td>
+                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tfoot>
+                                                <tr>
+                                                    <td style="color:orange">Grand Total:</td>
+                                                    <td style="color:orange ;">{{rbill.grand_total}}</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div> 
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+<center>
+    <div class="col-sm-12 m-0 p-0 text-dark">This is system generated bill Its not required signature</div>
+
+</center>                                </div>
+                            </section>
+                
+                            <!-- Cart BG -->
+                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                
+                            <!-- <footer>
+                                <hr>
+                                <p class="m-0 text-center">
+                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                                </p>
+                                <div class="social pt-3">
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-mobile-alt"></i>
+                                        <span>0123456789</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-envelope"></i>
+                                        <span>me@saburali.com</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>/sabur.7264</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>/abdussabur</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-github"></i>
+                                        <span>/example</span>
+                                    </span>
+                                </div>
+                            </footer> -->
+                        </div>
+                        </div>
+                </div>
+            </div>
+            <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+            </div>
+        </div>
+
+        <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
+            <div class="p-5"  >
+                <div class="my-5 page" size="A4" >
+                    <div class="row" style="margin-top: 20%;" id="printslip">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <div class="card bg-white" style="border: 1px dotted black;">
+                                <div class="mt-2" style="text-align: center;">
+                                    <div class="text-center" style="font-size: 3vh; color: black;">
+                                        <b>{{cmp1.cname}} </b>
+                                    </div>
+                                    <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
+                                        {{cmp1.city}},
+                                        {{cmp1.state}}
+                                        {{cmp1.pincode}} <br>
+                                        {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
+                                    </span>
+                                </div>
+                                <div class="ml-3 mr-3 mt-2" style="color: black;">
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Recurring Bill No:</div>
+                                        <div class="col-md-5 text-right">{{rbill.billno}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Customer Name:</div>
+                                        <div class="col-md-5 text-right">{{ rbill.customer_name}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Vendor Name:</div>
+                                        <div class="col-md-5 text-right">{{ rbill.vendor_name}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Shipment Date :</div>
+                                        <div class="col-md-5 text-right">{{rbill.start_date | date:'d-m-Y'}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Delivery Date:</div>
+                                        <div class="col-md-5 text-right">{{rbill.end_date}}</div>
+                                    </div>
+                                </div>
+                                <div><br>
+                                    <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                        <div class="equal-length-item" style=" text-align: center;">
+                                            Product
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                        </div>
+                                        <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                            HSN
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Qty
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Price
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Tax
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Discount
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item" style=" text-align: center; ">
+                                            Total
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    {% for j in ritem %}
+                                    <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                        <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
+                                            {{j.item}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: right;">
+                                            {{j.hsn}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.qty}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.price}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.tax}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.discount}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.total}}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div><br>
+                                 
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Subtotal
+                                        </div>
+                                        <div class="col-md-7 text-right  " style="color: black;">
+                                            {{ rbill.grand_total }}
+                                        </div>
+                                    </div>
+                                    {% if rbill.igst != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            IGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.igst }}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            CGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.cgst }}
+                                        </div>
+                                    </div>
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            SGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.sgst }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Total Tax
+                                        </div>
+                                        <div class="col-md-7 text-right" style="color: black;">
+                                            {{ rbill.tax_amount }}
+                                        </div>
+                                    </div>
+                                    {% if rbill.shipping_charge != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            Shipping
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.shipping_charge }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if rbill.adjustment != 0 %}
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Adjustment
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ rbill.adjustment }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if  rbill.paid_amount != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Paid
+                                        </div>
+                                        <div class="col-md-7 text-right" style="color: black;">
+                                            {{ rbill.paid_amount }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                   
+                                    <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                                </div>
+
+                                <div class="mb-2">
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left  " style=" font-size: large; color: black; font-weight: bold;">
+                                            Total
+                                        </div>
+                                        <div class="col-md-7 text-right" style="font-size: large; color: black; font-weight: bold;">
+                                            {{ rbill.grand_total }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+
+
+
+       
+            </div>
+        </div>
+        
+    </div>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function ($) {
+            $(document).on('click', '#pdflink', function (event) {
+                event.preventDefault();
+
+                print1 = document.getElementById('whatToPrint1')
+                print2 = document.getElementById('whatToPrint2')
+                print3 = document.getElementById('whatToPrint3')
+                print4 = document.getElementById('slipdiv')
+
+                if (print1.style.display !== 'none'){
+                    var element = document.getElementById('printdiv1') 
+                }
+
+                if (print2.style.display !== 'none'){
+                    var element = document.getElementById('printdiv2') 
+                }
+
+                if (print3.style.display !== 'none'){
+                    var element = document.getElementById('printdiv3') 
+                }
+
+                if (print4.style.display !== 'none'){
+                    var element = document.getElementById('printslip') 
+                }
+
+                 
+                // element.style.color = 'black';
+                // element.style.backgroundColor = 'white';
+                var recurringBillNumber = "{{ rbill.billno }}";
+                var opt =
+                {
+                    margin: 1,
+                    filename: 'recurringBill '+ recurringBillNumber + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+                };
+                html2pdf().set(opt).from(element).save();
+            });
+        });
+    </script>
+
+    <script>
+        function printfun(){
+
+            print4 = document.getElementById('slipdiv')
+            if (print4.style.display !== 'none'){
+                    var printContents = document.getElementById("slipdiv").innerHTML;
+            }else{
+
+                var printContents = document.getElementById("whatToPrint").innerHTML;
+            }
+
+
+
+            var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+            $printerDiv.html(printContents); // add the content to be printed
+            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+            window.print(); // call print
+            $printerDiv.remove(); // remove the div
+            $('body').removeClass("printingContent");
+        }
+    </script>
+
+    <script>
+            function toggleTemplate(templateId,buttonId){
+                $('.printTemplates').css('display','none');
+                $('#'+templateId).css('display','block');
+                $('.templateToggleButtons').removeClass('active');
+                $('#'+buttonId).addClass('active');
+                $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+                document.getElementById('page-content').scrollIntoView();
+            }
+    </script>
+
+
+        <script>
+            function showOverview(){
+                document.getElementById('overviewdiv').style.display='block'
+                document.getElementById('templatediv').style.display='none'
+                document.getElementById('slipdiv').style.display='none'
+                document.getElementById('overviewlink').style.backgroundColor='rgba(22,37,50,255)'
+                document.getElementById('templatelink').style.backgroundColor='transparent'
+                document.getElementById('sliplink').style.backgroundColor='transparent'
+                
+            }
+
+            function showTemplate(){
+                document.getElementById('overviewdiv').style.display='none'
+                document.getElementById('templatediv').style.display='block'
+                document.getElementById('slipdiv').style.display='none'
+                document.getElementById('overviewlink').style.backgroundColor='transparent'
+                document.getElementById('templatelink').style.backgroundColor='rgba(22,37,50,255)'
+                document.getElementById('sliplink').style.backgroundColor='transparent'
+                
+            }
+
+            function showSlip(){
+                document.getElementById('overviewdiv').style.display='none'
+                document.getElementById('templatediv').style.display='none'
+                document.getElementById('slipdiv').style.display='block'
+                document.getElementById('templatelink').style.backgroundColor='transparent'
+                document.getElementById('overviewlink').style.backgroundColor='transparent'
+                document.getElementById('sliplink').style.backgroundColor='rgba(22,37,50,255)'
+            }
+        </script>
+
+            <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+            <script>
+                $(document).ready(function(){
+            pstate = $("#sply").html().trim();
+            cmpstate = $("#cmp").html().trim();
+            // console.log(pstate == cmpstate);
+            if(pstate == cmpstate){
+
+                $('#igstrow').hide();
+                $('#sgstrow').show();
+                $('#cgstrow').show();
+                
+
+                $("#sgst").html($("#igst").html()/2);
+                $("#cgst").html($("#igst").html()/2);
+
+              
+            }
+            else{
+               
+
+                $('#igstrow').show();
+                $('#sgstrow').hide();
+                $('#cgstrow').hide();
+            }
+        });
+        
+        $('.delete').click(function(event) {
+            var form =  $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            swal({
+                title: `Are you sure you want to delete this record?`,
+                text: "If you delete this, it will be gone forever.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    swal("Poof! Your imaginary file has been deleted!", {
+                    icon: "success" ,
+              
+                    });
+                    form.submit();
+        
+                    
+                    
+                    
+                    }
+            });
+        });
+        
+
+        document.getElementById("deleteButton").addEventListener("click", function() {
+            var confirmed = confirm("Are you sure you want to delete this item?");
+            if (confirmed) {
+                // Perform the delete operation here
+                alert("Item deleted!");
+            } else {
+                // User canceled the delete operation
+                alert("Delete operation canceled.");
+            }
+        });
+    </script> 
+
+
+
+    
+    {% endblock %}    
