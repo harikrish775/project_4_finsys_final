@@ -385,7 +385,7 @@ footer p {
                                          
                                          
                                          
-                                     {% if  rbill.status == "Draft" %}
+                                     {% if  bill1.status == "Draft" %}
                                       <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                                         <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Convert&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
@@ -412,7 +412,7 @@ footer p {
                                         <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
-                                            {% if rbill.file != "default.png" %}
+                                            {% if bill1.file != "default.png" %}
                                             <a class="dropdown-item" download  href=""><i class="fa fa-download">&nbsp;Download File</i></a>
                                         {% endif %}
                                         </ul>
@@ -441,13 +441,13 @@ footer p {
                                     <h6 class="mb-0">Company</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ cmp1.cname}}</p>
+                                    <p class="mb-0 text-right">{{ companyName }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">Email</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ cmp1.cemail }}</p>
+                                    <p class="mb-0 text-right">{{ bill1.vendor.email }}</p>
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
@@ -455,16 +455,16 @@ footer p {
                                     <h6 class="mb-0">Mobile</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ cmp1.phone }}</p>
+                                    <p class="mb-0 text-right">{{ bill1.vendor.mobile }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">Address</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ cmp1.caddress }} <br>
-                                        {{cmp1.city}},
-                                        {{cmp1.state}}
-                                        {{cmp1.pincode}}</p>
+                                    <p class="mb-0 text-right">{{ bill1.vendor.address }} <br>
+                                        {{bill1.vendor.city}},
+                                        {{bill1.vendor.state}}
+                                        {{bill1.vendor.pincode}}</p>
                                 </div>
                             </div>
                             <hr class="my-4">
@@ -479,19 +479,19 @@ footer p {
                                     <h6 class="mb-0">Bill No</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0">{{ rbill.billno }}</p>
+                                    <p class="mb-0">{{ bill1.recurring_bill_number }}</p>
                                 </div>
                                 <div class="col-md-3 mt-3 vl">
                                     <h6 class="mb-0">Payment Terms</h6>
                                 </div>
                                 <!-- <div class="col-md-3 mt-3">
-                                    <p class="mb-0">NET {{ rbill.payment_terms }}</p>
+                                    <p class="mb-0">NET {{ bill1.payment_terms }}</p>
                                 </div> -->
                                 <div class="col-md-3 mt-3">
-                                    {% if rbill.payment_terms == "0" %}
+                                    {% if bill1.company_payment_terms == "0" %}
                                         <p class="mb-0">Due on Receipt</p>
                                     {% else %}
-                                        <p class="mb-0">NET {{ rbill.payment_terms }}</p>
+                                        <p class="mb-0">NET {{ bill1.company_payment_terms }}</p>
                                     {% endif %}
                                 </div>
                                 
@@ -501,7 +501,7 @@ footer p {
                                     <h6 class="mb-0">Purchase Order</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ rbill.purchase_order }}</p>
+                                    <p class="mb-0">{{ bill1.purchase_order_number }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0"></h6>
@@ -521,19 +521,19 @@ footer p {
                                     <h6 class="mb-0">Repeat Every</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ rbill.repeat_every }}</p>
+                                    <p class="mb-0">{{ bill1.repeat_every }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">Start Date</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ rbill.start_date }}</p>
+                                    <p class="mb-0">{{ bill1.start_date }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">End date</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ rbill.end_date }}</p>
+                                    <p class="mb-0">{{ bill1.end_date }}</p>
                                 </div>
                             </div>
                             <hr>
@@ -549,13 +549,13 @@ footer p {
                                     <h6 class="mb-0">Vendor</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0">{{rbill.vendor_name}}</p>
+                                    <p class="mb-0">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">Customer</h6>
                                 </div>
                                 <div class="col-md-4 mt-3 ">
-                                    <p class="mb-0">{{ rbill.customer_name }}</p>
+                                    <p class="mb-0">{{ bill1.customer.first_name }} {{ bill1.customer.last_name }}</p>
                                 </div>
                                
                             </div>
@@ -566,13 +566,13 @@ footer p {
                                 </div>
                                
                                 <div class="col-md-3 mt-3">
-                                    <p class="mb-0">{{vendor_email}}</p>
+                                    <p class="mb-0">{{bill1.vendor.email}}</p>
                                 </div>
                                 <div class="col-md-3 mt-3 vl">
                                     <h6 class="mb-0">Customer Email</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
-                                    <p class="mb-0">{{customer_email}}</p>
+                                    <p class="mb-0">{{bill1.customer.email}}</p>
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
@@ -584,14 +584,14 @@ footer p {
                                     <h6 class="mb-0">Vendor GST Treatment</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
-                                    <p class="mb-0">{{vendor_gsttype}}</p>
+                                    <p class="mb-0">{{bill1.vendor.gst_type}}</p>
                                 </div>
 
                                 <div class="col-md-3 mt-3 vl">
                                     <h6 class="mb-0">Customer GST Treatment</h6>
                                 </div>
                                 <div class="col-md-3 mt-3 ">
-                                    <p class="mb-0">{{ customer_gsttype }}</p>
+                                    <p class="mb-0">{{ bill1.customer.gst_type }}</p>
                                 </div>
                                
                             </div>
@@ -603,7 +603,7 @@ footer p {
                                     <h6 class="mb-0">Vendor GSTIN</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
-                                    <p class="mb-0">{{vendor_gstin}}</p>
+                                    <p class="mb-0">{{bill1.vendor.gstin}}</p>
                                 </div>
                                 {%else%}
                                 <div class="col-md-3 mt-3 "></div>
@@ -615,7 +615,7 @@ footer p {
                                     <h6 class="mb-0">Customer GSTIN</h6>
                                 </div>
                                 <div class="col-md-3 mt-3 ">
-                                    <p class="mb-0">{{ customer_gstin }}</p>
+                                    <p class="mb-0">{{ bill1.customer.gstin }}</p>
                                 </div>
                                 {%else%}
                                 <div class="col-md-3 mt-3 "></div>
@@ -626,13 +626,13 @@ footer p {
                                 <div class="col-md-12 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
 
-                                    {% for j in ritem  %}
+                                    {% for j in item  %}
                                         <div class="row mb-4 d-flex justify-content-between align-items-center">
                                             <div class="col-md-3 mt-3">
                                                 <h6 class="mb-0">Name</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <p class="mb-0 text-right">{{j.item}}</p>
+                                                <p class="mb-0 text-right">{{j.items}}</p>
                                             </div>
             
                                             <div class="col-md-3 mt-3 vl">
@@ -648,13 +648,13 @@ footer p {
                                                 <h6 class="mb-0">Quantity</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <p class="mb-0 text-right">{{ j.qty }}</p>
+                                                <p class="mb-0 text-right">{{ j.quantity }}</p>
                                             </div>
                                             <div class="col-md-3 mt-3 vl">
                                                 <h6 class="mb-0">Tax Amount</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <p class="mb-0 text-right">{{j.tax}} %</p>
+                                                <p class="mb-0 text-right">{{j.tax_rate}} %</p>
                                             </div>
                                         </div>
                                         <div class="row mb-4 d-flex justify-content-start align-items-center">
@@ -684,52 +684,52 @@ footer p {
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Grand Total</h5>
-                                <h6>{{ rbill.grand_total }}</h6>
+                                <h6>{{ bill1.grand_total }}</h6>
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Paid Amount</h5>
-                                <h6>{{ rbill.paid_amount }}</h6>
+                                <h6>{{ bill1.paid_amount }}</h6>
                             </div>
                            
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Balance</h5>
-                                <h6>{{ rbill.balance }}</h6>
+                                <h6>{{ bill1.balance }}</h6>
                             </div>
-                            {%if rbill.igst%}
+                            {%if bill1.igst%}
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">IGST</h5>
-                                <h6>{{ rbill.igst }}</h6>
+                                <h6>{{ bill1.igst }}</h6>
                             </div>
                             {%endif%}
-                            {%if rbill.cgst%}
+                            {%if bill1.cgst%}
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">CGST</h5>
-                                <h6>{{ rbill.cgst }}</h6>
+                                <h6>{{ bill1.cgst }}</h6>
                             </div>
                             {%endif%}
-                            {%if rbill.sgst%}
+                            {%if bill1.sgst%}
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">SGST</h5>
-                                <h6>{{ rbill.sgst }}</h6>
+                                <h6>{{ bill1.sgst }}</h6>
                             </div>
                             {%endif%}
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Tax Amount</h5>
-                                <h6>{{rbill.tax_amount }}</h6>
+                                <h6>{{bill1.tax_amount }}</h6>
                             </div>
                             
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Adjustment</h5>
-                                <h6>{{rbill.adjustment }}</h6>
+                                <h6>{{bill1.adjustment }}</h6>
                             </div>
                             
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Shipping Charge</h5>
-                                <h6>{{ rbill.shipping_charge}}</h6>
+                                <h6>{{ bill1.shipping_charge}}</h6>
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Status</h5>
-                                <h6>{{ rbill.status }}</h6>
+                                <h6>{{ bill1.status }}</h6>
                             </div>
                             <hr class="my-4">
                             
@@ -750,7 +750,7 @@ footer p {
                     <div class="my-5 page" size="A4" >
                         <div class="p-5" id="printdiv1">
                             <div id="ember2512" class="tooltip-container ember-view  text-ellipsis"> <!-- ribbon -->
-                                <div class="ribbon-inner ribbon-open">{{rbill.status}}<!----></div></div>
+                                <div class="ribbon-inner ribbon-open">{{bill1.status}}<!----></div></div>
                             <section class="top-content bb d-flex justify-content-between">
                                 <div class="logo">
                                     <img src="logo.png" alt="" class="img-fluid">
@@ -761,7 +761,7 @@ footer p {
                                         <p>Recurring Bill</p>
                                     </div> -->
                                     <div class="position-relative">
-                                        <p>Recurring Bill. <span>{{  rbill.billno }}</span></p>
+                                        <p>Recurring Bill. <span>{{  bill1.billno }}</span></p>
                                     </div>
                                 </div>
                             </section>
@@ -771,17 +771,17 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>FROM,</p>
-                                            <h5>{{cmp1.cname }}</h5>
-                                            <p class="address "> {{cmp1.caddress}}<br>
-                                                {{cmp1.city}},
-                                                {{cmp1.state}}<br>
-                                                {{cmp1.pincode}}<br>
+                                            <h5>{{bill1.cname }}</h5>
+                                            <p class="address "> {{bill1.caddress}}<br>
+                                                {{bill1.city}},
+                                                {{bill1.state}}<br>
+                                                {{bill1.pincode}}<br>
                                             </p>
                                             
                                         </div>
                                         <div class="col-5">
                                             <p style="color:#000">TO,</p>
-                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <h5  style="color: #22b8d1;">{{bill1.vendor_name}}</h5>
                                             <p class="address " style="color:#000">{{vendor_email}}<br>
                                                 {% if vendor_gstin %}
                                                   GSTIN:{{ vendor_gstin }}
@@ -796,15 +796,15 @@ footer p {
                                     <div class="row extra-info pt-3">
                                         <div class="col-7">
                                             <p style="color:#000">Deliver To Details: </p>
-                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                            <p class="address " style="color:#000">{{bill1.customer_name}}<br>
                                                 {{customer_email}}<br>
                                                 {% if customer_gstin %}
                                                   GSTIN:{{ customer_gstin }}
                                                 {% endif %}</p>
                                         </div>
                                         <div class="col-5">
-                                            <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
-                                            <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                            <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
+                                            <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
                                            
                                         </div>
                                     </div>
@@ -848,60 +848,60 @@ footer p {
                                 <div class="row">
                                     <div class="col-7">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{rbill.note}}</p>
+                                        <p style="color:black">{{bill1.note}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
                                             <tr >
                                                 <td style="color:black">Sub Total :</td>
-                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                                <td style="color:black">{{bill1.sub_total}}</td>
                                             </tr>
-                                            <!-- {% if rbill.discount != "0" %}
+                                            <!-- {% if bill1.discount != "0" %}
                                             <tr>
                                                 <td style="color:black">Discount</td>
-                                                <td style="color:black">{{rbill.discount}}</td>
+                                                <td style="color:black">{{bill1.discount}}</td>
                                             </tr>
                                             {% endif %} -->
-                                            {% if rbill.igst != 0 %}
+                                            {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{rbill.igst}}</td>
+                                                <td style="color:black">{{bill1.igst}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.cgst != 0 %}
+                                            {% if bill1.cgst != 0 %}
                                             <tr>
                                                 <td style="color:black">CGST :</td>
-                                                <td style="color:black">{{rbill.cgst}}</td>
+                                                <td style="color:black">{{bill1.cgst}}</td>
                                             </tr>
                                             {% endif %}
                                             
-                                            {% if rbill.sgst != 0 %}
+                                            {% if bill1.sgst != 0 %}
                                             <tr>
                                                 <td style="color:black">SGST :</td>
-                                                <td style="color:black">{{rbill.sgst}}</td>
+                                                <td style="color:black">{{bill1.sgst}}</td>
                                             </tr>
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.tax_amount}}</td>
                                             </tr>
-                                            {% if rbill.shipping_charge != 0 %}
+                                            {% if bill1.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
-                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                                <td style="color:black">{{bill1.shipping_charge}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.adjustment != 0 %}
+                                            {% if bill1.adjustment != 0 %}
                                             <tr>
                                                 <td style="color:black">Adjustment :</td>
-                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                                <td style="color:black">{{bill1.adjustment}}</td>
                                             </tr>
                                             {% endif %}
                                            
                                             <tfoot>
                                                 <tr>
                                                     <td style="color:black">Grand Total:</td>
-                                                    <td style="color:black ;">{{rbill.grand_total}}</td>
+                                                    <td style="color:black ;">{{bill1.grand_total}}</td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -958,8 +958,8 @@ footer p {
                             <section class="top-content bb d-flex justify-content-between p-3" style="background-color: greenyellow;">
                                 <div class="logo mt-4">
                                     <div class="position-relative">
-                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  rbill.billno }}</span></h5>
-                                        <p class="ml-2 text-dark"><b>{{rbill.status}}</b></p>
+                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  bill1.billno }}</span></h5>
+                                        <p class="ml-2 text-dark"><b>{{bill1.status}}</b></p>
                                     </div>
                                 </div>
                                 <div class="top-left">
@@ -967,11 +967,11 @@ footer p {
                                        
                                        
                                     </div>
-                                    <h5 style="color: rgb(0, 0, 0);">{{cmp1.cname }}</h5>
-                                            <p style="color: rgb(0, 0, 0);" class="address "> {{cmp1.caddress}}<br>
-                                                {{cmp1.city}},
-                                                {{cmp1.state}}<br>
-                                                {{cmp1.pincode}}<br>
+                                    <h5 style="color: rgb(0, 0, 0);">{{bill1.cname }}</h5>
+                                            <p style="color: rgb(0, 0, 0);" class="address "> {{bill1.caddress}}<br>
+                                                {{bill1.city}},
+                                                {{bill1.state}}<br>
+                                                {{bill1.pincode}}<br>
                                             </p>
                                 </div>
                             </section>
@@ -981,7 +981,7 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>Bill To,</p>
-                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <h5  style="color: #22b8d1;">{{bill1.vendor_name}}</h5>
                                             <p class="address " style="color:#000">{{vendor_email}}<br>
                                                 {% if vendor_gstin %}
                                                   GSTIN:{{ vendor_gstin }}
@@ -994,13 +994,13 @@ footer p {
                                         </div>
                                         <div class="col-5">
                                             <p style="color:#000">Deliver To Details: </p>
-                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                            <p class="address " style="color:#000">{{bill1.customer_name}}<br>
                                                 {{customer_email}}<br>
                                                 {% if customer_gstin %}
                                                   GSTIN:{{ customer_gstin }}
                                                 {% endif %}</p>
-                                                <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
-                                                <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                                <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
+                                                <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
                                                
                                         </div>
                                     </div>
@@ -1045,59 +1045,59 @@ footer p {
                                 <div class="row">
                                     <div class="col-7">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{rbill.note}}</p>
+                                        <p style="color:black">{{bill1.note}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
                                             <tr >
                                                 <td style="color:black">Sub Total :</td>
-                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                                <td style="color:black">{{bill1.sub_total}}</td>
                                             </tr>
-                                            <!-- {% if rbill.discount != "0" %}
+                                            <!-- {% if bill1.discount != "0" %}
                                             <tr>
                                                 <td style="color:black">Discount</td>
-                                                <td style="color:black">{{rbill.discount}}</td>
+                                                <td style="color:black">{{bill1.discount}}</td>
                                             </tr>
                                             {% endif %} -->
-                                            {% if rbill.igst != 0 %}
+                                            {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{rbill.igst}}</td>
+                                                <td style="color:black">{{bill1.igst}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.cgst != 0 %}
+                                            {% if bill1.cgst != 0 %}
                                             <tr>
                                                 <td style="color:black">CGST :</td>
-                                                <td style="color:black">{{rbill.cgst}}</td>
+                                                <td style="color:black">{{bill1.cgst}}</td>
                                             </tr>
                                             {% endif %}
                                             
-                                            {% if rbill.sgst != 0 %}
+                                            {% if bill1.sgst != 0 %}
                                             <tr>
                                                 <td style="color:black">SGST :</td>
-                                                <td style="color:black">{{rbill.sgst}}</td>
+                                                <td style="color:black">{{bill1.sgst}}</td>
                                             </tr>
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.tax_amount}}</td>
                                             </tr>
-                                            {% if rbill.shipping_charge != 0 %}
+                                            {% if bill1.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
-                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                                <td style="color:black">{{bill1.shipping_charge}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.adjustment != 0 %}
+                                            {% if bill1.adjustment != 0 %}
                                             <tr>
                                                 <td style="color:black">Adjustment :</td>
-                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                                <td style="color:black">{{bill1.adjustment}}</td>
                                             </tr>
                                             {% endif %}
                                             <tfoot>
                                                 <tr>
                                                     <td style="color:rgb(102, 168, 3)">Grand Total:</td>
-                                                    <td style="color:rgb(103, 170, 3) ;">{{rbill.grand_total}}</td>
+                                                    <td style="color:rgb(103, 170, 3) ;">{{bill1.grand_total}}</td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -1158,23 +1158,23 @@ footer p {
                     
                             <div class="logo">
                                 <div class="position-absolute m-5">
-                                    <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{ rbill.billno }}</span></h5>
-                                    <p class="ml-2 text-dark"><b>{{ rbill.status }}</b></p>
+                                    <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{ bill1.billno }}</span></h5>
+                                    <p class="ml-2 text-dark"><b>{{ bill1.status }}</b></p>
                                 </div>
                             </div>
                             <section class="top-content bb d-flex justify-content-between p-3 element">
                                 <div class="logo mt-4">
                                     <div class="position-relative">
-                                        <h5 style="color:orange;visibility: hidden;">Recurring Bill. <span>{{ rbill.billno }}</span></h5>
-                                        <p class="ml-2 text-dark" style="visibility: hidden;"><b>{{ rbill.status }}</b></p>
+                                        <h5 style="color:orange;visibility: hidden;">Recurring Bill. <span>{{ bill1.billno }}</span></h5>
+                                        <p class="ml-2 text-dark" style="visibility: hidden;"><b>{{ bill1.status }}</b></p>
                                     </div>
                                 </div>
                                 <div class="top-left curved-background">
-                                    <h5 style="color: rgb(0, 0, 0);">{{ cmp1.cname }}</h5>
-                                    <p style="color: rgb(0, 0, 0);" class="address"> {{ cmp1.caddress }}<br>
-                                        {{ cmp1.city }},
-                                        {{ cmp1.state }}<br>
-                                        {{ cmp1.pincode }}<br>
+                                    <h5 style="color: rgb(0, 0, 0);">{{ bill1.cname }}</h5>
+                                    <p style="color: rgb(0, 0, 0);" class="address"> {{ bill1.caddress }}<br>
+                                        {{ bill1.city }},
+                                        {{ bill1.state }}<br>
+                                        {{ bill1.pincode }}<br>
                                     </p>
                                 </div>
                             </section>
@@ -1186,7 +1186,7 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>Bill To,</p>
-                                            <h5  style="color: #22b8d1;">{{rbill.vendor_name}}</h5>
+                                            <h5  style="color: #22b8d1;">{{bill1.vendor_name}}</h5>
                                             <p class="address " style="color:#000">{{vendor_email}}<br>
                                                 {% if vendor_gstin %}
                                                   GSTIN:{{ vendor_gstin }}
@@ -1199,13 +1199,13 @@ footer p {
                                         </div>
                                         <div class="col-5">
                                             <p style="color:#000">Deliver To Details: </p>
-                                            <p class="address " style="color:#000">{{rbill.customer_name}}<br>
+                                            <p class="address " style="color:#000">{{bill1.customer_name}}<br>
                                                 {{customer_email}}<br>
                                                 {% if customer_gstin %}
                                                   GSTIN:{{ customer_gstin }}
                                                 {% endif %}</p>
-                                                <p style="color:#000">Start Date : <span>{{ rbill.start_date | date:'d-m-Y' }}</span></p>
-                                                <p style="color:#000">End Date : <span> {{ rbill.end_date}}</span></p>
+                                                <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
+                                                <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
                                                
                                         </div>
                                     </div>
@@ -1250,59 +1250,59 @@ footer p {
                                 <div class="row">
                                     <div class="col-7">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{rbill.note}}</p>
+                                        <p style="color:black">{{bill1.note}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
                                             <tr >
                                                 <td style="color:black">Sub Total :</td>
-                                                <td style="color:black">{{rbill.sub_total}}</td>
+                                                <td style="color:black">{{bill1.sub_total}}</td>
                                             </tr>
-                                            <!-- {% if rbill.discount != "0" %}
+                                            <!-- {% if bill1.discount != "0" %}
                                             <tr>
                                                 <td style="color:black">Discount</td>
-                                                <td style="color:black">{{rbill.discount}}</td>
+                                                <td style="color:black">{{bill1.discount}}</td>
                                             </tr>
                                             {% endif %} -->
-                                            {% if rbill.igst != 0 %}
+                                            {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{rbill.igst}}</td>
+                                                <td style="color:black">{{bill1.igst}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.cgst != 0 %}
+                                            {% if bill1.cgst != 0 %}
                                             <tr>
                                                 <td style="color:black">CGST :</td>
-                                                <td style="color:black">{{rbill.cgst}}</td>
+                                                <td style="color:black">{{bill1.cgst}}</td>
                                             </tr>
                                             {% endif %}
                                             
-                                            {% if rbill.sgst != 0 %}
+                                            {% if bill1.sgst != 0 %}
                                             <tr>
                                                 <td style="color:black">SGST :</td>
-                                                <td style="color:black">{{rbill.sgst}}</td>
+                                                <td style="color:black">{{bill1.sgst}}</td>
                                             </tr>
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{rbill.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.tax_amount}}</td>
                                             </tr>
-                                            {% if rbill.shipping_charge != 0 %}
+                                            {% if bill1.shipping_charge != 0 %}
                                             <tr>
                                                 <td style="color:black">Shipping Charge :</td>
-                                                <td style="color:black">{{rbill.shipping_charge}}</td>
+                                                <td style="color:black">{{bill1.shipping_charge}}</td>
                                             </tr>
                                             {% endif %}
-                                            {% if rbill.adjustment != 0 %}
+                                            {% if bill1.adjustment != 0 %}
                                             <tr>
                                                 <td style="color:black">Adjustment :</td>
-                                                <td style="color:black">{{rbill.adjustment}}</td>
+                                                <td style="color:black">{{bill1.adjustment}}</td>
                                             </tr>
                                             {% endif %}
                                             <tfoot>
                                                 <tr>
                                                     <td style="color:orange">Grand Total:</td>
-                                                    <td style="color:orange ;">{{rbill.grand_total}}</td>
+                                                    <td style="color:orange ;">{{bill1.grand_total}}</td>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -1373,35 +1373,35 @@ footer p {
                             <div class="card bg-white" style="border: 1px dotted black;">
                                 <div class="mt-2" style="text-align: center;">
                                     <div class="text-center" style="font-size: 3vh; color: black;">
-                                        <b>{{cmp1.cname}} </b>
+                                        <b>{{bill1.cname}} </b>
                                     </div>
-                                    <span style="font-size: x-small; color: black;">{{ cmp1.caddress }} <br>
-                                        {{cmp1.city}},
-                                        {{cmp1.state}}
-                                        {{cmp1.pincode}} <br>
-                                        {{ cmp1.phone }} <br>{{ cmp1.cemail }} 
+                                    <span style="font-size: x-small; color: black;">{{ bill1.caddress }} <br>
+                                        {{bill1.city}},
+                                        {{bill1.state}}
+                                        {{bill1.pincode}} <br>
+                                        {{ bill1.phone }} <br>{{ bill1.cemail }} 
                                     </span>
                                 </div>
                                 <div class="ml-3 mr-3 mt-2" style="color: black;">
                                     <div class="row">
                                         <div class="col-md-6 text-left">Recurring Bill No:</div>
-                                        <div class="col-md-5 text-right">{{rbill.billno}}</div>
+                                        <div class="col-md-5 text-right">{{bill1.billno}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Customer Name:</div>
-                                        <div class="col-md-5 text-right">{{ rbill.customer_name}}</div>
+                                        <div class="col-md-5 text-right">{{ bill1.customer_name}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Vendor Name:</div>
-                                        <div class="col-md-5 text-right">{{ rbill.vendor_name}}</div>
+                                        <div class="col-md-5 text-right">{{ bill1.vendor_name}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Shipment Date :</div>
-                                        <div class="col-md-5 text-right">{{rbill.start_date | date:'d-m-Y'}}</div>
+                                        <div class="col-md-5 text-right">{{bill1.start_date | date:'d-m-Y'}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Delivery Date:</div>
-                                        <div class="col-md-5 text-right">{{rbill.end_date}}</div>
+                                        <div class="col-md-5 text-right">{{bill1.end_date}}</div>
                                     </div>
                                 </div>
                                 <div><br>
@@ -1471,16 +1471,16 @@ footer p {
                                             Subtotal
                                         </div>
                                         <div class="col-md-7 text-right  " style="color: black;">
-                                            {{ rbill.grand_total }}
+                                            {{ bill1.grand_total }}
                                         </div>
                                     </div>
-                                    {% if rbill.igst != 0 %}
+                                    {% if bill1.igst != 0 %}
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left " style=" color: black;">
                                             IGST
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ rbill.igst }}
+                                            {{ bill1.igst }}
                                         </div>
                                     </div>
                                     {% else %}
@@ -1489,7 +1489,7 @@ footer p {
                                             CGST
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ rbill.cgst }}
+                                            {{ bill1.cgst }}
                                         </div>
                                     </div>
                                     <div class="row mr-2 ml-2">
@@ -1497,7 +1497,7 @@ footer p {
                                             SGST
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ rbill.sgst }}
+                                            {{ bill1.sgst }}
                                         </div>
                                     </div>
                                     {% endif %}
@@ -1506,36 +1506,36 @@ footer p {
                                             Total Tax
                                         </div>
                                         <div class="col-md-7 text-right" style="color: black;">
-                                            {{ rbill.tax_amount }}
+                                            {{ bill1.tax_amount }}
                                         </div>
                                     </div>
-                                    {% if rbill.shipping_charge != 0 %}
+                                    {% if bill1.shipping_charge != 0 %}
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left " style=" color: black;">
                                             Shipping
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ rbill.shipping_charge }}
+                                            {{ bill1.shipping_charge }}
                                         </div>
                                     </div>
                                     {% endif %}
-                                    {% if rbill.adjustment != 0 %}
+                                    {% if bill1.adjustment != 0 %}
                                     <div class="row mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             Adjustment
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ rbill.adjustment }}
+                                            {{ bill1.adjustment }}
                                         </div>
                                     </div>
                                     {% endif %}
-                                    {% if  rbill.paid_amount != 0 %}
+                                    {% if  bill1.paid_amount != 0 %}
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             Paid
                                         </div>
                                         <div class="col-md-7 text-right" style="color: black;">
-                                            {{ rbill.paid_amount }}
+                                            {{ bill1.paid_amount }}
                                         </div>
                                     </div>
                                     {% endif %}
@@ -1549,7 +1549,7 @@ footer p {
                                             Total
                                         </div>
                                         <div class="col-md-7 text-right" style="font-size: large; color: black; font-weight: bold;">
-                                            {{ rbill.grand_total }}
+                                            {{ bill1.grand_total }}
                                         </div>
                                     </div>
                                 </div>
@@ -1598,7 +1598,7 @@ footer p {
                  
                 // element.style.color = 'black';
                 // element.style.backgroundColor = 'white';
-                var recurringBillNumber = "{{ rbill.billno }}";
+                var recurringBillNumber = "{{ bill1.billno }}";
                 var opt =
                 {
                     margin: 1,

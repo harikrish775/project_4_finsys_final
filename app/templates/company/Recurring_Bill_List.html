@@ -52,7 +52,7 @@
                     <div class="col-4 ml-auto">
                         
                         <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
-                        <a href="{% url 'recurring_bill_overview' %}" class="btn btn-secondary">overview</a>
+                        
 
                         <!-- <a class="btn btn-secondary dropdown-toggle" href="">Filter</a> -->
                         
@@ -92,7 +92,7 @@
 
                         <tbody>
                             {% for i in bill %}
-                            <tr  onclick="window.location.href='/employee_overview/{{ i.id }}';" style="cursor: pointer;">
+                            <tr  onclick="window.location.href='/recurring_bill_overview/{{ i.id }}';" style="cursor: pointer;">
                                 
                                 
                                 <td>{{i.date}}</td>

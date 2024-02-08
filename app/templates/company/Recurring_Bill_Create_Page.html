@@ -14,7 +14,8 @@
 
 
     <div class="page-content" id="body">
-        
+        <form action="{% url 'recurring_bill_save' %}" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
         <!-- overview -->
         <div id="overview123">
             <div class="card radius-15" id="col33">
@@ -338,8 +339,8 @@
                                                     <div class="col-md-7 m-2"><input type="checkbox" required> Agree To Terms & Conditions.</div>
                                                     <div class="col-md-4 mb-3 m-3">
                                                         <div class="row">
-                                                            <div class="col-md mb-3"><button style="border-radius: 20px;" class="btn form-control " name="button" id="button1" value="Save">Save</button></div>
-                                                            <div class="col-md mb-3"><button style="border-radius: 20px;" class="btn form-control " name="button" id="button2" value="Draft">Draft</button></div>
+                                                            <div class="col-md mb-3"><button type="submit" style="border-radius: 20px;" class="btn form-control " name="button" id="button1" value="Save">Save</button></div>
+                                                            <div class="col-md mb-3"><button type="submit" style="border-radius: 20px;" class="btn form-control " name="button" id="button2" value="Draft">Draft</button></div>
                                                         </div>                                                        
                                                     </div>
                                                 </div><br><br>
@@ -351,6 +352,7 @@
                                 </div>
                             </div>
                         </div>
+                    </form>
 
                         <!-- modals -->
 

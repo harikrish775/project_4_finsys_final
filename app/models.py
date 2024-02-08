@@ -718,7 +718,7 @@ class Fin_CompanyRepeatEvery(models.Model):
     duration = models.IntegerField(null=True,blank=True)
     days = models.IntegerField(null=True,blank=True)
 
-class Recurring_Bills(models.Model):
+class Fin_Recurring_Bills(models.Model):
     vendor = models.ForeignKey(Fin_Vendors,on_delete=models.CASCADE,null=True,blank=True)
     recurring_bill_number = models.CharField(max_length=255,null=True,blank=True)
     profile_name = models.CharField(max_length=255,null=True,blank=True)
@@ -747,7 +747,7 @@ class Recurring_Bills(models.Model):
     status = models.CharField(max_length=255,null=True,blank=True)
     repeat_every = models.ForeignKey(Fin_CompanyRepeatEvery,on_delete=models.CASCADE,null=True,blank=True)
 
-class Recurring_Bill_Items(models.Model):
+class Fin_Recurring_Bill_Items(models.Model):
     items = models.CharField(max_length=255,null=True,blank=True)
     hsn = models.CharField(max_length=255,null=True,blank=True)
     quantity = models.IntegerField(null=True,blank=True)
@@ -756,16 +756,16 @@ class Recurring_Bill_Items(models.Model):
     discount = models.IntegerField(null=True,blank=True)
     total = models.IntegerField(null=True,blank=True)
 
-class Recurring_Bill_Reference(models.Model):
+class Fin_Recurring_Bill_Reference(models.Model):
     reference_number = models.IntegerField(null=True,blank=True)
     company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
     login_details = models.ForeignKey(Fin_Login_Details,on_delete=models.CASCADE,null=True,blank=True)
 
 
-class Recurring_Bill_History(models.Model):
+class Fin_Recurring_Bill_History(models.Model):
     company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
     login_details = models.ForeignKey(Fin_Login_Details,on_delete=models.CASCADE,null=True,blank=True)
-    recurring_bill = models.ForeignKey(Recurring_Bills,on_delete=models.CASCADE,null=True,blank=True)
+    recurring_bill = models.ForeignKey(Fin_Recurring_Bills,on_delete=models.CASCADE,null=True,blank=True)
     date = models.DateField(null=True,blank=True)
     action = models.CharField(max_length=255,null=True,blank=True)
     
