@@ -1805,10 +1805,10 @@ def Fin_createCustomer(request):
                 action = 'Created'
             )
 
-            return redirect(Fin_customers)
+            return redirect(recurring_bill_create_page)
 
         else:
-            return redirect(Fin_addCustomer)
+            return redirect(recurring_bill_create_page)
     else:
         return redirect('/')
 
@@ -2007,7 +2007,7 @@ def Fin_createVendor(request):
 
             
 
-            return redirect(Fin_vendors)
+            return redirect(recurring_bill_create_page)
 
         else:
             return redirect(Fin_addVendor)
@@ -2152,13 +2152,15 @@ def recurring_bill_create_page(request):
         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
         vendors = Fin_Vendors.objects.filter(Company_id=com.id)
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
+        customers = Fin_Customers.objects.filter(Company_id=com.id)
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
         vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
+        customers = Fin_Customers.objects.filter(Company_id=com.company_id_id)
 
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms})
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'customers':customers})
 
 def recurring_bill_save(request):
     if request.method == 'POST':

@@ -87,6 +87,21 @@ urlpatterns = [
     
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 
+    # -------------------------------------
+
+    path('Fin_createVendor',views.Fin_createVendor,name='Fin_createVendor'),
+    path('Fin_addVendor',views.Fin_addVendor,name='Fin_addVendor'),
+    path('Fin_checkVendorName',views.Fin_checkVendorName,name='Fin_checkVendorName'),
+
+
+    path('Fin_createNewItem',views.Fin_createNewItem,name='Fin_createNewItem'),
+    path('Fin_createCustomer',views.Fin_createCustomer,name='Fin_createCustomer'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+
+
 
     # harikrishnan---------------------
 
