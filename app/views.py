@@ -2150,15 +2150,15 @@ def recurring_bill_create_page(request):
     if loginn.User_Type == 'Company':
         com = Fin_Company_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.id,status='Active')
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
-        customers = Fin_Customers.objects.filter(Company_id=com.id)
+        customers = Fin_Customers.objects.filter(Company_id=com.id,status='Active')
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id,status='Active')
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
-        customers = Fin_Customers.objects.filter(Company_id=com.company_id_id)
+        customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
 
     return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'customers':customers})
 
@@ -2226,3 +2226,48 @@ def recurring_bill_overview(request,pk):
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         companyName = com.Company_name
     return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName})
+
+
+def get_vendor_details(request, vendor_id):
+    try:
+        vendor = Fin_Vendors.objects.get(id=vendor_id)
+        data = {
+            'email': vendor.email,
+            'street': vendor.billing_street,
+            'city':vendor.billing_city,
+            'state':vendor.billing_state,
+            'pincode':vendor.billing_pincode,
+            'country':vendor.billing_country,
+            'gst':vendor.gst_type,
+            'placeofsupply':vendor.place_of_supply
+        }
+        return JsonResponse(data)
+    except Fin_Vendors.DoesNotExist:
+        return JsonResponse({'error': 'Vendor not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_customer_details(request, customer_id):
+    try:
+        customer = Fin_Customers.objects.get(id=customer_id)
+        data = {
+            'email': customer.email,
+            'placeofsupply': customer.place_of_supply
+        }
+        return JsonResponse(data)
+    except Fin_Customers.DoesNotExist:
+        return JsonResponse({'error': 'customer not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def reference_number_auto(request):
+    try:
+        recurringBill = Fin_Recurring_Bills.objects.latest('-id')
+        ref = {
+            'referenceID': recurringBill.id
+        }
+        return JsonResponse(ref)
+    except Fin_Recurring_Bills.DoesNotExist:
+        return JsonResponse({'error': 'Recurring Bill not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

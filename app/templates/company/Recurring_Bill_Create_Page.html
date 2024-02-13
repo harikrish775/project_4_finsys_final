@@ -2,6 +2,9 @@
 {% block body %}
 {% load static %}
 
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <style>
     #button1,#button2{
         background-color: rgba(22,37,50,255);
@@ -11,6 +14,8 @@
         color: white    ;
     }
 </style>
+
+
 
 
     <div class="page-content" id="body">
@@ -43,6 +48,7 @@
                                                                 <label class="">Select Vendors</label>
                                                                 <div style="display: flex;">
                                                                     <select class="form-control" name="select_vendor" id="select_vendor">
+                                                                        <option value="">Select Vendor</option>
                                                                         {% for i in vendors %}
                                                                         <option value="{{i.id}}">{{i.first_name}} {{i.last_name}}</option>
                                                                         {% endfor %}
@@ -50,16 +56,49 @@
                                                                     <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#vendorModal" style="height:min-content ;">+</button>
                                                                 </div>
                                                             </div>
+                                                            <script>
+                                                                $(document).ready(function() {
+                                                                    $("#select_vendor").change(function() {
+                                                                        var vendorId = $(this).val();
                                                             
+                                                                        // Make an AJAX request to the backend to fetch vendor details
+                                                                        $.ajax({
+                                                                            url: '/get_vendor_details/' + vendorId + '/',
+                                                                            type: 'GET',
+                                                                            success: function(data) {
+                                                                                // Update the placeholder elements with the fetched details
+                                                                                $("#vendorEmail").val(data.email);
+                                                                                $("#vendorAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
+                                                                                $("#vendorGST").val(data.gst);
+
+                                                                                var placeOfSupplyDropdown = $("#sourceOFSupply");
+
+                                                                                // Append options from data.placeofsupply
+                                                                                var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
+
+                                                                                // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
+                                                                                option.prop('selected', true);
+
+                                                                                placeOfSupplyDropdown.append(option);
+                                                                                
+                                                                                
+                                                                            },
+                                                                            error: function(error) {
+                                                                                console.log(error);
+                                                                            }
+                                                                        });
+                                                                    });
+                                                                });
+                                                            </script>
                                                             <div class="form-group col-md-6">
                                                                 <label class="">Vendor Email</label>
-                                                                <input type="email" id="email" class="form-control">
+                                                                <input type="vendorEmail" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
                                                                 <label class="">GST Treatment</label>
-                                                                <input type="text" id="gst" class="form-control">
+                                                                <input type="text" id="vendorGST" class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -70,7 +109,7 @@
                                                     
                                                     <div class="form-group col-md mb-3">
                                                         <label class="">Address</label>
-                                                        <textarea name="address" id="address" cols="30" rows="5" class="form-control"></textarea>
+                                                        <textarea name="address" id="vendorAddress" cols="30" rows="5" class="form-control"></textarea>
                                                     </div>
                                                 </div>
 
@@ -78,10 +117,47 @@
                                                 <div class="row ml-2 mr-2 ">
                                                     <div class="col-md-3">
                                                         <label class="mt-4 ">Source Of Supply</label>
-                                                        <select class="form-control" name="source" id="source" >
-                                                            {% for i in source %}
-                                                            <option value=""></option>
-                                                            {% endfor %}
+                                                        <select class="form-control" name="source" id="sourceOFSupply" >
+                                                            <option selected value="">Select Place of Supply</option>
+                                                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                                            <option value="Assam">Assam</option>
+                                                            <option value="Bihar">Bihar</option>
+                                                            <option value="Chandigarh">Chandigarh</option>
+                                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option value="Damn anad Diu">Damn anad Diu</option>
+                                                            <option value="Delhi">Delhi</option>
+                                                            <option value="Goa">Goa</option>
+                                                            <option value="Gujarat">Gujarat</option>
+                                                            <option value="Haryana">Haryana</option>
+                                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option value="Jharkhand">Jharkhand</option>
+                                                            <option value="Karnataka">Karnataka</option>
+                                                            <option value="Kerala">Kerala</option>
+                                                            <option value="Ladakh">Ladakh</option>
+                                                            <option value="Lakshadweep">Lakshadweep</option>
+                                                            <option value="Madhya Predesh">Madhya Predesh</option>
+                                                            <option value="Maharashtra">Maharashtra</option>
+                                                            <option value="Manipur">Manipur</option>
+                                                            <option value="Meghalaya">Meghalaya</option>
+                                                            <option value="Mizoram">Mizoram</option>
+                                                            <option value="Nagaland">Nagaland</option>
+                                                            <option value="Odisha">Odisha</option>
+                                                            <option value="Puducherry">Puducherry</option>
+                                                            <option value="Punjab">Punjab</option>
+                                                            <option value="Rajasthan">Rajasthan</option>
+                                                            <option value="Sikkim">Sikkim</option>
+                                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option value="Telangana">Telangana</option>
+                                                            <option value="Tripura">Tripura</option>
+                                                            <option value="Uttar Predesh">Uttar Predesh</option>
+                                                            <option value="Uttarakhand">Uttarakhand</option>
+                                                            <option value="West Bengal">West Bengal</option>
+                                                            <option value="Other Territory">Other Territory</option>
+                                                            
                                                         </select>
                                                     </div>
                                                 </div>
@@ -97,7 +173,25 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Reference Number</label>
-                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo">
+                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" disabled>
+                                                        <script>
+                                                            $(document).ready(function() {
+                                                            $.ajax({
+                                                                url: '/reference_number_auto/',
+                                                                type: 'GET',
+                                                                success: function(ref) {
+                                                                    console.log('----success------');
+                                                                    nextID = ref.referenceID + 1;
+                                                                    $("#ReferenceNo").val(nextID);
+                                                                },
+                                                                error: function(xhr, status, error) {
+                                                                    console.error('-----error-----');
+                                                                    console.error('Status: ' + status);
+                                                                    console.error('Error: ' + error);
+                                                                }
+                                                            });
+                                                        });
+                                                        </script>
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
@@ -113,7 +207,9 @@
                                                     <div class="col-md-3">
                                                         <label for="">Repeat Every</label>
                                                         <div style="display: flex;">
-                                                            <input type="text" name="RepeatEvery" id="RepeatEvery" class="form-control">
+                                                            <select class="form-control" name="source" id="sourceOFSupply" >
+                                                                <option selected value="">Re</option>
+                                                            </select>
                                                             <button class="btn btn-outline-secondary text-grey ml-1">+</button>
                                                         </div>
                                                     </div>
@@ -127,7 +223,7 @@
                                                     <div class="col-md mb-3">
                                                         <label for="">Customer</label>
                                                         <div style="display: flex;">
-                                                            <select name="Customer" id="Customer" class="form-control">
+                                                            <select name="Customer" id="SelectCustomer" class="form-control">
                                                                 <option value="">Select Customer</option>
                                                                 {% for c in customers %}
                                                                 <option value="{{c.id}}">{{c.first_name}} {{c.last_name}}</option>
@@ -136,14 +232,83 @@
                                                             <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
                                                         </div>
                                                     </div>
+                                                    <script>
+                                                        $(document).ready(function() {
+                                                            $("#SelectCustomer").change(function() {
+                                                                var customerID = $(this).val();
+                                                    
+                                                                // Make an AJAX request to the backend to fetch vendor details
+                                                                $.ajax({
+                                                                    url: '/get_customer_details/' + customerID + '/',
+                                                                    type: 'GET',
+                                                                    success: function(data) {
+                                                                        // Update the placeholder elements with the fetched details
+                                                                        $("#customerEmail").val(data.email);
+
+                                                                        var placeOfSupplyDropdown = $("#sourceOFSupplyCustomer");
+
+                                                                        // Append options from data.placeofsupply
+                                                                        var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
+
+                                                                        // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
+                                                                        option.prop('selected', true);
+
+                                                                        placeOfSupplyDropdown.append(option);
+                                                                        
+                                                                    },
+                                                                    error: function(error) {
+                                                                        console.log(error);
+                                                                    }
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
                                                     <div class="col-md mb-3">
                                                         <label for="">Email</label>
                                                         <input type="email" class="form-control" name="customerEmail" id="customerEmail">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Place OF Supply</label>
-                                                        <select name="PlaceOfSupply" id="PlaceOfSupply" class="form-control">
+                                                        <select name="PlaceOfSupply" id="PlaceOfSupplyCustomer" class="form-control">
                                                             <option value="">Select Place Of Supply</option>
+                                                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                                            <option value="Assam">Assam</option>
+                                                            <option value="Bihar">Bihar</option>
+                                                            <option value="Chandigarh">Chandigarh</option>
+                                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option value="Damn anad Diu">Damn anad Diu</option>
+                                                            <option value="Delhi">Delhi</option>
+                                                            <option value="Goa">Goa</option>
+                                                            <option value="Gujarat">Gujarat</option>
+                                                            <option value="Haryana">Haryana</option>
+                                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option value="Jharkhand">Jharkhand</option>
+                                                            <option value="Karnataka">Karnataka</option>
+                                                            <option value="Kerala">Kerala</option>
+                                                            <option value="Ladakh">Ladakh</option>
+                                                            <option value="Lakshadweep">Lakshadweep</option>
+                                                            <option value="Madhya Predesh">Madhya Predesh</option>
+                                                            <option value="Maharashtra">Maharashtra</option>
+                                                            <option value="Manipur">Manipur</option>
+                                                            <option value="Meghalaya">Meghalaya</option>
+                                                            <option value="Mizoram">Mizoram</option>
+                                                            <option value="Nagaland">Nagaland</option>
+                                                            <option value="Odisha">Odisha</option>
+                                                            <option value="Puducherry">Puducherry</option>
+                                                            <option value="Punjab">Punjab</option>
+                                                            <option value="Rajasthan">Rajasthan</option>
+                                                            <option value="Sikkim">Sikkim</option>
+                                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option value="Telangana">Telangana</option>
+                                                            <option value="Tripura">Tripura</option>
+                                                            <option value="Uttar Predesh">Uttar Predesh</option>
+                                                            <option value="Uttarakhand">Uttarakhand</option>
+                                                            <option value="West Bengal">West Bengal</option>
+                                                            <option value="Other Territory">Other Territory</option>
                                                         </select>
                                                     </div>                                                    
                                                 </div>

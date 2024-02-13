@@ -92,11 +92,13 @@ urlpatterns = [
     path('Fin_createVendor',views.Fin_createVendor,name='Fin_createVendor'),
     path('Fin_addVendor',views.Fin_addVendor,name='Fin_addVendor'),
     path('Fin_checkVendorName',views.Fin_checkVendorName,name='Fin_checkVendorName'),
-
+    path('get_vendor_details/<int:vendor_id>/',views.get_vendor_details,name='get_vendor_details'),
+    path('get_customer_details/<int:customer_id>/',views.get_customer_details,name='get_customer_details'),
+    path('reference_number_auto/',views.reference_number_auto,name='reference_number_auto'),
 
     path('Fin_createNewItem',views.Fin_createNewItem,name='Fin_createNewItem'),
     path('Fin_createCustomer',views.Fin_createCustomer,name='Fin_createCustomer'),
-    # path('abc',views.abc,name='abc'),
+    
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
