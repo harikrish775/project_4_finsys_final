@@ -173,7 +173,7 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Reference Number</label>
-                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" disabled>
+                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" >
                                                         <script>
                                                             $(document).ready(function() {
                                                             $.ajax({
@@ -244,8 +244,9 @@
                                                                     success: function(data) {
                                                                         // Update the placeholder elements with the fetched details
                                                                         $("#customerEmail").val(data.email);
+                                                                        $("#GSTTypeCustomer").val(data.gst);
 
-                                                                        var placeOfSupplyDropdown = $("#sourceOFSupplyCustomer");
+                                                                        var placeOfSupplyDropdown = $("#PlaceOfSupplyCustomer");
 
                                                                         // Append options from data.placeofsupply
                                                                         var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
@@ -317,7 +318,7 @@
                                                 <div class="row m-md-2 border-bottom pb-4">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">GST Type</label>
-                                                        <input type="text" name="GSTType" id="GSTType" class="form-control">                                                        
+                                                        <input type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
                                                     </div>
                                                 </div>
 
@@ -356,6 +357,12 @@
                                                         <label for="">Payment Type</label>
                                                         <select name="paymentType" id="paymentType" class="form-control">
                                                             <option value="">Select Payment Method</option>
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Cheque">Cheque</option>
+                                                            <option value="UPI">UPI</option>
+                                                            {% for b in bank %}
+                                                            <option value="{{b.id}}">{{b.bank_name}}</option>
+                                                            {% endfor %}
                                                         </select>
                                                     </div>
                                                 </div>
