@@ -20,7 +20,7 @@
 
 
 <style>
-    table tr:hover{
+    #tr:hover{
         background-color: #5a7684;
     }
 </style>
@@ -92,7 +92,7 @@
 
                         <tbody>
                             {% for i in bill %}
-                            <tr  onclick="window.location.href='/recurring_bill_overview/{{ i.id }}';" style="cursor: pointer;">
+                            <tr id="tr" onclick="window.location.href='/recurring_bill_overview/{{ i.id }}';" style="cursor: pointer;">
                                 
                                 
                                 <td>{{i.date}}</td>

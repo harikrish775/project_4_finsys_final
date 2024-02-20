@@ -92,12 +92,12 @@ urlpatterns = [
     path('Fin_createVendor',views.Fin_createVendor,name='Fin_createVendor'),
     path('Fin_addVendor',views.Fin_addVendor,name='Fin_addVendor'),
     path('Fin_checkVendorName',views.Fin_checkVendorName,name='Fin_checkVendorName'),
-    path('get_vendor_details/<int:vendor_id>/',views.get_vendor_details,name='get_vendor_details'),
-    path('get_customer_details/<int:customer_id>/',views.get_customer_details,name='get_customer_details'),
-    path('reference_number_auto/',views.reference_number_auto,name='reference_number_auto'),
+    
 
     path('Fin_createNewItem',views.Fin_createNewItem,name='Fin_createNewItem'),
     path('Fin_createCustomer',views.Fin_createCustomer,name='Fin_createCustomer'),
+    path('Fin_createItem',views.Fin_createItem,name='Fin_createNewItem'),
+    
     
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
@@ -111,6 +111,12 @@ urlpatterns = [
     path('recurring_bill_create_page',views.recurring_bill_create_page,name="recurring_bill_create_page"),
     path('recurring_bill_overview/<int:pk>',views.recurring_bill_overview,name="recurring_bill_overview"),
     path('recurring_bill_save',views.recurring_bill_save,name="recurring_bill_save"),
+
+    path('get_vendor_details/<int:vendor_id>/',views.get_vendor_details,name='get_vendor_details'),
+    path('get_customer_details/<int:customer_id>/',views.get_customer_details,name='get_customer_details'),
+    path('reference_number_auto/',views.reference_number_auto,name='reference_number_auto'),
+    path('get_item_details/<int:item_id>/',views.get_item_details,name='get_item_details'),
+
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),

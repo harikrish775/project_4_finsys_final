@@ -1695,9 +1695,9 @@ def Fin_createNewItem(request):
                     action = 'Created'
                 )
                 
-                return redirect()
+                return redirect(recurring_bill_create_page)
 
-        return redirect(Fin_createItem)
+        return redirect(recurring_bill_create_page)
     else:
        return redirect('/')
 
@@ -2153,14 +2153,16 @@ def recurring_bill_create_page(request):
         vendors = Fin_Vendors.objects.filter(Company_id=com.id,status='Active')
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
         customers = Fin_Customers.objects.filter(Company_id=com.id,status='Active')
+        items = Fin_Items.objects.filter(Company_id=com.id)
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
         vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id,status='Active')
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
+        items = Fin_Items.objects.filter(Company_id=com.id)
 
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'customers':customers})
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'items':items,'customers':customers})
 
 def recurring_bill_save(request):
     if request.method == 'POST':
@@ -2200,7 +2202,7 @@ def recurring_bill_save(request):
         #                           advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
 
         newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
-                                  purchase_order_number =purchase_order_number,payment_method = payment_method,
+                                  purchase_order_number =purchase_order_number,company_payment_terms =company_payment_terms,payment_method = payment_method,
                                  description = description,document = document,sub_total = sub_total,cgst = cgst,
                                   sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,grand_total = grand_total,
                                   advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
@@ -2283,12 +2285,41 @@ def get_customer_details(request, customer_id):
             return JsonResponse(data)
             
         elif loginn.User_Type == 'Staff' :
-            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
             customer = Fin_Customers.objects.get(id=customer_id,Company_id=com.id)
             data = {
                 'email': customer.email,
                 'placeofsupply': customer.place_of_supply,
                 'gst': customer.gst_type
+            }
+            return JsonResponse(data)
+        
+    except Fin_Customers.DoesNotExist:
+        return JsonResponse({'error': 'customer not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def get_item_details(request, item_id):
+    try:
+        sid = request.session['s_id']
+        loginn = Fin_Login_Details.objects.get(id=sid)
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            items = Fin_Items.objects.get(Company_id=com.id,id=item_id)
+            data = {
+                'hsn': items.hsn,
+                'price': items.selling_price,
+                
+            }
+            return JsonResponse(data)
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            items = Fin_Items.objects.get(Company_id=com.id,id=item_id)
+            data = {
+                'hsn': items.hsn,
+                'price': items.selling_price,
+                
             }
             return JsonResponse(data)
         
@@ -2309,14 +2340,4 @@ def reference_number_auto(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-def end_date_auto(request):
-    try:
-        pterms = Fin_Payment_Terms.objects.filter(days)
-        ref = {
-            'referenceID': recurringBill.id
-        }
-        return JsonResponse(ref)
-    except Fin_Recurring_Bills.DoesNotExist:
-        return JsonResponse({'error': 'Recurring Bill not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+

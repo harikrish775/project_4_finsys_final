@@ -339,18 +339,39 @@
                                                         <div style="display: flex;">
                                                             <select class="custom-select" name="payment_terms" id="termadd2">
                                                                 <option selected id="trmopt2"></option>
-                                                                <option value="0">Due on Receipt</option>
-                                                                <option value="15">NET 15</option>
-                                                                <option value="30">NET 30</option>
-                                                                <option value="60">NET 60</option>
-                                                                {% for pd in payment %}
-                                                                    <option value="{{ pd.id }}">NET {{ pd.newperiod }}</option>
+                                                                {% for pd in payment_terms   %}
+                                                                    <option value="{{ pd.id }}">{{ pd.term_name }}</option>
                                                                 {% endfor %}
                                                             </select>
-                                                            <button class="btn btn-outline-secondary text-grey ml-1">+</button>
+                                                            <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#paymentTermsModal">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- payment terms modal -->
+                                                <div class="modal fade" id="paymentTermsModal" tabindex="-1" role="dialog" aria-labelledby="paymentTermsModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                      <div class="modal-content">
+                                                        <div class="modal-header">
+                                                          <h5 class="modal-title" id="paymentTermsModalLabel">Modal title</h5>
+                                                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                          </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            
+                                                                
+                                                        
+                                                        
+                                                            
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                          <button type="button" class="btn btn-primary">Save changes</button>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                <!-- paymentTermsModal end -->
 
                                                 <div class="row ml-md-2 mr-md-2 border-bottom pb-3 mb-5">
                                                     <div class="col-md-4 mb-3">
@@ -377,18 +398,18 @@
                                                                 <th class="border">QTY</th>
                                                                 <th class="border">PRICE</th>
                                                                 <th class="border">TAX(%)</th>
-                                                                <th class="border">DISCONT</th>
+                                                                <th class="border">DISCOUNT</th>
                                                                 <th class="border">TOTAL</th>
                                                                 <th class="border"></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             
-                                                            <tr>
-                                                                <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item" id="Item" class="form-control"><option value="">Select Item</option></select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control" placeholder="Enter HSN"></td>
+                                                            <tr class="item-row">
+                                                                <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
+                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
                                                                 <td class="border" style="min-width: 150px;"><input type="text" class="form-control" value="0"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control" placeholder="Enter Unit"></td>
+                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
                                                                 <td class="border" style="min-width: 150px;"><input type="text" class="form-control" placeholder="Tax Rate"></td>
                                                                 <td class="border" style="min-width: 150px;"><input type="text" class="form-control" value="0"></td>
                                                                 <td class="border" style="min-width: 150px;"><input type="text" class="form-control" value="0" disabled></td>
@@ -396,6 +417,36 @@
                                                             </tr>
                                                         </tbody>
                                                     </table>
+
+                                                    <script>
+                                                        
+
+                                                        $(document).ready(function () {
+                                                        // Use event delegation on the table
+                                                        $("#itemTable").on("change", ".item-select", function () {
+                                                            var $select = $(this);
+                                                            var $row = $select.closest('.item-row'); // Find the closest row
+
+                                                            var itemsId = $select.val();
+
+                                                            // Make an AJAX request to the backend to fetch item details
+                                                            $.ajax({
+                                                                url: '/get_item_details/' + itemsId + '/',
+                                                                type: 'GET',
+                                                                success: function (data) {
+                                                                    // Update the placeholder elements with the fetched details
+                                                                    $row.find(".item-hsn").val(data.hsn);
+                                                                    $row.find(".item-price").val(data.price);
+                                                                },
+                                                                error: function (error) {
+                                                                    console.log(error);
+                                                                }
+                                                            });
+                                                        });
+                                                        
+                                                    });
+                                                       
+                                                    </script>
                                                 </div>
 
                                                 <div class="row m-md-2">
@@ -2229,7 +2280,7 @@
                             <div class="col-md-6 mt-3">
                                 <label for="itemUnit" style="color: white;">Unit</label>
                                 <div class="d-flex">
-                                    <select class="custom-select" name="unit" id="itemUnit" required style="background-color: #2a4964; color: white;">
+                                    <select class="custom-select" name="unit" id="itemUnit" style="background-color: #2a4964; color: white;">
                                         <option selected disabled value="">Choose...</option>
                                         {% for a in units %}
                                         <option class="text-uppercase">{{ a.name }}</option>
@@ -2863,6 +2914,12 @@ $(document).ready(function () {
             $(this).closest("tr").remove();
         });
     });
+
+
+
+
+
+
 
 // ------------------------------------------------------------------------------------------------
 // index number
