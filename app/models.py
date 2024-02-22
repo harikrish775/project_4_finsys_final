@@ -755,6 +755,7 @@ class Fin_Recurring_Bill_Items(models.Model):
     tax_rate = models.IntegerField(null=True,blank=True)
     discount = models.IntegerField(null=True,blank=True)
     total = models.IntegerField(null=True,blank=True)
+    recurring_bill = models.ForeignKey(Fin_Recurring_Bills,on_delete=models.CASCADE,null=True,blank=True)
 
 class Fin_Recurring_Bill_Reference(models.Model):
     reference_number = models.IntegerField(null=True,blank=True)

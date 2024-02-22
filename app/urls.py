@@ -94,9 +94,9 @@ urlpatterns = [
     path('Fin_checkVendorName',views.Fin_checkVendorName,name='Fin_checkVendorName'),
     
 
-    path('Fin_createNewItem',views.Fin_createNewItem,name='Fin_createNewItem'),
+    path('Fin_createNewItem_modal',views.Fin_createNewItem_modal,name='Fin_createNewItem_modal'),
     path('Fin_createCustomer',views.Fin_createCustomer,name='Fin_createCustomer'),
-    path('Fin_createItem',views.Fin_createItem,name='Fin_createNewItem'),
+    path('Fin_createItem_modal',views.Fin_createItem_modal,name='Fin_createItem_modal'),
     
     
     # path('abc',views.abc,name='abc'),
@@ -107,15 +107,18 @@ urlpatterns = [
 
     # harikrishnan---------------------
 
-    path('recurring_bill_list',views.recurring_bill_list,name="recurring_bill_list"),
-    path('recurring_bill_create_page',views.recurring_bill_create_page,name="recurring_bill_create_page"),
-    path('recurring_bill_overview/<int:pk>',views.recurring_bill_overview,name="recurring_bill_overview"),
-    path('recurring_bill_save',views.recurring_bill_save,name="recurring_bill_save"),
+    path('Fin_recurring_bill_list',views.Fin_recurring_bill_list,name="Fin_recurring_bill_list"),
+    path('Fin_recurring_bill_create_page',views.Fin_recurring_bill_create_page,name="Fin_recurring_bill_create_page"),
+    path('Fin_recurring_bill_overview/<int:pk>',views.Fin_recurring_bill_overview,name="Fin_recurring_bill_overview"),
+    path('Fin_recurring_bill_save',views.Fin_recurring_bill_save,name="Fin_recurring_bill_save"),
+    path('Fin_recurring_bill_edit_page',views.Fin_recurring_bill_edit_page,name='Fin_recurring_bill_edit_page'),
 
-    path('get_vendor_details/<int:vendor_id>/',views.get_vendor_details,name='get_vendor_details'),
-    path('get_customer_details/<int:customer_id>/',views.get_customer_details,name='get_customer_details'),
-    path('reference_number_auto/',views.reference_number_auto,name='reference_number_auto'),
-    path('get_item_details/<int:item_id>/',views.get_item_details,name='get_item_details'),
+    path('Fin_get_vendor_details/<int:vendor_id>/',views.Fin_get_vendor_details,name='Fin_get_vendor_details'),
+    path('Fin_get_customer_details/<int:customer_id>/',views.Fin_get_customer_details,name='Fin_get_customer_details'),
+    path('Fin_reference_number_auto/',views.Fin_reference_number_auto,name='Fin_reference_number_auto'),
+    path('Fin_get_item_details/<int:item_id>/',views.Fin_get_item_details,name='Fin_get_item_details'),
+    path('Fin_check_recurring_bill_number/<int:pk>',views.Fin_check_recurring_bill_number,name='Fin_check_recurring_bill_number'),
+    
 
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),

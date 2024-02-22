@@ -1602,7 +1602,7 @@ def Fin_Edit_Staff_profile_Action(request):
 
 #ITEM
 
-def Fin_createItem(request):
+def Fin_createItem_modal(request):
     if 's_id' in request.session:
         s_id = request.session['s_id']
         data = Fin_Login_Details.objects.get(id = s_id)
@@ -1611,17 +1611,17 @@ def Fin_createItem(request):
             allmodules = Fin_Modules_List.objects.get(Login_Id = s_id,status = 'New')
             units = Fin_Units.objects.filter(Company = com)
             acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
-            return render(request,'company/Fin_Add_Item.html',{'allmodules':allmodules,'com':com,'data':data,'units':units, 'accounts':acc})
+            return redirect(Fin_recurring_bill_create_page)
         else:
             com = Fin_Staff_Details.objects.get(Login_Id = s_id)
             allmodules = Fin_Modules_List.objects.get(company_id = com.company_id,status = 'New')
             units = Fin_Units.objects.filter(Company = com.company_id)
             acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com.company_id).order_by('account_name')
-            return render(request,'company/Fin_Add_Item.html',{'allmodules':allmodules,'com':com,'data':data,'units':units, 'accounts':acc})
+            return redirect(Fin_recurring_bill_create_page)
     else:
        return redirect('/')
 
-def Fin_createNewItem(request):
+def Fin_createNewItem_modal(request):
     if 's_id' in request.session:
         s_id = request.session['s_id']
         data = Fin_Login_Details.objects.get(id = s_id)
@@ -1695,9 +1695,9 @@ def Fin_createNewItem(request):
                     action = 'Created'
                 )
                 
-                return redirect(recurring_bill_create_page)
+                return redirect(Fin_recurring_bill_create_page)
 
-        return redirect(recurring_bill_create_page)
+        return redirect(Fin_recurring_bill_create_page)
     else:
        return redirect('/')
 
@@ -2126,7 +2126,7 @@ def Fin_checkVendorEmail(request):
 
 # harikrishnan-------------------------
 
-def recurring_bill_list(request):
+def Fin_recurring_bill_list(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     
@@ -2143,7 +2143,7 @@ def recurring_bill_list(request):
     return render(request,'company/Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill})
 
 
-def recurring_bill_create_page(request):
+def Fin_recurring_bill_create_page(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     
@@ -2164,7 +2164,7 @@ def recurring_bill_create_page(request):
 
     return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'items':items,'customers':customers})
 
-def recurring_bill_save(request):
+def Fin_recurring_bill_save(request):
     if request.method == 'POST':
         vendor = request.POST['select_vendor']
         recurring_bill_number = request.POST['RecurringBillNo']
@@ -2208,10 +2208,10 @@ def recurring_bill_save(request):
                                   advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
         
         newBill.save()
-        return redirect('recurring_bill_list')
+        return redirect('Fin_recurring_bill_list')
     
     
-def recurring_bill_overview(request,pk):
+def Fin_recurring_bill_overview(request,pk):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     bill1 = Fin_Recurring_Bills.objects.get(id=pk)
@@ -2230,7 +2230,7 @@ def recurring_bill_overview(request,pk):
     return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName})
 
 
-def get_vendor_details(request, vendor_id):
+def Fin_get_vendor_details(request, vendor_id):
 
     try:
         sid = request.session['s_id']
@@ -2253,7 +2253,7 @@ def get_vendor_details(request, vendor_id):
             
         elif loginn.User_Type == 'Staff' :
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
-            vendor = Fin_Vendors.objects.get(id=vendor_id,Company_id=com.id)
+            vendor = Fin_Vendors.objects.get(id=vendor_id,Company_id=com.company_id_id)
             data = {
                 'email': vendor.email,
                 'street': vendor.billing_street,
@@ -2270,7 +2270,7 @@ def get_vendor_details(request, vendor_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-def get_customer_details(request, customer_id):
+def Fin_get_customer_details(request, customer_id):
     try:
         sid = request.session['s_id']
         loginn = Fin_Login_Details.objects.get(id=sid)
@@ -2299,7 +2299,7 @@ def get_customer_details(request, customer_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-def get_item_details(request, item_id):
+def Fin_get_item_details(request, item_id):
     try:
         sid = request.session['s_id']
         loginn = Fin_Login_Details.objects.get(id=sid)
@@ -2315,7 +2315,7 @@ def get_item_details(request, item_id):
             
         elif loginn.User_Type == 'Staff' :
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
-            items = Fin_Items.objects.get(Company_id=com.id,id=item_id)
+            items = Fin_Items.objects.get(Company_id=com.company_id_id,id=item_id)
             data = {
                 'hsn': items.hsn,
                 'price': items.selling_price,
@@ -2328,16 +2328,65 @@ def get_item_details(request, item_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-def reference_number_auto(request):
+def Fin_reference_number_auto(request):
     try:
-        recurringBill = Fin_Recurring_Bills.objects.latest('-id')
-        ref = {
-            'referenceID': recurringBill.id
-        }
-        return JsonResponse(ref)
+        sid = request.session['s_id']
+        loginn = Fin_Login_Details.objects.get(id=sid)
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            recurringBill = Fin_Recurring_Bills.objects.filter(Company_id = com.id)
+            recurringBillLatest = recurringBill.latest('-id')
+            data = {
+                'referenceID': recurringBillLatest.id
+            }
+            return JsonResponse(data)
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            recurringBill = Fin_Recurring_Bills.objects.filter(Company_id = com.company_id_id)
+            recurringBillLatest = recurringBill.latest('-id')
+            data = {
+                'referenceID': recurringBillLatest.id
+            }
+            return JsonResponse(data)
+        
     except Fin_Recurring_Bills.DoesNotExist:
         return JsonResponse({'error': 'Recurring Bill not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+    
+def Fin_check_recurring_bill_number(request):
+    try:
+        sid = request.session['s_id']
+        loginn = Fin_Login_Details.objects.get(id=sid)
+        recurringBillNum = request.GET.get('recurringBillNum', None)
+        recurringNum = recurringBillNum.slice(0,2)
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            for i in Fin_Recurring_Bills.objects.filter(Company_id=com.id):
+                if i.recurring_bill_number.slice(0,2) == recurringNum:
+                    data = {
+                        'mess':'Code already in use, Try another code'
+                            }
+                    return JsonResponse(data)
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            for i in Fin_Recurring_Bills.objects.filter(Company_id=com.company_id_id):
+                if i.recurring_bill_number.slice(0,2) == recurringNum:
+                    data = {
+                        'mess':'Code already in use, Try another code'
+                            }
+                    return JsonResponse(data)
+        
+    except Fin_Recurring_Bills.DoesNotExist:
+        return JsonResponse({'error': 'Recurring Bill not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+
+def Fin_recurring_bill_edit_page(request,pk):
+    return render(request,'company/Recurring_Bill_Edit_Page.html')
 
 
