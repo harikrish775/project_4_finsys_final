@@ -461,10 +461,10 @@ footer p {
                                     <h6 class="mb-0">Address</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ bill1.vendor.address }} <br>
-                                        {{bill1.vendor.city}},
-                                        {{bill1.vendor.state}}
-                                        {{bill1.vendor.pincode}}</p>
+                                    <p class="mb-0 text-right">{{ bill1.vendor.billing_street }} <br>
+                                        {{bill1.vendor.billing_city}},
+                                        {{bill1.vendor.billing_state}}
+                                        {{bill1.vendor.billing_pincode}}</p>
                                 </div>
                             </div>
                             <hr class="my-4">
@@ -488,7 +488,7 @@ footer p {
                                     <p class="mb-0">NET {{ bill1.payment_terms }}</p>
                                 </div> -->
                                 <div class="col-md-3 mt-3">
-                                    {% if bill1.company_payment_terms == "0" %}
+                                    {% if bill1.company_payment_terms_id is Null %}
                                         <p class="mb-0">Due on Receipt</p>
                                     {% else %}
                                         <p class="mb-0">NET {{ bill1.company_payment_terms }}</p>
@@ -771,11 +771,11 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>FROM,</p>
-                                            <h5>{{companyName }}</h5>
-                                            <p class="address "> {{bill1.caddress}}<br>
-                                                {{bill1.city}},
-                                                {{bill1.state}}<br>
-                                                {{bill1.pincode}}<br>
+                                            <h5>{{ companyName }}</h5>
+                                            <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                                {{bill1.vendor.billing_city}},
+                                                {{bill1.vendor.billing_state}}<br>
+                                                {{bill1.vendor.billing_pincode}}<br>
                                             </p>
                                             
                                         </div>
@@ -786,10 +786,10 @@ footer p {
                                                 {% if vendor_gstin %}
                                                   GSTIN:{{ bill1.vendor.gstin }}
                                                 {% endif %}
-                                                <p class="address "> {{vendor_street}}<br>
-                                                    {{vendor_city}},
-                                                    {{vendor_state}}<br>
-                                                    {{vendor_pincode}}<br>
+                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                                    {{bill1.vendor.billing_city}},
+                                                    {{bill1.vendor.billing_state}}<br>
+                                                    {{bill1.vendor.billing_pincode}}<br>
                                                 </p>
                                         </div>
                                     </div>
@@ -803,7 +803,7 @@ footer p {
                                                 {% endif %}</p>
                                         </div>
                                         <div class="col-5">
-                                            <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
+                                            <p style="color:#000">Start Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
                                             <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
                                            
                                         </div>
@@ -848,7 +848,7 @@ footer p {
                                 <div class="row">
                                     <div class="col-7">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{bill1.note}}</p>
+                                        <p style="color:black">{{bill1.description}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
@@ -1357,11 +1357,11 @@ footer p {
                         </div>
                 </div>
             </div>
-            <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+            <!-- <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
                 <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
                 <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
                 <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
-            </div>
+            </div> -->
         </div>
 
         <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
@@ -1373,31 +1373,31 @@ footer p {
                             <div class="card bg-white" style="border: 1px dotted black;">
                                 <div class="mt-2" style="text-align: center;">
                                     <div class="text-center" style="font-size: 3vh; color: black;">
-                                        <b>{{bill1.cname}} </b>
+                                        <b>{{companyName}} </b>
                                     </div>
-                                    <span style="font-size: x-small; color: black;">{{ bill1.caddress }} <br>
-                                        {{bill1.city}},
-                                        {{bill1.state}}
-                                        {{bill1.pincode}} <br>
-                                        {{ bill1.phone }} <br>{{ bill1.cemail }} 
+                                    <span style="font-size: x-small; color: black;">{{ companyData.caddress }} <br>
+                                        {{companyData.city}},
+                                        {{companyData.state}}
+                                        {{companyData.pincode}} <br>
+                                        {{ companyData.phone }} <br>{{ companyData.email }} 
                                     </span>
                                 </div>
                                 <div class="ml-3 mr-3 mt-2" style="color: black;">
                                     <div class="row">
                                         <div class="col-md-6 text-left">Recurring Bill No:</div>
-                                        <div class="col-md-5 text-right">{{bill1.billno}}</div>
+                                        <div class="col-md-5 text-right">{{bill1.recurring_bill_number}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Customer Name:</div>
-                                        <div class="col-md-5 text-right">{{ bill1.customer_name}}</div>
+                                        <div class="col-md-5 text-right">{{ bill1.customer.first_name}} {{ bill1.customer.last_name}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Vendor Name:</div>
-                                        <div class="col-md-5 text-right">{{ bill1.vendor_name}}</div>
+                                        <div class="col-md-5 text-right">{{ bill1.vendor.first_name}} {{ bill1.vendor.last_name}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Shipment Date :</div>
-                                        <div class="col-md-5 text-right">{{bill1.start_date | date:'d-m-Y'}}</div>
+                                        <div class="col-md-5 text-right">{{bill1.date | date:'d-m-Y'}}</div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 text-left">Delivery Date:</div>
@@ -1471,7 +1471,7 @@ footer p {
                                             Subtotal
                                         </div>
                                         <div class="col-md-7 text-right  " style="color: black;">
-                                            {{ bill1.grand_total }}
+                                            {{ bill1.sub_total }}
                                         </div>
                                     </div>
                                     {% if bill1.igst != 0 %}

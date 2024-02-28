@@ -196,15 +196,16 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Reference Number</label>
-                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" >
-                                                        <script>
+                                                        <input type="text" class="form-control" value="{{refData.referenceID}}" disabled >
+                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" value="{{refData.referenceID}}" hidden >
+                                                        <!-- <script>
                                                             $(document).ready(function() {
                                                             $.ajax({
                                                                 url: '/Fin_reference_number_auto/',
                                                                 type: 'GET',
-                                                                success: function(ref) {
+                                                                success: function(data) {
                                                                     console.log('----success------');
-                                                                    nextID = ref.referenceID + 1;
+                                                                    nextID = data.referenceID + 1;
                                                                     $("#ReferenceNo").val(nextID);
                                                                 },
                                                                 error: function(xhr, status, error) {
@@ -214,7 +215,7 @@
                                                                 }
                                                             });
                                                         });
-                                                        </script>
+                                                        </script> -->
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
@@ -429,13 +430,13 @@
                                                         <tbody>
                                                             
                                                             <tr class="item-row">
-                                                                <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-qty" value="0"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-tax" placeholder="Tax Rate"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-discount" value="0"></td>
-                                                                <td class="border" style="min-width: 150px;"><input type="text" class="form-control item-total" value="0" disabled></td>
+                                                                <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="qty[]" type="text" class="form-control item-qty" value="0"></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="taxrate[]" type="text" class="form-control item-tax" placeholder="Tax Rate"></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
+                                                                <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" disabled></td>
                                                                 <td class="border" ><button class="btn btn-outline-secondary text-grey mb-1 w-100 " id="plus">+</button><br> <button class="btn btn-outline-secondary text-grey w-100" id="minus"> - </button></td>
                                                             </tr>
                                                         </tbody>
@@ -444,7 +445,7 @@
 
                                                     <script>
                                                         
-
+                                                        // table row fill
                                                         $(document).ready(function () {
                                                         // Use event delegation on the table
                                                         $("#itemTable").on("change", ".item-select", function () {
@@ -469,6 +470,42 @@
                                                         });
                                                         
                                                     });
+
+
+                                                    // item save
+                                                    $(document).ready(function() {
+                                                    $('#saveItemsButton').click(function() {
+                                                        var itemsData = [];
+
+                                                        // Iterate through each row in the table
+                                                        $('#itemTable tbody tr').each(function() {
+                                                            var item = {
+                                                                'items': $(this).find('.item-select').val(),
+                                                                'hsn': $(this).find('.item-hsn').val(),
+                                                                'quantity': $(this).find('.item-qty').val(),
+                                                                'price': $(this).find('.item-price').val(),
+                                                                'tax_rate': $(this).find('.item-tax').val(),
+                                                                'discount': $(this).find('.item-discount').val(),
+                                                                'total': $(this).find('.item-total').val()
+                                                            };
+
+                                                            itemsData.push(item);
+                                                        });
+
+                                                        // Send data to the Django view using AJAX
+                                                        $.ajax({
+                                                            url: '/your_save_items_view_url/',
+                                                            type: 'POST',
+                                                            data: { 'items': itemsData },
+                                                            success: function(response) {
+                                                                console.log(response);
+                                                            },
+                                                            error: function(error) {
+                                                                console.error(error);
+                                                            }
+                                                        });
+                                                    });
+                                                });
                                                        
                                                     </script>
                                                 </div>

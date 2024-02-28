@@ -719,6 +719,7 @@ class Fin_CompanyRepeatEvery(models.Model):
     days = models.IntegerField(null=True,blank=True)
 
 class Fin_Recurring_Bills(models.Model):
+    company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
     vendor = models.ForeignKey(Fin_Vendors,on_delete=models.CASCADE,null=True,blank=True)
     recurring_bill_number = models.CharField(max_length=255,null=True,blank=True)
     profile_name = models.CharField(max_length=255,null=True,blank=True)
@@ -756,7 +757,8 @@ class Fin_Recurring_Bill_Items(models.Model):
     discount = models.IntegerField(null=True,blank=True)
     total = models.IntegerField(null=True,blank=True)
     recurring_bill = models.ForeignKey(Fin_Recurring_Bills,on_delete=models.CASCADE,null=True,blank=True)
-
+    company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
+    
 class Fin_Recurring_Bill_Reference(models.Model):
     reference_number = models.IntegerField(null=True,blank=True)
     company = models.ForeignKey(Fin_Company_Details,on_delete=models.CASCADE,null=True,blank=True)
