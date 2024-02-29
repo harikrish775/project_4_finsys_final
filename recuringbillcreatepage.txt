@@ -431,7 +431,6 @@
                                                             <tbody>
                                                                 
                                                                 <tr class="item-row">
-                                                                    <td></td>
                                                                     <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="text" class="form-control item-qty" value="0"></td>
@@ -439,7 +438,7 @@
                                                                     <td class="border" style="min-width: 150px;"><input name="taxrate[]" type="text" class="form-control item-tax" placeholder="Tax Rate"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
-                                                                    <td class="border" ><p class="btn btn-outline-secondary text-grey mb-1 w-100 " onclick="addRow()" id="plus">+</p><br> <p class="btn btn-outline-secondary text-grey w-100" onclick="removeRow(this)" id="minus"> - </p></td>
+                                                                    <td class="border" ><button class="btn btn-outline-secondary text-grey mb-1 w-100 " id="plus">+</button><br> <button class="btn btn-outline-secondary text-grey w-100" id="minus"> - </button></td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -624,187 +623,182 @@
                                                         
                                                     </div>
                                                     <script>
-
-                                                    function finalBill() {
-                                                        // Attach event listener for input fields in the tax calculation section
-                                                        var subtotalInput = document.getElementById('subTotal');
-                                                        var cgstInput = document.getElementById('cgst');
-                                                        var sgstInput = document.getElementById('sgst');
-                                                        var taxAmountInput = document.getElementById('taxAmount');
-                                                        var shippingInput = document.getElementById('shippingCharge');
-                                                        var adjustmentInput = document.getElementById('adjustment');
-                                                        var paidInput = document.getElementById('paidAmount');
-                                                        var grandInput = document.getElementById('grandTotal');
-                                                        var balanceInput = document.getElementById('balanceDue');
-                                                        
-
-                                                        [subtotalInput, cgstInput, sgstInput,paidInput,adjustmentInput,shippingInput].forEach(function (input) {
-                                                            input.addEventListener('input', function () {
-                                                                calculateTaxAmount();
-                                                            });
-                                                        });
-
-                                                        // Function to calculate tax amount
-                                                        function calculateTaxAmount() {
-                                                            var subtotal = parseFloat(subtotalInput.value) || 0;
-                                                            var cgst = parseFloat(cgstInput.value) || 0;
-                                                            var sgst = parseFloat(sgstInput.value) || 0;
-                                                            var shipping = parseFloat(shippingInput.value) || 0;
-                                                            var adjustment = parseFloat(adjustmentInput.value) || 0;
-                                                            var paid = parseFloat(paidInput.value) || 0;      
-                                                            
-                                                            // Calculate total tax amount
-                                                            var totalTaxAmount = (subtotal * (cgst + sgst)) / 100;
-                                                            var grandTotalo = subtotal + totalTaxAmount + shipping - adjustment ;
-                                                            var balance = grandTotalo - paid;
-
-                                                            // Display the calculated tax amount
-                                                            taxAmountInput.value = totalTaxAmount.toFixed(2);
-                                                            grandInput.value = grandTotalo.toFixed(2);
-                                                            balanceInput.value = balance.toFixed(2);
-                                                            
-                                                            
-
-                                                        }
-                                                    }
-
-                                                    document.addEventListener('DOMContentLoaded', finalBill);
-
-
-
+                                                        // // Function to calculate and update the total for a row
+                                                        // function updateTotal(row) { 
+                                                        //     var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                                                        //     var price = parseFloat(row.querySelector('.item-price').value) || 0;
+                                                        //     var tax = parseFloat(row.querySelector('.item-tax').value) || 0;
+                                                        //     var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
                                                     
+                                                        //     var total = qty * price * (1 + tax / 100) - discount;
+                                                        //     row.querySelector('.item-total').value = total.toFixed(2);
+                                                    
+                                                        //     // Update only the grand total for the current row
+                                                        //     updateGrandTotal(row);
+                                                        // }
+                                                    
+                                                        // // Function to initialize calculations on page start
+                                                        // function initializeCalculations() {
+                                                        //     var itemRows = document.querySelectorAll('.item-row');
+                                                    
+                                                        //     itemRows.forEach(function (row) {
+                                                        //         updateTotal(row);
+                                                        //     });
+                                                        // }
+                                                    
+                                                        // // Attach event listener for input fields in the row
+                                                        // var itemRows = document.querySelectorAll('.item-row');
+                                                        // itemRows.forEach(function (itemRow) {
+                                                        //     itemRow.addEventListener('input', function (event) {
+                                                        //         if (event.target.classList.contains('item-qty') ||
+                                                        //             event.target.classList.contains('item-price') ||
+                                                        //             event.target.classList.contains('item-tax') ||
+                                                        //             event.target.classList.contains('item-discount')) {
+                                                        //             updateTotal(itemRow);
+                                                        //         }
+                                                        //     });
+                                                        // });
+                                                    
+                                                        // // Attach event listener for the "Add Row" button
+                                                        // var plusButton = document.getElementById('plus');
+                                                        // plusButton.addEventListener('click', function () {
+                                                        //     var clone = itemRows[0].cloneNode(true);
+                                                        //     document.querySelector('tbody').appendChild(clone);
+                                                    
+                                                        //     // Reset values for the new row
+                                                        //     clone.querySelectorAll('input').forEach(function (input) {
+                                                        //         input.value = '';
+                                                        //     });
+                                                    
+                                                        //     updateTotal(clone);
+                                                        // });
+                                                    
+                                                        // // Attach event listener for the "Remove Row" button
+                                                        // var minusButton = document.getElementById('minus');
+                                                        // minusButton.addEventListener('click', function () {
+                                                        //     if (itemRows.length > 1) {
+                                                        //         itemRows[itemRows.length - 1].parentNode.removeChild(itemRows[itemRows.length - 1]);
+                                                        //         updateGrandTotal(itemRows[itemRows.length - 1]);
+                                                        //     }
+                                                        // });
+                                                    
+                                                        // // Call initializeCalculations on page load
+                                                        // window.onload = function () {
+                                                        //     initializeCalculations();
+                                                        //     // Set up an interval to continuously check for changes
+                                                        //     setInterval(function () {
+                                                        //         itemRows.forEach(function (row) {
+                                                        //             updateTotal(row);
+                                                        //         });
+                                                        //     }, 1000); // Adjust the interval time as needed
+                                                        // };
+
 
                                                         // Function to calculate and update the total for a row
-                                                        function updateTotal(row) { 
-                                                            var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-                                                            var price = parseFloat(row.querySelector('.item-price').value) || 0;
-                                                            var tax = parseFloat(row.querySelector('.item-tax').value) || 0;
-                                                            var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
-                                                    
-                                                            var total = qty * price * (1 + tax / 100) - discount;
-                                                            row.querySelector('.item-total').value = total.toFixed(2);
-                                                    
-                                                            // Update only the grand total for the current row
-                                                            
-                                                            updateSubTotal();
-                                                            finalBill()
-                                                        }
+// function updateTotal(row) { 
+//     var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+//     var price = parseFloat(row.querySelector('.item-price').value) || 0;
+//     var tax = parseFloat(row.querySelector('.item-tax').value) || 0;
+//     var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
 
-                                                        function updateSubTotal() {
-                                                        var subTotal = 0;
-                                                        // Iterate over all rows and sum up the individual totals
-                                                        var allRows = document.querySelectorAll('.item-row');
-                                                        allRows.forEach(function (row) {
-                                                            var rowTotal = parseFloat(row.querySelector('.item-total').value) || 0;
-                                                            subTotal += rowTotal;
-                                                        });
+//     var total = qty * price * (1 + tax / 100) - discount;
+//     row.querySelector('.item-total').value = total.toFixed(2);
 
-                                                        // Update the grand total in your HTML (replace 'your-grand-total-id' with the actual ID)
-                                                        document.getElementById('subTotal').value = subTotal.toFixed(2);
-                                                    }
-                                                    
-                                                        // Function to initialize calculations on page start
-                                                        function initializeCalculations() {
-                                                            addIndexToTable()
-                                                        var itemRows = document.querySelectorAll('.item-row');
-
-                                                        itemRows.forEach(function (row) {
-                                                            updateTotal(row);
-                                                            attachInputEventListener(row);
-                                                        });
-                                                    }
-                                                        // Attach event listener for input fields in the row
-                                                        var itemRows = document.querySelectorAll('.item-row');
-                                                        itemRows.forEach(function (itemRow) {
-                                                            itemRow.addEventListener('input', function (event) {
-                                                                if (event.target.classList.contains('item-qty') ||
-                                                                    event.target.classList.contains('item-price') ||
-                                                                    event.target.classList.contains('item-tax') ||
-                                                                    event.target.classList.contains('item-discount')) {
-                                                                    updateTotal(itemRow);
-                                                                }
-                                                            });
-                                                        });
-                                                    
-                                                        // Attach event listener for the "Add Row" button
-                                                        function addRow() {
-                                                        var clone = itemRows[0].cloneNode(true);
-                                                        document.querySelector('tbody').appendChild(clone);
-
-                                                        // Reset values for the new row
-                                                        clone.querySelectorAll('input').forEach(function (input) {
-                                                            input.value = 0;
-                                                        });
-                                                        initializeCalculations();
-                                                        
-                                                    }
-                                                                                                        
-                                                        // Attach event listener for the "Remove Row" button
-                                                        
-                                                        function removeRow(clickedButton) {
-                                                        // Get the parent row of the clicked button
-                                                        var rowToRemove = clickedButton.closest('.item-row');
-                                                        
-                                                        // Ensure the row to remove is not null
-                                                        if (rowToRemove) {
-                                                            // Remove the specified row from the DOM
-                                                            rowToRemove.parentNode.removeChild(rowToRemove);
-
-                                                            // Reinitialize event listeners for the remaining rows
-                                                            itemRows = document.querySelectorAll('.item-row');
-                                                            itemRows.forEach(function (itemRow) {
-                                                                attachInputEventListener(itemRow);
-                                                            });
-
-                                                            // Perform any other necessary calculations or updates
-                                                            initializeCalculations();
-                                                            
-                                                        } else {
-                                                            // Alert if the provided row is null
-                                                            alert("Invalid row to remove.");
-                                                        }
-                                                    }
-
-                                                    function addIndexToTable() {
-                                                    // Get the table element
-                                                    var table = document.getElementById('itemTable');
-
-                                                    // Get all rows in the table body
-                                                    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-                                                    // Loop through each row and add an index number
-                                                    for (var i = 0; i < rows.length; i++) {
-                                                        // Update the index cell content
-                                                        rows[i].cells[0].textContent = i + 1; // Assuming the index cell is the first cell (cells[0])
-                                                    }
-                                                }
-
-                                                        function attachInputEventListener(row) {
-                                                            row.addEventListener('input', function (event) {
-                                                                if (event.target.classList.contains('item-qty') ||
-                                                                    event.target.classList.contains('item-price') ||
-                                                                    event.target.classList.contains('item-tax') ||
-                                                                    event.target.classList.contains('item-discount')) {
-                                                                    updateTotal(row);
-                                                                }
-                                                            });
-                                                        }
-                                 
-                                                    
-                                                        // Call initializeCalculations on page load
-                                                        window.onload = function () {
-                                                        initializeCalculations();
-
-                                                        // Set up an interval to continuously check for changes
-                                                        setInterval(function () {
-                                                            itemRows.forEach(function (row) {
-                                                                updateTotal(row);
-                                                            });
-                                                        }, 1000);
-                                                    };
+//     // Update the grand total for all rows
+//     updateSubTotal();
+// }
 
 
-                                                    
+function updateTotal(row) {
+    var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+    var price = parseFloat(row.querySelector('.item-price').value) || 0;
+    var tax = parseFloat(row.querySelector('.item-tax').value) || 0;
+    var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
+
+    var total = qty * price * (1 + tax / 100) - discount;
+    row.querySelector('.item-total').value = total.toFixed(2);
+}
+
+// Assuming your table has an ID, for example, 'myTable'
+var table = document.getElementById('itemTable');
+var rows = table.getElementsByTagName('tr');
+
+// Loop through each row and attach the updateTotal function to the corresponding inputs
+for (var i = 1; i < rows.length; i++) {
+    var inputs = rows[i].getElementsByTagName('input');
+    for (var j = 0; j < inputs.length; j++) {
+        inputs[j].addEventListener('input', function () {
+            updateTotal(this.closest('tr'));
+        });
+    }
+}
+
+// Function to update grand total for the entire table
+function updateSubTotal() {
+    var subTotal = 0;
+
+    // Iterate over all rows and sum up the individual totals
+    var allRows = document.querySelectorAll('.item-row');
+    allRows.forEach(function (row) {
+        var rowTotal = parseFloat(row.querySelector('.item-total').value) || 0;
+        subTotal += rowTotal;
+    });
+
+    // Update the grand total in your HTML (replace 'your-grand-total-id' with the actual ID)
+    document.getElementById('subTotal').value = subTotal.toFixed(2);
+}
+
+// Function to initialize calculations on page start
+function initializeCalculations() {
+    var itemRows = document.querySelectorAll('.item-row');
+
+    itemRows.forEach(function (row) {
+        updateTotal(row);
+    });
+}
+
+// Attach event listener for input fields in the row
+var itemRows = document.querySelectorAll('.item-row');
+itemRows.forEach(function (itemRow) {
+    itemRow.addEventListener('input', function (event) {
+        if (event.target.classList.contains('item-qty') ||
+            event.target.classList.contains('item-price') ||
+            event.target.classList.contains('item-tax') ||
+            event.target.classList.contains('item-discount')) {
+            updateTotal(itemRow);
+        }
+    });
+});
+
+// Attach event listener for the "Add Row" button
+var plusButton = document.getElementById('plus');
+plusButton.addEventListener('click', function () {
+    var clone = itemRows[0].cloneNode(true);
+    document.querySelector('tbody').appendChild(clone);
+
+    // Reset values for the new row
+    clone.querySelectorAll('input').forEach(function (input) {
+        input.value = '';
+    });
+
+    // Update total for the new row
+    updateTotal(clone);
+});
+
+// Attach event listener for the "Remove Row" button
+var minusButton = document.getElementById('minus');
+minusButton.addEventListener('click', function () {
+    if (itemRows.length > 1) {
+        itemRows[itemRows.length - 1].parentNode.removeChild(itemRows[itemRows.length - 1]);
+        updateGrandTotal();
+    }
+});
+
+// Call initializeCalculations on page load
+window.onload = function () {
+    initializeCalculations();
+};
+
                                                     </script>
                                                     
                                                     
@@ -3173,24 +3167,20 @@ $(document).on("click","#saveNewAccount",function(){
 // ------------------------------------------------------------------------------------------------
 // index number
 
-//     document.addEventListener('DOMContentLoaded', function () {
-//     // Get the table element
-//     var table = document.getElementById('itemTable');
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get the table element
+    var table = document.getElementById('itemTable');
 
-//     // Get all rows in the table body
-//     var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    // Get all rows in the table body
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-//     // Loop through each row and add an index number
-//     for (var i = 0; i < rows.length; i++) {
-//         var cell = document.createElement('td');
-//         cell.textContent = i + 1; // Index starts from 1
-//         rows[i].insertBefore(cell, rows[i].firstChild);
-//     }
-// });
-
-
-
-
+    // Loop through each row and add an index number
+    for (var i = 0; i < rows.length; i++) {
+        var cell = document.createElement('td');
+        cell.textContent = i + 1; // Index starts from 1
+        rows[i].insertBefore(cell, rows[i].firstChild);
+    }
+});
 </script>
 
 {% endblock %}

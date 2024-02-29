@@ -626,7 +626,7 @@ footer p {
                                 <div class="col-md-12 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
 
-                                    {% for j in item  %}
+                                    {% for j in items  %}
                                         <div class="row mb-4 d-flex justify-content-between align-items-center">
                                             <div class="col-md-3 mt-3">
                                                 <h6 class="mb-0">Name</h6>
@@ -829,13 +829,12 @@ footer p {
                                         {% for j in items  %}
                                         <tr>
                                             <td style="color:black; text-align: center;">
-                                                {{j.item}}
-                                                
+                                                {{j.items}}                                                
                                             </td>
                                             <td style="color:black">{{j.hsn}}</td>
                                             <td style="color:black">{{j.price}}</td>
-                                            <td style="color:black">{{j.qty}}</td>
-                                            <td style="color:black">{{j.tax}} %</td>
+                                            <td style="color:black">{{j.quantity}}</td>
+                                            <td style="color:black">{{j.tax_rate}} %</td>
                                             <td style="color:black">{{j.discount}} </td>
                                             <td style="color:black">{{j.total}}</td>
                                         </tr>
@@ -1437,22 +1436,22 @@ footer p {
                                     </div>
                                 </div>
                                 <div>
-                                    {% for j in ritem %}
+                                    {% for j in items %}
                                     <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
                                         <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
-                                            {{j.item}}
+                                            {{j.items}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: right;">
                                             {{j.hsn}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
-                                            {{j.qty}}
+                                            {{j.quantity}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
                                             {{j.price}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
-                                            {{j.tax}}
+                                            {{j.tax_rate}}
                                         </div>
                                         <div class="equal-length-item" style="text-align: center; ">
                                             {{j.discount}}
