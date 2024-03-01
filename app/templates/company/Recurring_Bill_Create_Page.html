@@ -383,6 +383,19 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             
+                                                                <form action="" method="post" id="newTermForm1">
+                                                                    {% csrf_token %}
+
+                                                                    <div class="row mt-2">
+                                                                        <div class="col-md-6">
+                                                                            <label for="name">Term Name</label>
+                                                                            <input type="text" name="term_name" id="termName1" class="form-control w-100">
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <label for="name">Days</label>
+                                                                            <input type="number" name="days" id="termDays1" class="form-control w-100" min="0" step="1">
+                                                                        </div>
+                                                                    </div>
                                                                 
                                                         
                                                         
@@ -390,11 +403,55 @@
                                                         </div>
                                                         <div class="modal-footer">
                                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                          <button type="button" class="btn btn-primary">Save changes</button>
+                                                          <button class="btn btn-primary" id="paymentTermSave">Save changes</button>
                                                         </div>
+                                                    </form>
                                                       </div>
                                                     </div>
                                                   </div>
+
+                                                  <script>
+                                                   $(document).on("click", "#paymentTermSave", function () {
+                                                    var trm = $('#termName1').val();
+                                                    var dys = $("#termDays1").val();
+                                                    
+                                                    if (trm !== "" && dys !== "") {
+                                                        $.ajax({
+                                                            type: 'POST',
+                                                            url: "Fin_new_payment_terms/",
+                                                            data: {
+                                                                'term': trm,
+                                                                'days': dys,
+                                                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                                                            },
+                                                            success: function (response) {
+                                                                if (response.status) {
+                                                                    document.getElementById("newTermForm1").reset();
+
+                                                                    var dropdown = $('#termadd2');
+                                                                    dropdown.empty();
+                                                                    dropdown.append(`<option value="" selected>Choose</option>`);
+
+                                                                    $.each(response.terms, function (index, term) {
+                                                                        if (term.name === trm) {
+                                                                            dropdown.append($('<option selected></option>').text(term.name).val(term.id))
+                                                                        } else {
+                                                                            dropdown.append($('<option></option>').text(term.name).val(term.id))
+                                                                        }
+                                                                    });
+                                                                    alert('successfully added')
+
+                                                                } else {
+                                                                    alert(response.message)
+                                                                }
+                                                            },
+                                                        });
+                                                    } else {
+                                                        alert('Invalid');
+                                                    }
+                                                });
+
+                                                  </script>
                                                 <!-- paymentTermsModal end -->
 
                                                 <div class="row ml-md-2 mr-md-2 border-bottom pb-3 mb-5">
@@ -1021,7 +1078,7 @@
                                         <div class="d-flex">
                                             <select name="payment_terms" id="paymentTerms" class="form-control">
                                                 <option value="" selected>Choose</option>
-                                                {% for p in pTerms %}
+                                                {% for p in payment_terms %}
                                                 <option value="{{p.id}}">{{p.term_name}}</option>
                                                 {% endfor %}
                                             </select>
@@ -1248,7 +1305,7 @@
             </div>
             
             
-            <!-- Unit Create Modal -->
+            <!-- payment term vendor Create Modal -->
             
             <div class="modal fade" id="newPaymentTerm">
                 <div class="modal-dialog modal-lg">
@@ -1316,7 +1373,7 @@
                     if (trm !="" && dys !=""){
                         $.ajax({
                             type : 'POST',
-                            url:"",
+                            url:"Fin_new_payment_terms/",
                             data:{
                                 'term' : trm,
                                 'days' : dys,
@@ -2119,7 +2176,7 @@
                     if (trm !="" && dys !=""){
                         $.ajax({
                             type : 'POST',
-                            url:"",
+                            url:"Fin_add_payment_terms",
                             data:{
                                 'term' : trm,
                                 'days' : dys,
@@ -2711,7 +2768,7 @@
                         <div class="row mt-2">
                             <div class="col-12">
                                 <label for="name">Unit Name</label>
-                                <input name="name" id="unit_name" class="form-control text-uppercase w-100">
+                                <input name="unitName" id="unit_name" class="form-control text-uppercase w-100">
                             </div>
                         </div>
                         <div class="row mt-4">
@@ -2895,9 +2952,9 @@
         if (name !=""){
             $.ajax({
                 type : 'POST',
-                url:"",
+                url:"Fin_new_unit_modal/",
                 data:{
-                    'name' : name,
+                    'unitName' : name,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 
@@ -2905,6 +2962,7 @@
                     if(response.status){
                         document.getElementById("newUnitForm").reset();
                         reloadUnits();
+                        
                     }else{
                         alert(response.message)
                     }
@@ -2916,30 +2974,57 @@
         }
     });
 
+
     function reloadUnits() {
-        $.ajax({
-        url: "",
+    $.ajax({
+        url: "Fin_unit_reload_modal/",
         type: "GET",
         dataType: "json",
-        data: $(this).serialize(),
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-
-        success: function(data) {
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function (data) {
             console.log("AJAX Success - Dropdown Data:", data);
             var dropdown = $('#itemUnit');
-            dropdown.empty()
-            dropdown.append(`<option selected disabled value="">Choose...</option>`);
-            $.each(data, function(key, value) {
-                for(let i=0; i<value.length; i++){
-                    dropdown.append($('<option></option>').attr('class', 'text-uppercase').text(value[i].name))
-                }
+            dropdown.empty();
+            dropdown.append('<option selected disabled value="">Choose...</option>');
+            $.each(data.units, function (index, unit) {
+                dropdown.append($('<option></option>').attr('class', 'text-uppercase').text(unit.name));
             });
         },
-        error: function(xhr, status, error) {
-        console.error(xhr.responseText);
+        error: function (xhr, status, error) {
+            console.error(xhr.responseText);
         }
-        });
-    }
+    });
+}
+
+
+    // function reloadUnits() {
+    //     $.ajax({
+    //     url: "Fin_unit_reload_modal/",
+    //     type: "GET",
+    //     dataType: "json",
+    //     data: $(this).serialize(),
+    //     csrfmiddlewaretoken: '{{ csrf_token }}',
+
+    //     success: function(data) {
+    //         console.log("AJAX Success - Dropdown Data:", data);
+    //         var dropdown = $('#itemUnit');
+    //         dropdown.empty()
+    //         dropdown.append(`<option selected disabled value="">Choose...</option>`);
+    //         $.each(data, function(key, value) {
+    //             for(let i=0; i<value.length; i++){
+    //                 dropdown.append($('<option></option>').attr('class', 'text-uppercase').text(value[i].name))
+    //             }
+    //         });
+    //     },
+    //     error: function(xhr, status, error) {
+    //     console.error(xhr.responseText);
+    //     }
+    //     });
+    // }
+
+
 
     // Account add modal js
 

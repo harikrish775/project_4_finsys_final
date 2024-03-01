@@ -2154,6 +2154,8 @@ def Fin_recurring_bill_create_page(request):
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
         customers = Fin_Customers.objects.filter(Company_id=com.id,status='Active')
         items = Fin_Items.objects.filter(Company_id=com.id)
+        units = Fin_Units.objects.filter(Company = com)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -2172,6 +2174,8 @@ def Fin_recurring_bill_create_page(request):
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
         items = Fin_Items.objects.filter(Company_id=com.id)
+        units = Fin_Units.objects.filter(Company = com)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -2184,7 +2188,7 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'items':items,'customers':customers,'refData':data})
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
@@ -2500,4 +2504,66 @@ def Fin_check_recurring_bill_number(request):
 def Fin_recurring_bill_edit_page(request,pk):
     return render(request,'company/Recurring_Bill_Edit_Page.html')
 
+def Fin_new_unit_modal(request):
+    if request.method == 'POST':
+        unit = request.POST['unitName'].upper()
+        sid = request.session['s_id']
+        loginn = Fin_Login_Details.objects.get(id=sid)
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            
+            data = {
+                'units':units
+            }
+            return JsonResponse(data)
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            units = Fin_Units(name = unit,Company=com.company_id_id)
+            units.save()
+            data = {
+                'units':units
+            }
+            return JsonResponse(data)
+        
+def Fin_unit_reload_modal(request):
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    
+    if loginn.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id = sid)
+        units = Fin_Units.objects.filter(Company_id = com.id)
+        data = {
+                'units':units
+            }
+        return JsonResponse(data)
+        
+    elif loginn.User_Type == 'Staff' :
+        com = Fin_Staff_Details.objects.get(Login_Id = sid)
+        units = Fin_Units.objects.filter(Company_id = com.company_id_id)
+        data = {
+                'units':units
+            }
+        return JsonResponse(data)
+        
+def Fin_new_payment_terms(request):
+    if request.method == 'POST':
+        termName = request.POST['term']
+        termDays = request.POST['days']
+        sid = request.session['s_id']
+        loginn = Fin_Login_Details.objects.get(id=sid)
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            paymentTerm = Fin_Company_Payment_Terms(term_name = termName,days = termDays,Company_id = com.id)
+            paymentTerm.save()
+            return JsonResponse()
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            paymentTerm = Fin_Company_Payment_Terms(term_name = termName,days = termDays,Company_id = com.cpmpany_id_id)
+            paymentTerm.save()
+            return JsonResponse()
+
+
+            
 

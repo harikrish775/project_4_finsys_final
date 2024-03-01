@@ -99,6 +99,13 @@ urlpatterns = [
     path('Fin_createItem_modal',views.Fin_createItem_modal,name='Fin_createItem_modal'),
     
     
+    path('Fin_unit_reload_modal/',views.Fin_unit_reload_modal,name='Fin_unit_reload_modal'),
+    path('Fin_new_unit_modal/',views.Fin_new_unit_modal,name='Fin_new_unit_modal'),
+
+    path('Fin_new_payment_terms/',views.Fin_new_payment_terms,name='Fin_new_payment_terms'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
