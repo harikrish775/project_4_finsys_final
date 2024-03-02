@@ -1,0 +1,75 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<style>
+    table tr td{
+        font-size: larger;
+    }
+    table tr th{
+        font-size: x-large;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <div class="page-content ">
+        <div class="card radius-15">
+            <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+
+            <script>
+                function goBack() {
+                window.history.back();
+                }
+            </script>
+
+            <form action="{% url 'holiday_add' %}" method="post">
+                {% csrf_token %}
+            <div class="card-body">
+                <center><h2 style="text-transform: capitalize;">{{employ.first_name}} {{employ.last_name}}'s comments </h2></center><br>
+            <div class="container">
+                <center>
+                    
+                        <table class="table w-100">
+                            <thead>
+                                <tr>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                    <th>Person</th>
+                                </tr>
+                                
+                            </thead>
+                            <tbody>
+                                {% for i in comments %}
+                                <tr style="text-transform: capitalize;">
+                                    <td>{{i.comment}}</td>
+                                    <td>{{i.date}}</td>
+                                    <td>{{i.login.First_name}} </td>
+                                    
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        
+                    
+                </center>
+                
+
+            </div>
+            
+            </div><br><br>
+                
+            </form>
+        </div>
+    </div>
+
+  
+
+{% endblock %}

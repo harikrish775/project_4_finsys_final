@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script script src="https://kit.fontawesome.com/30ecc6e708.js" crossorigin="anonymous"></script>
+ 
+
+
+<!-- harikrishnan -->
+
+
+</head>
+
+<style>
+    
+    label,#body,td{
+        font-size: x-large;
+    }
+    
+    #table tr th{
+        align-items: flex-start;
+        text-align: left;
+        justify-content: left;
+        font-size: x-large;
+    }
+    #table2 tr th{
+        align-items: flex-start;
+        text-align: left;
+        justify-content: left;
+        font-size: x-large;
+    }
+    #table3 tr th{
+        align-items: flex-start;
+        text-align: left;
+        justify-content: left;
+        font-size: x-large;
+    }
+
+    #table,#table2,#table3{
+        margin-left: 75px;
+    }
+
+    #table th, #table td{
+        width: 50%;
+    }
+
+
+</style>
+
+<body>
+   
+    
+        
+            <div id="overview123" >
+                <div class="container rounded mt-1 mb-5" >
+                    <div class="row">
+                        <div class=" col ">
+                            
+                            <center><div class="d-flex flex-column align-items-center text-center p-3 "> <td class="font-weight-bold" style="font-size: x-large; text-transform: capitalize;"> <td></td> <h1 style="font-size: xx-large;">{{employ.first_name}} {{employ.last_name}}</h1> </td></div></center>
+                            
+                
+                            
+                              
+                        </div>
+                    </div>
+
+                    <div>
+                        <table id="table">
+                            <tr ><center><label for="">Profile</label></center> </tr>
+                            <tr><th>Alias :</th><td>{{employ.alias}}</td></tr>
+                            <tr><th>Employee ID :</th><td>{{employ.employee_number}}</td></tr>
+                            <tr><th>Joining Date :</th><td>{{employ.date_of_joining}}</td></tr>
+                            <tr><th>Designation :</th><td>{{employ.employee_designation}}</td></tr>
+                            <tr><th>Gender :</th><td>{{employ.gender}}</td></tr>
+                            <tr><th>Current Location :</th><td>{{employ.employee_current_location}}</td></tr>
+                            <tr><th>Mobile Number : </th> <td>{{employ.mobile}}</td> </tr>
+                            <tr><th>Emergency Contact : </th> <td>{{employ.emergency_contact}}</td> </tr>
+                            <tr><th>Email ID : </th> <td>{{employ.employee_mail}}</td> </tr>
+                            <tr><th>Address : </th> <td>{{employ.street}}, {{employ.city}}</td> </tr>
+                            <tr><th> </th> <td>{{employ.pincode}}, {{employ.state}}</td> </tr>
+                            <tr><th> </th> <td>{{employ.country}}.</td> </tr>
+                            <tr><th>Blood Group : </th> <td>{{employ.blood_group}}</td> </tr>
+                            <tr><th>Age : </th> <td>{{employ.age}}</td> </tr>
+                            <tr><th>DOB : </th> <td>{{employ.date_of_birth}}</td> </tr>
+                            <tr><th>Father's Name : </th> <td>{{employ.fathers_name_mothers_name}}</td> </tr>
+                            <tr><th>Spouse Name : </th> <td>{{employ.spouse_name}}</td> </tr>
+                            <tr><th>Temporary Address : </th> <td>{{employ.temporary_street}}, {{employ.temporary_city}}</td></tr>
+                            <tr><th> </th> <td >{{employ.temporary_pincode}}, {{employ.temporary_state}}</td></tr>
+                            <tr><th> </th> <td >{{employ.temporary_country}}.</td></tr>
+                            
+                        </table><br><br>
+                            
+                        <table id="table2">
+                            <tr ><center><label>Salary Info</label></center></tr>
+                            <tr><th>Employee Salary : </th><td>{{employ.salary_amount}}</td></tr> 
+                            <tr><th>Salary Date Range :</th><td>{{employ.salary_effective_from}}</td></tr>
+                            <tr><th>Salary Type :</th><td>{{employ.salary_details}}</td></tr>
+                            <tr><th>TDS Applicable : </th><td>{{employ.tds_applicable}}</td></tr>
+                            
+                        </table><br><br>
+
+                        <table id="table3">
+                            <tr><center><label>Statutory Info</label></center></tr>
+                            <tr><th>Income Tax Number : </th><td>{{employ.income_tax_number}}</td></tr> 
+                            <tr><th>Aadhar Number :</th><td>{{employ.aadhar_number}}</td></tr>
+                            <tr><th>Universal Account Number :</th><td>{{employ.universal_account_number}}</td></tr>
+                            <tr><th>PAN Number : </th><td>{{employ.pan_number}}</td></tr>
+                            <tr><th>PF Account Number :</th><td>{{employ.pf_account_number}}</td></tr>
+                            <tr><th>PR Account Number : </th><td>{{employ.pr_account_number}}</td></tr>
+                        </table>
+
+
+                        
+                    </div>
+    
+                    
+
+
+                </div>
+            </div>
+            
+        
+
+
+
+</body>
+</html>

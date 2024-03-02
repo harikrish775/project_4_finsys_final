@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    /* .table2 {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color: rgb(221, 247, 247);
+
+    } */
+
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .item_data {
+        font-size: 1.2rem;
+    }
+
+    .item_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .item_label, .item_value {
+        font-weight: bold;
+    }
+
+    .stock_value {
+        flex: 1;
+        text-align: right;
+    }
+
+
+
+
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black; font-size: 1.5rem;"><b>{{item.name}} - TRANSACTIONS</b></center>
+                </div>
+                <div style="width: 100%;">
+                    <div class="item_data">
+                        <div class="item_row">
+                            <div class="item_label">Selling Price: {{item.selling_price}}</div>
+                            <div class="item_value stock_value"><span id="stockValue">Stock Quantity: {{item.current_stock}}</span></div>
+                        </div>
+                        <div class="item_row">
+                            <div class="item_label">Purchase Price: {{item.purchase_price}}</div>
+                            <div class="item_value stock_value"><span id="stockValue">Stock Value: {{stockValue}}</span></div>
+                        </div>
+                        <div class="item_row">
+                            <div class="item_label">Min Stock to Maintain: {{item.min_stock}}</div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Sl No.</th>
+                            <th style="text-align: center;">Type</th>
+                            <th style="text-align: center;">Name</th>
+                            <th style="text-align: center;">Date</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th style="text-align: center;">Price</th>
+                            <th style="text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if item.current_stock != None and item.current_stock != 0 %}
+                        <tr class="clickable-row" data-href="" >
+                            <td style="text-align: center;">1</td>
+                            <td style="text-align: center;">Opening Stock</td>
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;">{{ item.item_created | date:'d-m-Y'  }}</td>
+                            <td style="text-align: center;"> {{ item.opening_stock  }} </td>
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;">{{item.status}} </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

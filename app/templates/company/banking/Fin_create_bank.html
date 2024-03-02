@@ -1,0 +1,182 @@
+{% extends 'company/Fin_base.html' %}
+{% load static %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div class="text-right">
+    <a href="{% url 'Fin_banking_listout' %}" class="btn-sm  px-2" ><i class="fa fa-times"></i></a>
+</div>
+<div class="card radius-15 h-20">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h2 class="mt-3">CREATE BANK</h2>
+                    </center>
+                </div>
+               
+            </div>
+            <hr style="width:95%">
+        </div>
+    </div>
+</div>
+<div class="page-content">
+
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="container-fluid">
+                <form id="bankForm" method="post" action="{% url 'Fin_create_bank_account' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">BANK NAME</label>
+
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <label for="">ACCOUNT NUMBER</label>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="bname" id="bname" required>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="number" name="acc_num" id="acc_num"
+                             required>
+                             <span id="accountNumberError" class="text-danger"></span>
+                           
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">BANK IFSC CODE</label>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <label for="">BRANCH NAME</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="ifsc" required >
+                        </div>
+                        <div class="col-md-2"></div>
+
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="branch" required>
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">OPENING BALANCE</label>
+                        </div>
+                        <div class="col-md-2"></div>
+
+                        <div class="col-md-5 p-2">
+                            <label for="">DATE</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 form-inline p-2">
+
+                            <input class="form-control" type="number" name="Opening" required>
+                            <select class="form-control" name="op_type" id="">
+                                <option value="DEBIT">DEBIT</option>
+                                <option value="CREDIT">CREDIT</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="date" name="date" id="dateInput">
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mb-5">
+                        <div class="col-md-8 mt-3"></div>
+                        <div class="col-md-2 mt-3">
+
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                Save Bank Account
+                            </button>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Event listener for account number input
+        $('#acc_num').on('input', function () {
+            // Get the entered account number
+            var accountNumber = $(this).val();
+            console.log(accountNumber);
+            // Get the bank name (you may adjust this based on how you get the bank name)
+            var bankName = $('#bname').val();
+            console.log(bankName);
+            // Perform AJAX request to check if the account number exists
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'Fin_banking_check_account_number' %}",  // Replace with your Django view URL for checking account number
+                data: {
+                    'bank_name': bankName,
+                    'account_number': accountNumber
+                },
+                success: function (data) {
+                    // Display error message if account number exists
+                    if (data.exists) {
+                        $('#accountNumberError').text('Account number already exists..');
+                    } else {
+                        // Clear the error message if account number is unique
+                        $('#accountNumberError').text('');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<script>
+    // Get the current date
+    var currentDate = new Date();
+
+    // Format the date to YYYY-MM-DD (required format for date input)
+    var formattedDate = currentDate.toISOString().slice(0, 10);
+
+    // Set the value of the date input field
+    document.getElementById('dateInput').value = formattedDate;
+</script>
+
+{% endblock %}

@@ -433,10 +433,10 @@
                                                                     dropdown.append(`<option value="" selected>Choose</option>`);
 
                                                                     $.each(response.terms, function (index, term) {
-                                                                        if (term.name === trm) {
-                                                                            dropdown.append($('<option selected></option>').text(term.name).val(term.id))
+                                                                        if (term.term_name === trm) {
+                                                                            dropdown.append($('<option selected></option>').text(term.term_name).val(term.id))
                                                                         } else {
-                                                                            dropdown.append($('<option></option>').text(term.name).val(term.id))
+                                                                            dropdown.append($('<option></option>').text(term.term_name).val(term.id))
                                                                         }
                                                                     });
                                                                     alert('successfully added')
@@ -1864,13 +1864,13 @@
                                     <div class="col-md-4 mt-3">
                                         <label for="paymentTerms">Payment Terms</label>
                                         <div class="d-flex">
-                                            <select name="payment_terms" id="paymentTerms" class="form-control">
+                                            <select name="payment_terms" id="paymentTerms2" class="form-control">
                                                 <option value="" selected>Choose</option>
-                                                {% for p in pTerms %}
+                                                {% for p in payment_terms %}
                                                 <option value="{{p.id}}">{{p.term_name}}</option>
                                                 {% endfor %}
                                             </select>
-                                            <a href="#newPaymentTerm" data-toggle="modal" class="btn btn-outline-secondary ml-1">+</a>
+                                            <a href="#newPaymentTerm2" data-toggle="modal" class="btn btn-outline-secondary ml-1">+</a>
                                         </div>
                                     </div>
             
@@ -2110,7 +2110,7 @@
             
             <!-- New Payment Term Modal -->
             
-            <div class="modal fade" id="newPaymentTerm">
+            <div class="modal fade" id="newPaymentTerm2">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content" style="background-color: #213b52;">
                         <div class="modal-header">
@@ -2121,22 +2121,22 @@
                         </div>
                         <div class="modal-body">
                             <div class="card p-3">
-                                <form method="post" id="newTermForm">
+                                <form method="post" id="newTermForm2">
                                     {% csrf_token %}
                                     <div class="row mt-2">
                                         <div class="col-6">
                                             <label for="name">Term Name</label>
-                                            <input type="text" name="term_name" id="termName" class="form-control w-100">
+                                            <input type="text" name="term_name" id="termName2" class="form-control w-100">
                                         </div>
                                         <div class="col-6">
                                             <label for="name">Days</label>
-                                            <input type="number" name="days" id="termDays" class="form-control w-100" min="0" step="1">
+                                            <input type="number" name="days" id="termDays2" class="form-control w-100" min="0" step="1">
                                         </div>
                                     </div>
                                     <div class="row mt-4">
                                         <div class="col-4"></div>
                                         <div class="col-4 d-flex justify-content-center">
-                                            <button class="btn btn-outline-secondary text-grey w-75" data-dismiss="modal" type="submit" id="savePaymentTerm">Save</button>
+                                            <button class="btn btn-outline-secondary text-grey w-75" data-dismiss="modal" type="submit" id="savePaymentTerm2">Save</button>
                                         </div>
                                         <div class="col-4"></div>
                                     </div>
@@ -2170,13 +2170,13 @@
                     }
                 }
             
-                $(document).on("click","#savePaymentTerm",function(){
-                    var trm = $('#termName').val();
-                    var dys = $("#termDays").val();
+                $(document).on("click","#savePaymentTerm2",function(){
+                    var trm = $('#termName2').val();
+                    var dys = $("#termDays2").val();
                     if (trm !="" && dys !=""){
                         $.ajax({
                             type : 'POST',
-                            url:"Fin_add_payment_terms",
+                            url:"Fin_new_payment_terms/",
                             data:{
                                 'term' : trm,
                                 'days' : dys,
@@ -2185,9 +2185,9 @@
                             
                             success: function(response) {
                                 if(response.status){
-                                    document.getElementById("newTermForm").reset();
+                                    document.getElementById("newTermForm2").reset();
                                     
-                                    var dropdown = $('#paymentTerms');
+                                    var dropdown = $('#paymentTerms2');
                                     dropdown.empty();
                                     dropdown.append(`<option value="" selected>Choose</option>`);
                                     $.each(response, function(key, value) {

@@ -1,0 +1,1137 @@
+<!-- Created -- shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<style>
+    .filterTable-column .dropdown-toggle::after{
+        content: none;
+    }
+    .filterTable-column .btn:focus{
+        box-shadow: none;
+    }
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+    .submitShareEmailBtn, .submitFileAttachBtn, #commentSaveBtn {
+        background: #192d3e;
+        border: 1px solid #3a4b5a;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+    .submitShareEmailBtn:hover, .submitFileAttachBtn:hover, #commentSaveBtn:hover {
+        background: #3a4b5a;
+    }
+    .print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+    .ribbon .ribbon-inner {
+        text-align: center;
+        color: #fff;
+        top: -20px;
+        left: -90px;
+        width: 120px;
+        padding: 3px;
+        /* position: relative;
+        transform: rotate(-45deg); */
+    }
+    .ribbon .ribbon-open {
+        background-color: #268ddd;
+        border-color: #1c72b4;
+    }
+    :root {
+        --body-bg: rgb(204, 204, 204);
+        --white: #ffffff;
+        --darkWhite: #ccc;
+        --black: #000000;
+        --dark: #615c60;
+        --themeColor: #22b8d1;
+        --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    }
+    @media print {
+        body{
+            visibility: hidden !important;
+            /* background-color: white; */
+        }
+
+        #slip{
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .printContainer {
+            visibility: visible !important;
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        }
+
+    }
+    /* Font Include */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+    body {
+        background-color: var(--body-bg);
+    }
+
+    .page {
+        background: var(--white);
+        display: block;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: var(--pageShadow);
+    }
+
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        overflow: hidden;
+    }
+
+    .bb {
+        border-bottom: 3px solid var(--darkWhite);
+    }
+
+    /* Top Section */
+    .top-content {
+        padding-bottom: 15px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    .top-left p {
+        margin: 0;
+        color: #000000;
+    }
+
+    .top-left .graphic-path {
+        width: 195px;
+        height: 40px;
+        position: relative;
+    }
+
+    .top-left .graphic-path::before {
+        content: "";
+        height: 20px;
+        background-color: var(--dark);
+        position: absolute;
+        left: 15px;
+        right: 0;
+        top: -15px;
+        z-index: 2;
+    }
+
+    .top-left .graphic-path::after {
+        content: "";
+        height: 22px;
+        width: 17px;
+        background: var(--black);
+        position: absolute;
+        top: -13px;
+        left: 6px;
+        transform: rotate(45deg);
+    }
+
+    .top-left .graphic-path p {
+        /* color: var(--white); */
+        height: 40px;
+        left: 0;
+        right: 0;
+        text-transform: uppercase;
+        background-color: var(--themeColor);
+        /* font: 26px; */
+        z-index: 3;
+        position: absolute;
+        padding-left: 10px;
+    }
+    
+    /* User Store Section */
+    .store-user {
+        padding-bottom: 25px;
+    }
+
+    .store-user p {
+        margin: 0;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .store-user .address {
+        font-weight: 400;
+    }
+
+    .store-user h5 {
+        color: var(--themeColor);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    .extra-info p span {
+        font-weight: 400;
+    
+    }
+
+    /* Product Section */
+    thead {
+        color: var(--white);
+        background: var(--themeColor);
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        text-align: left;
+    }
+
+    /* Balance Info Section */
+    .balance-info .table td,
+    .balance-info .table th {
+        padding: 0;
+        border: 0;
+    }
+
+    .balance-info tr td:first-child {
+        font-weight: 600;
+    }
+
+    #whatToPrint3 table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #whatToPrint3 th, #whatToPrint3 td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    #whatToPrint3 tr:nth-child(even) {background-color: #f2f2f2;}
+
+    #whatToPrint1 table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #whatToPrint1 th, #whatToPrint1 td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    #whatToPrint1 tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<div class="page-content " id="page-content">
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_manualJournals' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body" style="width:100%;">
+            <div class="card-title">
+                <div class="container-fluid mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="overview()" id="overviewBtn" >Overview</a>
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="template()" id="templateBtn" > Templates</a>
+                            <!-- <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="slip()" id="slipBtn" > Slip</a> -->
+                        </div> 
+
+                        <div class="col-md-6 d-flex justify-content-end">
+                            {% if journal.status == 'Draft' %}
+                            <div class="dropdown p-0 nav-item"  id="convertBtn" style="display: block;">
+                                <li  class="dropdown-toggle btn btn-outline-secondary text-grey fa fa-exchange" data-toggle="dropdown">&nbsp;Convert</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="">
+                                    <a class="dropdown-item" href="{% url 'Fin_convertJournal' journal.id %}">Saved</a>
+                                </ul>
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'Fin_journalPdf' journal.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" id="pdfBtn" style="display: none;"> &nbsp;PDF</a> 
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" onclick="slipPDF()" id="slipPdfBtn" style="display: none;"> &nbsp;PDF</a> 
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-print" role="button" id="printBtn" style="display: none; " onclick="printSection('whatToPrint')">&nbsp;Print</a>
+                            <div class="dropdown p-0 nav-item"  id="shareBtn" style="display: none;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                    <li style="text-align: center;" >{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="text-align: center;color: #e5e9ec; cursor: pointer;" data-toggle="modal" data-target="#shareToEmail">Email</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'Fin_editJournal' journal.id %}" class="ml-2 fa fa-pencil btn btn-outline-secondary text-grey" id="editBtn" role="button">&nbsp;Edit</a>
+                            <a href="{% url 'Fin_deleteJournal' journal.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" id="deleteBtn" role="button" onclick="return confirm('Are you sure you want to delete Journal - {{journal.journal_no}}.?')">&nbsp;Delete</a>
+                            <a href="#"  class="ml-2 btn btn-outline-secondary text-grey fa fa-comments" id="commentsBtn" role="button" data-toggle="modal" data-target="#commentModal">&nbsp;Comment</a>
+                            <a href="{% url 'Fin_journalHistory' journal.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                            <div class="dropdown p-0 nav-item"  id="attachBtn" style="display: block;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-paperclip" data-toggle="dropdown">&nbsp;Attach</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+                                    <a class="dropdown-item fa fa-paperclip" style="cursor: pointer;" data-toggle="modal" data-target="#attachFileModal">&nbsp; Attach file</a>
+                                    {% if journal.file %}
+                                    <a class="dropdown-item fa fa-download" style="cursor: pointer;" download  href="{{ journal.file.url }}">&nbsp; Download file</a>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <center>
+                    <h3 class="card-title">MANUAL JOURNAL OVERVIEW</h3>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+        <div class="card-body p-0">
+
+            <div id="overview">
+                <div class="row g-0 mx-0">
+                    <div class="col-lg-8">
+                        <div class="history_highlight pt-3 px-2 d-flex">
+                            <div class="col-12 d-flex justify-content-start align-items-center">
+                                {% if history %}{% if history.action == 'Created' %}<p class="text-success m-0" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text-warning m-0" style="font-size: 1.07rem; font-weight: 500;">Last Edited by :</p>{% endif %}{% endif %}
+                                <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{history.LoginDetails.First_name}} {{history.LoginDetails.Last_name}}</span>
+                                <span class="ml-5">{{history.date}}</span>
+                            </div>
+                        </div>
+
+                        <div class="pb-3 px-2">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="row">
+                                        <div class="col mt-3">
+                                            <h2 class="mb-0"># {{ journal.journal_no }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Company</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Company_name}}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Email }}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Mobile</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Contact }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Address</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Address }} <br>
+                                            {{cmp.City}},{{cmp.State}} - {{cmp.Pincode}}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <hr class="my-4">
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Billing Details</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Journal No</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ journal.journal_no  }}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Reference No.</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{journal.reference_no}}</p>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Journal Date</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{journal.journal_date | date:'d-m-Y'}}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Currency</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{journal.currency}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">Notes</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vr">
+                                        <p class="mb-0">{{journal.notes}}</p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">&nbsp;</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <!-- <p class="mb-0 text-right">{{journal.payment_method}}</p> -->
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Accounts</h5>
+    
+                                        {% for itm in jrnAccounts %}
+                                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                                <div class="col-md-3 mt-3">
+                                                    <h6 class="mb-0">Account</h6>
+                                                </div>
+                                                <div class="col-md-3 mt-3">
+                                                    <p class="mb-0 text-right">{{itm.Account.account_name|default:'None'}}</p>
+                                                </div>
+                
+                                                <div class="col-md-3 mt-3 vl">
+                                                    <h6 class="mb-0">Contact</h6>
+                                                </div>
+                                                <div class="col-md-3 mt-3">
+                                                    <p class="mb-0 text-right">{{itm.contact|default:'None'}}</p>
+                                                </div>
+                                                
+                                            </div>
+                                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                                <div class="col-md-3 mt-3">
+                                                    <h6 class="mb-0">Debit</h6>
+                                                </div>
+                                                <div class="col-md-3 mt-3">
+                                                    <p class="mb-0 text-right">{{itm.debit}}</p>
+                                                </div>
+                                                <div class="col-md-3 mt-3 vl">
+                                                    <h6 class="mb-0">Credit</h6>
+                                                </div>
+                                                <div class="col-md-3 mt-3">
+                                                    <p class="mb-0 text-right">{{itm.credit}}</p>
+                                                </div>
+                                            </div>
+                                            <hr class="my-3" style="width: 50%;">
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-12 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Accounts</h5>
+    
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <td style="font-weight:bold">ACCOUNT</td>
+                                                    <td style="font-weight:bold">CONTACT</td>
+                                                    <td style="font-weight:bold">DEBITS</td>
+                                                    <td style="font-weight:bold">CREDITS</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for j in jrnAccounts %}
+                                                <tr>
+                                                    <td >{{j.Account.account_name}}</td>
+                                                    <td >{{j.contact}}</td>
+                                                    <td >{{j.debit|default_if_none:"0.00"|floatformat:2}}</td>
+                                                    <td >{{j.credit|default_if_none:"0.00"|floatformat:2}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                                <tr style="width: 100%; font-weight:bold"  >
+                                                    <td colspan="2" class="table-head" style="font-size:13px;; font-weight:bold">Sub Total</td>
+                                                    <td class="pcs-total-section-value text-align-center" >₹{{ journal.subtotal_debit }}</td>
+                                                    <td class="pcs-total-section-value text-align-right" >₹{{ journal.subtotal_credit }}</td>
+                                                </tr>
+                                                <tr  style="height:40px;" class="pcs-balance">
+                                                    <td colspan="2"  style="padding:5px 15px 5px 15px; font-size:16px; font-weight:bold"><b>Total</b></td>
+                                                    <td style="font-size:16px;; font-weight:bold"><b>₹{{ journal.total_debit }}</b></td>
+                                                    <td style="font-size:16px;; font-weight:bold"><b>₹{{ journal.total_credit }}</b></td>
+                                                </tr>
+                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> -->
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey">
+
+                        <div class="px-3">
+                            <h4 class="fw-bold mb-2 mt-4 pt-1">DEBIT/CREDIT</h4>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Journal Status</h5>
+                                {% if journal.status == 'Draft' %} <span class="text-info h5 font-weight-bold">DRAFT</span> {% else %} <span class="text-success h5 font-weight-bold">SAVED</span> {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Debit Amount</h6>
+                                {{ journal.subtotal_debit }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Credit Amount</h6>
+                                {{journal.subtotal_credit }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Debit Amount</h6>
+                                {{ journal.total_debit }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Debit Amount</h6>
+                                {{ journal.total_credit }}
+                            </div>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Difference</h6>
+                                {% if journal.balance_debit != 0 %}
+                                <span class="font-weight-bold">{{ journal.balance_debit }}</span>
+                                {% elif journal.balance_credit != 0 %}
+                                <span class="font-weight-bold">{{ journal.balance_credit }}</span>
+                                {% else %}
+                                <span class="font-weight-bold"> 0.0 </span>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="template" style="display: none;" >
+                <div  id="whatToPrint" class="print-only">
+            
+                    <!-- template1 -->
+                    <div id="whatToPrint1" class="printTemplates template1">
+                        <div class="my-5 page" size="A4" >
+                            <div class="p-4" id="printdiv1">
+                                <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                                    <div class="ribbon-inner ribbon-open">{{journal.status}}<!----></div></div>
+                                <section class="top-content bb d-flex justify-content-between">
+                                    <div class="logo">
+                                        <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                                    </div>
+                                    <div class="top-left">
+                                        <div class="graphic-path">
+                                            <p>Manual Journal</p>
+                                        </div>
+                                        <div class="position-relative">
+                                            <p> Journal No. <span>{{ journal.journal_no }}</span></p>
+                                        </div>
+                                    </div>
+                                </section>
+                    
+                                <section class="store-user mt-5">
+                                    <div class="col-12">
+                                        <div class="row bb pb-3">
+                                            <div class="col-7">
+                                                <p>Company</p>
+                                                <h5>{{cmp.Company_name }}</h5>
+                                                <p class="address "> {{cmp.Address}}<br>
+                                                    {{cmp.City}},
+                                                    {{cmp.State}}<br>
+                                                    {{cmp.Pincode}}<br>
+                                                </p>
+                                                
+                                            </div>
+                                            <div class="col-5">
+                                                <p>Journal No: <span>{{journal.journal_no}}</span></p>
+                                                <p>Ref No.: {{ journal.reference_no}} </p>
+                                                <p>Date: {{ journal.journal_date | date:'d-m-Y'}} </p>
+                                                <p>Amount: {{ journal.total_debit}} </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                    
+                                <section class="product-area mt-4">
+                                    <table class=" table table-hover table-bordered " id="table1">
+                                        <thead >
+                                            <tr>
+                                                <td style="text-align: center; font-weight:bold; color:black">Account</td>
+                                                <td style="font-weight:bold; color:black">Contact</td>
+                                                <td style="font-weight:bold; color:black">Debits</td>
+                                                <td style="font-weight:bold; color:black">Credits</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+            
+                                            {% for j in jrnAccounts %}
+                                            <tr>
+                                                <td style="color:black; text-align: center;">{{j.Account.account_name}}</td>
+                                                <td style="color:black">{{j.contact}}</td>
+                                                <td style="color:black">{{j.debit}}</td>
+                                                <td style="color:black">{{j.credit}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            <tr style="width: 100%; font-weight:bold"  >
+                                                <td colspan="2" class="table-head" style="font-size:13px; font-weight:bold; color:black;">Sub Total</td>
+                                                <td class="pcs-total-section-value" style="color:black;">₹{{ journal.subtotal_debit }}</td>
+                                                <td class="pcs-total-section-value" style="color:black;">₹{{ journal.subtotal_credit }}</td>
+                                            </tr>
+                                            <tr style="width: 100%;">
+                                                <td colspan="2"  style="padding:5px 15px 5px 15px; font-size:16px; font-weight:bold; color: black;"><b>Total</b></td>
+                                                <td style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_debit }}</b></td>
+                                                <td style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_credit }}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br><br>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+        
+    
+                    <!-- template2 -->
+                    <div  id="whatToPrint2"  class="printTemplates template2" style="display: none;">
+                        <div class="my-5 page" size="A4" >
+                            <div id="printdiv2">
+                                <div class="row px-5 py-4" style="background-color:#268ddd;" >
+                                    <div id="ember2512" class="col-md-3 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
+                                      <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{journal.status}}<!----></div>
+                                  </div>
+                                  <div class="col-md-6 d-flex justify-content-center">
+                                      <center class="h4 text-white"><b>MANUAL JOURNAL</b></center>
+                                  </div>  
+                                  <div class="col-md-3 d-flex justify-content-end">
+                                      <div class="text-white">
+                                          <p class="mb-0 mt-2">Journal No: <b>{{journal.journal_no }}</b></p>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="px-5 py-1">
+                                  <section class="store-user"><br><br>
+                                      <div class="col-12">
+                                          <div class="row bb pb-2 mt-3">
+                                              <div class="col-4 pl-0">
+                                                  <label class="text-white w-100 p-1" style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>COMPANY ADDRESS</b></label>
+                                                  <h5 class="text-secondary" style="font-weight: bold;">{{cmp.Company_name}}</h5>
+                                                  <p class="address" style="font-weight: bold;color: #000;">
+                                                      {{cmp.Address}}
+                                                      <br>
+                                                      {{cmp.City}}
+                                                      <br>
+                                                      {{cmp.State}} - {{cmp.Pincode}}
+                                                      <br>
+                                                      <span>Mob: </span><b>{{cmp.Contact}}</b>
+                                                  </p>  
+                                              </div>
+                                              <div class="col-4"></div>
+                                              <div class="col-4 pr-0">
+                                                  <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>JOURNAL DETAILS</b></label>
+                                                  <h5 class="text-secondary" style="font-weight: bold;">Journal No: <span>{{journal.journal_no}}</span></h5>
+                                                  <p>Ref No.: {{ journal.reference_no}} </p>
+                                                  <p>Date: {{ journal.journal_date | date:'d-m-Y'}} </p>
+                                                  <p>Amount: {{ journal.total_debit}} </p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </section>
+                      
+                                  <section class="product-area mt-2">
+                                      <table class="table table-hover table-bordered  template2table" id="table2">
+                                          <thead >
+                                              <tr class="template3tablehead">
+                                                <td style="text-align: center; font-weight:bold; color:black">Account</td>
+                                                <td style="font-weight:bold; color:black">Contact</td>
+                                                <td style="font-weight:bold; color:black">Debits</td>
+                                                <td style="font-weight:bold; color:black">Credits</td>
+                                              </tr>
+                                          </thead>
+                                          <tbody  style="background-color: #999999;">
+                                              {% for j in jrnAccounts %}
+                                                <tr>
+                                                    <td style="color:black; text-align: center;">{{j.Account.account_name}}</td>
+                                                    <td style="color:black">{{j.contact}}</td>
+                                                    <td style="color:black">{{j.debit}}</td>
+                                                    <td style="color:black">{{j.credit}}</td>
+                                                </tr>
+                                              {% endfor %}
+                                              <tr style="width: 100%; font-weight:bold"  >
+                                                <td colspan="2" class="table-head" style="font-size:13px; font-weight:bold; color:black;">Sub Total</td>
+                                                <td class="pcs-total-section-value text-center" style="color:black;">₹{{ journal.subtotal_debit }}</td>
+                                                <td class="pcs-total-section-value text-center" style="color:black;">₹{{ journal.subtotal_credit }}</td>
+                                            </tr>
+                                            <tr style="width: 100%;">
+                                                <td colspan="2"  style="padding:5px 15px 5px 15px; font-size:16px; font-weight:bold; color: black;"><b>Total</b></td>
+                                                <td style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_debit }}</b></td>
+                                                <td style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_credit }}</b></td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+                                  </section>
+                                     
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- template3 -->
+                    <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
+                        <div class="my-5 page"  size="A4" >
+                            <div class="" id="printdiv3">
+                                <div class="row">
+                                    <div class="col-sm-12" style="background-image: linear-gradient(#1b83e8, black); color: white;">
+                                        <p style="font-size: 4vh; text-align: center;">MANUAL JOURNAL</p>
+                                        <p style=" text-align: center;"> {{cmp.Company_name}} <br>
+                                            {{cmp.Address}} <br>
+                                            {{cmp.City}},
+                                            {{cmp.State}}<br>
+                                            {{cmp.Email}}
+                                            <br>
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="row col-12">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-5" style="padding-top: 1rem;">
+                                            <h5 class="text-secondary" style="font-weight: bold;">Journal No: <span>{{journal.journal_no}}</span></h5>
+                                            <p style="color: black;">Ref No.: {{ journal.reference_no}} </p>
+                                            <p style="color: black;">Date: {{ journal.journal_date | date:'d-m-Y'}} </p>
+                                            <p style="color: black;">Amount: {{ journal.total_debit}} </p>
+                                        </div>
+                                        <div class="col-md-1"></div>
+                                        <div class="col-5">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10"><br>
+                                        <table class="table table-hover table-bordered  template3table" id="table3" style="border-collapse: collapse; border-color: #192d3e;">
+                                            <thead >
+                                                <tr class="template3tablehead">
+                                                    <th class="text-center"  style="color:black; background-color: gray;">ACCOUNT</th>
+                                                    <th class="text-center"  style="color:black; background-color: gray;">CONTACT</th>
+                                                    <th class="text-center"  style="color:black; background-color: gray;">DEBIT</th>
+                                                    <th class="text-center"  style="color:black; background-color: gray;">CREDIT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for itm in jrnAccounts %}
+                                                    <tr>
+                                                        <td class="text-center" style="color: black;">{{ itm.Account.account_name}}</td>
+                                                        <td class="text-center" style="color: black;">{{ itm.contact }}</td>
+                                                        <td class="text-center" style="color: black;">{{ itm.debit }}</td>
+                                                        <td class="text-center" style="color: black;">{{ itm.credit }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                <tr style="width: 100%; font-weight:bold"  >
+                                                    <td colspan="2" class="table-head" style="font-size:13px; font-weight:bold; color:black;">Sub Total</td>
+                                                    <td class="pcs-total-section-value text-center" style="color:black;">₹{{ journal.subtotal_debit }}</td>
+                                                    <td class="pcs-total-section-value text-center" style="color:black;">₹{{ journal.subtotal_credit }}</td>
+                                                </tr>
+                                                <tr style="width: 100%;">
+                                                    <td colspan="2"  style="padding:5px 15px 5px 15px; font-size:16px; font-weight:bold; color: black;"><b>Total</b></td>
+                                                    <td class="text-center" style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_debit }}</b></td>
+                                                    <td class="text-center" style="font-size:16px; font-weight:bold; color:black;"><b>₹{{ journal.total_credit }}</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                    <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                    <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                    <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<!-- Attach File Modal -->
+<div class="modal fade" id="attachFileModal">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Attach File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'Fin_attachJournalFile' journal.id %}" method="post" enctype="multipart/form-data" class="needs-validation">
+                <div class="modal-body">
+                    <div class="card p-3">
+                        
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="emailIds">Input File</label>
+                                <input type="file" class="form-control" name="file" id="fileAttachInput" required>
+                            </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" class="submitFileAttachBtn w-50 text-uppercase">SAVE</button>
+                </div>
+            </form>
+        </div>   
+    </div>
+</div>
+
+
+<!-- Share To Email Modal -->
+<div class="modal fade" id="shareToEmail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Share Journal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'Fin_shareJournalToEmail' journal.id %}" method="post" class="needs-validation" id="share_to_email_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase">SEND MAIL</button>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- Add Comments Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{% url 'Fin_addJournalComment' journal.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <textarea type="text" class="form-control" name="comment" placeholder="Add Comments.." required></textarea>
+                    {% if not comments %}
+                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                    {% else %}
+                    <div class="container-fluid">
+                        <table class="table mt-4">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center">sl no.</th>
+                                    <th class="text-center">Comment</th>
+                                    <th class="text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in comments %}
+                                <tr class="">
+                                    <td class="text-center">{{forloop.counter }}</td>
+                                    <td class="text-center">{{c.comments}}</td>
+                                    <td class="text-center"><a class="text-danger" href="{% url 'Fin_deleteJournalComment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')"><i class="fa fa-trash" style="font-size: 1.1rem;"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function ($) {
+        $(".table-row").click(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+
+    function overview() {
+        document.getElementById('overview').style.display = 'block';
+        document.getElementById('template').style.display = 'none';
+        document.getElementById('overviewBtn').style.backgroundColor='rgba(22,37,50,255)'
+        document.getElementById('templateBtn').style.backgroundColor='transparent';
+        $('#shareBtn').hide();
+        $('#printBtn').hide();
+        $('#pdfBtn').hide();
+        $('#convertBtn').show();
+        $('#editBtn').show();
+        $('#deleteBtn').show();
+        $('#historyBtn').show();
+        $('#commentsBtn').show();
+        $('#attachBtn').show();
+    }
+    
+    function template() {
+        document.getElementById('overview').style.display = 'none';
+        document.getElementById('template').style.display = 'block';
+        document.getElementById('overviewBtn').style.backgroundColor='transparent';
+        document.getElementById('templateBtn').style.backgroundColor='rgba(22,37,50,255)';
+        $('#shareBtn').show();
+        $('#printBtn').show();
+        $('#pdfBtn').show();
+        $('#editBtn').hide();
+        $('#convertBtn').hide();
+        $('#deleteBtn').hide();
+        $('#historyBtn').show();
+        $('#commentsBtn').show();
+        $('#attachBtn').hide();
+    }
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+    
+
+    var $rows = $('#dataTable tbody tr');
+    $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+        
+        $rows.show().filter(function() {
+        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+        return !~text.indexOf(val);
+        }).hide();
+    });
+
+    function filterSearchValues(col, fieldId, ele) {
+        var table = document.getElementById("dataTable");
+        
+        var rows = table.getElementsByTagName("tr");
+        
+        var filterValue = $('#' + fieldId).val().toLowerCase();
+
+        if (filterValue !== "") {
+            for (var i = 1; i < rows.length; i++) {
+                var statusCell = rows[i].getElementsByTagName("td")[col];
+
+                if (statusCell.textContent.toLowerCase() == filterValue) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function filterAmount(col, fieldId, ele) {
+        var table = document.getElementById("dataTable");
+        
+        var rows = table.getElementsByTagName("tr");
+        
+        var filterValue = parseFloat($('#' + fieldId).val());
+
+        if (!isNaN(filterValue)) {
+            for (var i = 1; i < rows.length; i++) {
+                var statusCell = rows[i].getElementsByTagName("td")[col];
+
+                if (parseFloat(statusCell.textContent.toLowerCase()) == filterValue) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function clearSearch(fieldId,ele) {
+        var table = document.getElementById("dataTable");
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 1; i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+        $('#' + fieldId).val("");
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function updateDateTime() {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1;
+        var year = currentDate.getFullYear();
+        var hours = currentDate.getHours();
+        var minutes = currentDate.getMinutes();
+        var seconds = currentDate.getSeconds();
+        var formattedDay = (day < 10) ? `0${day}` : day;
+        var formattedMonth = (month < 10) ? `0${month}` : month;
+        var formattedHours = (hours < 10) ? `0${hours}` : hours;
+        var formattedMinutes = (minutes < 10) ? `0${minutes}` : minutes;
+        var formattedSeconds = (seconds < 10) ? `0${seconds}` : seconds;
+        var formattedDateTime = `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        document.getElementById('dateTimeDisplay').textContent = formattedDateTime;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // function templatePrint(templateId){
+    //     var contentToPrint = document.getElementById(templateId).innerHTML;
+    //     var printWindow = window.open('', '_blank');
+
+    //     // Write the HTML content to the new window
+    //     printWindow.document.write(contentToPrint);
+
+    //     // Close the document stream to finish writing the content
+    //     printWindow.document.close();
+        
+    //     printWindow.onafterprint = function () {
+    //         printWindow.close();
+    //     };
+
+    //     // Print the new window
+    //     printWindow.print();
+    // }
+
+    function printSection(sectionId) {
+        document.body.style.backgroundColor = 'white';
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        var $printerDiv = $('<div class="printContainer"></div>');
+
+        $printerDiv.html(printContents); 
+        $('body').append($printerDiv).addClass("printingContent"); 
+        window.print(); 
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+    }
+
+    function toggleTemplate(templateId,buttonId){
+        $('.printTemplates').css('display','none');
+        $('#'+templateId).css('display','block');
+        $('.templateToggleButtons').removeClass('active');
+        $('#'+buttonId).addClass('active');
+        $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+        document.getElementById('page-content').scrollIntoView();
+    }
+</script>
+
+{% endblock %}

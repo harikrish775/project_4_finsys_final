@@ -1,0 +1,277 @@
+<!-- CREATED BY TINTO MT -->
+
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+<link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+<link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+<link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> 
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" /> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>
+<style>
+    table tr:hover{
+        background-color: #5a7684;
+    }
+</style>
+<div class="page-content ">
+    <div class="card radius-15">
+         <div class="card-body">
+            <center><h2>All Employee Loans </h2></center><br>
+            <div class="row">
+                <div class="col-3 ml-1">
+                    <input type="search" placeholder="Search..." id="employeeSearchInput" onkeyup="searchEmployee()" class="form-control ">                         
+                </div>
+                <div class="dropdown show">
+                    <a class="btn btn-outline-secondary text-grey" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-sort"></i> Sort by
+                    </a>
+                      
+                    <div class="dropdown-menu"  id="sort">
+                        <a class="dropdown-item" id="drop1" style="cursor: pointer;" href="{% url 'employee_loan_list'  %}" >All</a>
+                            <a class="dropdown-item" id="drop2" style="cursor: pointer;" href="{% url 'employee_loan_sort_by_balance' %}">Employee Name
+                            </a>
+                        <a class="dropdown-item" id="drop3" style="cursor: pointer;" href="{% url 'employee_loan_sort_by_employeename' %}">Balance</a>
+                    
+            
+                    </div>
+                </div>
+
+                <div class="col-4 ml-auto">
+                    <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
+                    <a class="btn btn-outline-secondary dropdown-toggle text-grey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-filter"></i> filter by
+                    </a>
+                          
+                    <div class="dropdown-menu"  id="filter" >
+                        <a class="dropdown-item" style="cursor: pointer;" href="{% url 'employee_loan_list'  %}">All</a>
+                        <a class="dropdown-item" style="cursor: pointer;" href="{% url 'employee_loan_filter_by_active'  %}">Active</a>
+                        <a class="dropdown-item" style="cursor: pointer;" href="{% url 'employee_loan_filter_by_inactive'  %}">Inactive</a>
+                    </div>
+
+                    <a class="btn btn-outline-secondary text-grey" href="{% url 'employee_loan_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
+                          
+                </div>
+                    
+            </div>
+
+            <br><br><br>
+
+            <div class="table-responsive">
+                <table id="loanTable"  class="table table-responsive-md mt-4 table-hover" >
+                    <thead>
+                        <tr>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>SL NO.</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Loan Date</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Employee Name</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Employee No</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Email ID</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Expiry Date</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Loan Amount </b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Balance </b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Status </b></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in loan %}
+                        <tr>
+                            <td  style="text-align: center;">{{forloop.counter}}</td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}"> {{d.loan_date}}</a></td>
+                            <td  style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.employee_name}}</a></td>
+                            <td  style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.employeeid}}</a></td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.employee_email}}</a></td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.expiry_date}}</a></td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.loan_amount}}</a></td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.balance}}</a></td>
+                            <td style="text-align: center;"><a href="{% url 'emploanoverview' d.id %}">{{d.status}}</a></td>
+                            
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+// -------------------------------------------------------------------------------------
+// filter
+
+ document.getElementById('filter').addEventListener('click', function (event) {
+        if (event.target.tagName === 'A') {
+            var statusFilter = event.target.getAttribute('data-status');
+
+            filterTableByStatus(statusFilter);
+        }
+    });
+
+    function filterTableByStatus(status) {
+        var tableRows = document.querySelectorAll('#employList tbody tr');
+
+        tableRows.forEach(function (row) {
+            var rowStatus = row.children[6].innerText.toLowerCase(); // Assuming status is in the 7th column
+            
+
+            if (status === 'All') {
+                row.style.display = ''; // Display all rows
+            } else if (status === 'Active' && rowStatus === 'active') {
+                row.style.display = ''; // Display rows with 'active' in the name
+            } else if (status === 'Inactive' && rowStatus === 'inactive') {
+                row.style.display = ''; // Display rows with 'inactive' in the name
+            } else {
+                row.style.display = 'none'; // Hide other rows
+            }
+        });
+    }
+// -------------------------------------------------------------------------------------
+// index
+
+        document.addEventListener('DOMContentLoaded', function () {
+    // Get the table element
+    var table = document.getElementById('employList');
+
+    // Get all rows in the table body
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    // Loop through each row and add an index number
+    for (var i = 0; i < rows.length; i++) {
+        var cell = document.createElement('td');
+        cell.textContent = i + 1; // Index starts from 1
+        rows[i].insertBefore(cell, rows[i].firstChild);
+    }
+});
+
+// ----------------------------------------------------------------
+// search function
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Get the table element
+        var table = document.getElementById('employList');
+
+        // Get all rows in the table body
+        var rows = table.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
+
+        // Loop through each row and add an index number
+        for (var i = 0; i < rows.length; i++) {
+            var cell = document.createElement('td');
+            cell.textContent = i + 1; // Index starts from 1
+            rows[i].insertBefore(cell, rows[i].firstChild);
+        }
+    });
+
+    function searchEmployee() {
+        // Declare variables
+        var input, filter, table, tbody, tr, td, i, txtValue;
+        input = document.getElementById("employeeSearchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("employList");
+        tbody = table.getElementsByTagName("tbody")[0];
+        tr = tbody.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those that don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1]; // Change index to match the column you want to search
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+// ------------------------------------------------------------------
+// sort function
+
+// Declare table variable globally
+var table = document.getElementById("employList");
+
+// Function to sort the table based on the selected column
+function sortByColumn(columnIndex) {
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+        for (i = 0; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[columnIndex].innerText;
+            y = rows[i + 1].getElementsByTagName("td")[columnIndex].innerText;
+
+            // Convert both values to lowercase for case-insensitive sorting
+            x = x.toLowerCase();
+            y = y.toLowerCase();
+
+            // Check if it's the eighth column for numeric comparison
+            if (columnIndex === 7) {
+                x = parseFloat(x) || 0; // Convert to float for numeric comparison
+                y = parseFloat(y) || 0;
+            }
+
+            if (x > y) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+// Event listener for sorting by the second column (Name)
+document.getElementById("drop2").addEventListener("click", function () {
+    sortByColumn(1); // Assuming the second column is used for sorting
+});
+
+// Event listener for sorting by the eighth column (Numeric)
+document.getElementById("drop3").addEventListener("click", function () {
+    sortByColumn(7); // Assuming the eighth column is used for sorting
+});
+
+// Event listener for sorting by the first column (Numeric)
+document.getElementById("drop1").addEventListener("click", function () {
+    sortByColumn(0);
+});
+
+
+
+
+// -----------------------------------------------------------------------------------
+// excel
+
+document.getElementById('exportButton').addEventListener('click', function () {
+        exportToExcel('loanTable');
+    });
+
+    function exportToExcel(loanTable) {
+        var table = document.getElementById(loanTable);
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'exported_table.xlsx');
+    }
+
+    </script>
+{% endblock %}

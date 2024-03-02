@@ -147,10 +147,16 @@
                                        class="form-control" style="background-color: #2f516f;color: white;" readonly>
                             </div>
                             <div class="col-md-6 d-none gstrow" >
+                                {% if com.GST_Type == "Registered Business - Regular" or com.GST_Type == "Registered Business - Composition" %}
                                 <label for="ctype">GST Number</label>
+                                {% if com.GST_NO  %}
                                 <input type="text" name="gstnum" id="gstnum" value="{{ com.GST_NO }}"
-                                       class="form-control " style="background-color: #2f516f;color: white;" readonly>
-                                
+                                    class="form-control " style="background-color: #2f516f;color: white;" readonly>
+                                {% else %}
+                                <input type="text" name="gstnum" id="gstnum" value="Please provide your GST number in profile edit section to continue"
+                                    class="form-control " style="background-color: #2f516f;color: white;" readonly>
+                                {% endif %}
+                                {% endif %}
                             </div>
                         </div>
                         <div class="row m-3">
@@ -171,9 +177,13 @@
                                 <label for="industry">Payment Term</label>
                                 <div class="d-flex">
                                     
+                                    {% if com.Payment_Term %}
                                     <input type="text" name="Payment_Term" id="Payment_Term" value="{{ com.Payment_Term.payment_terms_number }} {{ com.Payment_Term.payment_terms_value }}"
                                        class="form-control" style="border-radius: 10px 0px 0px 10px;background-color: #2f516f;color: white;" readonly>
-
+                                    {% else %}
+                                    <input type="text" name="Payment_Term" id="Payment_Term" value="Trial Period"
+                                       class="form-control" style="border-radius: 10px 0px 0px 10px;background-color: #2f516f;color: white;" readonly>
+                                    {% endif %}
                                        <!-- <button id="modal_closing" style="border-radius: 0px 10px 10px 0px;"
                                     title="change Payment Term" type="button" class="btn btn-info" data-bs-toggle="modal"
                                     data-bs-target="#partycreation" data-bs-whatever="@mdo"><i class="bx bx-plus"
@@ -299,15 +309,20 @@
                 <form action="{% url 'Fin_Change_payment_terms' %}" method="post" style="padding: 10px;">
                     {% csrf_token %}
                     <label for="" style="color: black;margin-left: 20px;">current Payment Term</label><br>
+
+                    {% if com.Payment_Term %}
                     <input type="text" value="{{ com.Payment_Term.payment_terms_number }} {{ com.Payment_Term.payment_terms_value }}" 
                     style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly> <br>
-
-
+                    {% else %}
+                    <input type="text" value="Trial Period" 
+                    style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly> <br>
+                    {% endif %}
+                    
                     <label for="" style="color: black;margin-left: 20px;">End Date</label><br>
                     <input type="text" value="{{ com.End_date }}" 
                     style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly>
 
-
+                    {% if not payment_request %}
                     <label for="" style="color: black;margin-left: 20px;">Choose New</label><br>
                     <select name="payment_term" id="" 
                     style="margin-bottom: 20px; border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;" >
@@ -316,8 +331,20 @@
                         <option value="{{t.id}}" style="background-color: white;">{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
                         {% endfor %}
                     </select>
-
                     <center><button type="submit" class="btn btn-info" style="border-radius: 30px;width: 50%;"><b>Submit</b></button></center>
+
+                    {% else %}
+                    <label for="" style="color: black;margin-left: 20px;">Choose New</label><br>
+                    <select name="payment_term" id="" 
+                    style="margin-bottom: 20px; border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;">
+                        <option value="" style="background-color: white;">Choose Payment terms</option>
+                        {% for t in terms %}
+                        <option value="{{t.id}}" style="background-color: white;">{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="text-center text-danger">You have a pending request, Please wait for approval.</p>
+                    <center><button type="submit" class="btn btn-info" style="border-radius: 30px;width: 50%;" disabled><b>Submit</b></button></center>
+                    {% endif %}
                 </form>
             </div>
             <div class="modal-footer" style="border-top: 1px solid black;">

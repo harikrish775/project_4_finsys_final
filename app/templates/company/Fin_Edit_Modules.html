@@ -78,6 +78,16 @@
                     <h2 class="mb-4 pb-4 text-center" id="head" style="margin-bottom: 30px; font-family: montserrat, arial, verdana;font-weight: bold;">Choose Your Modules..!</h2>
                 
                 </div>
+                <!-- Checkbox to select/deselect all -->
+                <div class="row g-0">
+                    <div class="card-body" style="margin-left: 15px;">
+                        <div class="form-check" style="font-size: medium;">
+                            <input type="checkbox" style="height: 20px; width: 20px;" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                            <label for="selectAllCheckbox" class="form-check-label ">Select All <span class="">(or choose individually)</span></label>
+                        </div>
+                    </div>
+
+                </div>
 
                 <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>ITEM</u></b></h4>
                 <div class="row" style="font-size: 15px;">
@@ -267,13 +277,36 @@
                 </div>
                 <hr>
 
+                {% if not  module_request %}
                 <center><input type="submit" class="next action-button" value="Submit" style="width: 20%;" /></center>
-           
+                {% else %}
+                <center><input type="submit" disabled class="next action-button" value="Submit" style="width: 20%;" /></center>
+                <p class="text-center text-danger">You have a pending request, please wait for approval.</p>
+                {% endif %}
+
             <!-- <center><input type="submit" class="btn btn-danger p-2 mt-5 mb-3" style="width: 30%;font-weight: bold;border-radius: 10px;"></center> -->
             
         </form>    
         </div>
     </div>        
-    
+
+    <!-- js function to check or uncheck all boxes -->
+    <script>
+        function toggleSelectAll(source) {
+            // Get all checkboxes in the document
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // Loop through each checkbox and set its checked property based on the source checkbox
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+
+            // Check if the source checkbox is unchecked, and reload the page if true
+            if (!source.checked) {
+                location.reload();
+            }
+        }
+    </script>
+
 </body>
 </html>

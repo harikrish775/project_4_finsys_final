@@ -228,8 +228,22 @@
                     {% endfor %}
                     {% endif %}
 
-                    {% if creditLimitAlert %}
-                    {% for data in creditLimit %}
+                    {% if cCreditLimitAlert %}
+                    {% for data in cCreditLimit %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if vCreditLimitAlert %}
+                    {% for data in vCreditLimit %}
                     <a class="dropdown-item" href="javascript:;">
                       <div class="media align-items-center">
                         <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
@@ -249,8 +263,8 @@
                         <div class="notify bg-light-primary text-primary"><i class="bx bx-file"></i>
                         </div>
                         <div class="media-body">
-                          <h6 class="msg-name">{{i.Title}}<span class="msg-time float-right">{{i.Noti_date}}</span></h6>
-                          <p class="msg-info">{{i.Discription}}</p>
+                          <h6 class="msg-name">{{i.Title}}<span class="msg-time float-right">{{i.date_created}} {{i.time}}</span></h6>
+                          <p class="msg-info">{{i.Discription|truncatewords:4}}</p>
                         </div>
                       </div>
                     </a>
@@ -291,8 +305,22 @@
                     {% endfor %}
                     {% endif %}
 
-                    {% if creditLimitAlert %}
-                    {% for data in creditLimit %}
+                    {% if cCreditLimitAlert %}
+                    {% for data in cCreditLimit %}
+                    <a class="dropdown-item" href="javascript:;">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{data.Title}}<span class="msg-time float-right">{{data.Noti_date|date:'Y-m-d'}}</span></h6>
+                          <p class="msg-info">'{{data.Discription}}'</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if vCreditLimitAlert %}
+                    {% for data in vCreditLimit %}
                     <a class="dropdown-item" href="javascript:;">
                       <div class="media align-items-center">
                         <div class="notify bg-light-primary text-primary"><i class='bx bx-package'></i></div>
@@ -455,13 +483,13 @@
               </a>
               <ul>
                 {% if allmodules.Items == 1 %}
-                <li id="items"><a href=""><i class="bx bx-right-arrow-alt"></i>Items</a>
+                <li id="items"><a href="{% url 'Fin_items' %}"><i class="bx bx-right-arrow-alt"></i>Items</a>
                 </li>
                 {% endif %}
 
                 {% if allmodules.Price_List == 1 %}
                 <li id="pricelist">
-                  <a href=""><i class="bx bx-right-arrow-alt"></i>Price Lists</a>
+                  <a href="{% url 'Fin_priceList' %}"><i class="bx bx-right-arrow-alt"></i>Price Lists</a>
                 </li>
                 {% endif %}
 
@@ -485,7 +513,7 @@
 
                 {% if allmodules.Offline_Banking == 1 %}
                 
-                <li id="Offlinebanking"><a href=""><i class="bx bx-right-arrow-alt"></i>Offline
+                <li id="Offlinebanking"><a href="{% url 'Fin_banking_listout' %}"><i class="bx bx-right-arrow-alt"></i>Offline
                     Banking</a>
                 </li>
                 {% endif %}
@@ -493,7 +521,7 @@
                 
 
                 {% if allmodules.Bank_Holders == 1 %}
-                <li id="Fin_bankholder"><a href=""><i class="bx bx-right-arrow-alt"></i>Bank
+                <li id="Fin_bankholder"><a href="{% url 'Fin_bankholder' %}"><i class="bx bx-right-arrow-alt"></i>Bank
                     Holders</a>
                 </li>
                 {% endif %}
@@ -529,24 +557,24 @@
               </a>
               <ul class="submenu">
                 {% if allmodules.Customers == 1 %}
-                <li id="customers"><a href=""><i class="bx bx-right-arrow-alt"></i>Customers</a>
+                <li id="customers"><a href="{% url 'Fin_customers' %}"><i class="bx bx-right-arrow-alt"></i>Customers</a>
                 </li>
                 {% endif %}
 
                 {% if allmodules.Estimate == 1 %}
 
-                <li id="estimate"><a href=""><i class="bx bx-right-arrow-alt"></i>Estimate</a>
+                <li id="estimate"><a href="{% url 'Fin_estimates' %}"><i class="bx bx-right-arrow-alt"></i>Estimate</a>
                 </li>
                 {% endif %}
 
                 {% if allmodules.Sales_Order == 1 %}
-                <li id="salesorder"><a href=""><i class="bx bx-right-arrow-alt"></i>Sales Order</a>
+                <li id="salesorder"><a href="{% url 'Fin_salesOrder' %}"><i class="bx bx-right-arrow-alt"></i>Sales Order</a>
                 </li>
                 {% endif %}
 
                 {% if allmodules.Invoice == 1 %}
                 
-                <li id="invoices"><a href=""><i class="bx bx-right-arrow-alt"></i>Invoices</a>
+                <li id="invoices"><a href="{% url 'Fin_invoice' %}"><i class="bx bx-right-arrow-alt"></i>Invoices</a>
                 </li>
                 {% endif %}
             </li>
@@ -574,7 +602,7 @@
             {% endif %}
 
             {% if allmodules.Recurring_Invoice == 1 %}
-            <li id="reccuringinvoices"><a href=""><i class="bx bx-right-arrow-alt"></i> Reccuring Invoices</a>
+            <li id="reccuringinvoices"><a href="{% url 'Fin_recurringInvoice' %}"><i class="bx bx-right-arrow-alt"></i> Recurring Invoices</a>
             </li>
             {% endif %}
 
@@ -592,7 +620,7 @@
               
 
               {% if allmodules.Vendors == 1 %}
-              <li id="vendor"><a href=""><i class="bx bx-right-arrow-alt"></i>Vendor</a>
+              <li id="vendor"><a href="{% url 'Fin_vendors' %}"><i class="bx bx-right-arrow-alt"></i>Vendor</a>
               </li>
               {% endif %}
 
@@ -602,7 +630,7 @@
               {% endif %}
 
               {% if allmodules.Bills == 1 %}
-              <li id="bill"><a href=""><i class="bx bx-right-arrow-alt"></i>Bill</a>
+              <li id="bill"><a href="{% url 'Fin_List_Purchase_Bill' %}"><i class="bx bx-right-arrow-alt"></i>Bill</a>
               </li>
               {% endif %}
 
@@ -622,7 +650,7 @@
               {% endif %}
 
               {% if allmodules.Recurring_Bills == 1 %}
-              <li id="recurringbill"><a href="{% url 'Fin_recurring_bill_list' %}"><i class="bx bx-right-arrow-alt"></i>Recurring Bill</a>
+              <li id="recurringbill"><a href=""><i class="bx bx-right-arrow-alt"></i>Recurring Bill</a>
               </li>
               {% endif %}
 
@@ -701,7 +729,7 @@
           {% if allmodules.EWay_Bill == 1 %}
 
           <li>
-            <a href="javascript:;" class="has-arrow">
+            <a href="{% url 'Fin_Eway_bills' %}" class="has-arrow">
               <div class="parent-icon"><i class="bx bx-file"></i>
               </div>
               <div class="menu-title">Eway Bill</div>
@@ -720,13 +748,13 @@
               
 
               {% if allmodules.Chart_of_Accounts == 1 %}
-              <li id="chartofaccounts"><a href=""><i class="bx bx-right-arrow-alt"></i>Chart of
+              <li id="chartofaccounts"><a href="{% url 'Fin_chartOfAccounts' %}"><i class="bx bx-right-arrow-alt"></i>Chart of
                   Accounts</a>
               </li>
               {% endif %}
 
               {% if allmodules.Manual_Journal == 1 %}
-              <li id="manualjournal"><a href=""><i class="bx bx-right-arrow-alt"></i>Manual Journal
+              <li id="manualjournal"><a href="{% url 'Fin_manualJournals' %}"><i class="bx bx-right-arrow-alt"></i>Manual Journal
                 </a>
               </li>
               {% endif %}
@@ -745,19 +773,19 @@
               
 
               {% if allmodules.Employees == 1 %}
-              <li id="employee"><a href=""><i class="bx bx-right-arrow-alt"></i>Employee</a> </li>
+              <li id="employee"><a href="{% url 'employee_list' %}"><i class="bx bx-right-arrow-alt"></i>Employee</a> </li>
               {% endif %}
 
               {% if allmodules.Employees_Loan == 1 %}
-              <li id="employeeloan"><a href=""><i class="bx bx-right-arrow-alt"></i>Employee Loan</a> </li>
+              <li id="employeeloan"><a href="{% url 'employee_loan_list' %}"><i class="bx bx-right-arrow-alt"></i>Employee Loan</a> </li>
               {% endif %}
 
               {% if allmodules.Holiday == 1 %}
-              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Holidays</a> </li>
+              <li><a href="{% url 'holiday_list' %}"><i class="bx bx-right-arrow-alt"></i>Holidays</a> </li>
               {% endif %}
 
               {% if allmodules.Attendance == 1 %}
-              <li><a href=""><i class="bx bx-right-arrow-alt"></i>Attendance</a> </li>
+              <li><a href="{% url 'Fin_Attendance' %}"><i class="bx bx-right-arrow-alt"></i>Attendance</a> </li>
               {% endif %}
               {% if allmodules.Salary_Details == 1 %}
               <li><a href=""><i class="bx bx-right-arrow-alt"></i>Salary Details</a> </li>

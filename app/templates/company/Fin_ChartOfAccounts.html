@@ -1,0 +1,200 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<div class="page-content">
+    <div class="card radius-15 h-20">
+        <div class="row">
+            <div class="col-md-12">
+            <center><h2 class="mt-3">CHART OF ACCOUNTS</h2></center>
+            <hr/>
+            </div>
+        </div>
+    </div>
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-5 d-flex justify-content-start">
+                    <input class="form-control w-50 mr-1" type="text" id="search" placeholder="Search..">
+
+                    <select class="form-control btn btn-outline-secondary dropdown-toggle text-grey w-25" id="categoryId" aria-label=".form-select-lg example" name="type" onchange="filterAccounts()">
+                        <option value="" selected>All</option>
+                        <option value="Asset">Asset</option>
+                        <option value="Liability">Liability</option>
+                        <option value="Equity">Equity</option>
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+                <div class="col-md-7 d-flex justify-content-end">
+                    <!-- <a role="button" class="btn btn-outline-secondary" style="color: a#fff;" href=""><i class="fa fa-table"></i> Run Report</a> -->
+                    <div class="dropdown ml-1">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-filter"></i> filter by</button>
+                        <div class="dropdown-menu" style="background-color: black">
+                          <a class="dropdown-item" style="color: white;cursor: pointer;" onclick="filterTable(3,'all')">All</a>
+                          <a class="dropdown-item" style="color: white;cursor: pointer;" onclick="filterTable(3,'active')">Active</a>
+                          <a class="dropdown-item" style="color: white;cursor: pointer;" onclick="filterTable(3,'inactive')">Inactive</a>
+                        </div>
+                      </div>
+                    <a href="{% url 'Fin_addAccount' %}" style="color: #fff;" class="btn btn-outline-secondary ml-1" ><i class="fa fa-plus"></i> New Account</a>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <table class="table table-responsive-md table-responsive-sm table-responsive-lg table-hover" style="overflow: scroll;" id="chartOfAccountsTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">ACCOUNT NAME</th>
+                        <th scope="col">ACCOUNT TYPE</th>
+                        <th scope="col">ACCOUNT CODE</th>
+                        <th scope="col">STATUS</th>
+                        <!-- <th scope="col">ACTION</th> -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for a in accounts %}
+                        {% if not a.sub_account %}
+                            <tr class="table-row cursor-pointer" data-href="{% url 'Fin_accountOverview' a.id %}">
+                                    <td>{{ a.account_name }}</td>
+                                    <td>{{ a.account_type }}</td>
+                                    <td>{{ a.account_code }}</td>
+                                    <td class="text-uppercase">{{ a.status }}</td>
+                                </tr>
+                        {% endif %}
+                        
+                        {% for sub in accounts %}
+                        {% if sub.sub_account == True and sub.parent_account == a.account_name %}
+                        <tr class="table-row cursor-pointer" data-href="{% url 'Fin_accountOverview' sub.id %}">
+                            <td><i class="fa fa-arrow-right ml-3 mr-2"></i>{{ sub.account_name }}</td>
+                            <td>{{ sub.account_type }}</td>
+                            <td>{{ sub.account_code }}</td>
+                            <td class="text-uppercase">{{ sub.status }}</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var $searchRows = $('#chartOfAccountsTable tr');
+    $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+        
+        $searchRows.show().filter(function() {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+
+    $(document).ready(function ($) {
+        $(".table-row").click(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+    function filterTable(row,filterValue) {
+        var table = document.getElementById("chartOfAccountsTable");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) {
+        var statusCell = rows[i].getElementsByTagName("td")[row];
+
+        if (filterValue == "all" || statusCell.textContent.toLowerCase() == filterValue) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+        }
+    }
+
+    function categoryType() {
+        debugger
+        let input, filter, table, tr, td, i, j, txtValue;
+        var selectElement = document.getElementById("categoryId"); 
+        filter = selectElement.value.toLowerCase();
+        table = document.getElementById("chartOfAccountsTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {
+            let rowVisible = false;
+            td = tr[i].getElementsByTagName("td");
+
+        
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) { 
+                    if (filter == "") {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            rowVisible = true;
+                            break;
+                        }
+                    }
+                    else {
+                        if (td[1].innerText.toLowerCase() == filter) {
+                            txtValue = td[j].textContent || td[j].innerText;
+                            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                rowVisible = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Show/hide the row based on the search results
+            tr[i].style.display = rowVisible ? "" : "none";
+        }
+
+    
+    }
+</script>
+<script>
+    function filterAccounts() {
+        let input, table, tr, td, i, j, txtValue;
+        var selectElement = document.getElementById("categoryId");
+        var filter = selectElement.value.toLowerCase();
+        var values = [];
+
+        if (filter === 'asset') {
+            values = ["Other Asset", "Other Current Asset", "Cash", "Bank", "Fixed Asset", "Stock", "Payment Clearing"];
+        } else if (filter === 'liability') {
+            values = ["Other Current Liability", "Credit Card", "Long Term Liability", "Other Liability", "Overseas Tax Payable"];
+        } else if (filter === 'equity') {
+            values = ["Equity"];
+        } else if (filter === 'income') {
+            values = ["Income", "Other Income"];
+        } else if (filter === 'expense') {
+            values = ["Expense", "Cost Of Goods Sold", "Other Expense"];
+        }
+
+        table = document.getElementById("chartOfAccountsTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {
+            let rowVisible = false;
+            td = tr[i].getElementsByTagName("td")[1];
+
+            if (filter === "") {
+                rowVisible = true;
+            } else {
+                // Check if the text content of the cell is in the values array
+                if (values.includes(td.innerText)) {
+                    rowVisible = true;
+                }
+            }
+
+            // Show/hide the row based on the search results
+            tr[i].style.display = rowVisible ? "" : "none";
+        }
+    }
+
+</script>
+
+{% endblock %}

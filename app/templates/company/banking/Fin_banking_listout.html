@@ -1,0 +1,274 @@
+{% extends 'company/Fin_base.html' %}
+{% load static %}
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<div class="page-content">
+    <div class="card radius-15 h-20">
+        <div class="row">
+            <div class="col-md-12">
+                <center>
+                    <h2 class="mt-3">BANKING</h2>
+                </center>
+
+                <hr style="width:95%">
+                <!-- <div class="btn-group col-md-2" style="float: right;"> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="card radius-15">
+    <div class="card-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="search-bar">
+                        <div class="input-group">
+                            <div class="input-group-prepend search-arrow-back">
+                                <button class="btn btn-search-back" type="button"><i
+                                        class="bx bx-arrow-back"></i></button>
+                            </div>
+                            <input class="form-control" type="search" id="searchInput" placeholder="Search"
+                                aria-label="Search">
+                            <!-- <div class="input-group-append">
+                                <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i></button>
+                            </div> -->
+                            <div class="dropdown ml-2">
+                                <button type="button" class=" fa fa-sort btn btn-outline-info dropdown-toggle text-grey"
+                                    data-toggle="dropdown" style="height: 37px;">&nbsp;&nbsp;Sort By</button>
+                                <div class="dropdown-menu" style="background-color: #2f516f;">
+                                    <a class="dropdown-item" href="{% url 'Fin_banking_listout' %}"
+                                        style=" font-size: 15px; color: white;">All </a>
+
+                                    <a class="dropdown-item" href="{% url 'Fin_banking_sort_by_name' %}"
+                                        style=" font-size: 15px; color: white;">Name </a>
+                                    <a class="dropdown-item" href="{% url 'Fin_banking_sort_by_balance' %}"
+                                        style=" font-size: 15px; color: white;">Balance </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 d-flex justify-content-end">
+                    <div class="d-flex align-items-center">
+                        <a class=" btn btn-outline-info text-grey" onclick="ExportToExcel()"><span class="fa fa-file-excel" aria-hidden="true"></span>
+                            Export To Excel</a>
+                
+                        <div class="dropdown ml-2">
+                            <button type="button" class="fa fa-filter btn btn-outline-info text-grey " style="height: 37px; "
+                                data-toggle="dropdown">
+                                <a href="#" class="text-white" >Filter By</a>
+                            </button>
+                            <div class="dropdown-menu" style="background-color: #2f516f;">
+                                <a class="dropdown-item" href="{% url 'Fin_banking_listout' %}"
+                                    style=" font-size: 15px; color: white; text-align: center;">All</a>
+                                <a class="dropdown-item" href="{% url 'Fin_banking_filter_active' %}"
+                                    style=" font-size: 15px; color: white; text-align: center;">Active</a>
+                                <a class="dropdown-item" href="{% url 'Fin_banking_filter_inactive' %}"
+                                    style=" font-size: 15px; color: white; text-align: center;">Inactive</a>
+                            </div>
+                        </div>
+                
+                        <div class="dropdown ml-2">
+                            <button type="button" class="btn btn-outline-info text-grey">
+                                <a href="{% url 'Fin_create_bank' %}">+ Add Bank</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                
+
+
+            </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
+            <thead>
+                <tr>
+                    <th>SL.NO</th>
+                    <th>DATE</th>
+                    <th id="nameList">BANK NAME</th>
+                    <th>ACCOUNT NUMBER</th>
+                    <th>IFSCE CODE</th>
+                    <th>OPENING BALANCE</th>
+                    <th>BALANCE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in all_bankings %}
+                <tr onclick="window.location='{% url 'Fin_view_bank' a.id %}';" style="cursor: pointer;">
+                    <td>{{ forloop.counter }}</td>
+                    <td> {{ a.date |date:"Y-m-d" }}</td>
+                    <td>{{ a.bank_name }}</td>
+                    <td> {{ a.account_number }}</td>
+                    <td> {{ a.ifsc_code }}</td>
+                    <td>{{ a.opening_balance }}</td>
+                    <td>{{a.current_balance}}</td>
+                    {% if a.bank_status == 'Inactive' %}
+                    <td class="text-danger">{{ a.bank_status }}</td>
+                    {% else %}
+                    <td >{{ a.bank_status }}</td>
+                    {% endif %}
+                    <!-- <td><a href="{% url 'Fin_view_bank' a.id %}">click</a></td> -->
+
+
+                </tr>
+
+
+               
+
+                {% endfor %}
+
+
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+</div>
+<!-- Edit Modal -->
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<!-- <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tabletobe');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Bank.' + (type || 'xlsx')));
+    }
+
+</script> -->
+<script>
+function ExportToExcel() {
+    const table = document.querySelector('#tabletobe');
+    const ws = XLSX.utils.table_to_sheet(table);
+
+    // Specify column widths (in Excel characters, e.g., "15px")
+    ws['!cols'] = [
+        { wch: 12 }, // DATE
+        { wch: 15 }, // INVOICE NO
+        { wch: 20 }, // PARTY NAME
+        { wch: 15 }, // TRANSCATION
+        { wch: 15 }, // PAYMENT TYPE
+        { wch: 12 }, // AMOUNT
+        { wch: 15 }, // BALANCE DUE
+        { wch: 15 }, // BALANCE DUE
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, 'Banking.xlsx');
+}
+</script>
+
+<script>
+    function sortTableBySalary(order) {
+        const table = document.getElementById('tabletobe');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+
+        rows.shift(); // Remove the table header row from sorting
+
+        rows.sort(function (a, b) {
+            const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
+
+            if (order === 'asc') {
+                return salaryA - salaryB;
+            } else if (order === 'desc') {
+                return salaryB - salaryA;
+            }
+        });
+
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+    }
+</script>
+
+
+<script>
+    function sortTable(order) {
+        const table = document.getElementById('tabletobe');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+
+        rows.shift(); // Remove the table header row from sorting
+
+        rows.sort(function (a, b) {
+            const bankNameA = a.querySelector('td:first-child').textContent;
+            const bankNameB = b.querySelector('td:first-child').textContent;
+
+            if (order === 'asc') {
+                return bankNameA.localeCompare(bankNameB);
+            } else if (order === 'desc') {
+                return bankNameB.localeCompare(bankNameA);
+            }
+        });
+
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $(".edit-item").on("click", function () {
+            $("#editModal").modal("show");
+        });
+    });
+</script>
+
+<!-- Modal HTML -->
+
+
+<script>
+    jQuery(document).ready(function ($) {
+        $(".clickable-row").click(function () {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+
+<script>
+    // Get the input element and table rows
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+
+    // Add an event listener to the search input
+    searchInput.addEventListener('input', function () {
+        const searchText = this.value.toLowerCase();
+
+        // Loop through each table row and hide/show based on search text
+        tableRows.forEach(row => {
+            let foundMatch = false;
+            const cells = row.querySelectorAll('td'); // Select all <td> elements within the row
+
+            cells.forEach(cell => {
+                const cellText = cell.textContent.toLowerCase();
+                if (cellText.includes(searchText)) {
+                    foundMatch = true;
+                }
+            });
+
+            // Show or hide the row based on whether a match was found
+            if (foundMatch) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+
+{% endblock %}

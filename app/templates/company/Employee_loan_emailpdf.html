@@ -1,0 +1,193 @@
+<!-- CREATED BY TINTO MT -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+
+
+<style>
+    .a{
+        margin-left: 20%;
+    }
+</style>
+
+    </head>
+<body>
+
+
+    <div class="page-content ">
+
+     
+            <div class="card radius-15 ">
+        <div  id="whatToPrint" class="print-only">
+            <div id="">
+                <div class="my-5 page" size="A4" >
+                    <div class="p-5" id="pdf">
+                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                            <div style=" text-transform: uppercase;color: #000000;" class="ribbon-inner ribbon-open">{{loan.status}}<!----></div></div>
+                        <section class="top-content bb d-flex justify-content-between">
+                            <div class="logo">
+                                <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                            </div>
+                            <div class="top-left">
+                                <div class="graphic-path">
+                                    <p style="text-transform: uppercase;color: #000000;">STATEMENT</p>
+                                </div>
+                                <div class="position-relative">
+                                    <p style=" text-transform: uppercase;color: #000000;margin-left: 80%;" id="a">Loan ID. <span>{{loan.employeeid }}</span></p>
+                                </div>
+                            </div>
+                            
+                        </section>
+                        
+            
+                        <section class="store-user mt-5">
+                            <div class="col-12">
+                                <div class="row bb pb-3">
+                                    <div class="col-7">
+                                        <p style=" text-transform: uppercase;color: #000000;"><b></b>Company Details,</b></p>
+                                        <p style=" text-transform: uppercase;color: #000000;" > {{loan.company.Company_name}}<br>
+                                        <!-- <h5 style=" color: #000000;">&nbsp;&nbsp;{{loan.company.Company_name }}</h5> -->
+                                        <p style=" text-transform: uppercase;color: #000000;" > {{loan.company..caAddressddress}}
+                                            {{loan.employee.street}}<br>{{loan.employee.state}}
+                                        </p>
+                                        
+                                    </div>
+                                    <div class="col-13">
+                                        <p style=" text-transform: uppercase;color: #000000;" ><b>Employee Details,</b></p>
+                                        <p style=" text-transform: uppercase;color: #000000;" > {{loan.employee.title}}&nbsp;{{loan.employee.first_name}}&nbsp; {{loan.employee.last_name}}<br>
+                                        <!-- <h5 style=" color: #000000;">&nbsp;&nbsp;{{loan.company.Company_name }}</h5> -->
+                                        <p style=" text-transform: uppercase;color: #000000;" > {{loan.company..caAddressddress}}
+                                            {{loan.company.City}},
+                                            {{loan.company.State}}<br>
+                                            {{loan.company.Pincode}}<br>
+                                        </p>
+                                        
+                                    </div>
+                                    <!-- <div class="col">
+                                        <p style=" color: #000000;" >
+                                            Employee Details,<br style="padding-left: 50px;">{{loan.employee.title}}&nbsp;{{loan.employee.first_name}}&nbsp; {{loan.employee.last_name}}<br>
+                                            {{loan.employee.street}}<br>{{loan.employee.state}}
+                                    
+                                            <br>
+                                        </p>
+                                    </div> -->
+                                </div>
+                                
+                            </div>
+                        </section>
+                        <section class="store-user mt-5">
+                            <div class="col-12">
+                                <div class="row bb pb-3">
+                                    
+                                    <div class="col-9 d-flex align-items-center">
+                                        <p style="color: #000000;">Loan Amount</p>
+                                        <h5 style="color: #000000;">{{loan.loan_amount}}</h5>
+                                    </div>
+                                    
+                                    <div class="col-3 d-flex align-items-center">
+                                        <p style="color: #000000;">Balance</p>
+                                        <h5 style="color: #000000;">{{loan.balance}}</h5>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </section>
+                        
+            
+                        <section class="product-area mt-4">
+                            <table class="table table-responsive-md table-hover mt-4" id="tabletobe1" style="color: #000000;">
+                                <thead>
+                                <tr style="color: #000000;" > 
+                                   <!-- Inside the <thead> section of your table -->
+                                    <th style="color: #000000;"><h6><b style="color: #000000;">DATE</b></h6></th>
+                                    <th ><h6><b style="color: #000000;"> PARTICULARS </b></h6></th>
+                                    <th style="color: #000000;"><h6><b style="color: #000000;">AMOUNT</b></h6></th>
+                                    <th style="color: #000000;"><h6><b style="color: #000000;">INTEREST</b></h6></th>
+                                    <th style="color: #000000;"><h6><b style="color: #000000;">TOTAL AMOUNT</b></h6></th>
+                                    <th style="color: #000000;"><h6><b style="color: #000000;">BALANCE</b></h6></th>
+                                    <!-- <th  style="display:none;color: #000000;"><h6><b><td></td></b></h6></th> -->
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+                     
+                                    {% for i in trans %}
+                            <tr >   <td style="color: #000000;">{{i.date}}</td> 
+                                          
+                                <td style="color: #000000;">{{ i.particulars }}</td>
+                                {% if i.particulars == 'LOAN ISSUED' %}
+                                            <td style="color: #000000;">{{ i.employee_loan.loan_amount }}</td>
+                                            {% elif i.particulars == 'EMI PAID' %}
+                                            <td style="color: #000000;">{{ i.repayment.principle_amount }}</td>
+                                        
+                                            {% elif i.particulars == 'ADDITIONAL LOAN' %}
+                                            <td style="color: #000000;">{{ i.additional.new_loan }}</td>
+
+                                            {% endif %}
+                                            <!-- <td >{{ a.loan_desc }}</td> -->
+                                            
+                                            
+                                            
+                                            <!-- <td>{{a.loan_amount}}</td> -->
+                                            <td style="color: #000000;">{{i.repayment.interest_amount|default:0}}</td>
+                                            
+                                            {% if i.particulars == 'LOAN ISSUED' %}
+                                            <td style="color: #000000;">{{ i.employee_loan.loan_amount }}</td>
+                                            {% elif i.particulars == 'EMI PAID' %}
+                                            <td style="color: #000000;" >{{ i.repayment.total_amount }}</td>
+                                        
+                                            {% elif i.particulars == 'ADDITIONAL LOAN' %}
+                                            <td style="color: #000000;">{{  i.additional.new_loan }}</td>
+
+                                            {% endif %}
+                                            {% if i.particulars == 'LOAN ISSUED' %}
+                                            <td style="color: #000000;">{{ i.balance }}</td>
+                                            {% elif i.particulars == 'EMI PAID' %}
+                                            <td style="color: #000000;">{{ i.balance }}</td>
+                                        
+                                            {% elif i.particulars == 'ADDITIONAL LOAN' %}
+                                            <td style="color: #000000;">{{ i.balance }}</td>
+
+                                            {% endif %}
+                                 
+                                            {% endfor %}
+                                        </tr>
+                                   
+                                          
+                                        <script>
+                                            function showAlert(bankType) {
+                                                alert("You can't edit this transaction with bank type: " + bankType);
+                                            }
+            
+                                            function shoAlert(bankType) {
+                                                alert("You can't delete this transaction with bank type: " + bankType);
+                                            }
+                                        </script>  
+                           
+            </tbody>
+                                   
+            </table>
+                        </section>
+            
+                    </div>
+            
+                        <!-- Cart BG -->
+                        <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+            
+                      
+                    </div>
+                </div>
+
+            </div>
+            
+        
+
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

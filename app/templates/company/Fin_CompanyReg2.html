@@ -181,7 +181,7 @@
             {% endif %}
             {% endfor %}
             <fieldset>
-                <h2 class="mb-4">We're Happy you're Here!</h2>
+                <h2 class="mb-4">Try it free for 30 days !</h2>
                 <input type="text" name="cname" placeholder="Company Name"/>
                 <input type="text" name="caddress" placeholder="Company Address"/>
                 <input type="text" name="city" placeholder="City"/>
@@ -229,13 +229,7 @@
                 <input type="number" name="pincode" placeholder="Pincode"/>
                 <input type="text" name="ccountry" placeholder="country">
                 <input type="text" name="phone" placeholder="Phone Number" id="ph" oninput="validatePhoneNumber()" required/>
-                <select name="payment_term" id="" style="
-                    font-weight: 500;">
-                        <option value="" >Choose Payment terms</option>
-                        {% for t in terms %}
-                        <option value="{{t.id}}" >{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
-                        {% endfor %}
-                    </select>
+                
                 <input type="file" name="img1"  accept="image/*"/>
                 
                 <input type="button" name="next" class="next action-button" value="Next"/>
@@ -290,7 +284,7 @@
                 </select>
 
                 <label style="float: left;">How do you Register?</label>
-                <select name="reg_type" id="reg">
+                <select name="reg_type" id="reg" onclick="dcode()">
                     <option value="self">By Self</option>
                     <option value="distributor">By The Distributor</option>
                 </select>
@@ -298,7 +292,7 @@
                 <input type="text" name="dis_code" id="dc" placeholder="Enter Distributor Code" style="display: none;">
 
                 <input type="button" name="previous" class="previous action-button-previous" value="Previous"/>
-                <input type="submit" class="action-button" value="Submit"/>
+                <input type="submit" class="action-button" value="Start Trial"/>
             </fieldset>
         </form>
     </div>

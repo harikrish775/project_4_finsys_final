@@ -1,0 +1,649 @@
+<!-- Created -- shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+<style>
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+    .submitShareEmailBtn, #commentSaveBtn {
+        background: #192d3e;
+        border: 1px solid #3a4b5a;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+    .submitShareEmailBtn:hover, #commentSaveBtn:hover {
+        background: #3a4b5a;
+    }
+    .customer_data p{
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    @media print {
+        body{
+            visibility: hidden !important;
+            background-color: white;
+        }
+
+        .printContainer {
+            visibility: visible !important;
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: medium;
+        }
+
+    }
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<div class="page-content ">
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_customers' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body" style="width:100%;">
+            <div class="card-title">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="overview()" id="overviewBtn" >Overview</a>
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="transaction()" id="transactionBtn" > Transactions</a>
+                        </div> 
+
+                        <div class="col-md-6 d-flex justify-content-end">
+                            {% if customer.status == 'Inactive' %}
+                            <a href="{% url 'Fin_changeCustomerStatus' customer.id 'Active' %}" id="activeBtn" class="ml-2 fa fa-ban btn btn-outline-secondary text-grey" role="button" >&nbsp;Inactive</a> 
+                            {% else %}
+                            <a href="{% url 'Fin_changeCustomerStatus' customer.id 'Inactive' %}" id="inactiveBtn" class="ml-2 fa fa-check-circle btn btn-outline-secondary text-grey" role="button" >&nbsp;Active</a> 
+                            {% endif %}
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-table" role="button" id="exportBtn" style="display: none;" onclick="ExportToExcel('xlsx')">&nbsp;Export</a>
+                            <a href="{% url 'Fin_customerTransactionsPdf' customer.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" id="pdfBtn" style="display: none;"> &nbsp;PDF</a> 
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-print" role="button" id="printBtn" style="display: none; " onclick="printSection('printContent')">&nbsp;Print</a>
+                            <div class="dropdown p-0 nav-item"  id="shareBtn" style="display: none;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                    <li style="text-align: center;" >{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="text-align: center;color: #e5e9ec; cursor: pointer;" data-toggle="modal" data-target="#shareToEmail">Email</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'Fin_editCustomer' customer.id %}" class="ml-2 fa fa-pencil btn btn-outline-secondary text-grey" id="editBtn" role="button">&nbsp;Edit</a>
+                            <a href="{% url 'Fin_deleteCustomer' customer.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" id="deleteBtn" role="button" onclick="return confirm('Are you sure you want to delete Customer - {{customer.first_name}}.?')">&nbsp;Delete</a>
+                            <a href="#"  class="ml-2 btn btn-outline-secondary text-grey fa fa-comments" id="commentsBtn" role="button" data-toggle="modal" data-target="#commentModal">&nbsp;Comment</a>
+                            <a href="{% url 'Fin_customerHistory' customer.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                        </div>
+                    </div> 
+                </div>
+                <center>
+                    <h3 class="card-title">CUSTOMER OVERVIEW</h3>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+        <div class="card-body p-0">
+
+            <div id="overview">
+                <div class="row g-0 mx-0">
+                    <div class="col-lg-8">
+                        <div class="history_highlight pt-3 px-2 d-flex">
+                            <div class="col-12 d-flex justify-content-start align-items-center">
+                                {% if history %}{% if history.action == 'Created' %}<p class="text-success m-0" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text-warning m-0" style="font-size: 1.07rem; font-weight: 500;">Last Edited by :</p>{% endif %}{% endif %}
+                                <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{history.LoginDetails.First_name}} {{history.LoginDetails.Last_name}}</span>
+                                <span class="ml-5">{{history.date}}</span>
+                            </div>
+                        </div>
+
+                        <div class="pb-3 px-2">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="row">
+                                        <div class="col mt-3">
+                                            <h2 class="mb-0">{{ customer.title }}. {{ customer.first_name }} {{ customer.last_name }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Company</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.company }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.email }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Mobile</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.mobile }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Website</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.website }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Location</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.location }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Place of Supply</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.place_of_supply }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Payment Terms</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.payment_terms.term_name }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Price List</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ customer.price_list.name }}</p>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="row ">
+                                    <div class="col-md-6" >
+                                        <div class="card-content bg-transparent border-0 ml-4" >
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5 class="ml-3" style="text-align: center;">Billing Address</h5>
+                                                    <hr>
+                                                </div>
+                                            </div><br>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3" >
+                                                    <h6 class="mb-0">Street</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.billing_street }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">City</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.billing_city }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">State</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.billing_state }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Pincode</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.billing_pincode }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Country</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.billing_country }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-content bg-transparent border-0" >
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5 class="ml-3" style="text-align: center;">Shipping Address</h5>
+                                                    <hr>
+                                                </div>
+                                            </div><br>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3" >
+                                                    <h6 class="mb-0">Street</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.ship_street }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">City</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.ship_city }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">State</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.ship_state }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Pincode</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.ship_pincode }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Country</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ customer.ship_country }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey">
+
+                        <div class="px-3">
+                            <h3 class="fw-bold mb-2 mt-4 pt-1">Customer Details</h3>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Status</h6>
+                                {% if customer.status == 'Active' %} <i class="fa fa-check-circle text-success">&nbsp;ACTIVE</i>{% else %}<i class="fa fa-ban text-danger">&nbsp;INACTIVE</i>{% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">GST Type</h6>
+                                {{ customer.gst_type }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">GSTIN</h6>
+                                {{ customer.gstin|default:None }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">PAN</h6>
+                                {{ customer.pan_no}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Opening Bal.</h6>
+                                {{ customer.opening_balance}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Credit Limit</h6>
+                                {{ customer.credit_limit}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Balance</h6>
+                                {{ customer.current_balance}}
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="transaction" style="display: none;" >
+                <div id="printContent">
+                    <center><h3 class="mt-3 text-uppercase">{{customer.first_name}} {{customer.last_name}} - TRANSACTIONS</h3></center>
+                    <div class="row mt-5">
+                        <div class="col d-flex justify-content-between px-5">
+                            <div class="customer_data">
+                                <p>Email: {{customer.email}}</p>
+                                <p>GSTIN: {{customer.gstin|default:None}}</p>
+                                <p>Address:<br>{{customer.billing_street}}, {{customer.billing_city}}, {{customer.billing_state}} <br>{{customer.billing_country}}-{{customer.billing_pincode}}</p>
+                            </div>
+                            <div class="customer_data">
+                                <p>Mobile: {{customer.mobile}}</p>
+                                <p>Credit Limit: {{customer.credit_limit}}</p>
+                                <p>Balance: {{customer.current_balance}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive px-2">
+                        <table class="table table-bordered" id="transactionTable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-uppercase">Transaction</th>
+                                    <th class="text-center text-uppercase">Type</th>
+                                    <th class="text-center text-uppercase">Number</th>
+                                    <th class="text-center text-uppercase">Date</th>
+                                    <th class="text-center text-uppercase">Total</th>
+                                    <th class="text-center text-uppercase">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if customer.opening_balance != 0 %}
+                                <tr class="clickable-row" data-href="#" >
+                                    <td style="text-align: center;">1</td>
+                                    <td style="text-align: center;"> Opening Balance </td>
+                                    <td style="text-align: center;"> - </td>
+                                    <td style="text-align: center;"> {{customer.date}} </td>
+                                    <td style="text-align: center;"> {{customer.opening_balance}} </td>
+                                    <td style="text-align: center;"> {{customer.current_balance}} </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Share To Email Modal -->
+<div class="modal fade" id="shareToEmail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Share Customer Transactions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'Fin_shareCustomerTransactionsToEmail' customer.id %}" method="post" class="needs-validation" id="share_to_email_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase">SEND MAIL</button>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- Add Comments Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{% url 'Fin_addCustomerComment' customer.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <textarea type="text" class="form-control" name="comment" placeholder="Add Comments.." required></textarea>
+                    {% if not comments %}
+                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                    {% else %}
+                    <div class="container-fluid">
+                        <table class="table mt-4">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">sl no.</th>
+                                    <th class="text-center">Comment</th>
+                                    <th class="text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in comments %}
+                                <tr class="">
+                                    <td class="text-center">{{forloop.counter }}</td>
+                                    <td class="text-center">{{c.comments}}</td>
+                                    <td class="text-center"><a class="text-danger" href="{% url 'Fin_deleteCustomerComment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')"><i class="fa fa-trash" style="font-size: 1.1rem;"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function ($) {
+        $(".table-row").click(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+
+    function overview() {
+        document.getElementById('overview').style.display = 'block';
+        document.getElementById('transaction').style.display = 'none';
+        document.getElementById('printBtn').style.display = 'none';
+        document.getElementById('pdfBtn').style.display = 'none';
+        document.getElementById('shareBtn').style.display = 'none';
+        document.getElementById('editBtn').style.display = 'block';
+        document.getElementById('deleteBtn').style.display = 'block';
+        document.getElementById('exportBtn').style.display = 'none';
+        document.getElementById('overviewBtn').style.backgroundColor='rgba(22,37,50,255)'
+        document.getElementById('transactionBtn').style.backgroundColor='transparent';
+        $('#historyBtn').show();
+        $('#activeBtn').show();
+        $('#inactiveBtn').show();
+        $('#commentsBtn').show();
+    }
+    
+    function transaction() {
+        document.getElementById('overview').style.display = 'none';
+        document.getElementById('transaction').style.display = 'block';
+        document.getElementById('printBtn').style.display = 'block';
+        document.getElementById('pdfBtn').style.display = 'block';
+        document.getElementById('shareBtn').style.display = 'block';
+        document.getElementById('editBtn').style.display = 'none';
+        document.getElementById('deleteBtn').style.display = 'none';
+        document.getElementById('exportBtn').style.display = 'block';
+        document.getElementById('overviewBtn').style.backgroundColor='transparent';
+        document.getElementById('transactionBtn').style.backgroundColor='rgba(22,37,50,255)';
+        $('#historyBtn').hide();
+        $('#commentsBtn').hide();
+        $('#activeBtn').hide();
+        $('#inactiveBtn').hide();
+    }
+
+    function printSection(sectionId) {
+        document.body.style.backgroundColor = 'white';
+        $('#transaction, #transaction *').css('color', 'black');
+
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var $printerDiv = $('<div class="printContainer"></div>');
+        $printerDiv.html(printContents);
+        $('body').append($printerDiv).addClass("printingContent");
+
+        window.print();
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+        $('#transaction, #transaction *').css('color', 'white');
+    
+    }
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+    
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('transactionTable');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('{{customer.first_name}}_transactions.' + (type || 'xlsx')));
+    }
+</script>
+
+{% endblock %}

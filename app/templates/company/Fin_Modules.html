@@ -72,11 +72,23 @@
 <body style="background-color: #213b52;  font-family: montserrat, arial, verdana;">
     <div class="body-wrapper" style=" padding: 120px;padding-top: 30px;">
         <div class="container">
+
+           
             <form action="{% url 'Fin_Add_Modules' data.id %}" method="post" style="padding: 30px;padding: 20px;">
                 {% csrf_token %}
                 <div class="head " style="border-bottom: 1px solid gray;margin-bottom: 30px;">
                     <h2 class="mb-4 pb-4 text-center" id="head" style="margin-bottom: 30px; font-family: montserrat, arial, verdana;font-weight: bold;">Choose Your Modules..!</h2>
                 
+                </div>
+                <!-- Checkbox to select/deselect all -->
+                <div class="row g-0">
+                    <div class="card-body" style="margin-left: 15px;">
+                        <div class="form-check" style="font-size: medium;">
+                            <input type="checkbox" style="height: 20px; width: 20px;" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                            <label for="selectAllCheckbox">Select All <span class="">(or choose individually)</span></label>
+                        </div>
+                    </div>
+
                 </div>
 
                 <h4 style="font-family: 'Times New Roman', Times, serif;margin-bottom: 20px;margin-top: 20px;"><b><u>ITEM</u></b></h4>
@@ -280,4 +292,18 @@
     </div>        
     
 </body>
+
+<!-- js function to check or uncheck all boxes -->
+<script>
+    function toggleSelectAll(source) {
+      // Get all checkboxes in the document
+      var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+      // Loop through each checkbox and set its checked property based on the source checkbox
+      for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
+</script>
+
 </html>
