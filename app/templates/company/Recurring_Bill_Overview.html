@@ -332,15 +332,44 @@ footer p {
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-                <div class="modal-body">
-                  <input type="file" class="form-control" name="file">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
+                <form id="fileUploadForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="file" class="form-control" name="attachment">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="fileUploadInput" data-pk="{{ bill1.id }}" onclick="submitForm()">Save</button>
+                    </div>
+                </form>
+                <script>
+                    function submitForm() {
+                        var formData = new FormData(document.getElementById('fileUploadForm'));
+                        var pk = document.getElementById('fileUploadInput').getAttribute('data-pk');
+                        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                        formData.append('csrfmiddlewaretoken', csrfToken);
+                    
+                        $.ajax({
+                            url: 'Fin_recurring_bill_attach_file/' + pk + '/',
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function(response) {
+                                // Handle success, e.g., show a message or update the UI
+                                alert('File uploaded successfully.');
+                                // Optionally, you can close the modal or do other actions
+                                $('#yourModalId').modal('hide');
+                            },
+                            error: function(error) {
+                                // Handle error, e.g., show an error message
+                                console.error('Failed to upload file:', error);
+                                alert('Failed to upload')
+                            }
+                        });
+                    }
+                    </script>
               </div>
             </div>
           </div>
@@ -372,7 +401,8 @@ footer p {
                                         <a href="" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1 "> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
                                       </li>
                                       <li class="nav-item mx-1">
-                                        <a  href="" role="button"id="deleteButton" class=" btn btn-outline-info rounded-pill text-grey p-1">&nbsp;<i class="fa fa-trash"></i> &nbsp;Delete&nbsp;&nbsp; 
+                                        <a href="{% url 'Fin_recurring_bill_delete' 0 %}" data-bill-id="{{ bill1.id }}" role="button" class="btn btn-outline-info rounded-pill text-grey p-1 deleteButton">
+                                            &nbsp;<i class="fa fa-trash"></i> &nbsp;Delete&nbsp;&nbsp;
                                         </a>
                                       </li>
                                       <li class="nav-item active mx-1" >
@@ -382,7 +412,29 @@ footer p {
                                         <li class="nav-item mx-1">
                                             <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
                                           </li>
-                                         
+                                          <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+    var deleteButtons = document.querySelectorAll('.deleteButton');
+
+    deleteButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            var confirmed = confirm("Are you sure you want to delete this item?");
+            if (confirmed) {
+                // Get the billId from the data attribute
+                var billId = button.getAttribute('data-bill-id');
+
+                // Redirect to the delete URL
+                window.location.href = button.getAttribute('href').replace('0', billId);
+            } else {
+                // User canceled the delete operation
+                alert("Delete operation canceled.");
+            }
+        });
+    });
+});
+                                            </script>
                                          
                                          
                                      {% if  bill1.status == "Draft" %}
@@ -402,13 +454,13 @@ footer p {
                                       <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
                                       <ul class="dropdown-menu" style="background-color: black;">
               
-                                          <li style="margin-left: 50px;" > </li> 
-                                          <li style="margin-left: 50px;" ></li>
+                                          <li style="margin-left: 20px;" >Email</li> 
+                                          <li style="margin-left: 20px;" >Whatsapp</li>
                                           
                                       </ul>
                                     </div>
           
-                                    <!-- <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
                                         <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
@@ -416,7 +468,7 @@ footer p {
                                             <a class="dropdown-item" download  href=""><i class="fa fa-download">&nbsp;Download File</i></a>
                                         {% endif %}
                                         </ul>
-                                    </div> -->
+                                    </div>
                                 </ul>
                             </div>
                         </nav>
@@ -688,7 +740,7 @@ footer p {
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Paid Amount</h5>
-                                <h6>{{ bill1.paid_amount }}</h6>
+                                <h6>{{ bill1.advanceAmount_paid }}</h6>
                             </div>
                            
                             <div class="d-flex justify-content-between mb-4">
@@ -761,7 +813,7 @@ footer p {
                                         <p>Recurring Bill</p>
                                     </div> -->
                                     <div class="position-relative">
-                                        <p>Recurring Bill. <span>{{  bill1.bill_number }}</span></p>
+                                        <p>Recurring Bill. <span>{{  bill1.recurring_bill_number }}</span></p>
                                     </div>
                                 </div>
                             </section>
@@ -882,7 +934,7 @@ footer p {
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{bill1.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% if bill1.shipping_charge != 0 %}
                                             <tr>
@@ -1061,7 +1113,7 @@ footer p {
                                             {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{bill1.igst}}</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% endif %}
                                             {% if bill1.cgst != 0 %}
@@ -1079,7 +1131,7 @@ footer p {
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{bill1.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% if bill1.shipping_charge != 0 %}
                                             <tr>
@@ -1266,7 +1318,7 @@ footer p {
                                             {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{bill1.igst}}</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% endif %}
                                             {% if bill1.cgst != 0 %}
@@ -1284,7 +1336,7 @@ footer p {
                                             {% endif %}
                                             <tr>
                                                 <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{bill1.tax_amount}}</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% if bill1.shipping_charge != 0 %}
                                             <tr>
@@ -1479,7 +1531,7 @@ footer p {
                                             IGST
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
-                                            {{ bill1.igst }}
+                                            {{ bill1.taxAmount_igst }}
                                         </div>
                                     </div>
                                     {% else %}
@@ -1505,7 +1557,7 @@ footer p {
                                             Total Tax
                                         </div>
                                         <div class="col-md-7 text-right" style="color: black;">
-                                            {{ bill1.tax_amount }}
+                                            {{ bill1.taxAmount_igst }}
                                         </div>
                                     </div>
                                     {% if bill1.shipping_charge != 0 %}
@@ -1528,13 +1580,13 @@ footer p {
                                         </div>
                                     </div>
                                     {% endif %}
-                                    {% if  bill1.paid_amount != 0 %}
+                                    {% if  bill1.advanceAmount_paid != 0 %}
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             Paid
                                         </div>
                                         <div class="col-md-7 text-right" style="color: black;">
-                                            {{ bill1.paid_amount }}
+                                            {{ bill1.advanceAmount_paid }}
                                         </div>
                                     </div>
                                     {% endif %}
@@ -1597,7 +1649,7 @@ footer p {
                  
                 // element.style.color = 'black';
                 // element.style.backgroundColor = 'white';
-                var recurringBillNumber = "{{ bill1.billno }}";
+                var recurringBillNumber = "{{ bill1.recurring_bill_number }}";
                 var opt =
                 {
                     margin: 1,
@@ -1732,16 +1784,30 @@ footer p {
         });
         
 
-        document.getElementById("deleteButton").addEventListener("click", function() {
-            var confirmed = confirm("Are you sure you want to delete this item?");
-            if (confirmed) {
-                // Perform the delete operation here
-                alert("Item deleted!");
-            } else {
-                // User canceled the delete operation
-                alert("Delete operation canceled.");
-            }
-        });
+        // document.getElementById("deleteButton").addEventListener("click", function() {
+        //     var confirmed = confirm("Are you sure you want to delete this item?");
+        //     if (confirmed) {
+        //         var pk = document.getElementById("deleteButton").val()
+        //         // Perform the delete operation here
+        //         $.ajax({
+        //         url: 'Fin_recurring_bill_delete/' + pk + '/',
+        //         type: 'DELETE',
+        //         success: function (response) {
+        //             // Handle success, e.g., show a message or update the UI
+        //             console.log('Recurring bill deleted successfully.');
+        //             alert("Item deleted!");
+        //         },
+        //         error: function (error) {
+        //             // Handle error, e.g., show an error message
+        //             console.error('Failed to delete recurring bill:', error);
+        //             alert("Failed!");
+        //         }
+        //     });
+        //     } else {
+        //         // User canceled the delete operation
+        //         alert("Delete operation canceled.");
+        //     }
+        // });
     </script> 
 
 

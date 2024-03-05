@@ -559,13 +559,12 @@ urlpatterns = [
 
     path('Fin_get_vendor_details/<int:vendor_id>/',views.Fin_get_vendor_details,name='Fin_get_vendor_details'),
     path('Fin_get_customer_details/<int:customer_id>/',views.Fin_get_customer_details,name='Fin_get_customer_details'),
-    # path('Fin_reference_number_auto/',views.Fin_reference_number_auto,name='Fin_reference_number_auto'),
     path('Fin_get_item_details/<int:item_id>/',views.Fin_get_item_details,name='Fin_get_item_details'),
     path('Fin_check_recurring_bill_number/<int:pk>',views.Fin_check_recurring_bill_number,name='Fin_check_recurring_bill_number'),
     
 
-    # path('abc',views.abc,name="abc"),
-    # path('abc',views.abc,name="abc"),
+    path('Fin_recurring_bill_delete/<int:pk>',views.Fin_recurring_bill_delete,name="Fin_recurring_bill_delete"),
+    path('Fin_recurring_bill_attach_file/<int:pk>/', views.Fin_recurring_bill_attach_file, name='Fin_recurring_bill_attach_file'),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),

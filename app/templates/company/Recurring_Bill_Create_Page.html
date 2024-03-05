@@ -233,6 +233,8 @@
                                                         <div style="display: flex;">
                                                             <select class="form-control" name="source" id="sourceOFSupply" >
                                                                 <option selected value="">Re</option>
+                                                                {% for r in repeat %}
+                                                                {% endfor %}
                                                             </select>
                                                             <button class="btn btn-outline-secondary text-grey ml-1">+</button>
                                                         </div>
@@ -383,7 +385,8 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             
-                                                                <form action="" method="post" id="newTermForm1">
+                                                                
+                                                                <form action=""  method="post" id="newTermForm1">
                                                                     {% csrf_token %}
 
                                                                     <div class="row mt-2">
@@ -405,11 +408,12 @@
                                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                           <button class="btn btn-primary" id="paymentTermSave">Save changes</button>
                                                         </div>
-                                                    </form>
+                                                              
+                                                    
                                                       </div>
                                                     </div>
                                                   </div>
-
+                                                
                                                   <script>
                                                    $(document).on("click", "#paymentTermSave", function () {
                                                     var trm = $('#termName1').val();
@@ -467,7 +471,50 @@
                                                             {% endfor %}
                                                         </select>
                                                     </div>
+
+                                                    <div class="col-md-4 mb-3" id="bankAccount" style="display: none;">
+                                                        <label for="">Bank Account</label>
+                                                        <input type="text" class="form-control" name="bankAccount" >
+                                                    </div>
+                                                    <div class="col-md-4 mb-3" id="Cheque" style="display: none;">
+                                                        <label for="">Cheque</label>
+                                                        <input type="text" class="form-control" name="Cheque">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3" id="UPI" style="display: none;">
+                                                        <label for="">UPI</label>
+                                                        <input type="text" class="form-control" name="UPI">
+                                                    </div>
                                                 </div>
+
+                                                <script>
+                                                    $(document).ready(function () {
+                                                    // Event listener for dropdown change
+                                                    $('#paymentType').on('change', function () {
+                                                        // Get the selected payment method
+                                                        var payment = $('#paymentType').val();
+
+                                                        // Show the selected payment method div
+                                                        if (payment === '' || payment === 'Cash' ) {
+                                                            $('#bankAccount').hide();
+                                                            $('#Cheque').hide();
+                                                            $('#UPI').hide();
+                                                        } else if (payment === 'Cheque') {
+                                                            $('#bankAccount').hide();
+                                                            $('#Cheque').show();
+                                                            $('#UPI').hide();
+                                                        } else if (payment === 'UPI') {
+                                                            $('#bankAccount').hide();
+                                                            $('#Cheque').hide();
+                                                            $('#UPI').show();
+                                                        }else{
+                                                            $('#bankAccount').show();
+                                                            $('#Cheque').hide();
+                                                            $('#UPI').hide();
+                                                        }
+                                                    });
+                                                });
+
+                                                </script>
 
                                                 <div class="row m-md-2 pb-3 table-responsive">
                                                     
