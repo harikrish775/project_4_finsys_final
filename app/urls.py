@@ -555,8 +555,7 @@ urlpatterns = [
     path('Fin_recurring_bill_create_page',views.Fin_recurring_bill_create_page,name="Fin_recurring_bill_create_page"),
     path('Fin_recurring_bill_overview/<int:pk>',views.Fin_recurring_bill_overview,name="Fin_recurring_bill_overview"),
     path('Fin_recurring_bill_save',views.Fin_recurring_bill_save,name="Fin_recurring_bill_save"),
-    path('Fin_recurring_bill_edit_page',views.Fin_recurring_bill_edit_page,name='Fin_recurring_bill_edit_page'),
-
+    
     path('Fin_get_vendor_details/<int:vendor_id>/',views.Fin_get_vendor_details,name='Fin_get_vendor_details'),
     path('Fin_get_customer_details/<int:customer_id>/',views.Fin_get_customer_details,name='Fin_get_customer_details'),
     path('Fin_get_item_details/<int:item_id>/',views.Fin_get_item_details,name='Fin_get_item_details'),
@@ -565,8 +564,8 @@ urlpatterns = [
 
     path('Fin_recurring_bill_delete/<int:pk>',views.Fin_recurring_bill_delete,name="Fin_recurring_bill_delete"),
     path('Fin_recurring_bill_attach_file/<int:pk>/', views.Fin_recurring_bill_attach_file, name='Fin_recurring_bill_attach_file'),
-    # path('abc',views.abc,name="abc"),
-    # path('abc',views.abc,name="abc"),
+    path('Fin_recurring_bill_edit_page/<int:pk>/',views.Fin_recurring_bill_edit_page,name="Fin_recurring_bill_edit_page"),
+    path('Fin_recurring_bill_edit_save/<int:pk>/',views.Fin_recurring_bill_edit_save,name="Fin_recurring_bill_edit_save"),
     # path('abc',views.abc,name="abc"),
     # path('abc',views.abc,name="abc"),
 

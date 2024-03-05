@@ -17396,6 +17396,7 @@ def Fin_recurring_bill_create_page(request):
         items = Fin_Items.objects.filter(Company_id=com.id)
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -17416,6 +17417,7 @@ def Fin_recurring_bill_create_page(request):
         items = Fin_Items.objects.filter(Company_id=com.id)
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -17428,7 +17430,7 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'payment_terms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units})
+    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
@@ -17461,26 +17463,33 @@ def Fin_recurring_bill_save(request):
         
         customer = request.POST['Customer'] 
         description = request.POST['Note']
-        # document = request.POST['Document'] 
+
+        if request.POST['Document']:
+            document = request.POST['Document'] 
+        else: 
+            document = ''
+
+        source = request.POST['sourceOfSupply']
+        place = request.POST['placeOfSupply']  
+        if source == place:
+            cgst = request.POST['cgst'] 
+            sgst = request.POST['sgst']
+            taxAmount_igst = ''
+        else:
+            cgst = ''
+            sgst = ''
+            taxAmount_igst = request.POST['taxAmount']
+            
+        
         sub_total = request.POST['subTotal'] 
-        cgst = request.POST['cgst'] 
-        sgst = request.POST['sgst'] 
-        taxAmount_igst = request.POST['taxAmount']
         shipping_charge = request.POST['shippingCharge'] 
         adjustment = request.POST['adjustment'] 
         grand_total = request.POST['grandTotal'] 
         advanceAmount_paid = request.POST['paidAmount'] 
         balance = request.POST['balanceDue']
         status = request.POST['button'] 
-        # repeat_every = request.POST['RepeatEvery']
+        repeat_every = request.POST['RepeatEvery']
 
-        # newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,profile_name = profile_name,reference_number = reference_number,
-        #                           date = '=====',company_payment_terms =company_payment_terms,expected_shipment_date =expected_shipment_date,
-        #                           purchase_order_number =purchase_order_number,payment_method = payment_method,cheque_number = cheque_number,upi_id = upi_id,
-        #                           bank_account = bank_account,customer = customer,description = description,document = document,sub_total = sub_total,cgst = cgst,
-        #                           sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,grand_total = grand_total,
-        #                           advanceAmount_paid = advanceAmount_paid,balance = balance,status = status)
-        
         if loginn.User_Type == 'Company':
             com = Fin_Company_Details.objects.get(Login_Id = sid)
             newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
@@ -17488,7 +17497,8 @@ def Fin_recurring_bill_save(request):
                                     description = description,sub_total = sub_total,cgst = cgst,bank_account=bank_account,cheque_number=cheque_number,upi_id=upi_id,
                                     sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
                                     grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
-                                    status = status,company_id=com.id,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms)
+                                    status = status,company_id=com.id,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
+                                    document = document,repeat_every_id=repeat_every)
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company_id=com.id,login_details_id = sid,recurring_bill_id =newBill.id)
             history.save()
@@ -17525,8 +17535,7 @@ def Fin_recurring_bill_save(request):
                 group = zip(product, qty, discount, total, hsn, tax, price)
                 mapped=list(group)
                 for itemsNew in mapped:
-                    itm =  Fin_Items.objects.get(id=itemsNew[0])
-                    itemsTable = Fin_Recurring_Bill_Items(items =itm.name,quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com.id)
+                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com.id)
                     itemsTable.save()
             
         elif loginn.User_Type == 'Staff' :
@@ -17535,13 +17544,8 @@ def Fin_recurring_bill_save(request):
                 group = zip(product, qty, discount, total, hsn, tax, price)
                 mapped=list(group)
                 for itemsNew in mapped:
-                    itm =  Fin_Items.objects.get(id=itemsNew[0])
-                    itemsTable = Fin_Recurring_Bill_Items(items =itm.name,quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill=newBill.id,company_id=com.company_id_id)
+                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill=newBill.id,company_id=com.company_id_id)
                     itemsTable.save()
-            
-        
-        
-        
                 
         return redirect('Fin_recurring_bill_list')
     
@@ -17662,6 +17666,8 @@ def Fin_get_item_details(request, item_id):
             data = {
                 'hsn': items.hsn,
                 'price': items.selling_price,
+                'gst_tax': items.intra_state_tax,
+                'igst_tax': items.inter_state_tax
                 
             }
             return JsonResponse(data)
@@ -17681,8 +17687,6 @@ def Fin_get_item_details(request, item_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-
-
     
 def Fin_check_recurring_bill_number(request):
     try:
@@ -17713,9 +17717,6 @@ def Fin_check_recurring_bill_number(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-
-def Fin_recurring_bill_edit_page(request,pk):
-    return render(request,'company/Recurring_Bill_Edit_Page.html')
 
 def Fin_new_unit_modal(request):
     if request.method == 'POST':
@@ -17788,4 +17789,162 @@ def Fin_recurring_bill_attach_file(request,pk):
         file = request.FILES['attachment']
         recurBill.attachment = file
         recurBill.save()
+
+def Fin_recurring_bill_edit_page(request,pk):
+    recur = Fin_Recurring_Bills.objects.get(id=pk)
+    itemTable = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk)
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    
+    if loginn.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.id,status='Active')
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
+        customers = Fin_Customers.objects.filter(Company_id=com.id,status='Active')
+        items = Fin_Items.objects.filter(Company_id=com.id)
+        units = Fin_Units.objects.filter(Company = com)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
+        
+
+        recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
+        if recurringBill:
+            recurringBillLatest = recurringBill.latest('id')
+            data = {
+                        'referenceID': recurringBillLatest.reference_number + 1
+                    }
+        else:
+            data = {
+                        'referenceID': 1
+                    }
+    elif loginn.User_Type == 'Staff' :
+        com = Fin_Staff_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id,status='Active')
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
+        customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
+        items = Fin_Items.objects.filter(Company_id=com.id)
+        units = Fin_Units.objects.filter(Company = com)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
+
+        recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
+        if recurringBill:
+            recurringBillLatest = recurringBill.latest('id')
+            data = {
+                        'referenceID': recurringBillLatest.reference_number + 1
+                    }
+        else:
+            data = {
+                        'referenceID': 1
+                    }
+
+    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable})
+
+
+def Fin_recurring_bill_edit_save(request,pk):
+    recur = Fin_Recurring_Bills.objects.get(id=pk)
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    if request.method == 'POST':
+        recur.vendor_id = request.POST['select_vendor']
+        recur.recurring_bill_number = request.POST['RecurringBillNo']
+        recur.profile_name = request.POST['ProfileName']
+        recur.date = request.POST['startDate']
+        recur.company_payment_terms_id = request.POST['payment_terms']
+        recur.purchase_order_number = request.POST['PurchaseOrderNo']
+        recur.payment_method = request.POST['paymentType']
+
+        if len(request.POST['Cheque']) > 0:
+            recur.cheque_number = request.POST['Cheque'] 
+        else:
+            recur.cheque_number = ''
+
+        if len(request.POST['UPI']) > 0:
+            recur.upi_id = request.POST['UPI'] 
+        else:
+            recur.upi_id = ''
+
+        if len(request.POST['bankAccount']) > 0:
+            recur.bank_account = request.POST['bankAccount'] 
+        else:
+            recur.bank_account = ''
+        
+        recur.customer_id = request.POST['Customer']
+        recur.description = request.POST['Note']
+
+        if request.POST['Document']:
+            recur.document = request.POST['Document']
+        else: 
+            recur.document = ''
+
+        recur.sub_total = request.POST['subTotal']
+        recur.cgst = request.POST['cgst'] 
+        recur.sgst = request.POST['sgst'] 
+        recur.taxAmount_igst = request.POST['taxAmount']
+        recur.shipping_charge = request.POST['shippingCharge'] 
+        recur.adjustment = request.POST['adjustment'] 
+        recur.grand_total = request.POST['grandTotal'] 
+        recur.advanceAmount_paid = request.POST['paidAmount'] 
+        recur.balance = request.POST['balanceDue']
+        recur.status = request.POST['button'] 
+        recur.repeat_every_id = request.POST['RepeatEvery']
+
+        recur.save()
+
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            history = Fin_Recurring_Bill_History(date=date.today(),action='Edited',company_id=com.id,login_details_id = sid,recurring_bill_id =pk)
+            history.save()
+            
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            history = Fin_Recurring_Bill_History(date=date.today(),action='Edited',company_id=com.company_id_id,login_details_id = sid,recurring_bill_id = pk)
+            history.save()
+        
+        
+        
+
+        product = tuple(request.POST.getlist("Item[]"))
+        qty = tuple(request.POST.getlist("qty[]"))
+        total_texts = tuple(request.POST.getlist("total[]"))
+        total = [float(value) for value in total_texts]
+        discount = tuple(request.POST.getlist("discount[]"))
+        hsn = request.POST.getlist("hsn[]")
+        tax = request.POST.getlist("taxrate[]")
+        price = request.POST.getlist("price[]")
+                
+
+        if loginn.User_Type == 'Company':
+            com = Fin_Company_Details.objects.get(Login_Id = sid)
+            recurItems = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk,company_id=com.id)
+            for i in recurItems:
+                i.delete()
+            if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
+                group = zip(product, qty, discount, total, hsn, tax, price)
+                mapped=list(group)
+                for itemsNew in mapped:
+                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=pk,company_id=com.id)
+                    itemsTable.save()
+            
+        elif loginn.User_Type == 'Staff' :
+            com = Fin_Staff_Details.objects.get(Login_Id = sid)
+            recurItems = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk,company_id=com.company_id_id)
+            for i in recurItems:
+                i.delete()
+            if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
+                group = zip(product, qty, discount, total, hsn, tax, price)
+                mapped=list(group)
+                for itemsNew in mapped:
+                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=pk,company_id=com.company_id_id)
+                    itemsTable.save()
+                
+        return redirect('Fin_recurring_bill_overview')
+       
+
+
+
+
 
