@@ -17667,7 +17667,8 @@ def Fin_get_item_details(request, item_id):
                 'hsn': items.hsn,
                 'price': items.selling_price,
                 'gst_tax': items.intra_state_tax,
-                'igst_tax': items.inter_state_tax
+                'igst_tax': items.inter_state_tax,
+                'min_stock': items.min_stock
                 
             }
             return JsonResponse(data)
@@ -17678,6 +17679,9 @@ def Fin_get_item_details(request, item_id):
             data = {
                 'hsn': items.hsn,
                 'price': items.selling_price,
+                'gst_tax': items.intra_state_tax,
+                'igst_tax': items.inter_state_tax,  
+                'min_stock': items.min_stock
                 
             }
             return JsonResponse(data)

@@ -117,7 +117,7 @@
                                                 <div class="row ml-2 mr-2 ">
                                                     <div class="col-md-3">
                                                         <label class="mt-4 ">Source Of Supply</label>
-                                                        <select class="form-control" name="sourceOfSupply" id="sourceOFSupply" >
+                                                        <select class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
                                                             <option selected value="">Select Place of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -198,24 +198,7 @@
                                                         <label for="">Reference Number</label>
                                                         <input type="text" class="form-control" value="{{refData.referenceID}}" disabled >
                                                         <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" value="{{refData.referenceID}}" hidden >
-                                                        <!-- <script>
-                                                            $(document).ready(function() {
-                                                            $.ajax({
-                                                                url: '/Fin_reference_number_auto/',
-                                                                type: 'GET',
-                                                                success: function(data) {
-                                                                    console.log('----success------');
-                                                                    nextID = data.referenceID + 1;
-                                                                    $("#ReferenceNo").val(nextID);
-                                                                },
-                                                                error: function(xhr, status, error) {
-                                                                    console.error('-----error-----');
-                                                                    console.error('Status: ' + status);
-                                                                    console.error('Error: ' + error);
-                                                                }
-                                                            });
-                                                        });
-                                                        </script> -->
+                                                        
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
@@ -297,7 +280,7 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Place OF Supply</label>
-                                                        <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control">
+                                                        <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option value="">Select Place Of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -369,24 +352,24 @@
                                                                     <option value="{{ pd.id }}">{{ pd.term_name }}</option>
                                                                 {% endfor %}
                                                             </select>
-                                                            <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#newPaymentTermNormal">+</button>
+                                                            <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#newPaymentRe">+</button>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <!-- pterms modal -->
 
-                                                <div class="modal fade" id="newPaymentTermNormal" tabindex="-1" role="dialog" aria-labelledby="vendorModalLongTitle" aria-hidden="true">
-                                                    <div class="modal-dialog" style="max-width: 1000px;" role="document">
+                                                
+                                                <div class="modal fade" id="newPaymentRe" tabindex="-1" role="dialog" aria-labelledby="newPaymentReLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
                                                       <div class="modal-content">
                                                         <div class="modal-header">
-                                                          <h5 class="modal-title" id="vendorModalLongTitle">ADD VENDORS</h5>
+                                                          <h5 class="modal-title" id="newPaymentReLabel">Modal Title</h5>
                                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                           </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            
-                                                        <form id="newTermForm1" enctype="multipart/form-data" method="PlaceOfSupplyCustomert"></form>
+                                                            <form id="newTermForm1" enctype="multipart/form-data" method="PlaceOfSupplyCustomert">
                                                             <div class="row mt-2">
                                                                 <div class="col-md-6">
                                                                     <label for="name">Term Name</label>
@@ -397,17 +380,19 @@
                                                                     <input type="number" name="days" id="termDays1" class="form-control w-100" min="0" step="1">
                                                                 </div>
                                                             </div>
-                                                            
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                          <button type="button" class="btn btn-primary" id="paymentTermSaveNormal">Save changes</button>
+                                                        </form>
                                                         </div>
                                                         <div class="modal-footer">
-                                                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                          <button type="button" class="btn btn-primary" id="paymentTermSaveNormal">Save changes</button>
+                                                          
                                                         </div>
-                                                        </form>
-                                                        
+                                                    
                                                       </div>
                                                     </div>
                                                   </div>
+                                                        
+                                                    
                                                 
                                                 <!-- end modal pterms -->
                                                 
@@ -539,7 +524,7 @@
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="text" class="form-control item-qty" value="0"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
                                                                     <td class="border" style="min-width: 150px;" id="gst">
-                                                                        <select name="taxrate[]" id="GST" class="form-control item-gst_tax" placeholder="Tax Rate">
+                                                                        <select name="taxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
                                                                             <option value="0">GST 0 (0%)</option>
                                                                             <option value="3">GST 3 (3%)</option>
                                                                             <option value="5">GST 5 (5%)</option>
@@ -549,7 +534,7 @@
                                                                         </select>
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;display: none;" id="igst">
-                                                                        <select name="taxrate[]" id="IGST" class="form-control item-igst_tax" placeholder="Tax Rate">
+                                                                        <select name="taxrate[]" id="IGSTcolumn" onchange="initializeCalculations()" class="form-control item-igst_tax" placeholder="Tax Rate">
                                                                             <option value="0">IGST 0 (0%)</option>
                                                                             <option value="3">IGST 3 (3%)</option>
                                                                             <option value="5">IGST 5 (5%)</option>
@@ -566,6 +551,7 @@
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
+                                                                    <td class="border" style="min-width: 150px;" hidden><input type="text" class="form-control item-totaltax" id="taxTotal" value="0" ></td>
                                                                     <td class="border" ><p class="btn btn-outline-secondary text-grey mb-1 w-100 " onclick="addRow()" id="plus">+</p><br> <p class="btn btn-outline-secondary text-grey w-100" onclick="removeRow(this)" id="minus"> - </p></td>
                                                                 </tr>
                                                             </tbody>
@@ -623,6 +609,9 @@
                                                             setTimeout(function () {
                                                                 // Trigger the logic after 1 second when 'SelectCustomer' or 'select_vendor' is changed
                                                                 checkPlaceOfSupply();
+                                                                initializeCalculations()
+                                                                
+
                                                             }, 1000); // 1000 milliseconds = 1 second
                                                         });
                                                         
@@ -647,6 +636,7 @@
                                                                     // Update the placeholder elements with the fetched details
                                                                     $row.find(".item-hsn").val(data.hsn);
                                                                     $row.find(".item-price").val(data.price);
+                                                                    $row.find(".item-qty").val(data.min_stock);
                                                                     $row.find(".item-gst_tax").val(data.gst_tax).change();
                                                                     $row.find(".item-igst_tax").val(data.igst_tax).change();
                                                                     
@@ -758,7 +748,7 @@
                                                                 <p>:</p>
                                                             </div>
                                                             <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="shippingCharge" id="shippingCharge" class="form-control">
+                                                                <input type="text" oninput="updateSubTotal()" name="shippingCharge" id="shippingCharge" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
@@ -769,7 +759,7 @@
                                                                 <p>:</p>
                                                             </div>
                                                             <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="adjustment" id="adjustment" class="form-control">
+                                                                <input type="text" oninput="updateSubTotal()" name="adjustment" id="adjustment" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
@@ -792,7 +782,7 @@
                                                                 <p>:</p>
                                                             </div>
                                                             <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="paidAmount" id="paidAmount" class="form-control">
+                                                                <input type="text" oninput="updateSubTotal()" name="paidAmount" id="paidAmount" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
@@ -810,97 +800,79 @@
                                                         
                                                     </div>
                                                     <script>
-
-                                                    function finalBill() {
-                                                        // Attach event listener for input fields in the tax calculation section
-                                                        var subtotalInput = document.getElementById('subTotal');
-                                                        var cgstInput = document.getElementById('cgst');
-                                                        var sgstInput = document.getElementById('sgst');
-                                                        var taxAmountInput = document.getElementById('taxAmount');
-                                                        var shippingInput = document.getElementById('shippingCharge');
-                                                        var adjustmentInput = document.getElementById('adjustment');
-                                                        var paidInput = document.getElementById('paidAmount');
-                                                        var grandInput = document.getElementById('grandTotal');
-                                                        var balanceInput = document.getElementById('balanceDue');
-                                                        var sourceInput = document.getElementById('sourceOfSupply');
-                                                        var placeInput = document.getElementById('PlaceOfSupplyCustomer');
-                                                        var gstInput = document.getElementById('GST');
-                                                        var igstInput = document.getElementById('IGST');
-                                                        
-
-                                                        [subtotalInput,paidInput,adjustmentInput,shippingInput].forEach(function (input) {
-                                                            input.addEventListener('input', function () {
-                                                                calculateTaxAmount();
-                                                            });
-                                                        });
-
-                                                        // Function to calculate tax amount
-                                                        function calculateTaxAmount() {
-                                                            var source = parseFloat(sourceInput.value) || 0;
-                                                            var place = parseFloat(placeInput.value) || 0;
-                                                            var gst = parseFloat(gstInput.value) || 0;
-                                                            var igst = parseFloat(igstInput.value) || 0;
-
-                                                            var subtotal = parseFloat(subtotalInput.value) || 0;
-                                                            var cgst = parseFloat(cgstInput.value) || 0;
-                                                            var sgst = parseFloat(sgstInput.value) || 0;
-                                                            var shipping = parseFloat(shippingInput.value) || 0;
-                                                            var adjustment = parseFloat(adjustmentInput.value) || 0;
-                                                            var paid = parseFloat(paidInput.value) || 0;      
-                                                            if (source === place){
-                                                                var totalTaxAmount = (subtotal * gst) / 100;
-                                                                var cgst_sgst = totalTaxAmount/2;
-                                                            }else{
-                                                                var totalTaxAmount = (subtotal * igst) / 100;
-                                                            }
-                                                            // Calculate total tax amount
-                                                            var grandTotalo = subtotal + totalTaxAmount + shipping - adjustment ;
-                                                            var balance = grandTotalo - paid;
-                                                            // Display the calculated tax amount
-                                                            taxAmountInput.value = totalTaxAmount.toFixed(2);
-                                                            grandInput.value = grandTotalo.toFixed(2);
-                                                            balanceInput.value = balance.toFixed(2);
-                                                            cgstInput.value = cgst_sgst.toFixed(2);
-                                                            sgstInput.value = cgst_sgst.toFixed(2);
-                                                            
-                                                            
-
-                                                        }
-                                                    }
-
-                                                    document.addEventListener('DOMContentLoaded', finalBill);
-
-
-
                                                     
 
                                                         // Function to calculate and update the total for a row
                                                         function updateTotal(row) { 
                                                             var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
                                                             var price = parseFloat(row.querySelector('.item-price').value) || 0;
-                                                            var tax = parseFloat(row.querySelector('.item-tax').value) || 0;
+                                                            var gst_tax = parseFloat(row.querySelector('.item-gst_tax').value) || 0;
+                                                            var igst_tax = parseFloat(row.querySelector('.item-igst_tax').value) || 0;
                                                             var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
-                                                    
-                                                            var total = qty * price * (1 + tax / 100) - discount;
-                                                            row.querySelector('.item-total').value = total.toFixed(2);
+                                                            var source = document.querySelector('.source_of_supply_vendor').value;
+                                                            var place = document.querySelector('.place_of_supply_customer').value;
+                                                            
+                                                            console.log('source',source)
+                                                            console.log('place',place)
+                                                            if (source === place && source !== '' && place !== ''){
+                                                                var total = qty * price * (1 + gst_tax / 100) - discount;
+                                                                var taxtotal = qty * price * (gst_tax / 100);
+                                                                row.querySelector('.item-total').value = total.toFixed(2);
+                                                                row.querySelector('.item-totaltax').value = taxtotal.toFixed(2);
+                                                            }else if (source !== place && source !== '' && place !== ''){
+                                                                var total = qty * price * (1 + igst_tax / 100) - discount;
+                                                                var taxtotal = qty * price * (igst_tax / 100);
+                                                                row.querySelector('.item-total').value = total.toFixed(2);
+                                                                row.querySelector('.item-totaltax').value = taxtotal.toFixed(2);
+                                                            }else{
+                                                                var total = qty * price - discount;
+                                                                row.querySelector('.item-total').value = total.toFixed(2);
+                                                                
+                                                            }
                                                     
                                                             // Update only the grand total for the current row
                                                             
                                                             updateSubTotal();
-                                                            finalBill()
+                                                            
                                                         }
 
                                                         function updateSubTotal() {
                                                         var subTotal = 0;
+                                                        var taxTotal = 0;
                                                         // Iterate over all rows and sum up the individual totals
                                                         var allRows = document.querySelectorAll('.item-row');
+                                                        var source = document.querySelector('.source_of_supply_vendor').value;
+                                                        var place = document.querySelector('.place_of_supply_customer').value;
+                                                        var grandTotal = document.getElementById('grandTotal');
+                                                        var shipping = parseFloat(document.getElementById('shippingCharge').value) || 0;
+                                                        var adjustment = parseFloat(document.getElementById('adjustment').value) || 0;
+                                                        var paid= parseFloat(document.getElementById('paidAmount').value) || 0;
+                                                        var grandInput = document.getElementById('grandTotal');
+                                                        var balanceInput = document.getElementById('balanceDue');
+
                                                         allRows.forEach(function (row) {
                                                             var rowTotal = parseFloat(row.querySelector('.item-total').value) || 0;
                                                             subTotal += rowTotal;
+                                                            var rowTaxTotal = parseFloat(row.querySelector('.item-totaltax').value) || 0;
+                                                            taxTotal += rowTaxTotal;
                                                         });
 
                                                         // Update the grand total in your HTML (replace 'your-grand-total-id' with the actual ID)
                                                         document.getElementById('subTotal').value = subTotal.toFixed(2);
+                                                        if (source === place && source !== '' && place !== ''){
+                                                            cgst = taxTotal/2.0;
+                                                            document.getElementById('cgst').value = cgst.toFixed(2);
+                                                            document.getElementById('sgst').value = cgst.toFixed(2);
+                                                            document.getElementById('taxAmount').value = taxTotal.toFixed(2);
+                                                        }else if (source !== place && source !== '' && place !== ''){
+                                                            document.getElementById('taxAmount').value = taxTotal.toFixed(2);
+                                                        }
+                                                        
+                                                        Gtotal = subTotal + shipping - adjustment ;
+                                                        var balance = Gtotal - paid;
+                                                        grandInput.value = Gtotal;
+                                                        balanceInput.value = balance;
+                                                        
                                                     }
                                                     
                                                         // Function to initialize calculations on page start
@@ -919,7 +891,8 @@
                                                             itemRow.addEventListener('input', function (event) {
                                                                 if (event.target.classList.contains('item-qty') ||
                                                                     event.target.classList.contains('item-price') ||
-                                                                    event.target.classList.contains('item-tax') ||
+                                                                    event.target.classList.contains('item-gst_tax') ||
+                                                                    event.target.classList.contains('item-igst_tax') ||
                                                                     event.target.classList.contains('item-discount')) {
                                                                     updateTotal(itemRow);
                                                                 }
@@ -996,11 +969,11 @@
                                                         initializeCalculations();
 
                                                         // Set up an interval to continuously check for changes
-                                                        setInterval(function () {
-                                                            itemRows.forEach(function (row) {
-                                                                updateTotal(row);
-                                                            });
-                                                        }, 1000);
+                                                        // setInterval(function () {
+                                                        //     itemRows.forEach(function (row) {
+                                                        //         updateTotal(row);
+                                                        //     });
+                                                        // }, 1000);
                                                     };
 
 
