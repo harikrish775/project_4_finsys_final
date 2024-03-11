@@ -17222,7 +17222,6 @@ def Fin_recurring_bill_list(request):
         bill = Fin_Recurring_Bills.objects.all()     
     return render(request,'company/Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill})
 
-
 def Fin_recurring_bill_create_page(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
@@ -17320,8 +17319,8 @@ def Fin_recurring_bill_save(request):
             sgst = request.POST['sgst']
             taxAmount_igst = ''
         else:
-            cgst = ''
-            sgst = ''
+            cgst = 0
+            sgst = 0
             taxAmount_igst = request.POST['taxAmount']
             
         
@@ -17346,6 +17345,9 @@ def Fin_recurring_bill_save(request):
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company_id=com.id,login_details_id = sid,recurring_bill_id =newBill.id)
             history.save()
+
+            ref = Fin_Recurring_Bill_Reference(reference_number = reference_number ,company_id = com.id,login_details_id = sid)
+            ref.save()
             
             
         elif loginn.User_Type == 'Staff' :
@@ -17360,7 +17362,9 @@ def Fin_recurring_bill_save(request):
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company_id=com.company_id_id,login_details_id = sid,recurring_bill_id =newBill.id)
             history.save()
-        
+
+            ref = Fin_Recurring_Bill_Reference(reference_number = reference_number ,company_id = com.company_id_id,login_details_id = sid)
+            ref.save()
         
 
         product = tuple(request.POST.getlist("Item[]"))
@@ -17369,8 +17373,11 @@ def Fin_recurring_bill_save(request):
         total = [float(value) for value in total_texts]
         discount = tuple(request.POST.getlist("discount[]"))
         hsn = request.POST.getlist("hsn[]")
-        tax = request.POST.getlist("taxrate[]")
         price = request.POST.getlist("price[]")
+        if request.POST['sourceOfSupply'] == request.POST['placeOfSupply']:
+            tax = request.POST.getlist("gsttaxrate[]")
+        else:
+            tax = request.POST.getlist("igsttaxrate[]")
                 
 
         if loginn.User_Type == 'Company':
@@ -17392,7 +17399,6 @@ def Fin_recurring_bill_save(request):
                     itemsTable.save()
                 
         return redirect('Fin_recurring_bill_list')
-    
     
 def Fin_recurring_bill_overview(request,pk):
     sid = request.session['s_id']
@@ -17429,7 +17435,6 @@ def Fin_recurring_bill_overview(request,pk):
             'email':com.Email
         }
     return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
-
 
 def Fin_get_vendor_details(request, vendor_id):
 
@@ -17535,7 +17540,6 @@ def Fin_get_item_details(request, item_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-    
 def Fin_check_recurring_bill_number(request):
     try:
         sid = request.session['s_id']
@@ -17565,7 +17569,6 @@ def Fin_check_recurring_bill_number(request):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
-
 def Fin_new_unit_modal(request):
     if request.method == 'POST':
         unit = request.POST['unitName'].upper()
@@ -17608,9 +17611,9 @@ def Fin_unit_reload_modal(request):
             }
         return JsonResponse(data)
         
-def Fin_new_payment_terms(request):
+def Fin_new_payment_terms_recurring(request):
     if request.method == 'POST':
-        termName = request.POST['term']
+        termName = request.POST['term_name']
         termDays = request.POST['days']
         sid = request.session['s_id']
         loginn = Fin_Login_Details.objects.get(id=sid)
@@ -17654,6 +17657,8 @@ def Fin_recurring_bill_edit_page(request,pk):
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
+        pricelist = Fin_Price_List.objects.filter(Company_id=com.id)
+        
         
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
@@ -17676,6 +17681,7 @@ def Fin_recurring_bill_edit_page(request,pk):
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
+        pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id)
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -17688,8 +17694,7 @@ def Fin_recurring_bill_edit_page(request,pk):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable})
-
+    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist})
 
 def Fin_recurring_bill_edit_save(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
@@ -17728,8 +17733,10 @@ def Fin_recurring_bill_edit_save(request,pk):
             recur.document = ''
 
         recur.sub_total = request.POST['subTotal']
-        recur.cgst = request.POST['cgst'] 
-        recur.sgst = request.POST['sgst'] 
+        if request.POST['cgst'] :
+            recur.cgst = request.POST['cgst'] 
+        if request.POST['sgst'] :
+            recur.sgst = request.POST['sgst'] 
         recur.taxAmount_igst = request.POST['taxAmount']
         recur.shipping_charge = request.POST['shippingCharge'] 
         recur.adjustment = request.POST['adjustment'] 
@@ -17761,8 +17768,13 @@ def Fin_recurring_bill_edit_save(request,pk):
         total = [float(value) for value in total_texts]
         discount = tuple(request.POST.getlist("discount[]"))
         hsn = request.POST.getlist("hsn[]")
-        tax = request.POST.getlist("taxrate[]")
         price = request.POST.getlist("price[]")
+        
+        if request.POST['sourceOfSupply'] == request.POST['placeOfSupply']:
+            tax = request.POST.getlist("gsttaxrate[]")
+        else:
+            tax = request.POST.getlist("igsttaxrate[]")
+        
                 
 
         if loginn.User_Type == 'Company':
@@ -17790,6 +17802,7 @@ def Fin_recurring_bill_edit_save(request,pk):
                     itemsTable.save()
                 
         return redirect('Fin_recurring_bill_overview')
+    return redirect('Fin_recurring_bill_create_page')
        
 def Fin_createVendor_modal(request):
     if 's_id' in request.session:
@@ -17868,8 +17881,6 @@ def Fin_createVendor_modal(request):
             return JsonResponse({'error': 'Invalid request method'})
     else:
         return JsonResponse({'error': 'User not logged in'})
-
-
 
 def Fin_createCustomer_modal(request):
     if 's_id' in request.session:
@@ -17955,7 +17966,6 @@ def Fin_createCustomer_modal(request):
             return JsonResponse({'error': 'Invalid request method'})
     else:
         return JsonResponse({'error': 'User not logged in'})
-
 
 def Fin_createNewItem_modal(request):
     if 's_id' in request.session:
@@ -18060,5 +18070,8 @@ def Fin_saveItemUnit_modal(request):
                 unit.save()
                 return JsonResponse({'status':True})
                 
-
+def Fin_end_date(request):
+    paymentID = request.GET.get('payment')
+    day = Fin_Company_Payment_Terms.objects.get(id=paymentID)
+    return JsonResponse({'countDays' : day.days}, content_type='application/json')
 
