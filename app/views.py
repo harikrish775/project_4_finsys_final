@@ -40,6 +40,10 @@ import logging
 import re   
 from decimal import Decimal
 
+import imgkit
+import pdfkit
+import os
+
 def Fin_index(request):
     return render(request,'Fin_index.html')
 
@@ -17517,7 +17521,7 @@ def Fin_get_item_details(request, item_id):
                 'price': items.selling_price,
                 'gst_tax': items.intra_state_tax,
                 'igst_tax': items.inter_state_tax,
-                'min_stock': items.min_stock
+                'current_stock': items.current_stock
                 
             }
             return JsonResponse(data)
@@ -17530,7 +17534,7 @@ def Fin_get_item_details(request, item_id):
                 'price': items.selling_price,
                 'gst_tax': items.intra_state_tax,
                 'igst_tax': items.inter_state_tax,  
-                'min_stock': items.min_stock
+                'current_stock': items.current_stock
                 
             }
             return JsonResponse(data)
@@ -17621,13 +17625,16 @@ def Fin_new_payment_terms_recurring(request):
             com = Fin_Company_Details.objects.get(Login_Id = sid)
             paymentTerm = Fin_Company_Payment_Terms(term_name = termName,days = termDays,Company_id = com.id)
             paymentTerm.save()
-            return JsonResponse()
+            terms = [{'term_name': paymentTerm.term_name,'id': paymentTerm.id}]
+            return JsonResponse({'terms':terms,'success':True})
+            
             
         elif loginn.User_Type == 'Staff' :
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
             paymentTerm = Fin_Company_Payment_Terms(term_name = termName,days = termDays,Company_id = com.cpmpany_id_id)
             paymentTerm.save()
-            return JsonResponse()
+            terms = [{'term_name': paymentTerm.term_name,'id': paymentTerm.id}]
+            return JsonResponse({'terms':terms},content_type='application/json')
 
 def Fin_recurring_bill_delete(request,pk):
     recurBill = Fin_Recurring_Bills.objects.get(id=pk)
@@ -17938,7 +17945,7 @@ def Fin_createCustomer_modal(request):
                 credit_limit = 0 if request.POST['credit_limit'] == "" else float(request.POST['credit_limit']),
                 billing_street = request.POST['street'],
                 billing_city = request.POST['city'],
-                billing_state = request.POST['state'],
+                billing_state = request.POST['state1'],
                 billing_pincode = request.POST['pincode'],
                 billing_country = request.POST['country'],
                 ship_street = request.POST['shipstreet'],
@@ -17958,13 +17965,14 @@ def Fin_createCustomer_modal(request):
                 customer = cust,
                 action = 'Created'
             )
-
             customers = [{'id': cust.id, 'first_name': cust.first_name , 'last_name': cust.last_name}]
             return JsonResponse({'success': True, 'customers': customers}, content_type='application/json')
 
         else:
+            print('------error on line 17973--------------')
             return JsonResponse({'error': 'Invalid request method'})
     else:
+        print('------error on line 17976--------------')
         return JsonResponse({'error': 'User not logged in'})
 
 def Fin_createNewItem_modal(request):
@@ -18074,4 +18082,122 @@ def Fin_end_date(request):
     paymentID = request.GET.get('payment')
     day = Fin_Company_Payment_Terms.objects.get(id=paymentID)
     return JsonResponse({'countDays' : day.days}, content_type='application/json')
+
+def recurring_bill_email(request):
+    try:
+        if request.method == 'POST':
+            emails_string = request.POST['email_ids']
+            # keyy = request.POST['mailDiv']
+            keyy = '1'
+            print(keyy,'-----------------11111111111----------------')
+            pk = request.POST['bill_id']
+            cmpID = request.POST['company_ID']
+            data = Fin_Recurring_Bills.objects.get(id=pk)
+            cmp = Fin_Company_Details.objects.get(id=cmpID)
+            items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+
+            # Split the string by commas and remove any leading or trailing whitespace
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = "Here's the requested profile"
+            companyData = {
+            'caddress':cmp.Address,
+            'city':cmp.City,
+            'state':cmp.State,
+            'pincode':cmp.Pincode,
+            'phone':cmp.Contact,
+            'email':cmp.Email
+            }
+            
+
+            context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
+            print('context working')
+
+            if keyy == '0' or keyy == '1' or keyy == '2' or keyy == '3' :
+                template_path = 'company/Fin_Recurring_Bill_Template_PDF.html'
+                print('tpath working')
+
+                template = get_template(template_path)
+                print('template working')
+
+                html = template.render(context)
+                print('html working')
+
+                result = BytesIO()
+                print('bytes working')
+
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/'))
+                print('pisa working')
+
+            elif keyy == '4':
+                template_path = 'company/Fin_Recurring_Bill_Slip_PDF.html'
+                print('tpath working')
+
+                template = get_template(template_path)
+                print('template working')
+
+                html = template.render(context)
+                print('html working')
+
+                result = BytesIO()
+                print('bytes working')
+
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Slip_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/'))
+                print('pisa working')
+
+            if pdf.err:
+                raise Exception(f"PDF generation error: {pdf.err}")
+
+            pdf = result.getvalue()
+            print('')
+            filename = f"Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            subject = f"Here is the details of Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            email = EmailMessage(subject, f"Hi, \n{email_message} -of -{cmp.Company_name}. ", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            messages.success(request, 'Report has been shared via email successfully..!')
+            # return JsonResponse({'success': True})
+            return redirect(Fin_recurring_bill_list)
+    except Exception as e:
+        messages.error(request, f'Error while sending report: {e}')
+        # return JsonResponse({'error': str(e)})
+        return redirect(Fin_recurring_bill_create_page)
+
+def view_template_pdf(request,pk):
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    bill1 = Fin_Recurring_Bills.objects.get(id=pk)
+    if loginn.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.id)
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
+        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        companyName = com.Company_name
+        companyData = {
+            'caddress':com.Address,
+            'city':com.City,
+            'state':com.State,
+            'pincode':com.Pincode,
+            'phone':com.Contact,
+            'email':com.Email
+        }
+    elif loginn.User_Type == 'Staff' :
+        com = Fin_Staff_Details.objects.get(Login_Id = sid)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
+        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
+        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        companyName = com.Company_name
+        companyData = {
+            'caddress':com.Address,
+            'city':com.City,
+            'state':com.State,
+            'pincode':com.Pincode,
+            'phone':com.Contact,
+            'email':com.Email
+        }
+
+    return render(request,'company/Fin_Recurring_Bill_Template_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+
+
 

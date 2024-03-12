@@ -549,12 +549,13 @@ urlpatterns = [
     path('Fin_recurring_bill_edit_page/<int:pk>/',views.Fin_recurring_bill_edit_page,name="Fin_recurring_bill_edit_page"),
     path('Fin_recurring_bill_edit_save/<int:pk>/',views.Fin_recurring_bill_edit_save,name="Fin_recurring_bill_edit_save"),
     path('Fin_end_date',views.Fin_end_date,name="Fin_end_date"),
-    # path('abc',views.abc,name="abc"),
+    path('recurring_bill_email/',views.recurring_bill_email,name="recurring_bill_email"),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
 
-
+    path('view_template_pdf/<int:pk>',views.view_template_pdf,name='view_template_pdf'),
+    # path('abc',views.abc,name='abc'),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

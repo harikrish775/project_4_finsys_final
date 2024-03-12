@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+</head>
+<body>
+
+    
+
+    
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div id="whatToPrint1" class="printTemplates template1 col-6" >
+            <div class="my-5 page" size="A4" >
+                <div class="p-5" id="printdiv1">
+                    <div id="ember2512" class="tooltip-container ember-view  text-ellipsis"> <!-- ribbon -->
+                        <div class="ribbon-inner ribbon-open">{{bill1.status}}<!----></div></div>
+                    <section class="top-content bb d-flex justify-content-between">
+                        <div class="logo">
+                            <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                            
+                        </div>
+                        <div class="top-left">
+                            <!-- <div class="graphic-path">
+                                <p>Recurring Bill</p>
+                            </div> -->
+                            <div class="position-relative">
+                                <p>Recurring Bill. <span>{{  bill1.recurring_bill_number }}</span></p>
+                            </div>
+                        </div>
+                    </section>
+        
+                    <section class="store-user mt-5">
+                        <div class="col-12">
+                            <div class="row bb pb-3">
+                                <div class="col-7">
+                                    <p style="font-weight: 700;">FROM,</p>
+                                    <h5 style="color: #22b8d1;">{{ companyName }}</h5>
+                                    <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                        {{bill1.vendor.billing_city}},
+                                        {{bill1.vendor.billing_state}}<br>
+                                        {{bill1.vendor.billing_pincode}}<br>
+                                    </p>
+                                    
+                                </div>
+                                <div class="col-5">
+                                    <p style="color:#000;font-weight: 700;">TO,</p>
+                                    <h5  style="color: #22b8d1;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
+                                    <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
+                                        {% if vendor_gstin %}
+                                          GSTIN:{{ bill1.vendor.gstin }}
+                                        {% endif %}
+                                        <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                            {{bill1.vendor.billing_city}},
+                                            {{bill1.vendor.billing_state}}<br>
+                                            {{bill1.vendor.billing_pincode}}<br>
+                                        </p>
+                                </div>
+                            </div>
+                            <div class="row extra-info pt-3">
+                                <div class="col-7">
+                                    <p style="color:#000;font-weight: 700;">Deliver To Details: </p>
+                                    <p class="address " style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                        {{bill1.customer.email}}<br>
+                                        {% if customer_gstin %}
+                                          GSTIN:{{ customer_gstin }}
+                                        {% endif %}</p>
+                                </div>
+                                <div class="col-5">
+                                    <p style="color:#000;font-weight: 700;">Start Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                    <p style="color:#000;font-weight: 700;">End Date : <span> {{ bill1.end_date}}</span></p>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+        
+                    <section class="product-area mt-4">
+                        <table class=" table table-hover table-bordered " id="table1">
+                            <thead >
+                                <tr style="background-color: #22b8d1;">
+                                    <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                    <td style="font-weight:bold; color:black">Hsn</td>
+                                    <td style="font-weight:bold; color:black ">Price</td>
+                                    <td style="font-weight:bold; color:black">Quantity</td>
+                                    <td style="font-weight:bold; color:black">Tax</td>
+                                    <td style="font-weight:bold; color:black">Discount</td>
+                                    <td style="font-weight:bold; color:black">Total</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+    
+                                {% for j in items  %}
+                                <tr>
+                                    <td style="color:black; text-align: center;">
+                                        {{j.items.name}}                                                
+                                    </td>
+                                    <td style="color:black">{{j.hsn}}</td>
+                                    <td style="color:black">{{j.price}}</td>
+                                    <td style="color:black">{{j.quantity}}</td>
+                                    <td style="color:black">{{j.tax_rate}} %</td>
+                                    <td style="color:black">{{j.discount}} </td>
+                                    <td style="color:black">{{j.total}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table><br><br>
+                    </section>
+        
+                    <section class="balance-info">
+                        <div class="row">
+                            <div class="col-7">
+                                <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                                <p style="color:black">{{bill1.description}}</p>
+                            </div>
+                            <div class="col-5">
+                                <table class="table border-0 table-hover">
+                                    <tr >
+                                        <td style="color:black;font-weight: 700;">Sub Total :</td>
+                                        <td style="color:black">{{bill1.sub_total}}</td>
+                                    </tr>
+                                    <!-- {% if bill1.discount != "0" %}
+                                    <tr>
+                                        <td style="color:black">Discount</td>
+                                        <td style="color:black">{{bill1.discount}}</td>
+                                    </tr>
+                                    {% endif %} -->
+                                    {% if bill1.taxAmount_igst != 0 %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">IGST :</td>
+                                        <td style="color:black">{{bill1.taxAmount_igst}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if bill1.cgst != 0 %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">CGST :</td>
+                                        <td style="color:black">{{bill1.cgst}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    
+                                    {% if bill1.sgst != 0 %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">SGST :</td>
+                                        <td style="color:black">{{bill1.sgst}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">Total Tax :</td>
+                                        <td style="color:black">{{bill1.taxAmount_igst}}</td>
+                                    </tr>
+                                    {% if bill1.shipping_charge != 0 %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">Shipping Charge :</td>
+                                        <td style="color:black">{{bill1.shipping_charge}}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if bill1.adjustment != 0 %}
+                                    <tr>
+                                        <td style="color:black;font-weight: 700;">Adjustment :</td>
+                                        <td style="color:black">{{bill1.adjustment}}</td>
+                                    </tr>
+                                    {% endif %}
+                                   
+                                    <tfoot>
+                                        <tr>
+                                            <td style="color:black;font-weight: 700;">Grand Total:</td>
+                                            <td style="color:black ;">{{bill1.grand_total}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div> 
+                        </div>
+                        <div class="row container-fluid  p-2 m-0">
+                            <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                            <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+                            <div class="col-sm-4 m-0 p-0"></div>
+                        </div>
+                    </section>
+        
+                    <!-- Cart BG -->
+                    <!-- <img src="cart.jpg" class="img-fluid cart-bg" alt=""> -->
+        
+                    <!-- <footer>
+                        <hr>
+                        <p class="m-0 text-center">
+                            View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                        </p>
+                        <div class="social pt-3">
+                            <span class="pr-2">
+                                <i class="fas fa fa-mobile-alt"></i>
+                                <span>0123456789</span>
+                            </span>
+                            <span class="pr-2">
+                                <i class="fas fa fa-envelope"></i>
+                                <span>me@saburali.com</span>
+                            </span>
+                            <span class="pr-2">
+                                <i class="fab fa-facebook-f"></i>
+                                <span>/sabur.7264</span>
+                            </span>
+                            <span class="pr-2">
+                                <i class="fab fa-youtube"></i>
+                                <span>/abdussabur</span>
+                            </span>
+                            <span class="pr-2">
+                                <i class="fab fa-github"></i>
+                                <span>/example</span>
+                            </span>
+                        </div>
+                    </footer> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</body>
+</html>

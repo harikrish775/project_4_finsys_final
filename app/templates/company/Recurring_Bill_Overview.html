@@ -454,7 +454,7 @@ footer p {
                                       <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
                                       <ul class="dropdown-menu" style="background-color: black;">
               
-                                          <li style="margin-left: 20px;" >Email</li> 
+                                          <li style="margin-left: 20px; cursor: pointer;" href="#emailModal" data-toggle="modal">Email</li> 
                                           <li style="margin-left: 20px;" >Whatsapp</li>
                                           
                                       </ul>
@@ -1618,10 +1618,55 @@ footer p {
         
     </div>
 
+    <!-- ---------modals ---------- -->
+
+    <!-- ------------email modal -------------- -->
+
+  <div class="modal fade" id="emailModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Send Mail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'recurring_bill_email' %}" method="post" >
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div>
+                                <label for="recipientEmail" style="text-align: left;">Recipient's Email Address:</label>
+                                <textarea id="recipientEmail" id="email_ids" name="email_ids" cols="5" rows="2" class="form-control"></textarea>
+                                <input type="text" name="bill_id" id="bill_id" value="{{bill1.id}}" style="display: none;">
+                                <input type="text" name="company_ID" id="company_ID" value="{{ bill1.company_id }}" style="display: none;">
+                            </div>
+                        </div>
+                        <!-- <button class="btn btn-outline-secondary text-grey w-75" type="submit">
+                            send
+                        </button> -->
+                        <div class="row mt-4">
+                            <div class="col-4"></div>
+                            <div class="col-4 d-flex justify-content-center">
+                                <button class="btn btn-outline-secondary text-grey w-75" type="submit">Send</button>
+                            </div>
+                            <div class="col-4"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+  <!-- -------------email modal end---------- -->
+
+    <!-------- modals end ----------->
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function ($) {
+        $(document).ready(function ($) { //pdf
             $(document).on('click', '#pdflink', function (event) {
                 event.preventDefault();
 
@@ -1664,6 +1709,64 @@ footer p {
     </script>
 
     <script>
+        
+function sendEmailWithPDF() {
+    // Your existing code to generate the PDF
+                print1 = document.getElementById('whatToPrint1');
+                print2 = document.getElementById('whatToPrint2');
+                print3 = document.getElementById('whatToPrint3');
+                print4 = document.getElementById('slipdiv')
+                var maildiv = '0';
+
+                if (print1.style.display !== 'none'){
+                    var element = document.getElementById('printdiv1') ;
+                    var maildiv = '1';
+                }
+
+                if (print2.style.display !== 'none'){
+                    var element = document.getElementById('printdiv2') ;
+                    var maildiv = '2';
+                }
+
+                if (print3.style.display !== 'none'){
+                    var element = document.getElementById('printdiv3') ;
+                    var maildiv = '3';
+                }
+
+                if (print4.style.display !== 'none'){
+                    var element = document.getElementById('printslip') ;
+                    var maildiv = '4';
+                }  
+                
+                var formData = {
+                    'mailDiv': maildiv,
+                    'email_ids': $('#email_ids').val(),
+                    'bill_id': $('#bill_id').val(),
+                    'company_ID': $('#company_ID').val()
+
+                }
+            
+
+        // Send the PDF file to the server using an AJAX request
+        $.ajax({
+            type: 'POST',
+            url: 'recurring_bill_email/',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(error) {
+                console.error(error);
+            }
+        });
+}
+
+
+    </script>
+
+    <script>
         function printfun(){
 
             print4 = document.getElementById('slipdiv')
@@ -1671,7 +1774,7 @@ footer p {
                     var printContents = document.getElementById("slipdiv").innerHTML;
             }else{
 
-                var printContents = document.getElementById("whatToPrint").innerHTML;
+                var printContents = document.getElementById("whatToPrint1").innerHTML;
             }
 
 

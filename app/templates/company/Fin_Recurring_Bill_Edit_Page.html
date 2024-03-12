@@ -558,7 +558,7 @@
                                                                         <td></td>
                                                                         <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}{% if i.id == itm.items_id %}<option value="{{i.id}}" selected>{{i.name}}</option>{% else %}<option value="{{i.id}}" >{{i.name}}</option>{% endif %}{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
                                                                         <td class="border" style="min-width: 150px;"><input value="{{itm.hsn}}" name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
-                                                                        <td class="border" style="min-width: 150px;"><input value="{{itm.quantity}}" name="qty[]" type="text" class="form-control item-qty" value="0"></td>
+                                                                        <td class="border" style="min-width: 150px;"><input value="{{itm.quantity}}" name="qty[]" type="number" class="form-control item-qty" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                         <td class="border" style="min-width: 150px;"><input value="{{itm.price}}" name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
                                                                         <td class="border" style="min-width: 150px;" id="gst">
                                                                             <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
@@ -658,35 +658,81 @@
 
 
                                                             // --------------------------------------------------------------------------
-                                                            // table row fill
-                                                            $(document).ready(function () {
-                                                            // Use event delegation on the table
-                                                            $("#itemTable").on("change", ".item-select", function () {
-                                                                var $select = $(this);
-                                                                var $row = $select.closest('.item-row'); // Find the closest row
+                                                        // table row fill
+                                                        $(document).ready(function () {
+                                                        // Use event delegation on the table
+                                                        $("#itemTable").on("change", ".item-select", function () {
+                                                            var $select = $(this);
+                                                            var $row = $select.closest('.item-row'); // Find the closest row
 
-                                                                var itemsId = $select.val();
-
-                                                                // Make an AJAX request to the backend to fetch item details
-                                                                $.ajax({
-                                                                    url: '/Fin_get_item_details/' + itemsId + '/',
-                                                                    type: 'GET',
-                                                                    success: function (data) {
-                                                                        // Update the placeholder elements with the fetched details
-                                                                        $row.find(".item-hsn").val(data.hsn);
-                                                                        $row.find(".item-price").val(data.price);
-                                                                        $row.find(".item-qty").val(data.min_stock);
-                                                                        $row.find(".item-gst_tax").val(data.gst_tax).change();
-                                                                        $row.find(".item-igst_tax").val(data.igst_tax).change();
-                                                                        
-                                                                    },
-                                                                    error: function (error) {
-                                                                        console.log(error);
-                                                                    }
-                                                                });
-                                                            });
+                                                            var itemsId = $select.val();
                                                             
+
+                                                            // Make an AJAX request to the backend to fetch item details
+                                                            $.ajax({
+                                                                url: '/Fin_get_item_details/' + itemsId + '/',
+                                                                type: 'GET',
+                                                                success: function (data) {
+                                                                    // Update the placeholder elements with the fetched details
+                                                                    $row.find(".item-hsn").val(data.hsn);
+                                                                    $row.find(".item-price").val(data.price);
+                                                                    $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
+                                                                    $row.find(".item-stockin").html(data.current_stock);
+                                                                    $row.find(".item-gst_tax").val(data.gst_tax).change();
+                                                                    $row.find(".item-igst_tax").val(data.igst_tax).change();
+
+                                                                    updateStockin($row);
+                                                                },
+                                                                error: function (error) {
+                                                                    console.log(error);
+                                                                }
+                                                            });
                                                         });
+
+                                                        // Function to check and update item-stockin based on item-qty
+                                                        function updateStockin($row) {
+                                                            var qty = parseInt($row.find(".item-qty").val());
+                                                            var initialStockin = parseInt($row.find(".item-stockin").data("initial"));
+
+                                                            // Set the maximum value for item-qty to the initial count of item-stockin
+                                                            $row.find(".item-qty").attr("max", initialStockin);
+
+                                                            // Check if item-qty is valid
+                                                            if (!isNaN(qty) && qty >= 0 && qty <= initialStockin) {
+                                                                // Update item-stockin based on the change in item-qty
+                                                                var updatedStockin = initialStockin - qty; // Decrease stockin based on qty
+                                                                $row.find(".item-stockin").html(updatedStockin);
+                                                                $row.find(".item-stockin").css('color', 'white');
+
+                                                                // Display "Out of Stock" message if item-stockin is 0
+                                                                if (updatedStockin <= 0) {
+                                                                    alert("Out of Stock");
+                                                                    $row.find(".item-stockin").html('out of stock');
+                                                                    $row.find(".item-stockin").css('color', 'red');
+                                                                }
+                                                            } else {
+                                                                // Handle invalid item-qty (e.g., display an error message)
+                                                                alert("Invalid quantity");
+                                                                // Reset item-qty to a valid value (you can modify this based on your requirements)
+                                                                $row.find(".item-qty").val(0);
+                                                                $row.find(".item-stockin").html(initialStockin);
+                                                                if (updatedStockin <= 0) {
+                                                                    alert("Out of Stock");
+                                                                    $row.find(".item-stockin").html('out of stock');
+                                                                    $row.find(".item-stockin").css('color', 'red');
+                                                                }
+
+                                                            }
+                                                        }
+
+                                                        $("#itemTable").on("input", ".item-qty", function () {
+                                                        var $input = $(this);
+                                                        var $row = $input.closest('.item-row'); // Find the closest row
+
+                                                        updateStockin($row);
+                                                    });
+                                                    $("#itemTable .item-select").trigger("change");
+                                                    });
 
 
                                                         // item save
@@ -943,13 +989,19 @@
                                                             var clone = itemRows[0].cloneNode(true);
                                                             document.querySelector('tbody').appendChild(clone);
 
-                                                            // Reset values for the new row
+                                                            // Reset values for the new row inputs
                                                             clone.querySelectorAll('input').forEach(function (input) {
                                                                 input.value = 0;
                                                             });
+
+                                                            // Reset values for the new row dropdowns
+                                                            clone.querySelectorAll('select').forEach(function (select) {
+                                                                select.value = '';
+                                                            });
+
                                                             initializeCalculations();
-                                                            
                                                         }
+
                                                                                                             
                                                             // Attach event listener for the "Remove Row" button
                                                             
