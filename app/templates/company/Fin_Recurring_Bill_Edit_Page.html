@@ -360,51 +360,56 @@
                                                     </div>
                                                     <script>
                                                         // Function to calculate end date
-                                                        function calculateEndDate() {
-                                                            // Get the selected start date
-                                                            var startDate = document.getElementById("startDate").value;
-    
-                                                            // Get the selected payment terms (number of days)
-                                                            var paymentTerms = document.getElementById("termadd2").value;
-                                                            if (paymentTerms == ''){
-                                                                
-                                                                var countDays = 0; // Correctly access the countDays from the response data
-                                                                    // Calculate the end date
-                                                                    var endDate = new Date(startDate);
-                                                                    endDate.setDate(endDate.getDate() + parseInt(countDays));
-    
-                                                                    // Format the end date to YYYY-MM-DD
-                                                                    var formattedEndDate = endDate.toISOString().split('T')[0];
-    
-                                                                    // Display the calculated end date
-                                                                    document.getElementById("endDate").value = formattedEndDate;
-                                                            }else{
-    
-                                                            $.ajax({
-                                                                url: 'Fin_end_date',
-                                                                type: 'GET',
-                                                                data: {
-                                                                    'payment': paymentTerms
-                                                                },
-                                                                success: function (data) {
-                                                                    var countDays = data.countDays; // Correctly access the countDays from the response data
-                                                                    // Calculate the end date
-                                                                    var endDate = new Date(startDate);
-                                                                    endDate.setDate(endDate.getDate() + parseInt(countDays));
-    
-                                                                    // Format the end date to YYYY-MM-DD
-                                                                    var formattedEndDate = endDate.toISOString().split('T')[0];
-    
-                                                                    // Display the calculated end date
-                                                                    document.getElementById("endDate").value = formattedEndDate;
-    
-                                                                },
-                                                                error: function (error) {
-                                                                    console.log(error);
-                                                                }
-                                                            });
-                                                        }
-                                                        }
+                                                    function calculateEndDate() {
+                                                        // Get the selected start date
+                                                        var startDate = document.getElementById("startDate").value;
+
+                                                        // Get the selected payment terms (number of days)
+                                                        var paymentTerms = document.getElementById("termadd2").value;
+                                                        if (paymentTerms == ''){
+                                                            
+                                                            var countDays = 0; // Correctly access the countDays from the response data
+                                                                // Calculate the end date
+                                                                var endDate = new Date(startDate);
+                                                                endDate.setDate(endDate.getDate() + parseInt(countDays));
+
+                                                                // Format the end date to YYYY-MM-DD
+                                                                var formattedEndDate = endDate.toISOString().split('T')[0];
+
+                                                                // Display the calculated end date
+                                                                document.getElementById("endDate").value = formattedEndDate;
+                                                        }else{
+
+                                                        $.ajax({
+                                                            url: 'Fin_end_date',
+                                                            type: 'GET',
+                                                            data: {
+                                                                'payment': paymentTerms
+                                                            },
+                                                            success: function (data) {
+                                                                var countDays = data.countDays; // Correctly access the countDays from the response data
+                                                                // Calculate the end date
+                                                                var endDate = new Date(startDate);
+                                                                endDate.setDate(endDate.getDate() + parseInt(countDays));
+
+                                                                // Format the end date to YYYY-MM-DD
+                                                                var formattedEndDate = endDate.toISOString().split('T')[0];
+
+                                                                // Display the calculated end date
+                                                                document.getElementById("endDate").value = formattedEndDate;
+
+                                                            },
+                                                            error: function (error) {
+                                                                console.log(error);
+                                                            }
+                                                        });
+                                                    }
+                                                    }
+                                                        window.onload = function () {
+                                                        setTimeout(function () {
+                                                            calculateEndDate();
+                                                        }, 1000); // 1000 milliseconds = 1 second
+                                                    };
     
                                                         
                                                         
@@ -413,7 +418,7 @@
 
                                                     <div class="row m-md-2">
                                                         <div class="col-md-4 mb-3">
-                                                            <label for="">Payment Terms </label>
+                                                            <label for="">Credit Period </label>
                                                             <div style="display: flex;">
                                                                 <select class="custom-select" name="payment_terms" id="termadd2" onchange="calculateEndDate();">
                                                                     <option selected id="trmopt2"></option>
@@ -953,7 +958,7 @@
                                                                 document.getElementById('taxAmount').value = taxTotal.toFixed(2);
                                                             }
                                                             
-                                                            Gtotal = subTotal + shipping - adjustment ;
+                                                            Gtotal = subTotal + shipping + adjustment ;
                                                             var balance = Gtotal - paid;
                                                             grandInput.value = Gtotal;
                                                             balanceInput.value = balance;
@@ -1230,33 +1235,34 @@
                                     
                                     if (trm !== "" && dys !== "") {
                                         $.ajax({
-                                            type: 'PlaceOfSupplyCustomerT',
-                                            url: "{% url 'Fin_new_payment_terms_recurring' %}",
+                                            type: 'POST',
                                             data: {
-                                                'term': trm,
+                                                'term_name': trm,
                                                 'days': dys,
                                                 csrfmiddlewaretoken: '{{ csrf_token }}'
                                             },
+                                            url: 'Fin_new_payment_terms_recurring',
                                             success: function (response) {
-                                                if (response.status) {
+                                                
                                                     document.getElementById("newTermForm1").reset();
 
-                                                    var dropdown = $('#termadd2');
-                                                    dropdown.empty();
-                                                    dropdown.append(`<option value="" selected>Choose</option>`);
-
+                                                    var dropdown = $('#paymentTermsCustomer');                                    
                                                     $.each(response.terms, function (index, term) {
-                                                        if (term.term_name === trm) {
-                                                            dropdown.append($('<option selected></option>').text(term.term_name).val(term.id))
-                                                        } else {
-                                                            dropdown.append($('<option></option>').text(term.term_name).val(term.id))
-                                                        }
+                                                        dropdown.append($('<option selected></option>').text(term.term_name).val(term.id))
                                                     });
-                                                    alert('successfully added')
 
-                                                } else {
-                                                    alert(response.message)
-                                                }
+                                                    var dropdown1 = $('#termadd2');
+                                                    $.each(response.terms, function (index, term) {
+                                                        dropdown1.append($('<option selected></option>').text(term.term_name).val(term.id))
+                                                    });
+
+                                                    var dropdown2 = $('#paymentTerms');
+                                                    $.each(response.terms, function (index, term) {
+                                                        dropdown2.append($('<option selected></option>').text(term.term_name).val(term.id))
+                                                    });
+
+                                                    alert('successfully added')
+                                                
                                             },
                                         });
                                     } else {
@@ -1785,34 +1791,33 @@
                     var dys = $("#termDays").val();
                     if (trm !="" && dys !=""){
                         $.ajax({
-                            type : 'PlaceOfSupplyCustomerT',
-                            url:"{% url 'Fin_new_payment_terms_recurring' %}",
+                            type : 'POST',
+                            url:'Fin_new_payment_terms_recurring',
                             data:{
-                                'term' : trm,
+                                'term_name' : trm,
                                 'days' : dys,
                                 csrfmiddlewaretoken: '{{ csrf_token }}'
                             },
                             
                             success: function(response) {
-                                if(response.status){
                                     document.getElementById("newTermForm").reset();
                                     
-                                    var dropdown = $('#paymentTerms');
-                                    dropdown.empty();
-                                    dropdown.append(`<option value="" selected>Choose</option>`);
-                                    $.each(response, function(key, value) {
-                                        for(let i=0; i<value.length; i++){
-                                            if(value[i].name == trm){
-                                                dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].id))
-                                            }else{
-                                                dropdown.append($('<option></option>').text(value[i].name).val(value[i].id))
-                                            }   
-                                        }
+                                    var dropdown = $('#paymentTermsCustomer');                                    
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown.append($('<option></option>').text(term.term_name).val(term.id))
                                     });
-            
-                                }else{
-                                    alert(response.message)
-                                }
+
+                                    var dropdown1 = $('#termadd2');
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown1.append($('<option></option>').text(term.term_name).val(term.id))
+                                    });
+
+                                    var dropdown2 = $('#paymentTerms');
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown2.append($('<option selected></option>').text(term.term_name).val(term.id))
+                                    });
+
+                                    alert('successfully added')
                             },         
                         });
                     }
@@ -2142,7 +2147,7 @@
                             <h4 class="mb-0">Customer Information</h4>
                         </div>
                         <hr/>
-                        <form method="PlaceOfSupplyCustomert" id="customerForm" class="needs-validation">
+                        <form method="post" id="customerForm" class="needs-validation">
                             {% csrf_token %}
             
                                 <div class="row mt-3">
@@ -2531,7 +2536,7 @@
 
                                 $.ajax({
                                     type: "POST",
-                                    url: "{% url 'Fin_createCustomer_modal' %}",
+                                    url: 'Fin_createCustomer_modal',
                                     data: formData,
                                     dataType: "json",  // Expect JSON response
                                     success: function(response) {
@@ -2630,34 +2635,36 @@
                     var dys = $("#termDaysCustomer").val();
                     if (trm !="" && dys !=""){
                         $.ajax({
-                            type : 'PlaceOfSupplyCustomerT',
-                            url:"{% url 'Fin_new_payment_terms_recurring' %}",
+                            type : 'POST',
+                            url:'Fin_new_payment_terms_recurring',
                             data:{
-                                'term' : trm,
+                                'term_name' : trm,
                                 'days' : dys,
                                 csrfmiddlewaretoken: '{{ csrf_token }}'
                             },
                             
                             success: function(response) {
-                                if(response.status){
+                                
                                     document.getElementById("newTermFormCustomer").reset();
                                     
-                                    var dropdown = $('#paymentTermsCustomer');
-                                    dropdown.empty();
-                                    dropdown.append(`<option value="" selected>Choose</option>`);
-                                    $.each(response, function(key, value) {
-                                        for(let i=0; i<value.length; i++){
-                                            if(value[i].name == trm){
-                                                dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].id))
-                                            }else{
-                                                dropdown.append($('<option></option>').text(value[i].name).val(value[i].id))
-                                            }   
-                                        }
+                                    var dropdown = $('#paymentTermsCustomer');                                    
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown.append($('<option></option>').text(term.term_name).val(term.id))
                                     });
+
+                                    var dropdown1 = $('#termadd2');
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown1.append($('<option></option>').text(term.term_name).val(term.id))
+                                    });
+
+                                    var dropdown2 = $('#paymentTerms');
+                                    $.each(response.terms, function (index, term) {
+                                        dropdown2.append($('<option selected></option>').text(term.term_name).val(term.id))
+                                    });
+
+                                    alert('successfully added')
             
-                                }else{
-                                    alert("Something went wrong.!")
-                                }
+                                
                             },         
                         });
                     }

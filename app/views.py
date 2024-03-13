@@ -40,9 +40,7 @@ import logging
 import re   
 from decimal import Decimal
 
-import imgkit
-import pdfkit
-import os
+
 
 def Fin_index(request):
     return render(request,'Fin_index.html')
@@ -17411,9 +17409,13 @@ def Fin_recurring_bill_overview(request,pk):
     if loginn.User_Type == 'Company':
         com = Fin_Company_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.id)
-        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=com.id,recurring_bill_id=pk)
+        if comments.exists():
+            for index, comment in enumerate(comments):
+                comment.index = index + 1
+        else: 
+            index = '0'
         companyName = com.Company_name
         companyData = {
             'caddress':com.Address,
@@ -17426,9 +17428,13 @@ def Fin_recurring_bill_overview(request,pk):
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
-        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=com.company_id_id,recurring_bill_id=pk)
+        if comments.exists():
+            for index, comment in enumerate(comments):
+                comment.index = index + 1
+        else: 
+            index = '0'
         companyName = com.Company_name
         companyData = {
             'caddress':com.Address,
@@ -17438,7 +17444,7 @@ def Fin_recurring_bill_overview(request,pk):
             'phone':com.Contact,
             'email':com.Email
         }
-    return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+    return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments})
 
 def Fin_get_vendor_details(request, vendor_id):
 
@@ -17617,7 +17623,7 @@ def Fin_unit_reload_modal(request):
         
 def Fin_new_payment_terms_recurring(request):
     if request.method == 'POST':
-        termName = request.POST['term_name']
+        termName = request.POST['term_name'].upper()
         termDays = request.POST['days']
         sid = request.session['s_id']
         loginn = Fin_Login_Details.objects.get(id=sid)
@@ -17808,8 +17814,8 @@ def Fin_recurring_bill_edit_save(request,pk):
                     itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=pk,company_id=com.company_id_id)
                     itemsTable.save()
                 
-        return redirect('Fin_recurring_bill_overview')
-    return redirect('Fin_recurring_bill_create_page')
+        return redirect('Fin_recurring_bill_overview',pk=pk)
+    return redirect('Fin_recurring_bill_list')
        
 def Fin_createVendor_modal(request):
     if 's_id' in request.session:
@@ -18083,7 +18089,7 @@ def Fin_end_date(request):
     day = Fin_Company_Payment_Terms.objects.get(id=paymentID)
     return JsonResponse({'countDays' : day.days}, content_type='application/json')
 
-def recurring_bill_email(request):
+def Fin_recurring_bill_email(request):
     try:
         if request.method == 'POST':
             emails_string = request.POST['email_ids']
@@ -18199,5 +18205,29 @@ def view_template_pdf(request,pk):
 
     return render(request,'company/Fin_Recurring_Bill_Template_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
 
+def Fin_recurring_bill_comment(request):
+    if request.method == 'POST':
+        sid = request.session['s_id']
+        commentN = request.POST['comment']
+        billID = request.POST['bill_id']
+        companyID = request.POST['company_ID']
+        NewComments = Fin_Recurring_Bill_Comments(company_id = companyID,
+                                            login_details_id = sid,
+                                            recurring_bill_id = billID,
+                                            comment = commentN)
+        NewComments.save()
+        comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=companyID,recurring_bill_id=billID)
+        if comments.exists():
+            for index, comment in enumerate(comments):
+                comment.index = index + 1
+        else: 
+            index = 0
+
+        if request.is_ajax():
+            # If it's an AJAX request, return a JSON response
+            return JsonResponse({'success': True, 'comments': comments})
+        else:
+            # If it's a regular form submission, redirect to the desired URL
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': billID}))
 
 

@@ -32,7 +32,7 @@
 
                 <div class="row">
                     <div class="col-3 ml-1">
-                        <input type="search" placeholder="Search..." id="employeeSearchInput" onkeyup="searchEmployee()" class="form-control ">                         
+                        <input type="search" placeholder="Search..." id="employeeSearchInput" onkeyup="searchRecuringBill()" class="form-control ">                         
                     </div>
 
                     
@@ -43,28 +43,23 @@
                         </a>
                       
                         <div class="dropdown-menu"  id="sort">
-                          <a class="dropdown-item" id="drop1" style="cursor: pointer;" >All</a>
-                          <a class="dropdown-item" id="drop2" style="cursor: pointer;" onclick="sortByColumn(4)">Sort By Vendor Name</a>
-                          <a class="dropdown-item" id="drop3" style="cursor: pointer;" onclick="sortByColumn(1)">Sort By Recurring Bill</a>
+                          <a class="dropdown-item" id="drop1" style="cursor: pointer;" onclick="sortByColumn(0)">All</a>
+                          <a class="dropdown-item" id="drop2" style="cursor: pointer;" onclick="sortByColumn(3)">Sort By Vendor Name</a>
+                          <a class="dropdown-item" id="drop3" style="cursor: pointer;" onclick="sortByColumn(2)">Sort By Recurring Bill</a>
                         </div>
                       </div>
 
                     <div class="col-4 ml-auto">
                         
                         <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
-                        
-
-                        <!-- <a class="btn btn-secondary dropdown-toggle" href="">Filter</a> -->
-                        
-                        
-                            <a class="btn btn-outline-secondary dropdown-toggle text-grey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-outline-secondary dropdown-toggle text-grey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="statusFilterDropdown" >
                                 <i class="fa fa-filter"></i> filter by
-                            </a>
+                            </button>
                           
-                            <div class="dropdown-menu"  id="filter" >
-                                <a class="dropdown-item" style="cursor: pointer;" data-status="All">All</a>
-                                <a class="dropdown-item" style="cursor: pointer;" data-status="Save">Saved</a>
-                                <a class="dropdown-item" style="cursor: pointer;" data-status="Draft">Draft</a>
+                            <div class="dropdown-menu" id="statusFilterDropdownMenu">
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="All" onclick="filterTable()">All</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Save" onclick="filterTable()">Saved</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Draft" onclick="filterTable()">Draft</a>
                             </div>
 
                             <a class="btn btn-outline-secondary text-grey" href="{% url 'Fin_recurring_bill_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
@@ -117,32 +112,23 @@
 // -------------------------------------------------------------------------------------
 // filter
 
- document.getElementById('filter').addEventListener('click', function (event) {
-        if (event.target.tagName === 'A') {
-            var statusFilter = event.target.getAttribute('data-status');
+function filterTable() {
+        var statusFilter = event.target.getAttribute("data-status");
+        var tableRows = document.getElementById("Bill_List").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
 
-            filterTableByStatus(statusFilter);
-        }
-    });
+        for (var i = 0; i < tableRows.length; i++) {
+            var statusCell = tableRows[i].getElementsByTagName("td")[6]; // 7th column (index 6)
+            var status = statusCell.textContent || statusCell.innerText;
 
-    function filterTableByStatus(status) {
-        var tableRows = document.querySelectorAll('#Bill_List tbody tr');
-
-        tableRows.forEach(function (row) {
-            var rowStatus = row.children[6].innerText.toLowerCase(); // Assuming status is in the 7th column
-            
-
-            if (status === 'All') {
-                row.style.display = ''; // Display all rows
-            } else if (status === 'Active' && rowStatus === 'active') {
-                row.style.display = ''; // Display rows with 'active' in the name
-            } else if (status === 'Inactive' && rowStatus === 'inactive') {
-                row.style.display = ''; // Display rows with 'inactive' in the name
+            if (statusFilter === 'All' || status === statusFilter) {
+                tableRows[i].style.display = "";
             } else {
-                row.style.display = 'none'; // Hide other rows
+                tableRows[i].style.display = "none";
             }
-        });
+        }
     }
+
+
 // -------------------------------------------------------------------------------------
 // index
 
@@ -161,46 +147,38 @@
     }
 });
 
+
+
 // ----------------------------------------------------------------
 // search function
 
-document.addEventListener('DOMContentLoaded', function () {
-        // Get the table element
-        var table = document.getElementById('Bill_List');
 
-        // Get all rows in the table body
-        var rows = table.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
+function searchRecuringBill() {
+    var input = document.getElementById("employeeSearchInput");
+    var filterValue = input.value.toLowerCase();
+    var tableRows = document.querySelectorAll('#Bill_List tbody tr');
 
-        // Loop through each row and add an index number
-        for (var i = 0; i < rows.length; i++) {
-            var cell = document.createElement('td');
-            cell.textContent = i + 1; // Index starts from 1
-            rows[i].insertBefore(cell, rows[i].firstChild);
-        }
-    });
+    tableRows.forEach(function(row) {
+        var cells = row.querySelectorAll('td');
+        var isVisible = false;
 
-    function searchEmployee() {
-        // Declare variables
-        var input, filter, table, tbody, tr, td, i, txtValue;
-        input = document.getElementById("employeeSearchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("Bill_List");
-        tbody = table.getElementsByTagName("tbody")[0];
-        tr = tbody.getElementsByTagName("tr");
-
-        // Loop through all table rows, and hide those that don't match the search query
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[3]; // Change index to match the column you want to search
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+        for (var i = 0; i < cells.length; i++) {
+            var cellValue = cells[i].textContent || cells[i].innerText;
+            if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                isVisible = true;
+                break;
             }
         }
-    }
+
+        if (isVisible) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
 // ------------------------------------------------------------------
 // sort function
 
@@ -244,20 +222,20 @@ function sortByColumn(columnIndex) {
     }
 }
 
-// Event listener for sorting by the second column (Name)
-document.getElementById("drop2").addEventListener("click", function () {
-    sortByColumn(1); // Assuming the second column is used for sorting
-});
+// // Event listener for sorting by the second column (Name)
+// document.getElementById("drop2").addEventListener("click", function () {
+//     sortByColumn(1); // Assuming the second column is used for sorting
+// });
 
-// Event listener for sorting by the eighth column (Numeric)
-document.getElementById("drop3").addEventListener("click", function () {
-    sortByColumn(7); // Assuming the eighth column is used for sorting
-});
+// // Event listener for sorting by the eighth column (Numeric)
+// document.getElementById("drop3").addEventListener("click", function () {
+//     sortByColumn(7); // Assuming the eighth column is used for sorting
+// });
 
-// Event listener for sorting by the first column (Numeric)
-document.getElementById("drop1").addEventListener("click", function () {
-    sortByColumn(0);
-});
+// // Event listener for sorting by the first column (Numeric)
+// document.getElementById("drop1").addEventListener("click", function () {
+//     sortByColumn(0);
+// });
 
 
 

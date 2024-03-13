@@ -469,6 +469,9 @@ footer p {
                                         {% endif %}
                                         </ul>
                                     </div>
+                                    <li class="">
+                                        <button class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
+                                    </li>
                                 </ul>
                             </div>
                         </nav>
@@ -1620,6 +1623,84 @@ footer p {
 
     <!-- ---------modals ---------- -->
 
+
+    <!-- -------------------comment modal ---------------->
+    <div class="modal fade" id="commentModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h5 class="m-3">Send Mail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="commentForm" action="{% url 'Fin_recurring_bill_comment' %}" method="post">
+                    {% csrf_token %}
+                <div class="modal-body">
+                    <div >
+                        <label for="" style="float: left;">Leave A Comment : </label> <textarea name="comment" cols="5" rows="3" class="form-control"></textarea>
+                        <input type="text" name="bill_id" id="bill_id" value="{{bill1.id}}" style="display: none;">
+                        <input type="text" name="company_ID" id="company_ID" value="{{ bill1.company_id }}" style="display: none;">
+                    </div><br>
+                    <div style="text-align: left;">
+                        {% if comments %}
+                        <h5 class="pb-1 mb-2" style="text-decoration: underline;text-underline-offset: 10px;">Previous Comments</h5>
+                        {% for i in comments %}
+                        <label for="">{{i.index}}. {{i.comment}}</label><a href="" id="deleteButton" style="color: crimson;"><i class="fa-solid fa-trash"></i></a><br>
+                        {% endfor %}
+                        {% else %}
+                        <h5 class="pb-1 mb-2" >No Comments Yet</h5>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-secondary text-grey" >Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+                
+                           
+            </div>   
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+        // Attach a submit event handler to the form with id 'commentForm'
+        $('#commentForm').submit(function (e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            // Serialize the form data
+            var formData = $(this).serialize(); 
+
+            // Make an AJAX request
+            $.ajax({
+                url: '{% url "Fin_recurring_bill_comment" %}',  // Adjust the URL based on your actual URL configuration
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // Handle success, e.g., show a message or update the UI
+                    alert('Comment saved successfully.');
+
+                    // Optionally, you can handle the response data here
+                    console.log(response);
+
+                    // Reload or update the comments section as needed
+                    // You can replace the following line with your logic to update the UI
+                    location.reload();
+                },
+                error: function (error) {
+                    // Handle error, e.g., show an error message
+                    console.error('Failed to save comment:', error);
+                    alert('Failed to save comment');
+                }
+            });
+        });
+    });
+
+    </script>
+
+<!-- -------------------comment modal end ---------------->
+
     <!-- ------------email modal -------------- -->
 
   <div class="modal fade" id="emailModal">
@@ -1633,7 +1714,7 @@ footer p {
             </div>
             <div class="modal-body">
                 <div class="card p-3">
-                    <form action="{% url 'recurring_bill_email' %}" method="post" >
+                    <form action="{% url 'Fin_recurring_bill_email' %}" method="post" >
                         {% csrf_token %}
                         <div class="modal-body">
                             <div>
@@ -1750,7 +1831,7 @@ function sendEmailWithPDF() {
         // Send the PDF file to the server using an AJAX request
         $.ajax({
             type: 'POST',
-            url: 'recurring_bill_email/',
+            url: 'Fin_recurring_bill_email/',
             data: formData,
             processData: false,
             contentType: false,
