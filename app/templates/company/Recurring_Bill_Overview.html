@@ -332,23 +332,23 @@ footer p {
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form id="fileUploadForm" enctype="multipart/form-data">
+                <form id="fileUploadForm" method="post" action="{% url 'Fin_recurring_bill_attach_file' pk=bill1.id %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body">
                         <input type="file" class="form-control" name="attachment">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="fileUploadInput" data-pk="{{ bill1.id }}" onclick="submitForm()">Save</button>
+                        <button type="submit" class="btn btn-primary" id="fileUploadInput" data-pk="{{ bill1.id }}" >Save</button>
                     </div>
                 </form>
                 <script>
                     function submitForm() {
-                        var formData = new FormData(document.getElementById('fileUploadForm'));
+                        var formData = $('#fileUploadForm').serialize();
                         var pk = document.getElementById('fileUploadInput').getAttribute('data-pk');
                         var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-                        formData.append('csrfmiddlewaretoken', csrfToken);
+                        // formData.append('csrfmiddlewaretoken', csrfToken);
                     
                         $.ajax({
                             url: 'Fin_recurring_bill_attach_file/' + pk + '/',
@@ -360,7 +360,7 @@ footer p {
                                 // Handle success, e.g., show a message or update the UI
                                 alert('File uploaded successfully.');
                                 // Optionally, you can close the modal or do other actions
-                                $('#yourModalId').modal('hide');
+                                $('#exampleModal').modal('hide');
                             },
                             error: function(error) {
                                 // Handle error, e.g., show an error message
@@ -439,10 +439,10 @@ footer p {
                                          
                                      {% if  bill1.status == "Draft" %}
                                       <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Convert&nbsp;&nbsp;</li>
+                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown" >Convert</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             
-                                            <li style="margin-left: 50px;" ><a href="">Save</a> </li>
+                                            <li style="margin-left: 50px;" ><a href="{% url 'Fin_recurring_bill_convert' pk=bill1.id %}">Save</a> </li>
                                           
                                         </ul>
                                       </div>
@@ -464,14 +464,25 @@ footer p {
                                         <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
-                                            {% if bill1.file != "default.png" %}
-                                            <a class="dropdown-item" download  href=""><i class="fa fa-download">&nbsp;Download File</i></a>
-                                        {% endif %}
+                                            {% if bill1.attachment %}
+                                            <a class="dropdown-item" download  href="{{bill1.attachment.url}}"><i class="fa fa-download"></i>&nbsp;Download File</a>
+                                            {% endif %}
                                         </ul>
                                     </div>
-                                    <li class="">
+                                    <li  >
                                         <button class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
                                     </li>
+
+                                    <div class="dropdown nav-item " style="margin-top: 10px;"  >
+                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey "data-toggle="dropdown">History</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <a class="dropdown-item" style="cursor: pointer;" >{% if lastHistory.action == 'Edited' %}Last edited by :{% else %}Created by : {% endif %} {{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</a>
+                                            <a href="{% url 'Fin_recurrung_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
+                                        </ul>
+                                    </div>
+                                    <!-- <li class="ml-1 mr-1 " >
+                                        <a href="{% url 'Fin_recurrung_bill_history' pk=bill1.id %}" class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" > History </a>
+                                    </li> -->
                                 </ul>
                             </div>
                         </nav>
@@ -540,13 +551,13 @@ footer p {
                                     <h6 class="mb-0">Payment Terms</h6>
                                 </div>
                                 <!-- <div class="col-md-3 mt-3">
-                                    <p class="mb-0">NET {{ bill1.payment_terms }}</p>
+                                    <p class="mb-0">NET {{ bill1.company_payment_terms }}</p>
                                 </div> -->
                                 <div class="col-md-3 mt-3">
                                     {% if bill1.company_payment_terms_id is Null %}
                                         <p class="mb-0">Due on Receipt</p>
                                     {% else %}
-                                        <p class="mb-0">NET {{ bill1.company_payment_terms }}</p>
+                                        <p class="mb-0">{{ bill1.company_payment_terms.term_name }}</p>
                                     {% endif %}
                                 </div>
                                 
@@ -576,17 +587,17 @@ footer p {
                                     <h6 class="mb-0">Repeat Every</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ bill1.repeat_every }}</p>
+                                    <p class="mb-0">{{ bill1.repeat_every.repeat_every }}</p>
                                 </div>
                                 <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">Start Date</h6>
                                 </div>
                                 <div class="col-md-2 mt-3">
-                                    <p class="mb-0">{{ bill1.start_date }}</p>
+                                    <p class="mb-0">{{ bill1.date }}</p>
                                 </div>
-                                <div class="col-md-2 mt-3 vl">
+                                <!-- <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">End date</h6>
-                                </div>
+                                </div> -->
                                 <div class="col-md-2 mt-3">
                                     <p class="mb-0">{{ bill1.end_date }}</p>
                                 </div>
@@ -687,7 +698,7 @@ footer p {
                                                 <h6 class="mb-0">Name</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
-                                                <p class="mb-0 text-right">{{j.items}}</p>
+                                                <p class="mb-0 text-right">{{j.items.name}}</p>
                                             </div>
             
                                             <div class="col-md-3 mt-3 vl">
@@ -804,7 +815,7 @@ footer p {
                 <div id="whatToPrint1" class="printTemplates template1">
                     <div class="my-5 page" size="A4" >
                         <div class="p-5" id="printdiv1">
-                            <div id="ember2512" class="tooltip-container ember-view  text-ellipsis"> <!-- ribbon -->
+                            <div id="ember2512" class="tooltip-container ember-view  text-ellipsis ribbon"> <!-- ribbon -->
                                 <div class="ribbon-inner ribbon-open">{{bill1.status}}<!----></div></div>
                             <section class="top-content bb d-flex justify-content-between">
                                 <div class="logo">
@@ -812,11 +823,13 @@ footer p {
                                     
                                 </div>
                                 <div class="top-left">
-                                    <!-- <div class="graphic-path">
-                                        <p>Recurring Bill</p>
-                                    </div> -->
+                                    <!-- <div class="graphic-path"> -->
+                                        
+                                            <p style="font-weight: 600;">Recurring Bill</p>
+                                        
+                                    <!-- </div> -->
                                     <div class="position-relative">
-                                        <p>Recurring Bill. <span>{{  bill1.recurring_bill_number }}</span></p>
+                                        <p>Recurring Bill No. <span>{{  bill1.recurring_bill_number }}</span></p>
                                     </div>
                                 </div>
                             </section>
@@ -827,10 +840,12 @@ footer p {
                                         <div class="col-7">
                                             <p>FROM,</p>
                                             <h5>{{ companyName }}</h5>
-                                            <p class="address "> {{bill1.vendor.billing_street}}<br>
-                                                {{bill1.vendor.billing_city}},
-                                                {{bill1.vendor.billing_state}}<br>
-                                                {{bill1.vendor.billing_pincode}}<br>
+                                            <p class="address " style="text-transform: capitalize;"> {{companyData.caddress}}<br>
+                                                {{companyData.city}},
+                                                {{companyData.state}}<br>
+                                                {{companyData.pincode}}<br>
+                                                phone: {{companyData.phone}}<br>
+                                                {{companyData.email}}<br>
                                             </p>
                                             
                                         </div>
@@ -853,13 +868,13 @@ footer p {
                                             <p style="color:#000">Deliver To Details: </p>
                                             <p class="address " style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
                                                 {{bill1.customer.email}}<br>
-                                                {% if customer_gstin %}
-                                                  GSTIN:{{ customer_gstin }}
+                                                {% if bill1.customer.gstin %}
+                                                  GSTIN:{{ bill1.customer.gstin }}
                                                 {% endif %}</p>
                                         </div>
                                         <div class="col-5">
-                                            <p style="color:#000">Start Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
-                                            <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
+                                            <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                            <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
                                            
                                         </div>
                                     </div>
@@ -880,7 +895,7 @@ footer p {
                                         </tr>
                                     </thead>
                                     <tbody>
-        
+                
                                         {% for j in items  %}
                                         <tr>
                                             <td style="color:black; text-align: center;">
@@ -969,7 +984,7 @@ footer p {
                             </section>
                 
                             <!-- Cart BG -->
-                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+                            <!-- <img src="cart.jpg" class="img-fluid cart-bg" alt=""> -->
                 
                             <!-- <footer>
                                 <hr>
@@ -1012,7 +1027,7 @@ footer p {
                             <section class="top-content bb d-flex justify-content-between p-3" style="background-color: greenyellow;">
                                 <div class="logo mt-4">
                                     <div class="position-relative">
-                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  bill1.billno }}</span></h5>
+                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  bill1.recurring_bill_number }}</span></h5>
                                         <p class="ml-2 text-dark"><b>{{bill1.status}}</b></p>
                                     </div>
                                 </div>
@@ -1021,11 +1036,13 @@ footer p {
                                        
                                        
                                     </div>
-                                    <h5 style="color: rgb(0, 0, 0);">{{companyName }}</h5>
-                                            <p style="color: rgb(0, 0, 0);" class="address "> {{bill1.caddress}}<br>
-                                                {{bill1.city}},
-                                                {{bill1.state}}<br>
-                                                {{bill1.pincode}}<br>
+                                    <h5 style="color: rgb(0, 0, 0);font-weight: 500;">{{ companyName }}</h5>
+                                            <p style="color: rgb(0, 0, 0);" class="address "> {{companyData.caddress}}<br>
+                                                {{companyData.city}},
+                                                {{companyData.state}}<br>
+                                                {{companyData.pincode}}<br>
+                                                phone: {{companyData.phone}}<br>
+                                                {{companyData.email}}
                                             </p>
                                 </div>
                             </section>
@@ -1035,26 +1052,31 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>Bill To,</p>
-                                            <h5  style="color: #22b8d1;">{{bill1.vendor_name}}</h5>
-                                            <p class="address " style="color:#000">{{vendor_email}}<br>
+                                            <h5 style="color: #000;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
+                                            <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
                                                 {% if vendor_gstin %}
                                                   GSTIN:{{ vendor_gstin }}
                                                 {% endif %}
-                                                <p class="address "> {{vendor_street}}<br>
-                                                    {{vendor_city}},
-                                                    {{vendor_state}}<br>
-                                                    {{vendor_pincode}}<br>
+                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                                    {{bill1.vendor.billing_city}},
+                                                    {{bill1.vendor.billing_state}}<br>
+                                                    {{bill1.vendor.billing_pincode}}<br>
                                                 </p>
                                         </div>
                                         <div class="col-5">
-                                            <p style="color:#000">Deliver To Details: </p>
-                                            <p class="address " style="color:#000">{{bill1.customer_name}}<br>
-                                                {{customer_email}}<br>
-                                                {% if customer_gstin %}
-                                                  GSTIN:{{ customer_gstin }}
-                                                {% endif %}</p>
-                                                <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
-                                                <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
+                                            <p style="color:#000">Deliver To: </p>
+                                            <h5 style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
+                                                <p class="address " style="color:#000"> {{bill1.customer.billing_street}}<br>
+                                                    {{bill1.customer.billing_city}},
+                                                    {{bill1.customer.billing_state}}<br>
+                                                    {{bill1.customer.billing_pincode}}<br>
+                                                
+                                                {{bill1.customer.email}}<br>
+                                                {% if bill1.customer.gstin %}
+                                                  GSTIN:{{ bill1.customer.gstin }}
+                                                {% endif %}</p><br>
+                                                <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                                <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
                                                
                                         </div>
                                     </div>
@@ -1077,16 +1099,16 @@ footer p {
                                     </thead>
                                     <tbody>
         
-                                        {% for j in ritem  %}
+                                        {% for j in items  %}
                                         <tr >
                                             <td style="color:black; text-align: center;background-color: greenyellow;">
-                                                {{j.item}}
+                                                {{j.items.name}}
                                                 
                                             </td>                                            
                                             <td style="color:black;background-color: #ccc; ">{{j.hsn}}</td>
                                             <td style="color:black;background-color: #ccc; ">{{j.price}}</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.qty}}</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.tax}} %</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.quantity}}</td>
+                                            <td style="color:black;background-color: #ccc; ">{{j.tax_rate}} %</td>
                                             <td style="color:black;background-color: #ccc; ">{{j.discount}} </td>
                                             <td style="color:black;background-color: greenyellow;">{{j.total}}</td>
                                         </tr>
@@ -1097,9 +1119,9 @@ footer p {
                 
                             <section class="balance-info">
                                 <div class="row">
-                                    <div class="col-7">
+                                    <div class="col-6 ml-4">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{bill1.note}}</p>
+                                        <p style="color:black">{{bill1.description}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
@@ -1113,6 +1135,7 @@ footer p {
                                                 <td style="color:black">{{bill1.discount}}</td>
                                             </tr>
                                             {% endif %} -->
+                                            
                                             {% if bill1.igst != 0 %}
                                             <tr>
                                                 <td style="color:black">IGST :</td>
@@ -1205,6 +1228,7 @@ footer p {
                         </div>
                     </div>
                 </div>
+
                 <!-- template3 -->
                 <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
                     <div class="my-5 page"  size="A4" >
@@ -1224,11 +1248,13 @@ footer p {
                                     </div>
                                 </div>
                                 <div class="top-left curved-background">
-                                    <h5 style="color: rgb(0, 0, 0);">{{ bill1.companyName }}</h5>
-                                    <p style="color: rgb(0, 0, 0);" class="address"> {{ bill1.caddress }}<br>
-                                        {{ bill1.city }},
-                                        {{ bill1.state }}<br>
-                                        {{ bill1.pincode }}<br>
+                                    <h5 style="color: rgb(0, 0, 0);">{{ companyName }}</h5>
+                                    <p style="color: rgb(0, 0, 0);" class="address "> {{companyData.caddress}}<br>
+                                        {{companyData.city}},
+                                        {{companyData.state}}<br>
+                                        {{companyData.pincode}}<br>
+                                        phone: {{companyData.phone}}<br>
+                                        {{companyData.email}}
                                     </p>
                                 </div>
                             </section>
@@ -1240,26 +1266,31 @@ footer p {
                                     <div class="row bb pb-3">
                                         <div class="col-7">
                                             <p>Bill To,</p>
-                                            <h5  style="color: #22b8d1;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
-                                            <p class="address " style="color:#000">{{vendor_email}}<br>
+                                            <h5 style="color: #000;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
+                                            <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
                                                 {% if vendor_gstin %}
-                                                  GSTIN:{{ vendor_gstin }}
+                                                GSTIN:{{ vendor_gstin }}
                                                 {% endif %}
-                                                <p class="address "> {{vendor_street}}<br>
-                                                    {{vendor_city}},
-                                                    {{vendor_state}}<br>
-                                                    {{vendor_pincode}}<br>
+                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                                    {{bill1.vendor.billing_city}},
+                                                    {{bill1.vendor.billing_state}}<br>
+                                                    {{bill1.vendor.billing_pincode}}<br>
                                                 </p>
                                         </div>
                                         <div class="col-5">
-                                            <p style="color:#000">Deliver To Details: </p>
-                                            <p class="address " style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                            <p style="color:#000">Deliver To: </p>
+                                            <h5 style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
+                                                <p class="address " style="color:#000"> {{bill1.customer.billing_street}}<br>
+                                                    {{bill1.customer.billing_city}},
+                                                    {{bill1.customer.billing_state}}<br>
+                                                    {{bill1.customer.billing_pincode}}<br>
+                                                
                                                 {{bill1.customer.email}}<br>
                                                 {% if bill1.customer.gstin %}
-                                                  GSTIN:{{ customer_gstin }}
-                                                {% endif %}</p>
-                                                <p style="color:#000">Start Date : <span>{{ bill1.start_date | date:'d-m-Y' }}</span></p>
-                                                <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p>
+                                                GSTIN:{{ bill1.customer.gstin }}
+                                                {% endif %}</p><br>
+                                                <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                                <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
                                                
                                         </div>
                                     </div>
@@ -1282,16 +1313,16 @@ footer p {
                                     </thead>
                                     <tbody>
         
-                                        {% for j in ritem  %}
+                                        {% for j in items  %}
                                         <tr style="background-color: orange; color: #000;" >
                                             <td style="color:black; text-align: center;">
-                                                {{j.item}}
+                                                {{j.items.name}}
                                                 
                                             </td>
                                             <td style="color:black;">{{j.hsn}}</td>
                                             <td style="color:black;">{{j.price}}</td>
-                                            <td style="color:black;">{{j.qty}}</td>
-                                            <td style="color:black;">{{j.tax}} %</td>
+                                            <td style="color:black;">{{j.quantity}}</td>
+                                            <td style="color:black;">{{j.tax_rate}} %</td>
                                             <td style="color:black; ">{{j.discount}} </td>
                                             <td style="color:black;">{{j.total}}</td>
                                         </tr>
@@ -1302,9 +1333,9 @@ footer p {
                 
                             <section class="balance-info">
                                 <div class="row">
-                                    <div class="col-7">
+                                    <div class="col-6 ml-4">
                                         <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{bill1.note}}</p>
+                                        <p style="color:black">{{bill1.description}}</p>
                                     </div>
                                     <div class="col-5">
                                         <table class="table border-0 table-hover">
@@ -1411,11 +1442,11 @@ footer p {
                         </div>
                 </div>
             </div>
-            <!-- <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+            <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
                 <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
                 <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
                 <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
-            </div> -->
+            </div>
         </div>
 
         <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
@@ -1634,7 +1665,7 @@ footer p {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="commentForm" action="{% url 'Fin_recurring_bill_comment' %}" method="post">
+                <form id="commentForm" method="post">
                     {% csrf_token %}
                 <div class="modal-body">
                     <div >
@@ -1642,11 +1673,11 @@ footer p {
                         <input type="text" name="bill_id" id="bill_id" value="{{bill1.id}}" style="display: none;">
                         <input type="text" name="company_ID" id="company_ID" value="{{ bill1.company_id }}" style="display: none;">
                     </div><br>
-                    <div style="text-align: left;">
+                    <div style="text-align: left;font-size: larger;">
                         {% if comments %}
                         <h5 class="pb-1 mb-2" style="text-decoration: underline;text-underline-offset: 10px;">Previous Comments</h5>
                         {% for i in comments %}
-                        <label for="">{{i.index}}. {{i.comment}}</label><a href="" id="deleteButton" style="color: crimson;"><i class="fa-solid fa-trash"></i></a><br>
+                        <label for="">{{i.index}}. {{i.comment}} </label> <a href="{% url 'Fin_recurring_bill_comment_delete' pk=i.id id=bill1.id %}" id="deleteButton" style="color: crimson;"><i class="fa-solid fa-trash"></i></a><br>
                         {% endfor %}
                         {% else %}
                         <h5 class="pb-1 mb-2" >No Comments Yet</h5>
@@ -1667,35 +1698,36 @@ footer p {
         $(document).ready(function () {
         // Attach a submit event handler to the form with id 'commentForm'
         $('#commentForm').submit(function (e) {
-            e.preventDefault();  // Prevent the default form submission
+        e.preventDefault();  // Prevent the default form submission
 
-            // Serialize the form data
-            var formData = $(this).serialize(); 
+        // Serialize the form data
+        var formData = $(this).serialize();
 
-            // Make an AJAX request
-            $.ajax({
-                url: '{% url "Fin_recurring_bill_comment" %}',  // Adjust the URL based on your actual URL configuration
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    // Handle success, e.g., show a message or update the UI
-                    alert('Comment saved successfully.');
+        // Make an AJAX request
+        $.ajax({
+            url: '{% url "Fin_recurring_bill_comment" %}',  // Adjust the URL based on your actual URL configuration
+            type: 'POST',
+            data: formData,
+            dataType: 'json',  // Specify the expected data type
+            success: function (response) {
+                // Handle success, e.g., show a message or update the UI
+                alert('Comment saved successfully.');
 
-                    // Optionally, you can handle the response data here
-                    console.log(response);
+                // Optionally, you can handle the response data here
+                console.log(response);
 
-                    // Reload or update the comments section as needed
-                    // You can replace the following line with your logic to update the UI
-                    location.reload();
-                },
-                error: function (error) {
-                    // Handle error, e.g., show an error message
-                    console.error('Failed to save comment:', error);
-                    alert('Failed to save comment');
-                }
-            });
+                // Reload or update the comments section as needed
+                
+                location.reload();
+            },
+            error: function (error) {
+                // Handle error, e.g., show an error message
+                console.error('Failed to save comment:', error);
+                alert('Failed to save comment');
+            }
         });
     });
+});
 
     </script>
 
@@ -1849,13 +1881,22 @@ function sendEmailWithPDF() {
 
     <script>
         function printfun(){
-
+            print1 = document.getElementById('whatToPrint1');
+            print2 = document.getElementById('whatToPrint2');
+            print3 = document.getElementById('whatToPrint3');
             print4 = document.getElementById('slipdiv')
             if (print4.style.display !== 'none'){
                     var printContents = document.getElementById("slipdiv").innerHTML;
             }else{
-
-                var printContents = document.getElementById("whatToPrint1").innerHTML;
+                if (print1.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint1").innerHTML;
+                }else if(print2.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint2").innerHTML;
+                }
+                else if(print3.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint3").innerHTML;
+                }
+                
             }
 
 

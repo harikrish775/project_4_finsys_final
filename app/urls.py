@@ -551,8 +551,14 @@ urlpatterns = [
     path('Fin_end_date',views.Fin_end_date,name="Fin_end_date"),
     path('Fin_recurring_bill_email/',views.Fin_recurring_bill_email,name="Fin_recurring_bill_email"),
     path('Fin_recurring_bill_comment',views.Fin_recurring_bill_comment,name='Fin_recurring_bill_comment'),
+    path('Fin_recurring_bill_comment_delete/<int:pk>//<int:id>/',views.Fin_recurring_bill_comment_delete,name='Fin_recurring_bill_comment_delete'),
+    path('Fin_recurrung_bill_history/<int:pk>',views.Fin_recurrung_bill_history,name='Fin_recurrung_bill_history'),
+    path('Fin_recurring_bill_convert/<int:pk>',views.Fin_recurring_bill_convert,name='Fin_recurring_bill_convert'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+    # path('abc',views.abc,name='abc'),
+
 
     path('view_template_pdf/<int:pk>',views.view_template_pdf,name='view_template_pdf'),
     # path('abc',views.abc,name='abc'),

@@ -17409,7 +17409,8 @@ def Fin_recurring_bill_overview(request,pk):
     if loginn.User_Type == 'Company':
         com = Fin_Company_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
-        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk,company_id = com.id)
+        lastHistory = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id = pk,company_id = com.id).latest('id')
         comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=com.id,recurring_bill_id=pk)
         if comments.exists():
             for index, comment in enumerate(comments):
@@ -17428,7 +17429,8 @@ def Fin_recurring_bill_overview(request,pk):
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk,Company_id = com.company_id_id)
+        lastHistory = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id = pk,company_id = com.company_id_id).latest()
         comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=com.company_id_id,recurring_bill_id=pk)
         if comments.exists():
             for index, comment in enumerate(comments):
@@ -17444,7 +17446,7 @@ def Fin_recurring_bill_overview(request,pk):
             'phone':com.Contact,
             'email':com.Email
         }
-    return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments})
+    return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory})
 
 def Fin_get_vendor_details(request, vendor_id):
 
@@ -17456,6 +17458,9 @@ def Fin_get_vendor_details(request, vendor_id):
             com = Fin_Company_Details.objects.get(Login_Id = sid)
             vendor = Fin_Vendors.objects.get(id=vendor_id,Company_id=com.id)
             data = {
+                'id': vendor.id,
+                'firstname' : vendor.first_name ,
+                'lastname': vendor.last_name,
                 'email': vendor.email,
                 'street': vendor.billing_street,
                 'city':vendor.billing_city,
@@ -17471,6 +17476,10 @@ def Fin_get_vendor_details(request, vendor_id):
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
             vendor = Fin_Vendors.objects.get(id=vendor_id,Company_id=com.company_id_id)
             data = {
+                'id': vendor.id,
+                'firstname' : vendor.first_name ,
+                'lastname': vendor.last_name,
+                'email': vendor.email,
                 'email': vendor.email,
                 'street': vendor.billing_street,
                 'city':vendor.billing_city,
@@ -17653,6 +17662,8 @@ def Fin_recurring_bill_attach_file(request,pk):
         file = request.FILES['attachment']
         recurBill.attachment = file
         recurBill.save()
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+    return redirect('Fin_recurring_bill_list')
 
 def Fin_recurring_bill_edit_page(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
@@ -18207,27 +18218,45 @@ def view_template_pdf(request,pk):
 
 def Fin_recurring_bill_comment(request):
     if request.method == 'POST':
-        sid = request.session['s_id']
-        commentN = request.POST['comment']
-        billID = request.POST['bill_id']
-        companyID = request.POST['company_ID']
-        NewComments = Fin_Recurring_Bill_Comments(company_id = companyID,
+        print(request.POST,'---------2332323---------')  
+        sid = request.session.get('s_id')
+        comment = request.POST.get('comment')
+        billID = request.POST.get('bill_id')
+        companyID = request.POST.get('company_ID')
+
+        NewComment = Fin_Recurring_Bill_Comments(company_id = companyID,
                                             login_details_id = sid,
                                             recurring_bill_id = billID,
-                                            comment = commentN)
-        NewComments.save()
-        comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=companyID,recurring_bill_id=billID)
-        if comments.exists():
-            for index, comment in enumerate(comments):
-                comment.index = index + 1
-        else: 
-            index = 0
+                                            comment = comment)
+        NewComment.save()
 
-        if request.is_ajax():
-            # If it's an AJAX request, return a JSON response
-            return JsonResponse({'success': True, 'comments': comments})
+        comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=companyID, recurring_bill_id=billID)
+        if comments.exists():
+            for index, comment_obj in enumerate(comments):
+                comment_obj.index = index + 1
         else:
-            # If it's a regular form submission, redirect to the desired URL
-            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': billID}))
+            index = 0
+        return JsonResponse({'success': True,'comments': list(comments.values())}, safe=False)
+        
+        # return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': billID}))
+
+def Fin_recurring_bill_comment_delete(request,pk,id):
+    comment = Fin_Recurring_Bill_Comments.objects.get(id=pk)
+    comment.delete()
+    redirect_url = reverse('Fin_recurring_bill_overview', args=[id])
+    return redirect(redirect_url)
+
+def Fin_recurrung_bill_history(request,pk):
+    RB = Fin_Recurring_Bills.objects.get(id=pk)
+    history = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id=pk)
+    return render(request,'company/Fin_Recurring_Bill_History.html',{'history':history,'RB':RB})
+
+def Fin_recurring_bill_convert(request,pk):
+    recurBill = Fin_Recurring_Bills.objects.get(id=pk)
+    recurBill.status = 'Save'
+    recurBill.save()
+    return redirect('Fin_recurring_bill_list')
+
+
 
 

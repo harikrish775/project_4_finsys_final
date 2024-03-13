@@ -57,32 +57,30 @@
                                                                 </div> -->
 
                                                                 <div class="input-group">
-                                                                    <input type="text" style="display: none;" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input type="text" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input type="text" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu" style="width:280px;">
                                                                             {% for i in vendors %}
-                                                                            <a class="dropdown-item drop1" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
+                                                                            <a class="dropdown-item" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
                                                                             {% endfor %}
                                                                         </div>
                                                                     </div>
                                                                 </div>
 
                                                                 <script>
-                                                                    // search
                                                                     $(document).ready(function () {
                                                                         // When a dropdown item is clicked
-                                                                        $('.drop1').on('click', function () {
+                                                                        $('.dropdown-item').on('click', function () {
                                                                             var value = $(this).data('value');
-                                                                            $('#select_vendor2').val($(this).text());
+                                                                            $('#select_vendor').val($(this).text());
                                                                             // Handle the selected value as needed (e.g., update form fields or perform an action)
                                                                             console.log('Selected value:', value);
                                                                         });
                                                                 
                                                                         // Add an input event listener to the search input
-                                                                        $('#select_vendor2').on('input', function () {
+                                                                        $('#select_vendor').on('input', function () {
                                                                             var searchText = $(this).val().toLowerCase();
-                                                                            $('.drop1').each(function () {
+                                                                            $('.dropdown-item').each(function () {
                                                                                 var itemText = $(this).text().toLowerCase();
                                                                                 // Show/hide items based on search input
                                                                                 $(this).toggle(itemText.includes(searchText));
@@ -107,50 +105,38 @@
                                                                 </script> -->
                                                             </div>
                                                             <script>
-                                                                $(document).ready(function () {
-                                                                $('.drop1').on('click', function () {
-                                                                    var vendorId = $(this).attr('value');
+                                                                $(document).ready(function() {
+                                                                    $("#select_vendor").change(function() {
+                                                                        var vendorId = $(this).val();
+                                                            
+                                                                        // Make an AJAX request to the backend to fetch vendor details
+                                                                        $.ajax({
+                                                                            url: '/Fin_get_vendor_details/' + vendorId + '/',
+                                                                            type: 'GET',
+                                                                            success: function(data) {
+                                                                                // Update the placeholder elements with the fetched details
+                                                                                $("#vendorEmail").val(data.email);
+                                                                                $("#vendorAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
+                                                                                $("#vendorGST").val(data.gst);
 
-                                                                    // Make an AJAX request to the backend to fetch vendor details
-                                                                    $.ajax({
-                                                                        url: '/Fin_get_vendor_details/' + vendorId + '/',
-                                                                        type: 'GET',
-                                                                        success: function (data) {
-                                                                            // Update the input field with the selected vendor's name
-                                                                            $("#select_vendor").val($(this).text());
+                                                                                var placeOfSupplyDropdown = $("#sourceOFSupply");
 
-                                                                            // Update other placeholder elements with the fetched details
-                                                                            $("#vendorEmail").val(data.email);
-                                                                            $("#vendorAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
-                                                                            $("#vendorGST").val(data.gst);
-                                                                            $('#select_vendor2').val(data.firstname + ' ' + data.lastname);
-                                                                            $('#select_vendor').val(data.id);
+                                                                                // Append options from data.placeofsupply
+                                                                                var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
 
+                                                                                // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
+                                                                                option.prop('selected', true);
 
-                                                                            var placeOfSupplyDropdown = $("#sourceOFSupply");
-
-                                                                            // Clear existing options
-                                                                            placeOfSupplyDropdown.empty();
-
-                                                                            // Append options from data.placeofsupply
-                                                                            var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
-
-                                                                            // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
-                                                                            option.prop('selected', true);
-
-                                                                            placeOfSupplyDropdown.append(option);
-
-                                                                            // Close the dropdown after selecting an item
-                                                                            $('.dropdown-menu').removeClass('show');
-                                                                        },
-                                                                        error: function (error) {
-                                                                            console.log(error);
-                                                                        }
+                                                                                placeOfSupplyDropdown.append(option);
+                                                                                
+                                                                                
+                                                                            },
+                                                                            error: function(error) {
+                                                                                console.log(error);
+                                                                            }
+                                                                        });
                                                                     });
                                                                 });
-                                                            });
-
-
                                                             </script>
                                                             <div class="form-group col-md-6">
                                                                 <label class="">Vendor Email</label>
@@ -293,7 +279,7 @@
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
                                                         <label for="">Customer</label>
-                                                        <!-- <div style="display: flex;">
+                                                        <div style="display: flex;">
                                                             <select name="Customer" id="SelectCustomer" class="form-control">
                                                                 <option value="">Select Customer</option>
                                                                 {% for c in customers %}
@@ -301,47 +287,12 @@
                                                                 {% endfor %}
                                                             </select>
                                                             <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
-                                                        </div> -->
-
-                                                        <div class="input-group">
-                                                            <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <div class="input-group-append">
-                                                                <div class="dropdown-menu" style="width:380px;">
-                                                                    {% for i in customers %}
-                                                                    <a class="dropdown-item drop2" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
-                                                                    {% endfor %}
-                                                                </div>
-                                                            </div>
                                                         </div>
-
-                                                        <script>
-                                                            // search
-                                                            $(document).ready(function () {
-                                                                // When a dropdown item is clicked
-                                                                $('.drop2').on('click', function () {
-                                                                    var value = $(this).data('value');
-                                                                    $('#SelectCustomer2').val($(this).text());
-                                                                    // Handle the selected value as needed (e.g., update form fields or perform an action)
-                                                                    console.log('Selected value:', value);
-                                                                });
-                                                        
-                                                                // Add an input event listener to the search input
-                                                                $('#SelectCustomer2').on('input', function () {
-                                                                    var searchText = $(this).val().toLowerCase();
-                                                                    $('.drop2').each(function () {
-                                                                        var itemText = $(this).text().toLowerCase();
-                                                                        // Show/hide items based on search input
-                                                                        $(this).toggle(itemText.includes(searchText));
-                                                                    });
-                                                                });
-                                                            });
-                                                        </script>
                                                     </div>
                                                     <script>
                                                         $(document).ready(function() {
-                                                            $(".drop2").change(function() {  
-                                                                var customerID = $(this).attr('value');
+                                                            $("#SelectCustomer").change(function() {  
+                                                                var customerID = $(this).val();
                                                     
                                                                 // Make an AJAX request to the backend to fetch vendor details
                                                                 $.ajax({
