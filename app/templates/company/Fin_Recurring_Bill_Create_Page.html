@@ -58,7 +58,7 @@
 
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input type="text" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input required type="text" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu" style="width:280px;">
                                                                             {% for i in vendors %}
@@ -128,16 +128,10 @@
 
 
                                                                             var placeOfSupplyDropdown = $("#sourceOFSupply");
-
                                                                             // Clear existing options
                                                                             placeOfSupplyDropdown.empty();
-
-                                                                            // Append options from data.placeofsupply
-                                                                            var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
-
-                                                                            // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
+                                                                            var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                            
                                                                             option.prop('selected', true);
-
                                                                             placeOfSupplyDropdown.append(option);
 
                                                                             // Close the dropdown after selecting an item
@@ -153,8 +147,8 @@
 
                                                             </script>
                                                             <div class="form-group col-md-6">
-                                                                <label class="">Vendor Email</label>
-                                                                <input type="vendorEmail" id="vendorEmail" class="form-control">
+                                                                <label class="" >Vendor Email</label>
+                                                                <input required type="vendorEmail" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
@@ -171,7 +165,7 @@
                                                     
                                                     <div class="form-group col-md mb-3">
                                                         <label class="">Address</label>
-                                                        <textarea name="address" id="vendorAddress" cols="30" rows="5" class="form-control"></textarea>
+                                                        <textarea  required name="address" id="vendorAddress" cols="30" rows="5" class="form-control"></textarea>
                                                     </div>
                                                 </div>
 
@@ -179,7 +173,7 @@
                                                 <div class="row ml-2 mr-2 ">
                                                     <div class="col-md-3">
                                                         <label class="mt-4 ">Source Of Supply</label>
-                                                        <select class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
+                                                        <select  required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
                                                             <option selected value="">Select Place of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -231,7 +225,7 @@
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
                                                         <label for="">Recurring Bill No.</label>
-                                                        <input type="text" class="form-control" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
+                                                        <input type="text"  required class="form-control" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
                                                         <script>
                                                             $(document).ready(function() {
                                                             // Bind the AJAX request to the keyup event on the input field
@@ -258,17 +252,17 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Reference Number</label>
-                                                        <input type="text" class="form-control" value="{{refData.referenceID}}" disabled >
-                                                        <input type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" value="{{refData.referenceID}}" hidden >
+                                                        <input required type="text" class="form-control" value="{{refData.referenceID}}" disabled >
+                                                        <input required type="text" class="form-control" name="ReferenceNo" id="ReferenceNo" value="{{refData.referenceID}}" hidden >
                                                         
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
-                                                        <input type="text" class="form-control" name="ProfileName" id="ProfileName">
+                                                        <input required type="text" class="form-control" name="ProfileName" id="ProfileName">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Purchase Order No.</label>
-                                                        <input type="text" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
+                                                        <input required type="text" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
                                                     </div>
                                                 </div>
 
@@ -276,7 +270,7 @@
                                                     <div class="col-md-3">
                                                         <label for="">Repeat Every</label>
                                                         <div style="display: flex;">
-                                                            <select class="form-control" name="RepeatEvery" id="RepeatEvery" >
+                                                            <select required class="form-control" name="RepeatEvery" id="RepeatEvery" >
                                                                 {% for r in RepeatEvery %}
                                                                 <option selected value="{{r.id}}">{{r.repeat_every}}</option>
                                                                 {% endfor %}
@@ -305,7 +299,7 @@
 
                                                         <div class="input-group">
                                                             <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                            <input type="text" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
                                                             <div class="input-group-append">
                                                                 <div class="dropdown-menu" style="width:380px;">
                                                                     {% for i in customers %}
@@ -340,7 +334,7 @@
                                                     </div>
                                                     <script>
                                                         $(document).ready(function() {
-                                                            $(".drop2").change(function() {  
+                                                            $(".drop2").on('click',function() {  
                                                                 var customerID = $(this).attr('value');
                                                     
                                                                 // Make an AJAX request to the backend to fetch vendor details
@@ -351,15 +345,14 @@
                                                                         // Update the placeholder elements with the fetched details
                                                                         $("#customerEmail").val(data.email);
                                                                         $("#GSTTypeCustomer").val(data.gst);
+                                                                        $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
+                                                                        $('#SelectCustomer').val(data.id);
 
                                                                         var placeOfSupplyDropdown = $("#PlaceOfSupplyCustomer");
-
+                                                                        // placeOfSupplyDropdown.empty();
                                                                         // Append options from data.placeofsupply
-                                                                        var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });
-
-                                                                        // Set the 'selected' attribute if the option matches the selectedPlaceOfSupply
+                                                                        var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                        
                                                                         option.prop('selected', true);
-
                                                                         placeOfSupplyDropdown.append(option); 
                                                                         
                                                                         
@@ -373,11 +366,11 @@
                                                     </script>
                                                     <div class="col-md mb-3">
                                                         <label for="">Email</label>
-                                                        <input type="email" class="form-control" name="customerEmail" id="customerEmail">
+                                                        <input type="email" required class="form-control" name="customerEmail" id="customerEmail">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Place OF Supply</label>
-                                                        <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
+                                                        <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option value="">Select Place Of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -424,14 +417,14 @@
                                                 <div class="row m-md-2 border-bottom pb-4">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">GST Type</label>
-                                                        <input type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
+                                                        <input required type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
                                                     </div>
                                                 </div>
 
                                                 <div class="row m-md-2 ">
                                                     <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" onchange="calculateEndDate()" name="startDate" id="startDate">
+                                                        <input required type="date" class="form-control" onchange="calculateEndDate()" name="startDate" id="startDate">
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">End Date</label>
@@ -495,7 +488,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Credit Period </label>
                                                         <div style="display: flex;">
-                                                            <select class="custom-select" name="payment_terms" id="termadd2" onchange="calculateEndDate()">
+                                                            <select required class="custom-select" name="payment_terms" id="termadd2" onchange="calculateEndDate()">
                                                                 <option selected id="trmopt2"></option>
                                                                 {% for pd in pTerms %}
                                                                     <option value="{{ pd.id }}">{{ pd.term_name }}</option>
@@ -510,7 +503,7 @@
                                                 <div class="row ml-md-2 mr-md-2 border-bottom pb-3 mb-5">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Payment Type</label>
-                                                        <select name="paymentType" id="paymentType" class="form-control">
+                                                        <select required name="paymentType" id="paymentType" class="form-control">
                                                             <option value="">Select Payment Method</option>
                                                             <option value="Cash">Cash</option>
                                                             <option value="Cheque">Cheque</option>
@@ -587,7 +580,7 @@
                                                                     <td></td>
                                                                     <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
                                                                     <td class="border" style="min-width: 150px;" id="gst">
                                                                         <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
@@ -610,7 +603,7 @@
                                                                         </select>
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;display: none;" id="GSTtext">
-                                                                        <select name="taxrate[]" id="" class="form-control item-tax" placeholder="Tax Rate">
+                                                                        <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
                                                                         </select>
                                                                         <small style="color: crimson;">Select Vendor & Customer</small>
@@ -671,7 +664,7 @@
                                                         // Trigger the change event on page load to initialize the visibility
                                                         $('#PlaceOfSupplyCustomer, #sourceOFSupply').change();
 
-                                                        $('#SelectCustomer, #select_vendor').on('change', function () {
+                                                        $('#SelectCustomer2, #select_vendor2').on('click', function () {
                                                             setTimeout(function () {
                                                                 // Trigger the logic after 1 second when 'SelectCustomer' or 'select_vendor' is changed
                                                                 checkPlaceOfSupply();
@@ -946,17 +939,57 @@
                                                             
                                                         }
 
-                                                        function updateSubTotal() {
+                                                    //     function updateSubTotal() {
+                                                    //     var subTotal = 0;
+                                                    //     var taxTotal = 0;
+                                                    //     // Iterate over all rows and sum up the individual totals
+                                                    //     var allRows = document.querySelectorAll('.item-row');
+                                                    //     var source = document.querySelector('.source_of_supply_vendor').value;
+                                                    //     var place = document.querySelector('.place_of_supply_customer').value;
+                                                    //     var grandTotal = document.getElementById('grandTotal');
+                                                    //     var shipping = parseFloat(document.getElementById('shippingCharge').value) || 0;
+                                                    //     var adjustment = parseFloat(document.getElementById('adjustment').value) || 0;
+                                                    //     var paid= parseFloat(document.getElementById('paidAmount').value) || 0;
+                                                    //     var grandInput = document.getElementById('grandTotal');
+                                                    //     var balanceInput = document.getElementById('balanceDue');
+
+                                                    //     allRows.forEach(function (row) {
+                                                    //         var rowTotal = parseFloat(row.querySelector('.item-total').value) || 0;
+                                                    //         subTotal += rowTotal;
+                                                    //         var rowTaxTotal = parseFloat(row.querySelector('.item-totaltax').value) || 0;
+                                                    //         taxTotal += rowTaxTotal;
+                                                    //     });
+
+                                                    //     // Update the grand total in your HTML (replace 'your-grand-total-id' with the actual ID)
+                                                    //     document.getElementById('subTotal').value = subTotal.toFixed(2);
+                                                    //     if (source === place && source !== '' && place !== ''){
+                                                    //         cgst = taxTotal/2.0;
+                                                    //         document.getElementById('cgst').value = cgst.toFixed(2);
+                                                    //         document.getElementById('sgst').value = cgst.toFixed(2);
+                                                    //         document.getElementById('taxAmount').value = taxTotal.toFixed(2);
+                                                    //     }else if (source !== place && source !== '' && place !== ''){
+                                                    //         document.getElementById('taxAmount').value = taxTotal.toFixed(2);
+                                                    //     }
+                                                        
+                                                    //     Gtotal = subTotal + shipping + adjustment ;
+                                                    //     var balance = Gtotal - paid;
+                                                    //     grandInput.value = Gtotal;
+                                                    //     balanceInput.value = balance;
+                                                        
+                                                    // }
+
+                                                    function updateSubTotal() {
                                                         var subTotal = 0;
                                                         var taxTotal = 0;
+
                                                         // Iterate over all rows and sum up the individual totals
                                                         var allRows = document.querySelectorAll('.item-row');
                                                         var source = document.querySelector('.source_of_supply_vendor').value;
                                                         var place = document.querySelector('.place_of_supply_customer').value;
-                                                        var grandTotal = document.getElementById('grandTotal');
+                                                        var grandTotalElement = document.getElementById('grandTotal');
                                                         var shipping = parseFloat(document.getElementById('shippingCharge').value) || 0;
                                                         var adjustment = parseFloat(document.getElementById('adjustment').value) || 0;
-                                                        var paid= parseFloat(document.getElementById('paidAmount').value) || 0;
+                                                        var paidAmountElement = document.getElementById('paidAmount');
                                                         var grandInput = document.getElementById('grandTotal');
                                                         var balanceInput = document.getElementById('balanceDue');
 
@@ -967,23 +1000,35 @@
                                                             taxTotal += rowTaxTotal;
                                                         });
 
-                                                        // Update the grand total in your HTML (replace 'your-grand-total-id' with the actual ID)
+                                                        // Update the grand total in your HTML
                                                         document.getElementById('subTotal').value = subTotal.toFixed(2);
-                                                        if (source === place && source !== '' && place !== ''){
-                                                            cgst = taxTotal/2.0;
+
+                                                        // Handle tax calculation based on source and place
+                                                        if (source === place && source !== '' && place !== '') {
+                                                            var cgst = taxTotal / 2.0;
                                                             document.getElementById('cgst').value = cgst.toFixed(2);
                                                             document.getElementById('sgst').value = cgst.toFixed(2);
                                                             document.getElementById('taxAmount').value = taxTotal.toFixed(2);
-                                                        }else if (source !== place && source !== '' && place !== ''){
+                                                        } else if (source !== place && source !== '' && place !== '') {
                                                             document.getElementById('taxAmount').value = taxTotal.toFixed(2);
                                                         }
-                                                        
-                                                        Gtotal = subTotal + shipping + adjustment ;
-                                                        var balance = Gtotal - paid;
-                                                        grandInput.value = Gtotal;
-                                                        balanceInput.value = balance;
-                                                        
+
+                                                        // Calculate grand total, balance, and handle paid amount not exceeding grand total
+                                                        var Gtotal = subTotal + shipping + adjustment;
+                                                        var paidAmount = parseFloat(paidAmountElement.value) || 0;
+
+                                                        if (paidAmount > Gtotal) {
+                                                            // If paid amount exceeds grand total, set paid amount to zero
+                                                            paidAmountElement.value = 0;
+                                                            paidAmount = 0;  // Update the paidAmount variable accordingly
+                                                            alert('Cannot be more than Grand Total')
+                                                        }
+
+                                                        var balance = Gtotal - paidAmount;
+                                                        grandInput.value = Gtotal.toFixed(2);
+                                                        balanceInput.value = balance.toFixed(2);
                                                     }
+
                                                     
                                                         // Function to initialize calculations on page start
                                                         function initializeCalculations() {

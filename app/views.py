@@ -17222,7 +17222,7 @@ def Fin_recurring_bill_list(request):
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
         # bill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)   
         bill = Fin_Recurring_Bills.objects.all()     
-    return render(request,'company/Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill})
+    return render(request,'company/Fin_Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill})
 
 def Fin_recurring_bill_create_page(request):
     sid = request.session['s_id']
@@ -17275,14 +17275,14 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist})
+    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     if request.method == 'POST':
         vendor = request.POST['select_vendor']
-        recurring_bill_number = request.POST['RecurringBillNo']
+        recurring_bill_number = request.POST['RecurringBillNo'].upper()
         profile_namee = request.POST['ProfileName']
         reference_number = request.POST['ReferenceNo']
         startdate = request.POST['startDate']
@@ -17446,7 +17446,7 @@ def Fin_recurring_bill_overview(request,pk):
             'phone':com.Contact,
             'email':com.Email
         }
-    return render(request,'company/Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory})
+    return render(request,'company/Fin_Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory})
 
 def Fin_get_vendor_details(request, vendor_id):
 
@@ -17503,6 +17503,9 @@ def Fin_get_customer_details(request, customer_id):
             com = Fin_Company_Details.objects.get(Login_Id = sid)
             customer = Fin_Customers.objects.get(id=customer_id,Company_id=com.id)
             data = {
+                'id': customer.id,
+                'firstname':customer.first_name,
+                'lastname': customer.last_name,
                 'email': customer.email,
                 'placeofsupply': customer.place_of_supply,
                 'gst': customer.gst_type
@@ -17513,6 +17516,9 @@ def Fin_get_customer_details(request, customer_id):
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
             customer = Fin_Customers.objects.get(id=customer_id,Company_id=com.id)
             data = {
+                'id': customer.id,
+                'firstname':customer.first_name,
+                'lastname': customer.last_name,
                 'email': customer.email,
                 'placeofsupply': customer.place_of_supply,
                 'gst': customer.gst_type
@@ -17753,8 +17759,6 @@ def Fin_recurring_bill_edit_save(request,pk):
 
         if request.POST['Document']:
             recur.document = request.POST['Document']
-        else: 
-            recur.document = ''
 
         recur.sub_total = request.POST['subTotal']
         if request.POST['cgst'] :
@@ -18105,10 +18109,12 @@ def Fin_recurring_bill_email(request):
         if request.method == 'POST':
             emails_string = request.POST['email_ids']
             # keyy = request.POST['mailDiv']
-            keyy = '1'
-            print(keyy,'-----------------11111111111----------------')
-            pk = request.POST['bill_id']
-            cmpID = request.POST['company_ID']
+            keyy = 1
+            print(keyy,'--------------keykeykey================')
+            pk = request.POST['bill_id_email']
+            print(pk,'--------------pkpkpkpkpkpkpkpkp================')
+            cmpID = request.POST['company_ID_email']
+            print(cmpID,'--------------cmpcmpcmpcmp================')
             data = Fin_Recurring_Bills.objects.get(id=pk)
             cmp = Fin_Company_Details.objects.get(id=cmpID)
             items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
@@ -18129,37 +18135,69 @@ def Fin_recurring_bill_email(request):
             context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
             print('context working')
 
-            if keyy == '0' or keyy == '1' or keyy == '2' or keyy == '3' :
-                template_path = 'company/Fin_Recurring_Bill_Template_PDF.html'
-                print('tpath working')
+            if keyy == '0' or keyy == '1' :
+                template_path = 'company/Fin_Recurring_Bill_Template1_PDF.html'
+                print('tpath working1')
 
                 template = get_template(template_path)
-                print('template working')
+                print('template working1')
 
                 html = template.render(context)
-                print('html working')
+                print('html working1')
 
                 result = BytesIO()
-                print('bytes working')
+                print('bytes working1')
 
-                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/'))
-                print('pisa working')
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template1_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+                print('pisa working1')
+            
+            elif keyy == '2':
+                template_path = 'company/Fin_Recurring_Bill_Template2_PDF.html'
+                print('tpath working2')
+
+                template = get_template(template_path)
+                print('template working2')
+
+                html = template.render(context)
+                print('html working2')
+
+                result = BytesIO()
+                print('bytes working2')
+
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template2_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+                print('pisa working2')
+            
+            elif keyy == '3':
+                template_path = 'company/Fin_Recurring_Bill_Template3_PDF.html'
+                print('tpath working3')
+
+                template = get_template(template_path)
+                print('template working3')
+
+                html = template.render(context)
+                print('html working3')
+
+                result = BytesIO()
+                print('bytes working3')
+
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template3_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+                print('pisa working3')
 
             elif keyy == '4':
                 template_path = 'company/Fin_Recurring_Bill_Slip_PDF.html'
-                print('tpath working')
+                print('tpath working4')
 
                 template = get_template(template_path)
-                print('template working')
+                print('template working4')
 
                 html = template.render(context)
-                print('html working')
+                print('html working4')
 
                 result = BytesIO()
-                print('bytes working')
+                print('bytes working4')
 
-                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Slip_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/'))
-                print('pisa working')
+                pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Slip_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+                print('pisa working4')
 
             if pdf.err:
                 raise Exception(f"PDF generation error: {pdf.err}")
@@ -18173,11 +18211,11 @@ def Fin_recurring_bill_email(request):
             email.send(fail_silently=False)
             messages.success(request, 'Report has been shared via email successfully..!')
             # return JsonResponse({'success': True})
-            return redirect(Fin_recurring_bill_list)
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
     except Exception as e:
         messages.error(request, f'Error while sending report: {e}')
         # return JsonResponse({'error': str(e)})
-        return redirect(Fin_recurring_bill_create_page)
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
 
 def view_template_pdf(request,pk):
     sid = request.session['s_id']
@@ -18214,7 +18252,7 @@ def view_template_pdf(request,pk):
             'email':com.Email
         }
 
-    return render(request,'company/Fin_Recurring_Bill_Template_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+    return render(request,'company/Fin_Recurring_Bill_Slip_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
 
 def Fin_recurring_bill_comment(request):
     if request.method == 'POST':
@@ -18255,6 +18293,7 @@ def Fin_recurring_bill_convert(request,pk):
     recurBill = Fin_Recurring_Bills.objects.get(id=pk)
     recurBill.status = 'Save'
     recurBill.save()
+    messages.info(request,'Bill Converted Successfully !')
     return redirect('Fin_recurring_bill_list')
 
 
