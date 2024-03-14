@@ -15,11 +15,56 @@
     }
 </style>
 
+<script>
+    $(document).ready(function() {
+        $('#button1').click(function() {
+        $('#buttonClicked').val($(this).val()); // Set the value of the clicked button in the hidden input field
+    });
 
+    // Click event listener for the draft button
+    $('#button2').click(function() {
+        $('#buttonClicked').val($(this).val()); // Set the value of the clicked button in the hidden input field
+    });
+    
+    $('#rBillForm').submit(function(event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Get the form data
+        var formData = $(this).serialize();
+        
+
+        // Make the AJAX request
+        $.ajax({
+            url: '/Fin_recurring_bill_save', // The URL to which the request is sent
+            type: 'POST', // Example: POST method
+            data: formData, // Send form data
+            dataType: 'json', // Expected data type from the server
+            success: function(response) {
+                // Function to be called if the request succeeds
+                console.log(response);
+                alert(response.messages)
+                if(response.success){
+                    window.location.href = 'Fin_recurring_bill_list';
+                }
+            },
+            error: function(xhr, status, error) {
+                // Function to be called if the request fails
+                console.error('Error:', error);
+                alert(error)
+            },
+            complete: function(xhr, status) {
+                // Function to be called regardless of success or failure
+            }
+        });
+    });
+});
+
+</script>
 
 
     <div class="page-content" id="body">
-        <form action="{% url 'Fin_recurring_bill_save' %}" enctype="multipart/form-data" method="post">
+        <form action="{% url 'Fin_recurring_bill_save' %}" id="rBillForm" enctype="multipart/form-data" method="post">
             {% csrf_token %}
         <!-- overview -->
         <div id="overview123">
@@ -58,7 +103,7 @@
 
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input required type="text" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input required type="text" autocomplete="off" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu" style="width:280px;">
                                                                             {% for i in vendors %}
@@ -66,6 +111,7 @@
                                                                             {% endfor %}
                                                                         </div>
                                                                     </div>
+                                                                    <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#vendorModal" style="height:min-content ;">+</button>
                                                                 </div>
 
                                                                 <script>
@@ -123,13 +169,21 @@
                                                                             $("#vendorEmail").val(data.email);
                                                                             $("#vendorAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
                                                                             $("#vendorGST").val(data.gst);
+                                                                            $("#vendorGSTIN").val(data.gstin);
                                                                             $('#select_vendor2').val(data.firstname + ' ' + data.lastname);
                                                                             $('#select_vendor').val(data.id);
+
+                                                                            if(data.gst === 'Unregistered Business'){
+                                                                                $("#vendorGstinDiv").hide();
+                                                                            }else{
+                                                                                $("#vendorGstinDiv").show();
+                                                                                
+                                                                            }
 
 
                                                                             var placeOfSupplyDropdown = $("#sourceOFSupply");
                                                                             // Clear existing options
-                                                                            placeOfSupplyDropdown.empty();
+                                                                            // placeOfSupplyDropdown.empty();
                                                                             var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                            
                                                                             option.prop('selected', true);
                                                                             placeOfSupplyDropdown.append(option);
@@ -146,33 +200,28 @@
 
 
                                                             </script>
-                                                            <div class="form-group col-md-6">
+                                                            <div class="form-group col-md">
                                                                 <label class="" >Vendor Email</label>
                                                                 <input required type="vendorEmail" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
-                                                                <label class="">GST Treatment</label>
+                                                                <label class="">GST Type (Vendor)</label>
                                                                 <input type="text" id="vendorGST" class="form-control">
+                                                            </div>
+                                                            <div id="vendorGstinDiv" style="display: none;" class="form-group col-md">
+                                                                <label class="">GST Number</label>
+                                                                <input type="text" id="vendorGSTIN"  class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-1">
+                                                    <!-- <div class="col-md-1">
 
-                                                    </div>
-                                                    
-                                                    <div class="form-group col-md mb-3">
-                                                        <label class="">Address</label>
-                                                        <textarea  required name="address" id="vendorAddress" cols="30" rows="5" class="form-control"></textarea>
-                                                    </div>
-                                                </div>
-
-                                                
-                                                <div class="row ml-2 mr-2 ">
+                                                    </div> -->
                                                     <div class="col-md-3">
-                                                        <label class="mt-4 ">Source Of Supply</label>
+                                                        <label class=" ">Place Of Supply</label>
                                                         <select  required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
                                                             <option selected value="">Select Place of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
@@ -216,11 +265,64 @@
                                                             
                                                         </select>
                                                     </div>
+                                                    <div class="form-group col-md mb-3">
+                                                        <label class="">Address</label>
+                                                        <textarea  required name="address" id="vendorAddress" cols="10" rows="5" class="form-control"></textarea>
+                                                    </div>
                                                 </div>
 
-                                                <br><br>
+                                                
+                                                <div class="row ml-2 mr-2 ">
+                                                    <!-- <div class="col-md-3">
+                                                        <label class="mt-4 ">Place Of Supply</label>
+                                                        <select  required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
+                                                            <option selected value="">Select Place of Supply</option>
+                                                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                                            <option value="Assam">Assam</option>
+                                                            <option value="Bihar">Bihar</option>
+                                                            <option value="Chandigarh">Chandigarh</option>
+                                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option value="Damn anad Diu">Damn anad Diu</option>
+                                                            <option value="Delhi">Delhi</option>
+                                                            <option value="Goa">Goa</option>
+                                                            <option value="Gujarat">Gujarat</option>
+                                                            <option value="Haryana">Haryana</option>
+                                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option value="Jharkhand">Jharkhand</option>
+                                                            <option value="Karnataka">Karnataka</option>
+                                                            <option value="Kerala">Kerala</option>
+                                                            <option value="Ladakh">Ladakh</option>
+                                                            <option value="Lakshadweep">Lakshadweep</option>
+                                                            <option value="Madhya Predesh">Madhya Predesh</option>
+                                                            <option value="Maharashtra">Maharashtra</option>
+                                                            <option value="Manipur">Manipur</option>
+                                                            <option value="Meghalaya">Meghalaya</option>
+                                                            <option value="Mizoram">Mizoram</option>
+                                                            <option value="Nagaland">Nagaland</option>
+                                                            <option value="Odisha">Odisha</option>
+                                                            <option value="Puducherry">Puducherry</option>
+                                                            <option value="Punjab">Punjab</option>
+                                                            <option value="Rajasthan">Rajasthan</option>
+                                                            <option value="Sikkim">Sikkim</option>
+                                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option value="Telangana">Telangana</option>
+                                                            <option value="Tripura">Tripura</option>
+                                                            <option value="Uttar Predesh">Uttar Predesh</option>
+                                                            <option value="Uttarakhand">Uttarakhand</option>
+                                                            <option value="West Bengal">West Bengal</option>
+                                                            <option value="Other Territory">Other Territory</option>
+                                                            
+                                                        </select>
+                                                    </div> -->
+                                                </div>
+
+                                                <!-- <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Bill Details</h5> </div>
-                                                <br><br>
+                                                <br><br> -->
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
@@ -267,7 +369,7 @@
                                                 </div>
 
                                                 <div class="row ml-md-2 mr-md-2 ">
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-3 mt-2">
                                                         <label for="">Repeat Every</label>
                                                         <div style="display: flex;">
                                                             <select required class="form-control" name="RepeatEvery" id="RepeatEvery" >
@@ -278,11 +380,31 @@
                                                             <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#RepeatEveryN">+</button>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-3 mb-3 mt-2">
+                                                        <label for="">Recurring Bill Date</label>
+                                                        <input required type="date" class="form-control" onchange="calculateEndDate()" name="startDate" id="startDate">
+                                                    </div>
+                                                    <div class="col-md-3 mb-3 mt-2">
+                                                        <label for="">Expiry Date</label>
+                                                        <input type="date" class="form-control" name="endDate" id="endDate" readonly>
+                                                    </div>
+                                                    <div class="col-md-3 mb-3 mt-2">
+                                                        <label for="">Credit Period </label>
+                                                        <div style="display: flex;">
+                                                            <select required class="custom-select" name="payment_terms" id="termadd2" onchange="calculateEndDate()">
+                                                                <option selected id="trmopt2"></option>
+                                                                {% for pd in pTerms %}
+                                                                    <option value="{{ pd.id }}">{{ pd.term_name }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#newPaymentRe">+</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                <br><br>
+                                                <!-- <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Customer Details</h5> </div>
-                                                <br><br>
+                                                <br><br> -->
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
@@ -299,7 +421,7 @@
 
                                                         <div class="input-group">
                                                             <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                            <input type="text" autocomplete="off" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
                                                             <div class="input-group-append">
                                                                 <div class="dropdown-menu" style="width:380px;">
                                                                     {% for i in customers %}
@@ -307,6 +429,7 @@
                                                                     {% endfor %}
                                                                 </div>
                                                             </div>
+                                                            <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
                                                         </div>
 
                                                         <script>
@@ -345,6 +468,7 @@
                                                                         // Update the placeholder elements with the fetched details
                                                                         $("#customerEmail").val(data.email);
                                                                         $("#GSTTypeCustomer").val(data.gst);
+                                                                        $("#customerGSTIN").val(data.gstin);
                                                                         $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
                                                                         $('#SelectCustomer').val(data.id);
 
@@ -354,6 +478,13 @@
                                                                         var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                        
                                                                         option.prop('selected', true);
                                                                         placeOfSupplyDropdown.append(option); 
+
+                                                                        if(data.gst === 'Unregistered Business'){
+                                                                                $("#customerGstinDiv").hide();
+                                                                            }else{
+                                                                                $("#customerGstinDiv").show();
+                                                                                
+                                                                            }
                                                                         
                                                                         
                                                                     },
@@ -369,7 +500,7 @@
                                                         <input type="email" required class="form-control" name="customerEmail" id="customerEmail">
                                                     </div>
                                                     <div class="col-md mb-3">
-                                                        <label for="">Place OF Supply</label>
+                                                        <label for="">Place Of Supply</label>
                                                         <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option value="">Select Place Of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
@@ -415,22 +546,53 @@
                                                 </div>
 
                                                 <div class="row m-md-2 border-bottom pb-4">
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">GST Type</label>
                                                         <input required type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
                                                     </div>
+                                                    <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
+                                                        <label class="">GST Number</label>
+                                                        <input type="text" id="customerGSTIN"  class="form-control">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3 mt-2">
+                                                        <label for="">Payment Type</label>
+                                                        <select required name="paymentType" id="paymentType" class="form-control">
+                                                            <option value="">Select Payment Method</option>
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Cheque">Cheque</option>
+                                                            <option value="UPI">UPI</option>
+                                                            {% for b in bank %}
+                                                            <option value="{{b.id}}">{{b.bank_name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3 mt-2" id="bankAccount" style="display: none;">
+                                                        <label for="">Bank Account</label>
+                                                        <input type="text" class="form-control" name="bankAccount" >
+                                                    </div>
+                                                    <div class="col-md-4 mb-3 mt-2" id="Cheque" style="display: none;">
+                                                        <label for="">Cheque</label>
+                                                        <input type="text" class="form-control" name="Cheque">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3 mt-2" id="UPI" style="display: none;">
+                                                        <label for="">UPI</label>
+                                                        <input type="text" class="form-control" name="UPI">
+                                                    </div>
+                                                     
                                                 </div>
 
-                                                <div class="row m-md-2 ">
+                                                
+
+                                                <!-- <div class="row m-md-2 ">
                                                     <div class="col-md-4 mb-3 mt-2">
-                                                        <label for="">Start Date</label>
+                                                        <label for="">Recurring Bill Date</label>
                                                         <input required type="date" class="form-control" onchange="calculateEndDate()" name="startDate" id="startDate">
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2">
-                                                        <label for="">End Date</label>
-                                                        <input type="text" class="form-control" name="endDate" id="endDate" readonly>
-                                                    </div>                                                    
-                                                </div>
+                                                        <label for="">Expiry Date</label>
+                                                        <input type="date" class="form-control" name="endDate" id="endDate" readonly>
+                                                    </div>                                                
+                                                </div> -->
                                                 <script>
                                                     // Function to calculate end date
                                                     function calculateEndDate() {
@@ -465,8 +627,10 @@
                                                                 var endDate = new Date(startDate);
                                                                 endDate.setDate(endDate.getDate() + parseInt(countDays));
 
-                                                                // Format the end date to YYYY-MM-DD
+                                                                // // Format the end date to YYYY-MM-DD
                                                                 var formattedEndDate = endDate.toISOString().split('T')[0];
+
+                                                                
 
                                                                 // Display the calculated end date
                                                                 document.getElementById("endDate").value = formattedEndDate;
@@ -484,7 +648,7 @@
 
                                                 </script>
 
-                                                <div class="row m-md-2">
+                                                <!-- <div class="row m-md-2">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Credit Period </label>
                                                         <div style="display: flex;">
@@ -497,10 +661,10 @@
                                                             <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#newPaymentRe">+</button>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                        
 
-                                                <div class="row ml-md-2 mr-md-2 border-bottom pb-3 mb-5">
+                                                <!-- <div class="row ml-md-2 mr-md-2 border-bottom pb-3 mb-5">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Payment Type</label>
                                                         <select required name="paymentType" id="paymentType" class="form-control">
@@ -526,7 +690,7 @@
                                                         <label for="">UPI</label>
                                                         <input type="text" class="form-control" name="UPI">
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <script>
                                                     $(document).ready(function () {
@@ -611,9 +775,12 @@
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
                                                                     <td class="border" style="min-width: 150px;" hidden><input type="text" class="form-control item-totaltax" id="taxTotal" value="0" ></td>
-                                                                    <td class="border" ><p class="btn btn-outline-secondary text-grey mb-1 w-100 " onclick="addRow()" id="plus">+</p><br> <p class="btn btn-outline-secondary text-grey w-100" onclick="removeRow(this)" id="minus"> - </p></td>
+                                                                    <td class="border" ><br> <p class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close w-80" onclick="removeRow(this)" id="minus"></p></td>
                                                                 </tr>
                                                             </tbody>
+                                                            <tr>
+                                                                <td class="border"><p class="btn btn-outline-secondary text-grey mb-1 w-100 " onclick="addRow()" id="plus">+</p></td>
+                                                            </tr>
                                                         </table>
                                                     
 
@@ -719,7 +886,7 @@
                                                             // Check if item-qty is valid
                                                             if (!isNaN(qty) && qty >= 0 && qty <= initialStockin) {
                                                                 // Update item-stockin based on the change in item-qty
-                                                                var updatedStockin = initialStockin - qty; // Decrease stockin based on qty
+                                                                var updatedStockin = initialStockin + qty; // Decrease stockin based on qty
                                                                 $row.find(".item-stockin").html(updatedStockin);
                                                                 $row.find(".item-stockin").css('color', 'white');
 
@@ -760,17 +927,23 @@
 
                                                         // Iterate through each row in the table
                                                         $('#itemTable tbody tr').each(function() {
-                                                            var item = {
-                                                                'items': $(this).find('.item-select').val(),
-                                                                'hsn': $(this).find('.item-hsn').val(),
-                                                                'quantity': $(this).find('.item-qty').val(),
-                                                                'price': $(this).find('.item-price').val(),
-                                                                'tax_rate': $(this).find('.item-tax').val(),
-                                                                'discount': $(this).find('.item-discount').val(),
-                                                                'total': $(this).find('.item-total').val()
-                                                            };
+                                                            // Get quantity value
+                                                            var quantity = $(this).find('.item-qty').val();
 
-                                                            itemsData.push(item);
+                                                            // Check if quantity is not 0
+                                                            if (quantity !== "0") {
+                                                                var item = {
+                                                                    'items': $(this).find('.item-select').val(),
+                                                                    'hsn': $(this).find('.item-hsn').val(),
+                                                                    'quantity': quantity,
+                                                                    'price': $(this).find('.item-price').val(),
+                                                                    'tax_rate': $(this).find('.item-tax').val(),
+                                                                    'discount': $(this).find('.item-discount').val(),
+                                                                    'total': $(this).find('.item-total').val()
+                                                                };
+
+                                                                itemsData.push(item);
+                                                            }
                                                         });
 
                                                         // Send data to the Django view using AJAX
@@ -787,121 +960,157 @@
                                                         });
                                                     });
                                                 });
+
                                                        
                                                     </script>
                                                 </div>
 
-                                                <div class="row m-md-2">
+                                                <div class="row ">
                                                     <div class="col-md-6 mt-4">
                                                         <label for="">Note</label>
                                                         <textarea name="Note" id="" class="form-control" cols="30" rows="5"></textarea><br>
                                                         <input type="file" class="form-control" name="Document" id="">
                                                     </div>
+
                                                     <div class="col-md-1 mb-5"></div>
+
                                                     <div class="col-md-4 mb-3 m-md-5 p-4" style="background-color: rgba(22,37,50,255);border-radius: 5px;">
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > Sub Total </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="subTotal" id="subTotal" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3" id="GST1">
-                                                            <div class="col-4 d-flex justify-content-start" >
-                                                                <label style="color: white;" > CGST </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="cgst" id="cgst" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3" id="GST2">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > SGST </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="sgst" id="sgst" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3" >
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > <span id="ifGST">Tax Amount</span> <span id="ifOR">/</span> <span id="ifIGST">IGST</span> </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="taxAmount" id="taxAmount" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > Shipping Charge </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" oninput="updateSubTotal()" name="shippingCharge" id="shippingCharge" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > Adjustment </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" oninput="updateSubTotal()" name="adjustment" id="adjustment" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > Grand Total </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" name="grandTotal" id="grandTotal" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 justify-content-start">
-                                                                <!-- <input type="checkbox" name="paid" id="paid" >  -->
-                                                                Paid
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start">
-                                                                <input type="text" oninput="updateSubTotal()" name="paidAmount" id="paidAmount" class="form-control">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-4 d-flex justify-content-start">
-                                                                <label style="color: white;" > Balance Due </label>
-                                                            </div>
-                                                            <div class="col-2 d-flex justify-content-center">
-                                                                <p>:</p>
-                                                            </div>
-                                                            <div class="col-md-6 d-flex justify-content-start"> 
-                                                                <input type="text" name="balanceDue" id="balanceDue" class="form-control">
-                                                            </div>
-                                                        </div>
                                                         
-                                                        
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Sub Total </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" name="subTotal" id="subTotal" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3" id="GST1">
+                                                                <div class="col-4 d-flex justify-content-start" >
+                                                                    <label style="color: white;" > CGST </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" name="cgst" id="cgst" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3" id="GST2">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > SGST </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" name="sgst" id="sgst" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3" >
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > <span id="ifGST">Tax Amount</span> <span id="ifOR">/</span> <span id="ifIGST">IGST</span> </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" name="taxAmount" id="taxAmount" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Shipping Charge </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" oninput="updateSubTotal()" name="shippingCharge" id="shippingCharge" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Adjustment </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" oninput="updateSubTotal()" name="adjustment" id="adjustment" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Grand Total </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" name="grandTotal" id="grandTotal" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 justify-content-start">
+                                                                    <!-- <input type="checkbox" name="paid" id="paid" >  -->
+                                                                    Paid
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" oninput="updateSubTotal()" name="paidAmount" id="paidAmount" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Balance Due </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start"> 
+                                                                    <input type="text" name="balanceDue" id="balanceDue" class="form-control">
+                                                                </div>
+                                                            </div>
                                                     </div>
+                                                </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6 mt-4"></div>
+                                                        <div class="col-md-1 mb-5"></div>
+                                                        <div class="col-md-4 mb-3 m-md-5 p-4" style="background-color: rgba(22,37,50,255);border-radius: 5px;">
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 justify-content-start">
+                                                                    <!-- <input type="checkbox" name="paid" id="paid" >  -->
+                                                                    Paid
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start">
+                                                                    <input type="text" oninput="updateSubTotal()" name="paidAmount" id="paidAmount" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <div class="col-4 d-flex justify-content-start">
+                                                                    <label style="color: white;" > Balance Due </label>
+                                                                </div>
+                                                                <div class="col-2 d-flex justify-content-center">
+                                                                    <p>:</p>
+                                                                </div>
+                                                                <div class="col-md-6 d-flex justify-content-start"> 
+                                                                    <input type="text" name="balanceDue" id="balanceDue" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
                                                     <script>
                                                     
 
@@ -1136,15 +1345,16 @@
                                                     </script>
                                                     
                                                     
-                                                </div>
+                                                
 
                                                 <div class="row">
+                                                    <input type="hidden" id="buttonClicked" name="button" value="">
                                                     
-                                                    <div class="col-md-7 m-2"><input type="checkbox" required> Agree To Terms & Conditions.</div>
-                                                    <div class="col-md-4 mb-3 m-3">
+                                                    <div class="col-md-7 m-4"><input type="checkbox" required> Agree To Terms & Conditions.</div>
+                                                    <div class="col-md-4 mb-3 ">
                                                         <div class="row">
-                                                            <div class="col-md mb-3"><button type="submit" style="border-radius: 20px;" class="btn form-control " name="button" id="button1" value="Save">Save</button></div>
-                                                            <div class="col-md mb-3"><button type="submit" style="border-radius: 20px;" class="btn form-control " name="button" id="button2" value="Draft">Draft</button></div>
+                                                            <div class="col-md mb-3"><button type="submit" class="ml-2 btn btn-outline-secondary text-grey form-control " id="button1" value="Save">Save</button></div>
+                                                            <div class="col-md mb-3"><button type="submit" class="ml-2 btn btn-outline-secondary text-grey form-control " id="button2" value="Draft">Draft</button></div>
                                                         </div>                                                        
                                                     </div>
                                                 </div><br><br>

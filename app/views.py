@@ -17238,7 +17238,7 @@ def Fin_recurring_bill_create_page(request):
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
-        pricelist = Fin_Price_List.objects.filter(Company_id=com.id)
+        pricelist = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
         
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
@@ -17257,9 +17257,9 @@ def Fin_recurring_bill_create_page(request):
         vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id,status='Active')
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
-        items = Fin_Items.objects.filter(Company_id=com.id)
-        units = Fin_Units.objects.filter(Company = com)
-        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        items = Fin_Items.objects.filter(Company_id=com.company_id_id)
+        units = Fin_Units.objects.filter(Company_id = com.company_id_id)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id)
         
@@ -17309,10 +17309,10 @@ def Fin_recurring_bill_save(request):
         customer = request.POST['Customer'] 
         description = request.POST['Note']
 
-        if request.POST['Document']:
-            document = request.POST['Document'] 
-        else: 
-            document = ''
+        # if request.FILES['Document'] :
+        #     document = request.FILES['Document']
+        # else: 
+        #     document = ''
 
         source = request.POST['sourceOfSupply']
         place = request.POST['placeOfSupply']  
@@ -17327,81 +17327,144 @@ def Fin_recurring_bill_save(request):
             
         
         sub_total = request.POST['subTotal'] 
-        shipping_charge = request.POST['shippingCharge'] 
-        adjustment = request.POST['adjustment'] 
+
+        if request.POST['shippingCharge'] :
+            shipping_charge = request.POST['shippingCharge'] 
+        else:
+            shipping_charge = 0
+        
+        if request.POST['adjustment'] :
+            adjustment = request.POST['adjustment'] 
+        else:
+            adjustment = 0
+
         grand_total = request.POST['grandTotal'] 
-        advanceAmount_paid = request.POST['paidAmount'] 
+        if request.POST['paidAmount'] :
+            advanceAmount_paid = request.POST['paidAmount'] 
+        else:
+            advanceAmount_paid = 0
+
         balance = request.POST['balanceDue']
         status = request.POST['button'] 
         repeat_every = request.POST['RepeatEvery']
 
         if loginn.User_Type == 'Company':
             com = Fin_Company_Details.objects.get(Login_Id = sid)
-            newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
-                                    purchase_order_number =purchase_order_number,payment_method = payment_method,
-                                    description = description,sub_total = sub_total,cgst = cgst,bank_account=bank_account,cheque_number=cheque_number,upi_id=upi_id,
-                                    sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
-                                    grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
-                                    status = status,company_id=com.id,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
-                                    document = document,repeat_every_id=repeat_every)
-            newBill.save()
-            history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company_id=com.id,login_details_id = sid,recurring_bill_id =newBill.id)
-            history.save()
-
-            ref = Fin_Recurring_Bill_Reference(reference_number = reference_number ,company_id = com.id,login_details_id = sid)
-            ref.save()
-            
-            
         elif loginn.User_Type == 'Staff' :
-            com = Fin_Staff_Details.objects.get(Login_Id = sid)
-            
-            newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
-                                    purchase_order_number =purchase_order_number,payment_method = payment_method,
-                                    description = description,document = document,sub_total = sub_total,cgst = cgst,
-                                    sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
-                                    grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
-                                    status = status,company_id=com.company_id_id,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms)
-            newBill.save()
-            history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company_id=com.company_id_id,login_details_id = sid,recurring_bill_id =newBill.id)
-            history.save()
+            com = Fin_Staff_Details.objects.get(Login_Id = sid).company_id
 
-            ref = Fin_Recurring_Bill_Reference(reference_number = reference_number ,company_id = com.company_id_id,login_details_id = sid)
-            ref.save()
-        
-
-        product = tuple(request.POST.getlist("Item[]"))
-        qty = tuple(request.POST.getlist("qty[]"))
-        total_texts = tuple(request.POST.getlist("total[]"))
-        total = [float(value) for value in total_texts]
-        discount = tuple(request.POST.getlist("discount[]"))
-        hsn = request.POST.getlist("hsn[]")
-        price = request.POST.getlist("price[]")
-        if request.POST['sourceOfSupply'] == request.POST['placeOfSupply']:
-            tax = request.POST.getlist("gsttaxrate[]")
+        if Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number,purchase_order_number=purchase_order_number).exists():
+            return JsonResponse({'messages': 'Bill Exists'})
+        elif Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number).exists():
+            return JsonResponse({'messages': 'Bill Number Exists'})
+        elif Fin_Recurring_Bills.objects.filter(company=com,purchase_order_number=purchase_order_number).exists():
+            return JsonResponse({'messages': 'Purchase order number Exists'})
+        elif request.POST['UPI'] :
+            if Fin_Recurring_Bills.objects.filter(company=com,upi_id=upi_id).exists():
+                return JsonResponse({'messages': 'Upi id Exists'})
+        elif request.POST['Cheque']:
+            if Fin_Recurring_Bills.objects.filter(company=com,cheque_number=cheque_number).exists():
+                return JsonResponse({'messages': 'Cheque number Exists'})
+        elif request.POST['bankAccount']:
+            if Fin_Recurring_Bills.objects.filter(company=com,bank_account=bank_account).exists():
+                return JsonResponse({'messages': 'Bank number Exists'})
         else:
-            tax = request.POST.getlist("igsttaxrate[]")
+            newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
+                                        purchase_order_number =purchase_order_number,payment_method = payment_method,
+                                        description = description,sub_total = sub_total,cgst = cgst,bank_account=bank_account,cheque_number=cheque_number,upi_id=upi_id,
+                                        sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
+                                        status = status,grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
+                                        company=com,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
+                                        repeat_every_id=repeat_every)
+            newBill.save()
+            history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company=com,login_details_id = sid,recurring_bill_id =newBill.id)
+            history.save()
+            ref = Fin_Recurring_Bill_Reference(reference_number = reference_number ,company = com,login_details_id = sid)
+            ref.save()
+            
+            product = tuple(request.POST.getlist("Item[]"))
+            qty = tuple(request.POST.getlist("qty[]"))
+            total_texts = tuple(request.POST.getlist("total[]"))
+            total = [float(value) for value in total_texts]
+            discount = tuple(request.POST.getlist("discount[]"))
+            hsn = request.POST.getlist("hsn[]")
+            price = request.POST.getlist("price[]")
+            if request.POST['sourceOfSupply'] == request.POST['placeOfSupply']:
+                tax = request.POST.getlist("gsttaxrate[]")
+            else:
+                tax = request.POST.getlist("igsttaxrate[]")
+                    
+            if loginn.User_Type == 'Company':
+                com = Fin_Company_Details.objects.get(Login_Id = sid)
+                if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
+                    group = zip(product, qty, discount, total, hsn, tax, price)
+                    mapped=list(group)
+                    for itemsNew in mapped:
+                        itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com.id)
+                        itemsTable.save()
                 
+            elif loginn.User_Type == 'Staff' :
+                com = Fin_Staff_Details.objects.get(Login_Id = sid)
+                if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
+                    group = zip(product, qty, discount, total, hsn, tax, price)
+                    mapped=list(group)
+                    for itemsNew in mapped:
+                        itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com.company_id_id)
+                        itemsTable.save()
+                    
+            return JsonResponse({'messages': 'Bill created successfully','success':True})
+
+def Fin_recurring_bill_usercheck(request):
+    sid = request.session['s_id']
+    loginn = Fin_Login_Details.objects.get(id=sid)
+    if request.method == 'POST':
+        recurring_bill_number = request.POST['RecurringBillNo'].upper()
+        purchase_order_number = request.POST['PurchaseOrderNo']
+        if len(request.POST['Cheque']) > 0:
+            cheque_number = request.POST['Cheque'] 
+        else:
+            cheque_number = ''
+
+        if len(request.POST['UPI']) > 0:
+            upi_id = request.POST['UPI'] 
+        else:
+            upi_id = ''
+
+        if len(request.POST['bankAccount']) > 0:
+            bank_account = request.POST['bankAccount'] 
+        else:
+            bank_account = ''
+        
 
         if loginn.User_Type == 'Company':
             com = Fin_Company_Details.objects.get(Login_Id = sid)
-            if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
-                group = zip(product, qty, discount, total, hsn, tax, price)
-                mapped=list(group)
-                for itemsNew in mapped:
-                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com.id)
-                    itemsTable.save()
-            
         elif loginn.User_Type == 'Staff' :
-            com = Fin_Staff_Details.objects.get(Login_Id = sid)
-            if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
-                group = zip(product, qty, discount, total, hsn, tax, price)
-                mapped=list(group)
-                for itemsNew in mapped:
-                    itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill=newBill.id,company_id=com.company_id_id)
-                    itemsTable.save()
-                
-        return redirect('Fin_recurring_bill_list')
-    
+            com = Fin_Staff_Details.objects.get(Login_Id = sid).company_id
+        
+        if Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number,purchase_order_number=purchase_order_number).exists():
+            messages.info(request,'Bill Exists')
+            return redirect(Fin_recurring_bill_create_page)
+        elif Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number).exists():
+            messages.info(request,'Bill Number Exists Exists')
+            return redirect(Fin_recurring_bill_create_page)
+        elif Fin_Recurring_Bills.objects.filter(company=com,purchase_order_number=purchase_order_number).exists():
+            messages.info(request,'Purchase order number Exists')
+            return redirect(Fin_recurring_bill_create_page)
+        elif request.POST['UPI'] :
+            if Fin_Recurring_Bills.objects.filter(company=com,upi_id=upi_id).exists():
+                messages.info(request,'Upi id Exists')
+                return redirect(Fin_recurring_bill_create_page)
+        elif request.POST['Cheque']:
+            if Fin_Recurring_Bills.objects.filter(company=com,cheque_number=cheque_number).exists():
+                messages.info(request,'Cheque number Exists')
+                return redirect(Fin_recurring_bill_create_page)
+        elif request.POST['bankAccount']:
+            if Fin_Recurring_Bills.objects.filter(company=com,bank_account=bank_account).exists():
+                messages.info(request,'Bank number Exists')
+                return redirect(Fin_recurring_bill_create_page)
+        else:
+            return redirect(Fin_recurring_bill_save)
+
 def Fin_recurring_bill_overview(request,pk):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
@@ -17429,22 +17492,22 @@ def Fin_recurring_bill_overview(request,pk):
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk,Company_id = com.company_id_id)
-        lastHistory = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id = pk,company_id = com.company_id_id).latest()
+        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk,company_id = com.company_id_id)
+        lastHistory = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id = pk,company_id = com.company_id_id).latest('id')
         comments = Fin_Recurring_Bill_Comments.objects.filter(company_id=com.company_id_id,recurring_bill_id=pk)
         if comments.exists():
             for index, comment in enumerate(comments):
                 comment.index = index + 1
         else: 
             index = '0'
-        companyName = com.Company_name
+        companyName = com.company_id.Company_name
         companyData = {
-            'caddress':com.Address,
-            'city':com.City,
-            'state':com.State,
-            'pincode':com.Pincode,
-            'phone':com.Contact,
-            'email':com.Email
+            'caddress':com.company_id.Address,
+            'city':com.company_id.City,
+            'state':com.company_id.State,
+            'pincode':com.company_id.Pincode,
+            'phone':com.company_id.Contact,
+            'email':com.company_id.Email
         }
     return render(request,'company/Fin_Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory})
 
@@ -17468,6 +17531,7 @@ def Fin_get_vendor_details(request, vendor_id):
                 'pincode':vendor.billing_pincode,
                 'country':vendor.billing_country,
                 'gst':vendor.gst_type,
+                'gstin':vendor.gstin,
                 'placeofsupply':vendor.place_of_supply
             }
             return JsonResponse(data)
@@ -17487,6 +17551,7 @@ def Fin_get_vendor_details(request, vendor_id):
                 'pincode':vendor.billing_pincode,
                 'country':vendor.billing_country,
                 'gst':vendor.gst_type,
+                'gstin':vendor.gstin,
                 'placeofsupply':vendor.place_of_supply
             }
             return JsonResponse(data)
@@ -17508,7 +17573,8 @@ def Fin_get_customer_details(request, customer_id):
                 'lastname': customer.last_name,
                 'email': customer.email,
                 'placeofsupply': customer.place_of_supply,
-                'gst': customer.gst_type
+                'gst': customer.gst_type,
+                'gstin':customer.gstin,
             }
             return JsonResponse(data)
             
@@ -17521,7 +17587,8 @@ def Fin_get_customer_details(request, customer_id):
                 'lastname': customer.last_name,
                 'email': customer.email,
                 'placeofsupply': customer.place_of_supply,
-                'gst': customer.gst_type
+                'gst': customer.gst_type,
+                'gstin':customer.gstin,
             }
             return JsonResponse(data)
         
@@ -17539,7 +17606,7 @@ def Fin_get_item_details(request, item_id):
             items = Fin_Items.objects.get(Company_id=com.id,id=item_id)
             data = {
                 'hsn': items.hsn,
-                'price': items.selling_price,
+                'price': items.purchase_price,
                 'gst_tax': items.intra_state_tax,
                 'igst_tax': items.inter_state_tax,
                 'current_stock': items.current_stock
@@ -17552,7 +17619,7 @@ def Fin_get_item_details(request, item_id):
             items = Fin_Items.objects.get(Company_id=com.company_id_id,id=item_id)
             data = {
                 'hsn': items.hsn,
-                'price': items.selling_price,
+                'price': items.purchase_price,
                 'gst_tax': items.intra_state_tax,
                 'igst_tax': items.inter_state_tax,  
                 'current_stock': items.current_stock
@@ -17708,8 +17775,8 @@ def Fin_recurring_bill_edit_page(request,pk):
         payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
         customers = Fin_Customers.objects.filter(Company_id=com.company_id_id,status='Active')
         items = Fin_Items.objects.filter(Company_id=com.id)
-        units = Fin_Units.objects.filter(Company = com)
-        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
+        units = Fin_Units.objects.filter(Company_id = com.company_id_id)
+        acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id)
 
@@ -18108,13 +18175,8 @@ def Fin_recurring_bill_email(request):
     try:
         if request.method == 'POST':
             emails_string = request.POST['email_ids']
-            # keyy = request.POST['mailDiv']
-            keyy = 1
-            print(keyy,'--------------keykeykey================')
             pk = request.POST['bill_id_email']
-            print(pk,'--------------pkpkpkpkpkpkpkpkp================')
             cmpID = request.POST['company_ID_email']
-            print(cmpID,'--------------cmpcmpcmpcmp================')
             data = Fin_Recurring_Bills.objects.get(id=pk)
             cmp = Fin_Company_Details.objects.get(id=cmpID)
             items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
@@ -18217,43 +18279,6 @@ def Fin_recurring_bill_email(request):
         # return JsonResponse({'error': str(e)})
         return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
 
-def view_template_pdf(request,pk):
-    sid = request.session['s_id']
-    loginn = Fin_Login_Details.objects.get(id=sid)
-    bill1 = Fin_Recurring_Bills.objects.get(id=pk)
-    if loginn.User_Type == 'Company':
-        com = Fin_Company_Details.objects.get(Login_Id = sid)
-        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.id)
-        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.id)
-        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
-        companyName = com.Company_name
-        companyData = {
-            'caddress':com.Address,
-            'city':com.City,
-            'state':com.State,
-            'pincode':com.Pincode,
-            'phone':com.Contact,
-            'email':com.Email
-        }
-    elif loginn.User_Type == 'Staff' :
-        com = Fin_Staff_Details.objects.get(Login_Id = sid)
-        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        vendors = Fin_Vendors.objects.filter(Company_id=com.company_id_id)
-        payment_terms = Fin_Company_Payment_Terms.objects.filter(Company_id=com.company_id_id)
-        items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
-        companyName = com.Company_name
-        companyData = {
-            'caddress':com.Address,
-            'city':com.City,
-            'state':com.State,
-            'pincode':com.Pincode,
-            'phone':com.Contact,
-            'email':com.Email
-        }
-
-    return render(request,'company/Fin_Recurring_Bill_Slip_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
-
 def Fin_recurring_bill_comment(request):
     if request.method == 'POST':
         print(request.POST,'---------2332323---------')  
@@ -18284,7 +18309,7 @@ def Fin_recurring_bill_comment_delete(request,pk,id):
     redirect_url = reverse('Fin_recurring_bill_overview', args=[id])
     return redirect(redirect_url)
 
-def Fin_recurrung_bill_history(request,pk):
+def Fin_recurring_bill_history(request,pk):
     RB = Fin_Recurring_Bills.objects.get(id=pk)
     history = Fin_Recurring_Bill_History.objects.filter(recurring_bill_id=pk)
     return render(request,'company/Fin_Recurring_Bill_History.html',{'history':history,'RB':RB})
@@ -18295,6 +18320,361 @@ def Fin_recurring_bill_convert(request,pk):
     recurBill.save()
     messages.info(request,'Bill Converted Successfully !')
     return redirect('Fin_recurring_bill_list')
+
+
+# def Fin_recurring_bill_template1(request,pk):
+#     sid = request.session['s_id']
+#     loginn = Fin_Login_Details.objects.get(id=sid)
+#     bill1 = Fin_Recurring_Bills.objects.get(id=pk)
+#     if loginn.User_Type == 'Company':
+#         com = Fin_Company_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+#     elif loginn.User_Type == 'Staff' :
+#         com = Fin_Staff_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+
+#     return render(request,'company/Fin_Recurring_Bill_Template1_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+
+# def Fin_recurring_bill_template2(request,pk):
+#     sid = request.session['s_id']
+#     loginn = Fin_Login_Details.objects.get(id=sid)
+#     bill1 = Fin_Recurring_Bills.objects.get(id=pk)
+#     if loginn.User_Type == 'Company':
+#         com = Fin_Company_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+#     elif loginn.User_Type == 'Staff' :
+#         com = Fin_Staff_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+
+#     return render(request,'company/Fin_Recurring_Bill_Template2_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+
+# def Fin_recurring_bill_template3(request,pk):
+#     sid = request.session['s_id']
+#     loginn = Fin_Login_Details.objects.get(id=sid)
+#     bill1 = Fin_Recurring_Bills.objects.get(id=pk)
+#     if loginn.User_Type == 'Company':
+#         com = Fin_Company_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+#     elif loginn.User_Type == 'Staff' :
+#         com = Fin_Staff_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+
+#     return render(request,'company/Fin_Recurring_Bill_Template3_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+
+# def Fin_recurring_bill_slip(request,pk):
+#     sid = request.session['s_id']
+#     loginn = Fin_Login_Details.objects.get(id=sid)
+#     bill1 = Fin_Recurring_Bills.objects.get(id=pk)
+#     if loginn.User_Type == 'Company':
+#         com = Fin_Company_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+#     elif loginn.User_Type == 'Staff' :
+#         com = Fin_Staff_Details.objects.get(Login_Id = sid)
+#         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
+#         items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+#         companyName = com.Company_name
+#         companyData = {
+#             'caddress':com.Address,
+#             'city':com.City,
+#             'state':com.State,
+#             'pincode':com.Pincode,
+#             'phone':com.Contact,
+#             'email':com.Email
+#         }
+
+#     return render(request,'company/Fin_Recurring_Bill_Slip_PDF.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items})
+
+
+def Fin_recurring_bill_template1_email(request):
+    try:
+        if request.method == 'POST':
+            emails_string = request.POST['email_ids']
+            pk = request.POST['bill_id_email']
+            cmpID = request.POST['company_ID_email']
+            data = Fin_Recurring_Bills.objects.get(id=pk)
+            cmp = Fin_Company_Details.objects.get(id=cmpID)
+            items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+
+            # Split the string by commas and remove any leading or trailing whitespace
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = "Here's the requested profile"
+            companyData = {
+            'caddress':cmp.Address,
+            'city':cmp.City,
+            'state':cmp.State,
+            'pincode':cmp.Pincode,
+            'phone':cmp.Contact,
+            'email':cmp.Email
+            }
+            
+
+            context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
+            print('context working')
+            
+            template_path = 'company/Fin_Recurring_Bill_Template1_PDF.html'
+            print('tpath working')
+            template = get_template(template_path)
+            print('template working')
+            html = template.render(context)
+            print('html working')
+            result = BytesIO()
+            print('bytes working')
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template1_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+            print('pisa working')
+
+            if pdf.err:
+                raise Exception(f"PDF generation error: {pdf.err}")
+
+            pdf = result.getvalue()
+            
+            filename = f"Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            subject = f"Here is the details of Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            email = EmailMessage(subject, f"Hi, \n{email_message} -of -{cmp.Company_name}. ", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            messages.success(request, 'Report has been shared via email successfully..!')
+            # return JsonResponse({'success': True})
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+    except Exception as e:
+        messages.error(request, f'Error while sending report: {e}')
+        # return JsonResponse({'error': str(e)})
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+
+def Fin_recurring_bill_template2_email(request):
+    try:
+        if request.method == 'POST':
+            emails_string = request.POST['email_ids']
+            pk = request.POST['bill_id_email']
+            cmpID = request.POST['company_ID_email']
+            data = Fin_Recurring_Bills.objects.get(id=pk)
+            cmp = Fin_Company_Details.objects.get(id=cmpID)
+            items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+
+            # Split the string by commas and remove any leading or trailing whitespace
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = "Here's the requested profile"
+            companyData = {
+            'caddress':cmp.Address,
+            'city':cmp.City,
+            'state':cmp.State,
+            'pincode':cmp.Pincode,
+            'phone':cmp.Contact,
+            'email':cmp.Email
+            }
+            
+
+            context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
+            print('context working')
+            
+            template_path = 'company/Fin_Recurring_Bill_Template2_PDF.html'
+            print('tpath working')
+            template = get_template(template_path)
+            print('template working')
+            html = template.render(context)
+            print('html working')
+            result = BytesIO()
+            print('bytes working')
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template2_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+            print('pisa working')
+
+            if pdf.err:
+                raise Exception(f"PDF generation error: {pdf.err}")
+
+            pdf = result.getvalue()
+            
+            filename = f"Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            subject = f"Here is the details of Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            email = EmailMessage(subject, f"Hi, \n{email_message} -of -{cmp.Company_name}. ", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            messages.success(request, 'Report has been shared via email successfully..!')
+            # return JsonResponse({'success': True})
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+    except Exception as e:
+        messages.error(request, f'Error while sending report: {e}')
+        # return JsonResponse({'error': str(e)})
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+
+def Fin_recurring_bill_template3_email(request):
+    try:
+        if request.method == 'POST':
+            emails_string = request.POST['email_ids']
+            pk = request.POST['bill_id_email']
+            cmpID = request.POST['company_ID_email']
+            data = Fin_Recurring_Bills.objects.get(id=pk)
+            cmp = Fin_Company_Details.objects.get(id=cmpID)
+            items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+
+            # Split the string by commas and remove any leading or trailing whitespace
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = "Here's the requested profile"
+            companyData = {
+            'caddress':cmp.Address,
+            'city':cmp.City,
+            'state':cmp.State,
+            'pincode':cmp.Pincode,
+            'phone':cmp.Contact,
+            'email':cmp.Email
+            }
+            
+
+            context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
+            print('context working')
+            
+            template_path = 'company/Fin_Recurring_Bill_Template1_PDF.html'
+            print('tpath working')
+            template = get_template(template_path)
+            print('template working')
+            html = template.render(context)
+            print('html working')
+            result = BytesIO()
+            print('bytes working')
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Template3_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+            print('pisa working')
+
+            if pdf.err:
+                raise Exception(f"PDF generation error: {pdf.err}")
+
+            pdf = result.getvalue()
+            
+            filename = f"Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            subject = f"Here is the details of Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            email = EmailMessage(subject, f"Hi, \n{email_message} -of -{cmp.Company_name}. ", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            messages.success(request, 'Report has been shared via email successfully..!')
+            # return JsonResponse({'success': True})
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+    except Exception as e:
+        messages.error(request, f'Error while sending report: {e}')
+        # return JsonResponse({'error': str(e)})
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+
+def Fin_recurring_bill_slip_email(request):
+    try:
+        if request.method == 'POST':
+            emails_string = request.POST['email_ids']
+            pk = request.POST['bill_id_email']
+            cmpID = request.POST['company_ID_email']
+            data = Fin_Recurring_Bills.objects.get(id=pk)
+            cmp = Fin_Company_Details.objects.get(id=cmpID)
+            items = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id = pk)
+
+            # Split the string by commas and remove any leading or trailing whitespace
+            emails_list = [email.strip() for email in emails_string.split(',')]
+            email_message = "Here's the requested profile"
+            companyData = {
+            'caddress':cmp.Address,
+            'city':cmp.City,
+            'state':cmp.State,
+            'pincode':cmp.Pincode,
+            'phone':cmp.Contact,
+            'email':cmp.Email
+            }
+            
+
+            context = {'companyName': cmp.Company_name, 'bill1': data,'companyData':companyData,'email_message': email_message,'items':items}
+            print('context working')
+            
+            template_path = 'company/Fin_Recurring_Bill_Slip_PDF.html'
+            print('tpath working')
+            template = get_template(template_path)
+            print('template working')
+            html = template.render(context)
+            print('html working')
+            result = BytesIO()
+            print('bytes working')
+            pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result,path='company/Fin_Recurring_Bill_Slip_PDF.html',base_url=request.build_absolute_uri('/static/assets/css/bootstrap.min.css'))
+            print('pisa working')
+
+            if pdf.err:
+                raise Exception(f"PDF generation error: {pdf.err}")
+
+            pdf = result.getvalue()
+            
+            filename = f"Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            subject = f"Here is the details of Recurring_Bill_No.{data.recurring_bill_number}.pdf"
+            email = EmailMessage(subject, f"Hi, \n{email_message} -of -{cmp.Company_name}. ", from_email=settings.EMAIL_HOST_USER, to=emails_list)
+            email.attach(filename, pdf, "application/pdf")
+            email.send(fail_silently=False)
+            messages.success(request, 'Report has been shared via email successfully..!')
+            # return JsonResponse({'success': True})
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+    except Exception as e:
+        messages.error(request, f'Error while sending report: {e}')
+        # return JsonResponse({'error': str(e)})
+        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+
 
 
 

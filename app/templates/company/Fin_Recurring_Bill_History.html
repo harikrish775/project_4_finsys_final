@@ -13,13 +13,13 @@
 
     <div class="page-content ">
         <div class="card radius-15">
-            <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
         <script>
             function goBack() {
       window.history.back();
     }
         </script>
-            <form action="{% url 'holiday_add' %}" method="post">
+            
                 {% csrf_token %}
             <div class="card-body">
                 <center><h2 style="text-transform: capitalize;">History of Bill No. {{RB.recurring_bill_number}}</h2></center><br>
@@ -55,7 +55,7 @@
             
             </div><br><br>
                 
-            </form>
+            
         </div>
     </div>
 

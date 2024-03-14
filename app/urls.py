@@ -552,16 +552,25 @@ urlpatterns = [
     path('Fin_recurring_bill_email',views.Fin_recurring_bill_email,name="Fin_recurring_bill_email"),
     path('Fin_recurring_bill_comment',views.Fin_recurring_bill_comment,name='Fin_recurring_bill_comment'),
     path('Fin_recurring_bill_comment_delete/<int:pk>//<int:id>/',views.Fin_recurring_bill_comment_delete,name='Fin_recurring_bill_comment_delete'),
-    path('Fin_recurrung_bill_history/<int:pk>',views.Fin_recurrung_bill_history,name='Fin_recurrung_bill_history'),
+    path('Fin_recurring_bill_history/<int:pk>',views.Fin_recurring_bill_history,name='Fin_recurring_bill_history'),
     path('Fin_recurring_bill_convert/<int:pk>',views.Fin_recurring_bill_convert,name='Fin_recurring_bill_convert'),
-    # path('abc',views.abc,name='abc'),
+    path('Fin_recurring_bill_usercheck',views.Fin_recurring_bill_usercheck,name='Fin_recurring_bill_usercheck'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
     # path('abc',views.abc,name='abc'),
 
 
-    path('view_template_pdf/<int:pk>',views.view_template_pdf,name='view_template_pdf'),
-    # path('abc',views.abc,name='abc'),
+
+    # path('Fin_recurring_bill_template1/<int:pk>',views.Fin_recurring_bill_template1,name='Fin_recurring_bill_template1'),
+    # path('Fin_recurring_bill_template2/<int:pk>',views.Fin_recurring_bill_template2,name='Fin_recurring_bill_template2'),
+    # path('Fin_recurring_bill_template3/<int:pk>',views.Fin_recurring_bill_template3,name='Fin_recurring_bill_template3'),
+    # path('Fin_recurring_bill_slip/<int:pk>',views.Fin_recurring_bill_slip,name='Fin_recurring_bill_slip'),
+    path('Fin_recurring_bill_template1_email',views.Fin_recurring_bill_template1_email,name='Fin_recurring_bill_template1_email'),
+    path('Fin_recurring_bill_template2_email',views.Fin_recurring_bill_template2_email,name='Fin_recurring_bill_template2_email'),
+    path('Fin_recurring_bill_template3_email',views.Fin_recurring_bill_template3_email,name='Fin_recurring_bill_template3_email'),
+    path('Fin_recurring_bill_slip_email',views.Fin_recurring_bill_slip_email,name='Fin_recurring_bill_slip_email'),
+
+    
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

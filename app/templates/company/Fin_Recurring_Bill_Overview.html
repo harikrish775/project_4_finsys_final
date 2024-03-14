@@ -388,7 +388,7 @@ footer p {
                     <div class="col-md-3" style="margin-top: 3vh; font-size: medium;">
                         <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="showOverview()" id="overviewlink" >Overview</a>&nbsp;&nbsp;
                         <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showTemplate()" id="templatelink" >Template</a>
-                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showSlip()" id="sliplink" >Order Slip</a>
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showSlip()" id="sliplink" > Slip</a>
                     </div>
                     <div class="col-md-9">
                         <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
@@ -398,90 +398,89 @@ footer p {
                             <div class="collapse navbar-collapse" id="navbarScroll">
                                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                                     <li class="nav-item mx-1">
-                                        <a href="{% url 'Fin_recurring_bill_edit_page' pk=bill1.id %}" role="button" class=" btn btn-outline-info rounded-pill text-grey p-1 "> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
+                                        <a href="{% url 'Fin_recurring_bill_edit_page' pk=bill1.id %}" role="button" class=" ml-2 btn btn-outline-secondary text-grey"> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
                                       </li>
-                                      <li class="nav-item mx-1">
-                                        <a href="{% url 'Fin_recurring_bill_delete' 0 %}" data-bill-id="{{ bill1.id }}" role="button" class="btn btn-outline-info rounded-pill text-grey p-1 deleteButton">
+                                      <li class="nav-item mx-1" id="deleteLi">
+                                        <a href="{% url 'Fin_recurring_bill_delete' 0 %}" data-bill-id="{{ bill1.id }}" role="button" class="ml-2 btn btn-outline-secondary text-grey deleteButton">
                                             &nbsp;<i class="fa fa-trash"></i> &nbsp;Delete&nbsp;&nbsp;
                                         </a>
                                       </li>
-                                      <li class="nav-item active mx-1" >
-                                        <a class="nav-link text-light  btn btn-outline-info rounded-pill text-grey p-1" role="button" onclick="window.printfun()">&nbsp;<i class="fa fa-print"></i>&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
+                                      <li class="nav-item active mx-1" id="printLi" >
+                                        <a class="nav-link text-light  ml-2 btn btn-outline-secondary text-grey" role="button" onclick="window.printfun()" >&nbsp;<i class="fa fa-print"></i>&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
                                         </li>
               
-                                        <li class="nav-item mx-1">
-                                            <a class="btn btn-outline-info rounded-pill text-grey p-1" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
+                                        <li class="nav-item mx-1" id="pdfLi">
+                                            <a class="ml-2 btn btn-outline-secondary text-grey" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
                                           </li>
                                           <script>
                                             document.addEventListener('DOMContentLoaded', function () {
-    var deleteButtons = document.querySelectorAll('.deleteButton');
+                                            var deleteButtons = document.querySelectorAll('.deleteButton');
 
-    deleteButtons.forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            event.preventDefault();
+                                            deleteButtons.forEach(function (button) {
+                                                button.addEventListener('click', function (event) {
+                                                    event.preventDefault();
 
-            var confirmed = confirm("Are you sure you want to delete this item?");
-            if (confirmed) {
-                // Get the billId from the data attribute
-                var billId = button.getAttribute('data-bill-id');
+                                                    var confirmed = confirm("Are you sure you want to delete this item?");
+                                                    if (confirmed) {
+                                                        // Get the billId from the data attribute
+                                                        var billId = button.getAttribute('data-bill-id');
 
-                // Redirect to the delete URL
-                window.location.href = button.getAttribute('href').replace('0', billId);
-            } else {
-                // User canceled the delete operation
-                alert("Delete operation canceled.");
-            }
-        });
-    });
-});
+                                                        // Redirect to the delete URL
+                                                        window.location.href = button.getAttribute('href').replace('0', billId);
+                                                    } else {
+                                                        // User canceled the delete operation
+                                                        alert("Delete operation canceled.");
+                                                    }
+                                                });
+                                            });
+                                        });
                                             </script>
                                          
                                          
                                      {% if  bill1.status == "Draft" %}
                                       <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown" >Convert</li>
+                                        <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey" data-toggle="dropdown" >Convert</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
-                                            
                                             <li style="margin-left: 50px;" ><a href="{% url 'Fin_recurring_bill_convert' pk=bill1.id %}">Save</a> </li>
-                                          
                                         </ul>
                                       </div>
                                       {% else %}
                                       <td></td>
                                       {% endif %}
         
-                                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                      <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown"> &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
+                                    <div class="dropdown p-0 nav-item mx-1 " id="shareLi" style="margin-top: 10px;">
+                                      <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey"data-toggle="dropdown" > &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
                                       <ul class="dropdown-menu" style="background-color: black;">
               
                                           <li style="margin-left: 20px; cursor: pointer;" href="#emailModal" data-toggle="modal">Email</li> 
-                                          <li style="margin-left: 20px;" >Whatsapp</li>
+                                          <li style="margin-left: 20px;cursor: pointer;" onclick="sendWhatsAppLink()" >Whatsapp</li>
                                           
                                       </ul>
                                     </div>
           
-                                    <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
-                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey p-1"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                                    <div class="dropdown p-0 nav-item mx-1 " id="attachLi"  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle btn btn-outline-secondary text-grey"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
                                             {% if bill1.attachment %}
                                             <a class="dropdown-item" download  href="{{bill1.attachment.url}}"><i class="fa fa-download"></i>&nbsp;Download File</a>
                                             {% endif %}
+                                            
                                         </ul>
                                     </div>
                                     <li  >
-                                        <button class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
+                                        <button class="ml-2 btn btn-outline-secondary text-grey " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
                                     </li>
 
                                     <div class="dropdown nav-item " style="margin-top: 10px;"  >
-                                        <li  class=" dropdown-toggle btn btn-outline-info rounded-pill text-grey "data-toggle="dropdown">History</li>
+                                        <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey "data-toggle="dropdown">History</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             <a class="dropdown-item" style="cursor: pointer;" >{% if lastHistory.action == 'Edited' %}Last edited by :{% else %}Created by : {% endif %} {{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</a>
-                                            <a href="{% url 'Fin_recurrung_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
+                                            <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
                                         </ul>
                                     </div>
                                     <!-- <li class="ml-1 mr-1 " >
-                                        <a href="{% url 'Fin_recurrung_bill_history' pk=bill1.id %}" class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" > History </a>
+                                        <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" > History </a>
                                     </li> -->
                                 </ul>
                             </div>
@@ -490,8 +489,32 @@ footer p {
                 </div>
             </div>
         </div>
+        
+        <script>
+            function unhideButtons() {
+                document.getElementById("printLi").style.display = "";
+                document.getElementById("pdfLi").style.display = "";
+                document.getElementById("shareLi").style.display = "";
+                document.getElementById("deleteLi").style.display = "none";
+                document.getElementById("attachLi").style.display = "none";
+            }
+            // Function to hide buttons
+            function hideButtons() {
+                document.getElementById("printLi").style.display = "none";
+                document.getElementById("pdfLi").style.display = "none";
+                document.getElementById("shareLi").style.display = "none";
+                document.getElementById("deleteLi").style.display = "";
+                document.getElementById("attachLi").style.display = "";
+            }
+    
+            // Call the hideButtons function when the page loads
+            window.onload = function() {
+                hideButtons();
+            };
+        </script>
 
         <div id="overviewdiv">
+            <input type="text" style="display: none;" value="{{bill1.id}}" id="rBillNo">
             <div id="details">
                 <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
                     <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
@@ -743,7 +766,7 @@ footer p {
                     <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
                         <div class="p-5">
                           
-                            <h3 class="fw-bold mb-5 mt-2 pt-1">BILL</h3>
+                            <h3 class="fw-bold mb-5 mt-2 pt-1">Recurring Bill Tax Details</h3>
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Grand Total</h5>
@@ -1019,209 +1042,165 @@ footer p {
                 <!-- template2 -->
                 <div  id="whatToPrint2"  class="printTemplates template2" style="display: none;">
                     <div class="my-5 page" size="A4" >
-                        <div class="" id="printdiv2">
-
-                            <section class="top-content bb d-flex justify-content-between p-3" style="background-color: greenyellow;">
-                                <div class="logo mt-4">
-                                    <div class="position-relative">
-                                        <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{  bill1.recurring_bill_number }}</span></h5>
-                                        <p class="ml-2 text-dark"><b>{{bill1.status}}</b></p>
-                                    </div>
-                                </div>
-                                <div class="top-left">
-                                    <div class="top-left">
-                                       
-                                       
-                                    </div>
-                                    <h5 style="color: rgb(0, 0, 0);font-weight: 500;">{{ companyName }}</h5>
-                                            <p style="color: rgb(0, 0, 0);" class="address "> {{companyData.caddress}}<br>
-                                                {{companyData.city}},
-                                                {{companyData.state}}<br>
-                                                {{companyData.pincode}}<br>
-                                                phone: {{companyData.phone}}<br>
-                                                {{companyData.email}}
-                                            </p>
-                                </div>
-                            </section>
-                
-                            <section class="store-user mt-5 p-2">
-                                <div class="col-12">
-                                    <div class="row bb pb-3">
-                                        <div class="col-7">
-                                            <p>Bill To,</p>
-                                            <h5 style="color: #000;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
-                                            <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
-                                                {% if vendor_gstin %}
-                                                  GSTIN:{{ vendor_gstin }}
-                                                {% endif %}
-                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
-                                                    {{bill1.vendor.billing_city}},
-                                                    {{bill1.vendor.billing_state}}<br>
-                                                    {{bill1.vendor.billing_pincode}}<br>
-                                                </p>
-                                        </div>
-                                        <div class="col-5">
-                                            <p style="color:#000">Deliver To: </p>
-                                            <h5 style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
-                                                <p class="address " style="color:#000"> {{bill1.customer.billing_street}}<br>
-                                                    {{bill1.customer.billing_city}},
-                                                    {{bill1.customer.billing_state}}<br>
-                                                    {{bill1.customer.billing_pincode}}<br>
-                                                
-                                                {{bill1.customer.email}}<br>
-                                                {% if bill1.customer.gstin %}
-                                                  GSTIN:{{ bill1.customer.gstin }}
-                                                {% endif %}</p><br>
-                                                <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
-                                                <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
-                                               
-                                        </div>
-                                    </div>
-                                   
-                                </div>
-                            </section>
-                
-                            <section class="product-area p-2">
-                                <table class=" table table-hover table-bordered " id="table1">
-                                    <thead >
-                                        <tr >
-                                            <td style="text-align: center; font-weight:bold; color:black;background-color: greenyellow; ">Items</td>
-                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Hsn</td>
-                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Price</td>
-                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Quantity</td>
-                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Tax</td>
-                                            <td style="font-weight:bold; color:black;background-color: #ccc; ">Discount</td>
-                                            <td style="font-weight:bold; color:black;background-color: greenyellow;">Total</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-        
-                                        {% for j in items  %}
-                                        <tr >
-                                            <td style="color:black; text-align: center;background-color: greenyellow;">
-                                                {{j.items.name}}
-                                                
-                                            </td>                                            
-                                            <td style="color:black;background-color: #ccc; ">{{j.hsn}}</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.price}}</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.quantity}}</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.tax_rate}} %</td>
-                                            <td style="color:black;background-color: #ccc; ">{{j.discount}} </td>
-                                            <td style="color:black;background-color: greenyellow;">{{j.total}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table><br><br>
-                            </section>
-                
-                            <section class="balance-info">
-                                <div class="row">
-                                    <div class="col-6 ml-4">
-                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{bill1.description}}</p>
-                                    </div>
-                                    <div class="col-5">
-                                        <table class="table border-0 table-hover">
-                                            <tr >
-                                                <td style="color:black">Sub Total :</td>
-                                                <td style="color:black">{{bill1.sub_total}}</td>
-                                            </tr>
-                                            <!-- {% if bill1.discount != "0" %}
-                                            <tr>
-                                                <td style="color:black">Discount</td>
-                                                <td style="color:black">{{bill1.discount}}</td>
-                                            </tr>
-                                            {% endif %} -->
-                                            
-                                            {% if bill1.igst != 0 %}
-                                            <tr>
-                                                <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if bill1.cgst != 0 %}
-                                            <tr>
-                                                <td style="color:black">CGST :</td>
-                                                <td style="color:black">{{bill1.cgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            
-                                            {% if bill1.sgst != 0 %}
-                                            <tr>
-                                                <td style="color:black">SGST :</td>
-                                                <td style="color:black">{{bill1.sgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tr>
-                                                <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
-                                            </tr>
-                                            {% if bill1.shipping_charge != 0 %}
-                                            <tr>
-                                                <td style="color:black">Shipping Charge :</td>
-                                                <td style="color:black">{{bill1.shipping_charge}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if bill1.adjustment != 0 %}
-                                            <tr>
-                                                <td style="color:black">Adjustment :</td>
-                                                <td style="color:black">{{bill1.adjustment}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tfoot>
-                                                <tr>
-                                                    <td style="color:rgb(102, 168, 3)">Grand Total:</td>
-                                                    <td style="color:rgb(103, 170, 3) ;">{{bill1.grand_total}}</td>
+                        <div id="printdiv2">
+                            <div class="row px-5 py-4" style="background-color:#268ddd;" >
+                                <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
+                                  <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{invoice.status}}<!----></div>
+                              </div>
+                              <div class="col-md-4 d-flex justify-content-center">
+                                  <center class="h3 text-white"><b>Invoice</b></center>
+                              </div>  
+                              <div class="col-md-4 d-flex justify-content-end">
+                                  <div class="text-white">
+                                      <p class="mb-0 mt-2">Invoice No: <b>{{invoice.invoice_no }}</b></p>
+                                      {%if invoice.salesOrder_no %}
+                                      <p class="mb-0 mt-2">Order No: <b>{{invoice.salesOrder_no }}</b></p>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="px-5 py-1">
+                              <section class="store-user"><br><br>
+                                  <div class="col-12">
+                                      <div class="row bb pb-2 mt-3">
+                                          <div class="col-4 pl-0">
+                                              <label class="text-white w-100 p-1" style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>COMPANY ADDRESS</b></label>
+                                              <h5 class="text-secondary" style="font-weight: bold;">{{cmp.Company_name}}</h5>
+                                              <p class="address" style="font-weight: bold;color: #000;">
+                                                  {{cmp.Address}}
+                                                  <br>
+                                                  {{cmp.City}}
+                                                  <br>
+                                                  {{cmp.State}} - {{cmp.Pincode}}
+                                                  <br>
+                                                  <span>Mob: </span><b>{{cmp.Contact}}</b>
+                                              </p>  
+                                          </div>
+                                          <div class="col-4"></div>
+                                          <div class="col-4 pr-0">
+                                              <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>SHIPPING ADDRESS</b></label>
+                                              <h5 class="text-secondary" style="font-weight: bold;">{{invoice.Customer.title}} {{invoice.Customer.first_name}} {{invoice.Customer.last_name}}</h5>
+                                              <p class="address" style="font-weight: bold;color: #000;">{{ invoice.billing_address | linebreaksbr}} </p>
+                                          </div>
+                                      </div>
+                                      
+                                  </div>
+                              </section>
+                  
+                              <section class="product-area mt-2">
+                                  <table class="table table-hover table-bordered  template2table" id="table2">
+                                      <thead >
+                                          <tr class="template3tablehead">
+                                              <th class="text-center bg-dark" style="color:black">Items</th>
+                                              <th class="text-center bg-dark" style="color:black">HSN</th>
+                                              <th class="text-center bg-dark" style="color:black">Quantity</th>
+                                              <th class="text-center bg-dark" style="color:black">Rate</th>
+                                              <th class="text-center bg-dark" style="color:black">Tax</th>
+                                              <th class="text-center bg-dark" style="color:black">Discount</th>
+                                              <th class="text-center bg-dark" style="color:black">Total</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody  style="background-color: #999999;">
+                                          {% for itm in invItems %}
+                                              <tr>
+                                                  <td class="text-center" style="color:black">{{ itm.Item.name}}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.hsn }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.quantity }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.price  }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.tax  }}%</td>
+                                                  <td class="text-center" style="color:black">{{ itm.discount  }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.total }}</td>
+                                              </tr>
+                                          {% endfor %} 
+                                      </tbody>
+                                  </table>
+                              </section>
+                  
+                              <section class="balance-info">
+                                  <div class="row mt-3">
+                                      <div class="col-4">
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  {% if invoice.note %}
+                                                  <tr >
+                                                      <td style="color: #000;text-align: left;">Note</td>
+                                                      <td style="color: #000;text-align: left;">:</td>
+                                                      <th style="color: #000;text-align: center;">{{invoice.note}}</th>
+                                                  </tr>
+                                                  {% endif %}
+      
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                      <div class="col-4"></div>
+                                      <div class="col-4"><br><br>
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  <tr >
+                                                      <td style="color: #000;">Sub Total</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{invoice.subtotal}}</td>
+                                                  </tr>
+                                                  
+                                                  {% if invoice.igst != 0 %}
+                                                  <tr >
+                                                      <td style="color: #000;">IGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{invoice.igst}}</td>
+                                                  </tr>
+                                                  {% endif %}
+                                                  {% if invoice.cgst != 0 %}
+                                                  <tr>
+                                                      <td style="color: #000;">CGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{invoice.cgst}}</td>
+                                                      
+                                                  </tr>
+                                                  {% endif %}
+                                                  {% if invoice.sgst != 0 %}
+                                                  <tr>
+                                                      <td style="color: #000;">SGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{invoice.sgst}}</td>
+                                                  </tr>
+                                                  {% endif %}
+                                                  <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.tax_amount}}</td>
                                                 </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div> 
-                                </div>
-                                <div class="row container-fluid  p-2 m-0">
-                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
-                                    <div class="col-sm-4 m-0 p-0"></div>
-                                </div>
-                                <div class="row container-fluid  p-2 m-0">
-                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
-<center>
-    <div class="col-sm-12 m-0 p-0 text-dark">This is system generated bill Its not required signature</div>
-
-</center>                                </div>
-                            </section>
-                
-                            <!-- Cart BG -->
-                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
-                
-                            <!-- <footer>
-                                <hr>
-                                <p class="m-0 text-center">
-                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
-                                </p>
-                                <div class="social pt-3">
-                                    <span class="pr-2">
-                                        <i class="fas fa fa-mobile-alt"></i>
-                                        <span>0123456789</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fas fa fa-envelope"></i>
-                                        <span>me@saburali.com</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-facebook-f"></i>
-                                        <span>/sabur.7264</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-youtube"></i>
-                                        <span>/abdussabur</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-github"></i>
-                                        <span>/example</span>
-                                    </span>
-                                </div>
-                            </footer> -->
+                                                {% if invoice.shipping_charge != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Shipping Charge</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.shipping_charge}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if invoice.adjustment != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.adjustment}}</td>
+                                                </tr>
+                                                {% endif %}
+                                              </tbody>
+      
+                                          </table>
+                                          <hr style="background-color: #000000;">
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  <tr >
+                                                      <th style="color: #000;">Grand Total</th>
+                                                      <th style="color: #000;">:</th>
+                                                      <th class="text-right" style="color: #000;">{{invoice.grandtotal}}</th>
+                                                  </tr>
+                                              </tbody>
+                                          </table>
+                                      </div> 
+                                  </div>
+                              </section>
+                                 
+                          </div>
                         </div>
                     </div>
                 </div>
@@ -1230,213 +1209,165 @@ footer p {
                 <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
                     <div class="my-5 page"  size="A4" >
                         <div class="" id="printdiv3">
-                    
-                            <div class="logo">
-                                <div class="position-absolute m-5">
-                                    <h5 style="color: rgb(0, 0, 0);">Recurring Bill. <span>{{ bill1.recurring_bill_number }}</span></h5>
-                                    <p class="ml-2 text-dark"><b>{{ bill1.status }}</b></p>
-                                </div>
-                            </div>
-                            <section class="top-content bb d-flex justify-content-between p-3 element">
-                                <div class="logo mt-4">
-                                    <div class="position-relative">
-                                        <h5 style="color:orange;visibility: hidden;">Recurring Bill. <span>{{ bill1.recurring_bill_number }}</span></h5>
-                                        <p class="ml-2 text-dark" style="visibility: hidden;"><b>{{ bill1.status }}</b></p>
-                                    </div>
-                                </div>
-                                <div class="top-left curved-background">
-                                    <h5 style="color: rgb(0, 0, 0);">{{ companyName }}</h5>
-                                    <p style="color: rgb(0, 0, 0);" class="address "> {{companyData.caddress}}<br>
-                                        {{companyData.city}},
-                                        {{companyData.state}}<br>
-                                        {{companyData.pincode}}<br>
-                                        phone: {{companyData.phone}}<br>
-                                        {{companyData.email}}
+                            <div class="row">
+                                <div class="col-sm-12" style="background-image: linear-gradient(#1b83e8, black); color: white;">
+                                    <p style="font-size: 4vh; text-align: center;">INVOICE</p>
+                                    <p style=" text-align: center;"> {{cmp.Company_name}} <br>
+                                        {{cmp.Address}} <br>
+                                        {{cmp.City}},
+                                        {{cmp.State}}<br>
+                                        {{cmp.Email}}
+                                        <br>
                                     </p>
                                 </div>
-                            </section>
-                            
-                            
-                
-                            <section class="store-user mt-5 p-2">
-                                <div class="col-12">
-                                    <div class="row bb pb-3">
-                                        <div class="col-7">
-                                            <p>Bill To,</p>
-                                            <h5 style="color: #000;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
-                                            <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
-                                                {% if vendor_gstin %}
-                                                GSTIN:{{ vendor_gstin }}
-                                                {% endif %}
-                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
-                                                    {{bill1.vendor.billing_city}},
-                                                    {{bill1.vendor.billing_state}}<br>
-                                                    {{bill1.vendor.billing_pincode}}<br>
-                                                </p>
-                                        </div>
-                                        <div class="col-5">
-                                            <p style="color:#000">Deliver To: </p>
-                                            <h5 style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
-                                                <p class="address " style="color:#000"> {{bill1.customer.billing_street}}<br>
-                                                    {{bill1.customer.billing_city}},
-                                                    {{bill1.customer.billing_state}}<br>
-                                                    {{bill1.customer.billing_pincode}}<br>
-                                                
-                                                {{bill1.customer.email}}<br>
-                                                {% if bill1.customer.gstin %}
-                                                GSTIN:{{ bill1.customer.gstin }}
-                                                {% endif %}</p><br>
-                                                <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
-                                                <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
-                                               
-                                        </div>
+                                
+                                <div class="row col-12">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-5">
+                                        <br><br><br>
+                                        <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
+                                        {{invoice.Customer.title}} {{invoice.Customer.first_name}} {{invoice.Customer.last_name}}<br>
+                                        {{invoice.billing_address|linebreaksbr }}
+                                        </p>
                                     </div>
-                                   
-                                </div>
-                            </section>
-                
-                            <section class="product-area p-2">
-                                <table class=" table table-hover table-bordered " id="table1">
-                                    <thead >
-                                        <tr >
-                                            <td style="text-align: center; font-weight:bold; background-color: orange; color: #000;">Items</td>
-                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Hsn</td>
-                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Price</td>
-                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Quantity</td>
-                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Tax</td>
-                                            <td style="font-weight:bold; background-color: orange; color: #000; ">Discount</td>
-                                            <td style="font-weight:bold;background-color: orange; color: #000;">Total</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-        
-                                        {% for j in items  %}
-                                        <tr style="background-color: orange; color: #000;" >
-                                            <td style="color:black; text-align: center;">
-                                                {{j.items.name}}
+                                    <div class="col-md-1"></div>
+                                    <div class="col-5">
+                                        <br><br><br>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Invoices No</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{ invoice.invoice_no }}</td>
+                                                </tr>
+                                                {%if invoice.salesOrder_no %}
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Order No</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{ invoice.salesOrder_no }}</td>
+                                                </tr>
+                                                {% endif %}
                                                 
-                                            </td>
-                                            <td style="color:black;">{{j.hsn}}</td>
-                                            <td style="color:black;">{{j.price}}</td>
-                                            <td style="color:black;">{{j.quantity}}</td>
-                                            <td style="color:black;">{{j.tax_rate}} %</td>
-                                            <td style="color:black; ">{{j.discount}} </td>
-                                            <td style="color:black;">{{j.total}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table><br><br>
-                            </section>
-                
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Invoice Date</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.invoice_date | date:'d-m-Y'}}<td>
+                                                </tr>
+ 
+                                                <tr>
+                                                    <td style="color: #000; font-weight: bold;">Shipment Date</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.duedate | date:'d-m-Y'}}</td>
+                                                    
+                                                </tr>
+                                            </tbody>
+        
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10"><br>
+                                    <table class="table table-hover table-bordered  template3table" id="table3">
+                                        <thead >
+                                            <tr class="template3tablehead">
+                                                <th class="text-center bg-dark"  style="color:black">Items</th>
+                                                <th class="text-center bg-dark"  style="color:black">HSN</th>
+                                                <th class="text-center bg-dark"  style="color:black">Quantity</th>
+                                                <th class="text-center bg-dark"  style="color:black">Rate</th>
+                                                <th class="text-center bg-dark"  style="color:black">Tax</th>
+                                                <th class="text-center bg-dark"  style="color:black">Discount</th>
+                                                <th class="text-center bg-dark"  style="color:black">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for itm in invItems %}
+                                                <tr>
+                                                    <td class="text-center" style="color: black;">{{ itm.Item.name}}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.hsn }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.quantity }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.price }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.tax }}%</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.discount }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.total }}</td>
+                                                </tr>
+                                            {% endfor %} 
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> 
                             <section class="balance-info">
                                 <div class="row">
-                                    <div class="col-6 ml-4">
-                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
-                                        <p style="color:black">{{bill1.description}}</p>
-                                    </div>
-                                    <div class="col-5">
-                                        <table class="table border-0 table-hover">
-                                            <tr >
-                                                <td style="color:black">Sub Total :</td>
-                                                <td style="color:black">{{bill1.sub_total}}</td>
-                                            </tr>
-                                            <!-- {% if bill1.discount != "0" %}
-                                            <tr>
-                                                <td style="color:black">Discount</td>
-                                                <td style="color:black">{{bill1.discount}}</td>
-                                            </tr>
-                                            {% endif %} -->
-                                            {% if bill1.igst != 0 %}
-                                            <tr>
-                                                <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if bill1.cgst != 0 %}
-                                            <tr>
-                                                <td style="color:black">CGST :</td>
-                                                <td style="color:black">{{bill1.cgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            
-                                            {% if bill1.sgst != 0 %}
-                                            <tr>
-                                                <td style="color:black">SGST :</td>
-                                                <td style="color:black">{{bill1.sgst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tr>
-                                                <td style="color:black">Total Tax :</td>
-                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
-                                            </tr>
-                                            {% if bill1.shipping_charge != 0 %}
-                                            <tr>
-                                                <td style="color:black">Shipping Charge :</td>
-                                                <td style="color:black">{{bill1.shipping_charge}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if bill1.adjustment != 0 %}
-                                            <tr>
-                                                <td style="color:black">Adjustment :</td>
-                                                <td style="color:black">{{bill1.adjustment}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            <tfoot>
-                                                <tr>
-                                                    <td style="color:orange">Grand Total:</td>
-                                                    <td style="color:orange ;">{{bill1.grand_total}}</td>
+                                    <div class="col-md-7"></div>
+                                    <div class="col-md-4">
+                                        <br>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000;">Sub Total</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.subtotal}}</td>
                                                 </tr>
-                                            </tfoot>
+                                                
+                                                {% if invoice.igst != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.igst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if invoice.cgst != 0 %}
+                                                <tr>
+                                                    <td style="color: #000;">CGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.cgst}}</td>
+                                                    
+                                                </tr>
+                                                {% endif %}
+                                                {% if invoice.sgst != 0 %}
+                                                <tr>
+                                                    <td style="color: #000;">SGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.sgst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.tax_amount}}</td>
+                                                </tr>
+                                                {% if invoice.shipping_charge != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Shipping Charge</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.shipping_charge}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if invoice.adjustment != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{invoice.adjustment}}</td>
+                                                </tr>
+                                                {% endif %}
+                                            </tbody>
+        
                                         </table>
-                                    </div> 
+                                        <hr style="background-color: #000000;">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <th style="color: #000;">Grand Total</th>
+                                                    <th style="color: #000;">:</th>
+                                                    <th class="text-right" style="color: #000;">{{invoice.grandtotal}}</th>
+                                                </tr>
+                                                <tr >
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="row container-fluid  p-2 m-0">
-                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
-                                    <div class="col-sm-4 m-0 p-0"></div>
-                                </div>
-                                <div class="row container-fluid  p-2 m-0">
-                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
-                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
-<center>
-    <div class="col-sm-12 m-0 p-0 text-dark">This is system generated bill Its not required signature</div>
-
-</center>                                </div>
-                            </section>
-                
-                            <!-- Cart BG -->
-                            <img src="cart.jpg" class="img-fluid cart-bg" alt="">
-                
-                            <!-- <footer>
-                                <hr>
-                                <p class="m-0 text-center">
-                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
-                                </p>
-                                <div class="social pt-3">
-                                    <span class="pr-2">
-                                        <i class="fas fa fa-mobile-alt"></i>
-                                        <span>0123456789</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fas fa fa-envelope"></i>
-                                        <span>me@saburali.com</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-facebook-f"></i>
-                                        <span>/sabur.7264</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-youtube"></i>
-                                        <span>/abdussabur</span>
-                                    </span>
-                                    <span class="pr-2">
-                                        <i class="fab fa-github"></i>
-                                        <span>/example</span>
-                                    </span>
-                                </div>
-                            </footer> -->
+                            </section> 
                         </div>
-                        </div>
+                    </div>
                 </div>
             </div>
             <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
@@ -1448,7 +1379,7 @@ footer p {
 
         <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
             <div class="p-5"  >
-                <div class="my-5 page" size="A4" >
+                <div class="my-5 page" size="A4"  >
                     <div class="row" style="margin-top: 20%;" id="printslip">
                         <div class="col-md-3"></div>
                         <div class="col-md-6">
@@ -1743,7 +1674,7 @@ footer p {
             </div>
             <div class="modal-body">
                 <div class="card p-3">
-                    <form  method="post" action="{% url 'Fin_recurring_bill_email' %}" id="mailForm">
+                    <form method="post" id="mailForm">
                         {% csrf_token %}
                         <div class="modal-body">
                             <div>
@@ -1753,9 +1684,6 @@ footer p {
                                 <input type="text" name="company_ID_email" id="company_ID_email" value="{{ bill1.company_id }}" style="display: none;">
                             </div>
                         </div>
-                        <!-- <button class="btn btn-outline-secondary text-grey w-75" type="submit">
-                            send
-                        </button> -->
                         <div class="row mt-4">
                             <div class="col-4"></div>
                             <div class="col-md-4 d-flex justify-content-center">
@@ -1819,64 +1747,194 @@ footer p {
     </script>
 
     <script>
-        
-        $(document).ready(function ($) { 
-            $(document).on('click', '#sendMailButton', function (event) {
-                event.preventDefault();
-                // Your existing code to generate the PDF
-                print1 = document.getElementById('whatToPrint1');
-                print2 = document.getElementById('whatToPrint2');
-                print3 = document.getElementById('whatToPrint3');
-                print4 = document.getElementById('slipdiv')
-                var maildiv = '0';
 
-                if (print1.style.display !== 'none'){
-                    var element = document.getElementById('printdiv1') ;
-                    var maildiv = '1';
-                }else if (print2.style.display !== 'none'){
-                    var element = document.getElementById('printdiv2') ;
-                    var maildiv = '2';
-                }else if (print3.style.display !== 'none'){
-                    var element = document.getElementById('printdiv3') ;
-                    var maildiv = '3';
-                }else if (print4.style.display !== 'none'){
-                    var element = document.getElementById('printslip') ;
-                    var maildiv = '4';
-                }  
-                console.log(maildiv,'------1111111--------------11111-------')
-                
-                var formData = {
-                    'mailDiv': maildiv,
-                    'email_ids': $('#email_ids').val(),
-                    'bill_id_email': $('#bill_id_email').val(),
-                    'company_ID_email': $('#company_ID_email').val(),
-                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                    
-                }
+$(document).ready(function ($) {
+        $(document).on('submit', '#mailForm', function (event) {
+            event.preventDefault();
+            // Your existing code to generate the PDF
+            var print1 = document.getElementById('whatToPrint1');
+            var print2 = document.getElementById('whatToPrint2');
+            var print3 = document.getElementById('whatToPrint3');
+            var print4 = document.getElementById('slipdiv');
 
-                // Send the PDF file to the server using an AJAX request
-                $.ajax({
-                    type: 'POST',
-                    url: '/Fin_recurring_bill_email',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        alert('Email sent successfully')
-                    },
-                    error: function(error) {
-                        console.error(error);
-                    }
-                });
-            });
+            var newAction;
+
+            if (print1.style.display !== 'none'){
+                newAction = "{% url 'Fin_recurring_bill_template1_email' %}";
+
+            } else if (print2.style.display !== 'none'){
+                newAction = "{% url 'Fin_recurring_bill_template2_email' %}";
+
+            } else if (print3.style.display !== 'none'){
+                newAction = "{% url 'Fin_recurring_bill_template3_email' %}";
+
+            } else if (print4.style.display !== 'none'){
+                newAction = "{% url 'Fin_recurring_bill_slip_email' %}";
+
+            }  
+            // Set new action URL
+            this.action = newAction;
+
+            // Submit the form
+            this.submit();
+            
         });
+    });
         
+        // $(document).ready(function ($) { //send mail
+        //     $(document).on('submit', '#mailForm', function (event) {
+        //         event.preventDefault();
+        //         // Your existing code to generate the PDF
+        //         print1 = document.getElementById('whatToPrint1');
+        //         print2 = document.getElementById('whatToPrint2');
+        //         print3 = document.getElementById('whatToPrint3');
+        //         print4 = document.getElementById('slipdiv')
+        //         var maildiv = '0';
+
+        //         if (print1.style.display !== 'none'){
+                    
+        //         }else if (print2.style.display !== 'none'){
+        //             var element = document.getElementById('printdiv2') ;
+        //             var maildiv = '2';
+        //         }else if (print3.style.display !== 'none'){
+        //             var element = document.getElementById('printdiv3') ;
+        //             var maildiv = '3';
+        //         }else if (print4.style.display !== 'none'){
+        //             var element = document.getElementById('printslip') ;
+        //             var maildiv = '4';
+        //         }  
+        //         console.log(maildiv,'------1111111--------------11111-------')
+                
+        //         var formData = {
+                    
+        //             'email_ids': $('#email_ids').val(),
+        //             'bill_id_email': $('#bill_id_email').val(),
+        //             'company_ID_email': $('#company_ID_email').val(),
+        //             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    
+        //         }
+
+        //         // Send the PDF file to the server using an AJAX request
+        //         $.ajax({
+        //             type: 'POST',
+        //             url: '/Fin_recurring_bill_email/',
+        //             data: formData,
+        //             processData: false,
+        //             contentType: false,
+        //             success: function(response) {
+        //                 console.log(response);
+        //                 alert('Email sent successfully')
+        //             },
+        //             error: function(error) {
+        //                 console.error(error);
+        //             }
+        //         });
+        //     });
+        // });
+        
+        // --------------------------
+        // whatsapp
+        function sendWhatsAppLink() {
+            var printContents;
+            var print1 = document.getElementById('whatToPrint1');
+            var print2 = document.getElementById('whatToPrint2');
+            var print3 = document.getElementById('whatToPrint3');
+            var print4 = document.getElementById('slipdiv');
+            var rBillNoID = document.getElementById('rBillNo').value;
+
+            var pageName;
+
+            if (print4.style.display !== 'none') {
+                pageName = '/Fin_recurring_bill_slip/';
+            } else {
+                if (print1.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template1/';
+                } else if (print2.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template2/';
+                } else if (print3.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template3/';
+                }
+            }
+            
+              
+            var url = window.location.href;
+
+            // var domain = window.location.hostname;
+            // var url = 'http://' + domain + pageName + rBillNoID;
+
+            // Send the URL via WhatsApp
+            var whatsappLink = 'whatsapp://send?text=' + encodeURIComponent('Check out this link: ' + url);
+
+            // Create an anchor element
+            var whatsappAnchor = document.createElement('a');
+            whatsappAnchor.setAttribute('href', whatsappLink);
+
+            // Click the anchor programmatically
+            whatsappAnchor.click();
+
+            // Open the WhatsApp link
+            window.location.href = whatsappLink;
+        }
 
 
     </script>
 
     <script>
+        // function printfun(page) {
+        //     var printContents;
+        //     print1 = document.getElementById('whatToPrint1');
+        //     print2 = document.getElementById('whatToPrint2');
+        //     print3 = document.getElementById('whatToPrint3');
+        //     print4 = document.getElementById('slipdiv')
+
+        //     rBillNoID = document.getElementById('rBillNo').value;
+
+        //     if (print4.style.display !== 'none'){
+        //             var pageName = '/Fin_recurring_bill_slip/';
+        //     }else{
+        //         if (print1.style.display !== 'none'){
+        //             var pageName = '/Fin_recurring_bill_template1/';
+        //         }else if(print2.style.display !== 'none'){
+                    
+        //             var pageName = '/Fin_recurring_bill_template2/';
+        //         }
+        //         else if(print3.style.display !== 'none'){
+                    
+        //             var pageName = '/Fin_recurring_bill_template3/';
+        //         }
+                
+        //     }
+        //     console.log(pageName,'------pageName----------')
+        //     console.log(rBillNoID,'------rBillNoID----------')
+
+        //     // Load content of the desired HTML page
+        //     $.ajax({
+        //         url: pageName + rBillNoID, // Assuming the HTML pages are named as new1.html, new2.html, etc.
+        //         type: 'GET',
+        //         async: false, // Ensure synchronous loading for simplicity
+        //         success: function(data) {
+        //             printContents = data;
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error loading page:', error);
+        //         }
+        //     });
+            
+        //     if (!printContents) {
+        //         console.error('Failed to load page:', pageName);
+        //         return;
+        //     }
+
+        //     var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+        //     $printerDiv.html(printContents); // add the content to be printed
+        //     $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        //     window.print(); // call print
+        //     $printerDiv.remove(); // remove the div
+        //     $('body').removeClass("printingContent");
+        // }
+        
+
         function printfun(){
             print1 = document.getElementById('whatToPrint1');
             print2 = document.getElementById('whatToPrint2');
@@ -1896,9 +1954,7 @@ footer p {
                 
             }
 
-
-
-            var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+            var $printerDiv = $('<div class="printContainer" style="background-color: white;border: 1px solid black;"></div>'); // create the div that will contain the stuff to be printed
             $printerDiv.html(printContents); // add the content to be printed
             $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
 
@@ -1906,7 +1962,7 @@ footer p {
             $printerDiv.remove(); // remove the div
             $('body').removeClass("printingContent");
         }
-    </script>
+    </script><div style="background-color: white;border: 1px solid black;width: 100%;"></div>
 
     <script>
             function toggleTemplate(templateId,buttonId){
@@ -1922,32 +1978,35 @@ footer p {
 
         <script>
             function showOverview(){
-                document.getElementById('overviewdiv').style.display='block'
-                document.getElementById('templatediv').style.display='none'
-                document.getElementById('slipdiv').style.display='none'
-                document.getElementById('overviewlink').style.backgroundColor='rgba(22,37,50,255)'
-                document.getElementById('templatelink').style.backgroundColor='transparent'
-                document.getElementById('sliplink').style.backgroundColor='transparent'
+                document.getElementById('overviewdiv').style.display='block';
+                document.getElementById('templatediv').style.display='none';
+                document.getElementById('slipdiv').style.display='none';
+                document.getElementById('overviewlink').style.backgroundColor='rgba(22,37,50,255)';
+                document.getElementById('templatelink').style.backgroundColor='transparent';
+                document.getElementById('sliplink').style.backgroundColor='transparent';
+                hideButtons()
                 
             }
 
             function showTemplate(){
-                document.getElementById('overviewdiv').style.display='none'
-                document.getElementById('templatediv').style.display='block'
-                document.getElementById('slipdiv').style.display='none'
-                document.getElementById('overviewlink').style.backgroundColor='transparent'
-                document.getElementById('templatelink').style.backgroundColor='rgba(22,37,50,255)'
-                document.getElementById('sliplink').style.backgroundColor='transparent'
+                document.getElementById('overviewdiv').style.display='none';
+                document.getElementById('templatediv').style.display='block';
+                document.getElementById('slipdiv').style.display='none';
+                document.getElementById('overviewlink').style.backgroundColor='transparent';
+                document.getElementById('templatelink').style.backgroundColor='rgba(22,37,50,255)';
+                document.getElementById('sliplink').style.backgroundColor='transparent';
+                unhideButtons();
                 
             }
 
             function showSlip(){
-                document.getElementById('overviewdiv').style.display='none'
-                document.getElementById('templatediv').style.display='none'
-                document.getElementById('slipdiv').style.display='block'
-                document.getElementById('templatelink').style.backgroundColor='transparent'
-                document.getElementById('overviewlink').style.backgroundColor='transparent'
-                document.getElementById('sliplink').style.backgroundColor='rgba(22,37,50,255)'
+                document.getElementById('overviewdiv').style.display='none';
+                document.getElementById('templatediv').style.display='none';
+                document.getElementById('slipdiv').style.display='block';
+                document.getElementById('templatelink').style.backgroundColor='transparent';
+                document.getElementById('overviewlink').style.backgroundColor='transparent';
+                document.getElementById('sliplink').style.backgroundColor='rgba(22,37,50,255)';
+                unhideButtons();
             }
         </script>
 
