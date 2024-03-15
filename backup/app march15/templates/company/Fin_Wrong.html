@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Fin sYs</title>
+    <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /*custom font*/
+        @import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+        /*basic reset*/
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            height: 100%;
+            background: #213b52; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to left, #213b52, #2a0845); /* Chrome 10-25, Safari 5.1-6 */
+          
+        }
+
+        body {
+            font-family: montserrat, arial, verdana;
+            background: transparent;
+            width: 95%;
+            margin: 10px;
+        }
+
+        /*form styles*/
+        #msform {
+            text-align: center;
+            position: relative;
+            margin-top: 20px;
+            
+  
+        }
+
+        #msform fieldset {
+            background: white;
+            border: 0 none;
+            border-radius: 0px;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+            padding: 20px 30px;
+            box-sizing: border-box;
+            width: 90%;
+            margin: 0 10%;
+
+            /*stacking fieldsets above each other*/
+            position: relative;
+        }
+
+        /*Hide all except first fieldset*/
+        #msform fieldset:not(:first-of-type) {
+            display: none;
+        }
+
+        /*inputs*/
+        #msform input, #msform textarea, #msform select {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 0px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: montserrat;
+            font-size: 13px;
+        }
+
+        #msform input:focus, #msform textarea:focus {
+            -moz-box-shadow: none !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            border: 1px solid #213b52;
+            outline-width: 0;
+            transition: All 0.5s ease-in;
+            -webkit-transition: All 0.5s ease-in;
+            -moz-transition: All 0.5s ease-in;
+            -o-transition: All 0.5s ease-in;
+        }
+
+        /*buttons*/
+        #msform .action-button {
+            width: 100px;
+            background: #213b52;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+        #msform .action-button:hover, #msform .action-button:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #213b52;
+        }
+
+        #msform .action-button-previous {
+            width: 100px;
+            background: #213b52;
+            font-weight: bold;
+            color: white;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 10px 5px;
+            margin: 10px 5px;
+        }
+
+        #msform .action-button-previous:hover, #msform .action-button-previous:focus {
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #213b52;
+        }
+
+        /*headings*/
+        .fs-title {
+            font-size: 18px;
+            text-transform: uppercase;
+            color: #2C3E50;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .fs-subtitle {
+            font-weight: normal;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+
+        /* Not relevant to this form */
+        .dme_link {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .dme_link a {
+            background: #FFF;
+            font-weight: bold;
+            color: #ee0979;
+            border: 0 none;
+            border-radius: 25px;
+            cursor: pointer;
+            padding: 5px 25px;
+            font-size: 12px;
+        }
+
+        .dme_link a:hover, .dme_link a:focus {
+            background: #C5C5F1;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<!-- MultiStep Form -->
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form id="msform" action="{% url 'Fin_Wrong_Action' %}" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <!-- fieldsets -->
+            {% for message in messages %}
+            {% if message %}
+            <div class="alert" onclick="this.parentElement.style.display='none';">
+              <div class="row d-flex">
+                <div class="col-md-12">
+                  <center>
+                    <h5 style="color: goldenrod;">{{ message }}</h5>
+                  </center>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <fieldset>
+                <h2 class="mb-4">Upgrade Your Payment Terms</h2>
+
+                {% if data.User_Type == "Company" %}
+                    <label for="" style="float: left;margin-top: 20px;">Company Name</label>
+                    <input type="text" name="cname" placeholder="Company Name" value="{{com.Company_name}}" readonly/>
+                {% else %} 
+                    <label for="" style="float: left;margin-top: 20px;">Distributor Name</label>
+                    <input type="text" name="cname" placeholder="Company Name" value="{{com.Login_Id.First_name}} {{com.Login_Id.Last_name}}" readonly/> 
+                {% endif %}    
+
+               
+                <label for="" style="float: left;margin-top: 20px;">current Payment Terms</label>
+                <input type="text" value="{{com.Payment_Term.payment_terms_number}} {{com.Payment_Term.payment_terms_value}}" readonly>
+
+                <label for="" style="float: left;margin-top: 20px;">current End Date</label>
+                <input type="text" value="{{com.End_date}}" style="border: 1px solid red;"/>
+
+                <label for="" style="float: left;margin-top: 20px;">Upgrade Payment Term</label>
+                <select name="payment_term" id="" style="
+                    font-weight: 500;">
+                        <option value="" >Choose Payment terms</option>
+                        {% for t in terms %}
+                        <option value="{{t.id}}" >{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
+                        {% endfor %}
+                    </select>
+               
+                
+                <input type="submit" name="next" class="next action-button" style="margin-top: 30px;" value="Submit"/>
+            </fieldset>
+            
+        </form>
+    </div>
+</div>
+
+<script>
+    function dcode(){
+        var r = document.getElementById("reg").value;
+        if (r == 'self'){
+            document.getElementById("dc").style.display = 'none'
+        }
+        else{
+            document.getElementById("dc").style.display = 'block' 
+        }
+    }
+</script>
+
+<script>
+
+    //jQuery time
+    var current_fs, next_fs, previous_fs; //fieldsets
+    var left, opacity, scale; //fieldset properties which we will animate
+    var animating; //flag to prevent quick multi-click glitches
+
+    $(".next").click(function () {
+
+        if (animating) return false;
+        animating = true;
+
+        current_fs = $(this).parent();
+        next_fs = $(this).parent().next();  
+
+        //activate next step on progressbar using the index of next_fs
+        $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+        //show the next fieldset
+        next_fs.show();
+        //hide the current fieldset with style
+        current_fs.animate({opacity: 0}, {
+            step: function (now, mx) {
+                //as the opacity of current_fs reduces to 0 - stored in "now"
+                //1. scale current_fs down to 80%
+                scale = 1 - (1 - now) * 0.2;
+                //2. bring next_fs from the right(50%)
+                left = (now * 50) + "%";
+                //3. increase opacity of next_fs to 1 as it moves in
+                opacity = 1 - now;
+                current_fs.css({
+                    'transform': 'scale(' + scale + ')',
+                    'position': 'absolute'
+                });
+                next_fs.css({'left': left, 'opacity': opacity});
+            },
+            duration: 800,
+            complete: function () {
+                current_fs.hide();
+                animating = false;
+            },
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+        });
+    });
+
+    $(".previous").click(function () {
+        if (animating) return false;
+        animating = true;
+
+        current_fs = $(this).parent();
+        previous_fs = $(this).parent().prev();
+
+        //de-activate current step on progressbar
+        $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+        //show the previous fieldset
+        previous_fs.show();
+        //hide the current fieldset with style
+        current_fs.animate({opacity: 0}, {
+            step: function (now, mx) {
+                //as the opacity of current_fs reduces to 0 - stored in "now"
+                //1. scale previous_fs from 80% to 100%
+                scale = 0.8 + (1 - now) * 0.2;
+                //2. take current_fs to the right(50%) - from 0%
+                left = ((1 - now) * 50) + "%";
+                //3. increase opacity of previous_fs to 1 as it moves in
+                opacity = 1 - now;
+                current_fs.css({'left': left});
+                previous_fs.css({'transform': 'scale(' + scale + ')', 'opacity': opacity});
+            },
+            duration: 800,
+            complete: function () {
+                current_fs.hide();
+                animating = false;
+            },
+            //this comes from the custom easing plugin
+            easing: 'easeInOutBack'
+        });
+    });
+
+</script>
+</body>
+</html>

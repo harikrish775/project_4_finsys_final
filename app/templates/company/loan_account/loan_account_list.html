@@ -1,0 +1,356 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="page-content ">
+    <div class="card radius-15 h-20">
+        <div class="row">
+          <div class="col-md-12">
+            <center><h2 class="mt-3">LOAN ACCOUNT </h2></center>
+            <hr/>
+          </div>
+        </div>
+      </div>
+    <div class="card radius-15">
+         <div class="card-body">
+         
+            <div class="row">
+                <div class="col-3 ml-1">
+                    <input type="search" placeholder="Search..." id="searchInput"  class="form-control ">                         
+                </div>
+                <div class="dropdown show">
+                    <a class="btn btn-outline-secondary text-grey" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-sort"></i> Sort by
+                    </a>
+                      
+                    <div class="dropdown-menu"  id="sort">
+                        <a class="dropdown-item" href="">All</a>
+                                    <a class="dropdown-item" id="sortAccount">Holder Name</a>
+                                    <a class="dropdown-item" id="sortLoan">Loan Amount</a>
+
+            
+                    </div>
+                </div>
+
+                <div class="col-4 ml-auto">
+                    <button class="btn btn-outline-secondary text-grey" id="exportButton" onclick="ExportToExcel('xlsx')"><i class="fa fa-table"></i> Export To Excel</button>
+                    <a class="btn btn-outline-secondary dropdown-toggle text-grey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-filter"></i> filter by
+                    </a>
+                          
+                    <div class="dropdown-menu"  id="filter" >
+                        <a class="dropdown-item"href="javascript:void(0);" data-status="All">All</a>
+                        <a class="dropdown-item"href="javascript:void(0);" data-status="Active">Active</a>
+                        <a class="dropdown-item"  href="javascript:void(0);" data-status="Inactive">Inactive</a>
+                    </div>
+
+                    <a class="btn btn-outline-secondary text-grey" href="{%url 'loan_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
+                          
+                </div>
+                    
+            </div>
+
+            <br>
+            <div class="table-responsive">
+                <table class="table table-responsive-md table-hover mt-4" id="tabletobe">
+                    <thead>
+                    <tr>
+                        <th>Sl.NO</th>
+                        <th>DATE</th>
+                        <th> HOLDER NAME</th>
+                        <th>ACCOUNT NUMBER</th>
+                        <!-- <th>LENDER</th>
+                         -->
+                        <th>LOAN AMOUNT</th>
+                        <th>BALANCE</th>
+                        <th>STATUS</th>
+                 
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in loan %}
+                <tr  class="table-row "   data-status="{{ i.status }}" >
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{forloop.counter}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.date}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_name}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
+                                
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.loan_amount}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td>
+                                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.status}}</td>
+                                
+
+                                
+                        
+                            </tr>
+                            
+                           
+                            <!-- Your existing table row -->
+                        
+                         
+                  
+                   
+                            {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<table class="table table-responsive-md table-hover mt-4" id="tabletobea" style="display: none;">
+    <thead>
+    <tr>
+        <th>Sl.NO</th>
+        <th>DATE</th>
+        <th> HOLDER NAME</th>
+        <th>ACCOUNT NUMBER</th>
+        <!-- <th>LENDER</th>
+         -->
+        <th>LOAN AMOUNT</th>
+        <th>BALANCE</th>
+        <th>STATUS</th>
+        
+    </thead>
+    <tbody>
+        {% for i in loan %}
+<tr  class="table-row "   data-status="{{ i.status }}" >
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{forloop.counter}}</td>
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.date}}</td>
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_name}}</td>
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.account_number}}</td>
+                
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.loan_amount}}</td>
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.balance}}</td>
+                <td class='clickable-row' data-href="loan_list/{{ i.id }}">{{i.status}}</td>
+              
+                
+        
+            </tr>
+            
+           
+            <!-- Your existing table row -->
+        
+         
+  
+   
+            {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+
+
+<!-- Edit Modal -->
+
+
+<script>
+    $(document).ready(function () {
+        $("#sortAccount").on("click", function () {
+            sortTable(2);  // Sort by the "ACCOUNT" column, change the index if needed
+        });
+    });
+
+    function sortTable(colIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("tabletobe");
+        switching = true;
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+
+                x = rows[i].getElementsByTagName("td")[colIndex];
+                y = rows[i + 1].getElementsByTagName("td")[colIndex];
+
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $("#sortLoan").on("click", function () {
+            sortTable(4);  // Sort by the "ACCOUNT" column, change the index if needed
+        });
+    });
+
+    function sortTable(colIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("tabletobe");
+        switching = true;
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+
+                x = rows[i].getElementsByTagName("td")[colIndex];
+                y = rows[i + 1].getElementsByTagName("td")[colIndex];
+
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        $(".edit-item").on("click", function () {
+            $("#editModal").modal("show");
+        });
+    });
+</script>
+
+    <!-- Modal HTML -->
+    <div class="modal fade" id="addBankModal" tabindex="-1" role="dialog" aria-labelledby="addBankModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #213b52;width: 100%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBankModalLabel">Add Bank Modal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    // Get the input element and table rows
+    const searchInput = document.getElementById('searchInput');
+    const tableRows = document.querySelectorAll('#tabletobe tbody tr');
+
+    // Add an event listener to the search input
+    searchInput.addEventListener('input', function () {
+        const searchText = this.value.toLowerCase();
+
+        // Loop through each table row and hide/show based on search text
+        tableRows.forEach(row => {
+            let foundMatch = false;
+            const cells = row.querySelectorAll('td'); // Select all <td> elements within the row
+
+            cells.forEach(cell => {
+                const cellText = cell.textContent.toLowerCase();
+                if (cellText.includes(searchText)) {
+                    foundMatch = true;
+                }
+            });
+
+            // Show or hide the row based on whether a match was found
+            if (foundMatch) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<script type="text/javascript">function ExportToExcel(type, fn, dl) {
+  var elt = document.getElementById('tabletobea');
+  var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+  return dl ?
+      XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+      XLSX.writeFile(wb, fn || ('Loan_account.' + (type || 'xlsx')));
+}
+
+</script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to handle table filtering
+        function filterTable(status) {
+            // Show all rows by default
+            $('#tabletobe tbody tr').show();
+
+            // If the status is not "All," hide rows with a different status
+            if (status !== 'All') {
+                $('#tabletobe tbody tr').not('[data-status="' + status + '"]').hide();
+            }
+        }
+
+        // Event listener for the filter dropdown
+        $('.dropdown-item[data-status]').on('click', function () {
+            var status = $(this).data('status');
+            filterTable(status);
+        });
+    });
+</script>
+ 
+
+{%endblock%}

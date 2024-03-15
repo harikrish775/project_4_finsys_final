@@ -5,6 +5,8 @@
 <!-- Include jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 <style>
     #button1,#button2{
         background-color: rgba(22,37,50,255);
@@ -60,15 +62,22 @@
     });
 });
 
+
+function goBack() {
+      window.history.back();
+    }
+
 </script>
 
 
     <div class="page-content" id="body">
+        <span class="d-flex justify-content-end p-2" style="cursor: pointer;"  onclick="goBack()"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
         <form action="{% url 'Fin_recurring_bill_save' %}" id="rBillForm" enctype="multipart/form-data" method="post">
             {% csrf_token %}
         <!-- overview -->
         <div id="overview123">
             <div class="card radius-15" id="col33">
+                <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
                <center><h2 style="padding: 50px;">NEW RECURRING BILL</h2></center>
             </div>
                         
@@ -103,9 +112,9 @@
 
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input required type="text" autocomplete="off" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input required type="text" autocomplete="off" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search Vendors" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
-                                                                        <div class="dropdown-menu" style="width:280px;">
+                                                                        <div class="dropdown-menu vendorDropdown" style="width:280px;">
                                                                             {% for i in vendors %}
                                                                             <a class="dropdown-item drop1" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
                                                                             {% endfor %}
@@ -154,7 +163,7 @@
                                                             </div>
                                                             <script>
                                                                 $(document).ready(function () {
-                                                                $('.drop1').on('click', function () {
+                                                                    $('.vendorDropdown').on('click', '.drop1', function() {
                                                                     var vendorId = $(this).attr('value');
 
                                                                     // Make an AJAX request to the backend to fetch vendor details
@@ -202,17 +211,17 @@
                                                             </script>
                                                             <div class="form-group col-md">
                                                                 <label class="" >Vendor Email</label>
-                                                                <input required type="vendorEmail" id="vendorEmail" class="form-control">
+                                                                <input required type="vendorEmail" placeholder="Vendor Email" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
                                                                 <label class="">GST Type (Vendor)</label>
-                                                                <input type="text" id="vendorGST" class="form-control">
+                                                                <input type="text" placeholder="Vendor GST Type" id="vendorGST" class="form-control">
                                                             </div>
-                                                            <div id="vendorGstinDiv" style="display: none;" class="form-group col-md">
+                                                            <div id="vendorGstinDiv"  class="form-group col-md">
                                                                 <label class="">GST Number</label>
-                                                                <input type="text" id="vendorGSTIN"  class="form-control">
+                                                                <input type="text" placeholder="Vendor GST Number" id="vendorGSTIN"  class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -222,8 +231,8 @@
                                                     </div> -->
                                                     <div class="col-md-3">
                                                         <label class=" ">Place Of Supply</label>
-                                                        <select  required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
-                                                            <option selected value="">Select Place of Supply</option>
+                                                        <select aria-placeholder="Select Place of Supply" required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
+                                                            <option value="" class="text-grey">Select Place of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
                                                             <option value="Arunachal Predesh">Arunachal Predesh</option>
@@ -267,7 +276,7 @@
                                                     </div>
                                                     <div class="form-group col-md mb-3">
                                                         <label class="">Address</label>
-                                                        <textarea  required name="address" id="vendorAddress" cols="10" rows="5" class="form-control"></textarea>
+                                                        <textarea  required name="address" id="vendorAddress" placeholder="Vendor Address" cols="10" rows="5" class="form-control"></textarea>
                                                     </div>
                                                 </div>
 
@@ -326,29 +335,29 @@
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
-                                                        <label for="">Recurring Bill No.</label>
-                                                        <input type="text"  required class="form-control" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
+                                                        <label for="">Recurring Bill No.</label> <small style="color: orangered;" id="recuringErr"></small>
+                                                        <input type="text"  required class="form-control" placeholder="{{nxtRB}}" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
                                                         <script>
-                                                            $(document).ready(function() {
-                                                            // Bind the AJAX request to the keyup event on the input field
-                                                            $('#RecurringBillNo').keyup(function() {
-                                                                // Get the value entered in the input field
-                                                                var recurringBillNoValue = $(this).val();                                                                
-                                                                // Make an AJAX request to fetch data
+                                                            $(document).on('change','#RecurringBillNo', function() {
+                                                            $('#recuringErr').text('');
+                                                            var inv_num = $(this).val();
+                                                            if(inv_num != ""){
+                                                                console.log(inv_num);
                                                                 $.ajax({
-                                                                    url: '/Fin_check_recurring_bill_number/',  // Replace with the actual URL
-                                                                    method: 'GET',
-                                                                    data: { recurringBillNum: recurringBillNoValue },
-                                                                    dataType: 'json',
-                                                                    success: function(data) {
-                                                                        // Assuming data.RecurringBillNo is the value you want to set
-                                                                        $('#RecurringBillNo').val(data.RecurringBillNo);
+                                                                    type: "GET",
+                                                                    url: "{% url 'Fin_check_recurring_bill_number' %}",
+                                                                    data: {
+                                                                        'invNum' : inv_num,
                                                                     },
-                                                                    error: function(error) {
-                                                                        console.error('Error fetching data:', error);
+                                                                    success: function (response) {
+                                                                        if (response.status){
+                                                                            $('#recuringErr').text('');
+                                                                        }else{
+                                                                            $('#recuringErr').text(response.message);
+                                                                        }
                                                                     }
-                                                                });
-                                                            });
+                                                                })
+                                                            }
                                                         });
                                                         </script>
                                                     </div>
@@ -360,11 +369,11 @@
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
-                                                        <input required type="text" class="form-control" name="ProfileName" id="ProfileName">
+                                                        <input required type="text" placeholder="Profile Name" class="form-control" name="ProfileName" id="ProfileName">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Purchase Order No.</label>
-                                                        <input required type="text" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
+                                                        <input required type="text" placeholder="Purchase Order Number" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
                                                     </div>
                                                 </div>
 
@@ -373,8 +382,9 @@
                                                         <label for="">Repeat Every</label>
                                                         <div style="display: flex;">
                                                             <select required class="form-control" name="RepeatEvery" id="RepeatEvery" >
+                                                                <option value="">Select RepeatEvery</option>
                                                                 {% for r in RepeatEvery %}
-                                                                <option selected value="{{r.id}}">{{r.repeat_every}}</option>
+                                                                <option value="{{r.id}}">{{r.repeat_every}}</option>
                                                                 {% endfor %}
                                                             </select>
                                                             <button class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#RepeatEveryN">+</button>
@@ -421,9 +431,9 @@
 
                                                         <div class="input-group">
                                                             <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" autocomplete="off" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                            <input type="text" autocomplete="off" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
                                                             <div class="input-group-append">
-                                                                <div class="dropdown-menu" style="width:380px;">
+                                                                <div class="dropdown-menu customerDropdown" style="width:380px;">
                                                                     {% for i in customers %}
                                                                     <a class="dropdown-item drop2" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
                                                                     {% endfor %}
@@ -436,7 +446,7 @@
                                                             // search
                                                             $(document).ready(function () {
                                                                 // When a dropdown item is clicked
-                                                                $('.drop2').on('click', function () {
+                                                                $('.customerDropdown').on('click', '.drop2', function() {
                                                                     var value = $(this).data('value');
                                                                     $('#SelectCustomer2').val($(this).text());
                                                                     // Handle the selected value as needed (e.g., update form fields or perform an action)
@@ -497,7 +507,7 @@
                                                     </script>
                                                     <div class="col-md mb-3">
                                                         <label for="">Email</label>
-                                                        <input type="email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                        <input type="email" placeholder="Customer Email" required class="form-control" name="customerEmail" id="customerEmail">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Place Of Supply</label>
@@ -548,11 +558,11 @@
                                                 <div class="row m-md-2 border-bottom pb-4">
                                                     <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">GST Type</label>
-                                                        <input required type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
+                                                        <input required  placeholder="Customer GST Type" type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
+                                                    <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" >
                                                         <label class="">GST Number</label>
-                                                        <input type="text" id="customerGSTIN"  class="form-control">
+                                                        <input placeholder="Customer GST Number" type="text" id="customerGSTIN"  class="form-control">
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">Payment Type</label>
@@ -746,7 +756,7 @@
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
-                                                                    <td class="border" style="min-width: 150px;" id="gst">
+                                                                    <td class="border gst" style="min-width: 150px;" id="gst">
                                                                         <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
                                                                             <option value="0">GST 0 (0%)</option>
                                                                             <option value="3">GST 3 (3%)</option>
@@ -756,7 +766,7 @@
                                                                             <option value="28">GST 28 (28%)</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td class="border" style="min-width: 150px;display: none;" id="igst">
+                                                                    <td class="border igst" style="min-width: 150px;display: none;" id="igst">
                                                                         <select name="igsttaxrate[]" id="IGSTcolumn" onchange="initializeCalculations()" class="form-control item-igst_tax" placeholder="Tax Rate">
                                                                             <option value="0">IGST 0 (0%)</option>
                                                                             <option value="3">IGST 3 (3%)</option>
@@ -766,7 +776,7 @@
                                                                             <option value="28">IGST 28 (28%)</option>
                                                                         </select>
                                                                     </td>
-                                                                    <td class="border" style="min-width: 150px;display: none;" id="GSTtext">
+                                                                    <td class="border GSTtext" style="min-width: 150px;display: none;" id="GSTtext">
                                                                         <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
                                                                         </select>
@@ -794,31 +804,31 @@
                                                             var sourceOFSupplyValue = $('#sourceOFSupply').val();
 
                                                             // Check if 'PlaceOfSupplyCustomer' and 'sourceOFSupply' have the same value
-                                                            if (PlaceOfSupplyCustomerValue === sourceOFSupplyValue && PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            if (PlaceOfSupplyCustomerValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'gst' and hide 'igst'
-                                                                $('#gst').show();
-                                                                $('#igst').hide();
-                                                                $('#GSTtext').hide();
+                                                                $('.gst').show();
+                                                                $('.igst').hide();
+                                                                $('.GSTtext').hide();
                                                                 $('#ifIGST').hide();
                                                                 $('#ifGST').show();
                                                                 $('#ifOR').hide();
                                                                 $('#GST1').show();
                                                                 $('#GST2').show();
-                                                            } else if (PlaceOfSupplyCustomerValue !== sourceOFSupplyValue && PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            } else if ( PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'igst' and hide 'gst'
-                                                                $('#gst').hide();
-                                                                $('#GSTtext').hide();
+                                                                $('.gst').hide();
+                                                                $('.GSTtext').hide();
                                                                 $('#ifGST').hide();
-                                                                $('#igst').show();
+                                                                $('.igst').show();
                                                                 $('#ifGST').hide();
                                                                 $('#ifIGST').show();
                                                                 $('#ifOR').hide();
                                                                 $('#GST1').hide();
                                                                 $('#GST2').hide();
                                                             }else{
-                                                                $('#gst').hide();
-                                                                $('#igst').hide();
-                                                                $('#GSTtext').show();
+                                                                $('.gst').hide();
+                                                                $('.igst').hide();
+                                                                $('.GSTtext').show();
                                                                 $('#ifOR').show();
                                                                 $('#GST1').show();
                                                                 $('#GST2').show();
@@ -838,7 +848,7 @@
                                                                 initializeCalculations()
                                                                 
 
-                                                            }, 1000); // 1000 milliseconds = 1 second
+                                                            }, 1500); // 1000 milliseconds = 1 second
                                                         });
                                                         
                                                     });
@@ -881,22 +891,17 @@
                                                             var initialStockin = parseInt($row.find(".item-stockin").data("initial"));
 
                                                             // Set the maximum value for item-qty to the initial count of item-stockin
-                                                            $row.find(".item-qty").attr("max", initialStockin);
+                                                            // $row.find(".item-qty").attr("max", initialStockin);
 
                                                             // Check if item-qty is valid
-                                                            if (!isNaN(qty) && qty >= 0 && qty <= initialStockin) {
+                                                            if (!isNaN(qty) && qty >= 0 ) {
                                                                 // Update item-stockin based on the change in item-qty
                                                                 var updatedStockin = initialStockin + qty; // Decrease stockin based on qty
                                                                 $row.find(".item-stockin").html(updatedStockin);
                                                                 $row.find(".item-stockin").css('color', 'white');
 
                                                                 // Display "Out of Stock" message if item-stockin is 0
-                                                                if (updatedStockin <= 0) {
-                                                                    alert("Out of Stock");
-                                                                    $row.find(".item-stockin").html('out of stock');
-                                                                    $row.find(".item-stockin").css('color', 'red');
-                                                                    
-                                                                }
+                                                                
                                                             } else {
                                                                 // Handle invalid item-qty (e.g., display an error message)
                                                                 alert("Invalid quantity");
@@ -1054,29 +1059,7 @@
                                                                 </div>
                                                             </div>
                                                             
-                                                            <div class="row mb-3">
-                                                                <div class="col-4 justify-content-start">
-                                                                    <!-- <input type="checkbox" name="paid" id="paid" >  -->
-                                                                    Paid
-                                                                </div>
-                                                                <div class="col-2 d-flex justify-content-center">
-                                                                    <p>:</p>
-                                                                </div>
-                                                                <div class="col-md-6 d-flex justify-content-start">
-                                                                    <input type="text" oninput="updateSubTotal()" name="paidAmount" id="paidAmount" class="form-control">
-                                                                </div>
-                                                            </div>
-                                                            <div class="row mb-3">
-                                                                <div class="col-4 d-flex justify-content-start">
-                                                                    <label style="color: white;" > Balance Due </label>
-                                                                </div>
-                                                                <div class="col-2 d-flex justify-content-center">
-                                                                    <p>:</p>
-                                                                </div>
-                                                                <div class="col-md-6 d-flex justify-content-start"> 
-                                                                    <input type="text" name="balanceDue" id="balanceDue" class="form-control">
-                                                                </div>
-                                                            </div>
+                                                            
                                                     </div>
                                                 </div>
 
@@ -1213,12 +1196,12 @@
                                                         document.getElementById('subTotal').value = subTotal.toFixed(2);
 
                                                         // Handle tax calculation based on source and place
-                                                        if (source === place && source !== '' && place !== '') {
+                                                        if (source === 'Kerala' && place === 'Kerala' && source !== '' && place !== '') {
                                                             var cgst = taxTotal / 2.0;
                                                             document.getElementById('cgst').value = cgst.toFixed(2);
                                                             document.getElementById('sgst').value = cgst.toFixed(2);
                                                             document.getElementById('taxAmount').value = taxTotal.toFixed(2);
-                                                        } else if (source !== place && source !== '' && place !== '') {
+                                                        } else if ( source !== '' && place !== '') {
                                                             document.getElementById('taxAmount').value = taxTotal.toFixed(2);
                                                         }
 
@@ -1265,6 +1248,7 @@
                                                     
                                                         // Attach event listener for the "Add Row" button
                                                         function addRow() {
+                                                        
                                                         var clone = itemRows[0].cloneNode(true);
                                                         document.querySelector('tbody').appendChild(clone);
 
@@ -1275,6 +1259,9 @@
                                                         initializeCalculations();
                                                         
                                                     }
+                                                    
+
+
                                                                                                         
                                                         // Attach event listener for the "Remove Row" button
                                                         
@@ -1542,10 +1529,10 @@
 
                     
 <!-- Modal vendor-->
-  <div class="modal fade" id="vendorModal" tabindex="-1" role="dialog" aria-labelledby="vendorModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 1000px;" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
+<div class="modal fade" id="vendorModal">
+    <div class="modal-dialog modal-lg" style="max-width: 1000px;" >
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
           <h5 class="modal-title" id="vendorModalLongTitle">ADD VENDORS</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -1967,13 +1954,17 @@
                                             alert('Vendor created successfully!');
 
                                             // Update dropdown with the newly created vendor
-                                            var dropdown = $('#select_vendor');
+                                            var dropdown = $('.vendorDropdown');
                                             
                                             // Add each vendor from the response to the dropdown
                                             $.each(response.vendors, function(index, vendor) {
                                             // Assuming each vendor has properties 'first_name', 'last_name', and 'id'
                                             var fullName = vendor.first_name + ' ' + vendor.last_name;
-                                            dropdown.append($('<option></option>').text(fullName).val(vendor.id));
+                                            console.log(vendor.id,'-------------')
+                                            newVen = $('<a class="dropdown-item drop1"></a>').attr('value', vendor.id).text(fullName);
+                                            dropdown.append(newVen);
+                                            $('#vendorModal').modal('hide');
+                                            document.getElementById("vendorForm").reset();
                                         });
                                         } else {
                                             alert(response.error);
@@ -2393,10 +2384,10 @@
 
 
 <!-- modal customer -->
-<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalTitle" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 1000px;" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
+<div class="modal fade" id="customerModal">
+    <div class="modal-dialog modal-lg" style="max-width: 1000px;" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
           <h5 class="modal-title" id="customerModalTitle">ADD CUSTOMER</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -2810,13 +2801,16 @@
                                             alert('Customer created successfully!');
 
                                             // Update dropdown with the newly created vendor
-                                            var dropdown = $('#SelectCustomer');
+                                            var dropdown = $('.customerDropdown');
                                             
                                             // Add each vendor from the response to the dropdown
                                             $.each(response.customers, function(index, customer) {
                                             // Assuming each customer has properties 'first_name', 'last_name', and 'id'
                                             var fullName = customer.first_name + ' ' + customer.last_name;
-                                            dropdown.append($('<option></option>').text(fullName).val(customer.id));
+                                            newCus = $('<a></a>').addClass('dropdown-item drop2').attr('value', customer.id).text(fullName);
+                                            dropdown.append(newCus);
+                                            $('#customerModal').modal('hide');
+                                            $("#customerForm").reset()
                                         });
                                         } else {
                                             alert(response.error);
@@ -3240,11 +3234,11 @@
 
 
 <!-- items modal -->
-  <div class="modal fade" id="Items" tabindex="-1" role="dialog" aria-labelledby="ItemsTitle" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 1000px;" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="ItemsTitle">Modal title</h5>
+<div class="modal fade" id="Items">
+    <div class="modal-dialog modal-lg" style="max-width: 1000px;" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+          <h5 class="modal-title" id="ItemsTitle">Add Item</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -3287,17 +3281,17 @@
                     <div class="card" style="background-color: #2a4964;">
                         <div class="row no-gutters">
                             <div class="col-md-2"></div>
-                            <div class="col-md-8 mt-4 mb-4">
+                            <!-- <div class="col-md-8 mt-4 mb-4">
                                 <center>
                                     <h5 class="card-title"><h3> ADD ITEM </h3></h5>
                                 </center>
-                            </div>
+                            </div> -->
                             <div class="col-md-2"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <form action="{% url 'Fin_createNewItem' %}" method="post" class="needs-validation"  validate>
+            <form action="" method="post" id="itemForm" class="needs-validation"  validate>
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-12 mx-0">
@@ -3468,11 +3462,11 @@
                         </div>
                         
                         <div class="row mt-5 mb-5">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                             </div>
-                            <div class="col-md-4 d-flex justify-content-center">
-                                <button class="btn btn-outline-secondary w-50 text-light" type="submit">SUBMIT</button>
-                                <a href="{% url 'Fin_items' %}"class="btn btn-outline-secondary w-25 ml-1 text-light">CANCEL</a>
+                            <div class="col-md-6 d-flex justify-content-center">
+                                <button class="btn btn-outline-secondary w-50 text-light" type="submit">SAVE</button>
+                                <!-- <a  class="btn btn-outline-secondary w-50 ml-1 text-light" >CANCEL</a> -->
                             </div>
                             <div class="col-md-4"></div>
                         </div>
@@ -3482,7 +3476,46 @@
         </div>
     </div>
 </div>
+<script>
+    
 
+    $(document).ready(function() {
+    $("#itemForm").submit(function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize(); // Serialize form
+        $.ajax({
+            type: "POST",
+            url: "{% url 'Fin_createNewItem_modal' %}",
+            data: formData,
+            dataType: "json",  // Expect JSON response
+            success: function(response) {
+                if (response.success) {
+                    alert('Item Saved successfull')
+                    // Update dropdown with the newly created vendor
+                    var dropdown = $('.item-select');
+                    
+                    // Add each vendor from the response to the dropdown
+                    $.each(response.Items, function(index, item) {
+                    // Assuming each vendor has properties 'first_name', 'last_name', and 'id'
+                    var fullName = item.name ;
+                    dropdown.append($('<option></option>').text(fullName).val(item.id));
+                    $('#Items').modal('hide');
+                });
+                } else {
+                    alert(response.error);
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                alert("Error occurred: " + errmsg);
+            }
+        });
+    });
+});
+
+  
+
+
+</script>
 <!-- Unit Create Modal -->
 
 <div class="modal fade" id="createNewUnit">

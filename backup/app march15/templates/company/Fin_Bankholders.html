@@ -1,0 +1,152 @@
+<!-- Created aiswarya  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+<div class="page-content">
+  <div class="card radius-15 h-20">
+    <div class="row">
+      <div class="col-md-12">
+        <center><h2 class="mt-3">BANK HOLDERS</h2></center>
+        <hr/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card radius-15">
+    <div class="card-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="d-flex">
+              <input type="text" id="search" class="form-control" placeholder="Search.." autocomplete="off"/>
+              <div class="dropdown ml-1" style="justify-content: left">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-sort"></i> Sort by</button>
+                <div class="dropdown-menu" style="background-color: black">
+                  <a class="dropdown-item" href="{% url 'Fin_bankholder' %}"style="height: 40px; font-size: 15px; color: white; text-align: center;">All</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'Fin_bankholder' %}?sort_by=holder_name">Holder Name</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white; text-align: center;" href="{% url 'Fin_bankholder' %}?sort_by=bank_name">Bank Name</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-5 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary text-grey" id="exportBtn"><i class="fa fa-table"></i> Export To Excel</button>
+            <div class="dropdown ml-1">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-filter"></i> filter by</button>
+              <div class="dropdown-menu" style="background-color: black">
+                <a class="dropdown-item" href="{% url 'Fin_bankholder' %}" style="font-size: 14px;">All</a>
+                <a class="dropdown-item status-filter" data-status="active" style="font-size: 14px;">Active</a>
+                <a class="dropdown-item status-filter" data-status="inactive"style="font-size: 14px;">Inactive</a>
+              </div>
+            </div>
+            <a href="{% url 'Fin_addbank' %}" class="ml-1"></i><button type="button" class="btn btn-outline-secondary text-grey"><i class="fa fa-plus font-weight-light"></i> Add BankHolder</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-responsive-md table-hover mt-4" id="itemsTable" style="text-align: center">
+        <thead>
+          <tr>
+            <th>SL.NO.</th>
+            <th>HOLDER NAME</th>
+            <th>BANK NAME</th>
+            <th>ACCOUNT NUMBER</th>
+            <th>IFSC CODE</th>
+            <th>BRANCH NAME</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for account_holder in bank_holders %}
+          <tr class="status-{{ account_holder.is_active|yesno:'active,inactive' }}">
+            <td><a href="{% url 'Fin_Bankholderview' account_holder.id %}">{{forloop.counter}}</a></td>
+            <td><a href="{% url 'Fin_Bankholderview' account_holder.id %}">{{ account_holder.Holder_name }}</a></td>
+            <td><a href="{% url 'Fin_Bankholderview'  account_holder.id %}">{{ account_holder.Bank_name }}</a></td>
+            <td><a href="{% url 'Fin_Bankholderview' account_holder.id %}">{{ account_holder.Account_number }}</a></td>
+            <td><a href="{% url 'Fin_Bankholderview' account_holder.id %}">{{ account_holder.Ifsc_code }}</a></td>
+            <td><a href="{% url 'Fin_Bankholderview' account_holder.id %}">{{ account_holder.Branch_name }}</a></td>
+            {% if account_holder.is_active %}
+            <td class="status"><a href="{% url 'Fin_Bankholderview' account_holder.id %}">Active</a></td>
+            {% else %}
+            <td class="status"><a href="{% url 'Fin_Bankholderview' account_holder.id %}">Inactive</a></td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script>
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('table');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Bank_account_holder.' + (type || 'xlsx')));
+    }
+    function filterTableByStatus(status) {
+        $rows.show().filter(function () {
+            if (status === "all") {
+                return false; 
+            } else {
+                return $(this).find('.status').text().toLowerCase() !== status;
+            }
+        }).hide();
+    }
+    $('.status-filter').on('click', function () {
+        var status = $(this).data('status');
+        filterTableByStatus(status);
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", function () {
+    const Table = document.getElementById("itemsTable");
+    const ws = XLSX.utils.table_to_sheet(Table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Bankholders.xlsx");
+    });
+    
+</script>
+<script>
+    $(document).ready(function() {
+        $('.status-filter').click(function() {
+            var selectedStatus = $(this).data('status');
+            
+            $('.status-active, .status-inactive').hide();
+            if (selectedStatus === 'active') {
+                $('.status-active').show();
+            } else if (selectedStatus === 'inactive') {
+                $('.status-inactive').show();
+            } else {
+                $('.status-active, .status-inactive').show();
+            }
+        });
+    });
+</script>
+<script>
+  var $rows = $('#itemsTable tbody tr');
+  $('#search').keyup(function () {
+      var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+      $rows.show().filter(function () {
+          var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+          return !~text.indexOf(val);
+      }).hide();
+  });
+
+  $('#sortDropdown .dropdown-item').on('click', function () {
+        var sort_by = $(this).attr('data-sort');
+        window.location.href = '{% url "Fin_bankholder" %}?sort_by=' + sort_by;
+  });
+</script>
+
+
+
+    
+
+{% endblock %}

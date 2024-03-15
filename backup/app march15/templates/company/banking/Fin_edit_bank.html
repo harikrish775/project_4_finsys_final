@@ -1,0 +1,202 @@
+{% extends 'company/Fin_base.html' %}
+{% load static %}
+{% block body %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div class="text-right">
+    <a href="{% url 'Fin_banking_listout' %}" class="btn-sm  px-2" ><i class="fa fa-times"></i></a>
+</div>
+<div class="card radius-15 h-20">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h2 class="mt-3">EDIT BANK</h2>
+                    </center>
+                </div>
+               
+            </div>
+            <hr style="width:95%">
+        </div>
+    </div>
+</div>
+<div class="page-content">
+
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="container-fluid">
+                <form id="bankForm" method="post" action="{% url 'Fin_edit_bank_account' bank.id %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">BANK NAME</label>
+
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <label for="">ACCOUNT NUMBER</label>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="bname" id="bname" value="{{bank.bank_name}}">
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="number" name="acc_num" id="acc_num" oninput="validateAccountNumber()"
+                            value="{{bank.account_number}}">
+                            <div id="accountNumberError" style="color: red;"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">BANK IFSC CODE</label>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-5 p-2">
+                            <label for="">BRANCH NAME</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="ifsc" value="{{bank.ifsc_code}}">
+                        </div>
+                        <div class="col-md-2"></div>
+
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="text" name="branch" value="{{bank.branch_name}}">
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-5 p-2">
+                            <label for="">OPENING BALANCE</label>
+                        </div>
+                        <div class="col-md-2"></div>
+
+                        <div class="col-md-5 p-2">
+                            <label for="">DATE</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-5 form-inline p-2">
+
+                            <input class="form-control" type="number" name="Opening" value="{{bank.opening_balance}}">
+                            <select class="form-control" name="op_type" id="">
+                                <option value="{{bank.opening_balance_type}}" selected>{{bank.opening_balance_type}}</option>
+                                <option value="CREDIT">CREDIT</option>
+                                <option value="DEBIT">DEBIT</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+
+                        <div class="col-md-5 p-2">
+                            <input class="form-control" type="date" name="date" id="dateInput" value="{{bank.date}}">
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mb-5">
+                        <div class="col-md-8 mt-3"></div>
+                        <div class="col-md-2 mt-3">
+
+                        </div>
+                        <div class="col-md-2 mt-3">
+                            <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                Save Bank Account
+                            </button>
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Event listener for account number input
+        $('#acc_num').on('input', function () {
+            // Get the entered account number
+            var accountNumber = $(this).val();
+            console.log(accountNumber);
+            // Get the bank name (you may adjust this based on how you get the bank name)
+            var bankName = $('#bname').val();
+            console.log(bankName);
+            // Perform AJAX request to check if the account number exists
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'Fin_banking_check_account_number' %}",  // Replace with your Django view URL for checking account number
+                data: {
+                    'bank_name': bankName,
+                    'account_number': accountNumber
+                },
+                success: function (data) {
+                    // Display error message if account number exists
+                    if (data.exists) {
+                        $('#accountNumberError').text('Account number already exists for this bank.');
+                    } else {
+                        // Clear the error message if account number is unique
+                        $('#accountNumberError').text('');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    var validationTimer;
+
+    function validateAccountNumber() {
+        clearTimeout(validationTimer);
+
+        // Set a delay before triggering the validation
+        validationTimer = setTimeout(function() {
+            var accountNumber = document.getElementById('acc_num').value;
+
+            // Check if the account number has exactly 15 digits
+            if (accountNumber.length === 15) {
+                // Clear the error message if the length is correct
+                document.getElementById('accountNumberError').innerText = '';
+            } else {
+                // Display an error message if the length is not 15
+                document.getElementById('accountNumberError').innerText = 'Account number must be 15 digits.';
+            }
+        }, 500); // Set the delay time in milliseconds (adjust as needed)
+    }
+</script>
+
+<script>
+    // Get the current date
+    var currentDate = new Date();
+
+    // Format the date to YYYY-MM-DD (required format for date input)
+    var formattedDate = currentDate.toISOString().slice(0, 10);
+
+    // Set the value of the date input field
+    document.getElementById('dateInput').value = formattedDate;
+</script>
+
+{% endblock %}

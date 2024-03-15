@@ -6,6 +6,7 @@
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
    
     <style>
 
@@ -316,6 +317,9 @@ footer p {
     }
 
 
+    function goBack() {
+      window.history.back();
+    }
     
 </script>
 
@@ -378,7 +382,9 @@ footer p {
     
 
     <div class="page-content"  id="page-content">
+        <a class="d-flex justify-content-end p-2" href="{% url 'Fin_recurring_bill_list' %}" style="cursor: pointer;"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></a>
         <div class="card radius-15">
+            <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
             <div class="card-body">
                 <div class="card-title">
                     <center><h2 class="mb-0">RECURRING BILL</h2> <h4></h4></center>
@@ -475,7 +481,7 @@ footer p {
                                     <div class="dropdown nav-item " style="margin-top: 10px;"  >
                                         <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey "data-toggle="dropdown">History</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
-                                            <a class="dropdown-item" style="cursor: pointer;" >{% if lastHistory.action == 'Edited' %}Last edited by :{% else %}Created by : {% endif %} {{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</a>
+                                            
                                             <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
                                         </ul>
                                     </div>
@@ -491,6 +497,14 @@ footer p {
         </div>
         
         <script>
+            function slipHideButtons() {
+                document.getElementById("printLi").style.display = "";
+                document.getElementById("pdfLi").style.display = "";
+                document.getElementById("shareLi").style.display = "none";
+                document.getElementById("deleteLi").style.display = "none";
+                document.getElementById("attachLi").style.display = "none";
+            }
+
             function unhideButtons() {
                 document.getElementById("printLi").style.display = "";
                 document.getElementById("pdfLi").style.display = "";
@@ -515,9 +529,12 @@ footer p {
 
         <div id="overviewdiv">
             <input type="text" style="display: none;" value="{{bill1.id}}" id="rBillNo">
+            
             <div id="details">
                 <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
                     <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
+                        <h5 class="mt-3 ml-5 mb-3">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited by :</span> {% else %} <span style="color: green;">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;" class="ml-5" for="">{{lastHistory.date}}</label> </h5>
+                        <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3>
                         <div class="p-5">
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-4 mt-3">
@@ -769,6 +786,10 @@ footer p {
                             <h3 class="fw-bold mb-5 mt-2 pt-1">Recurring Bill Tax Details</h3>
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Bill status</h5>
+                                <h4 {%if bill1.status == 'Save'%} style="color: green;" {% else %} style="color: yellow;" {% endif %} >{{ bill1.status }}</h4>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Grand Total</h5>
                                 <h6>{{ bill1.grand_total }}</h6>
                             </div>
@@ -813,10 +834,10 @@ footer p {
                                 <h5 class="">Shipping Charge</h5>
                                 <h6>{{ bill1.shipping_charge}}</h6>
                             </div>
-                            <div class="d-flex justify-content-between mb-4">
+                            <!-- <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Status</h5>
                                 <h6>{{ bill1.status }}</h6>
-                            </div>
+                            </div> -->
                             <hr class="my-4">
                             
                             
@@ -1009,7 +1030,7 @@ footer p {
                             <!-- <footer>
                                 <hr>
                                 <p class="m-0 text-center">
-                                    View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                                    View THis Recurring Bill Online At - <a href="#!"> Recurring Bill/saburbd.com/#868 </a>
                                 </p>
                                 <div class="social pt-3">
                                     <span class="pr-2">
@@ -1045,16 +1066,16 @@ footer p {
                         <div id="printdiv2">
                             <div class="row px-5 py-4" style="background-color:#268ddd;" >
                                 <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
-                                  <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{invoice.status}}<!----></div>
+                                  <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{bill1.status}}<!----></div>
                               </div>
                               <div class="col-md-4 d-flex justify-content-center">
-                                  <center class="h3 text-white"><b>Invoice</b></center>
+                                  <center class="h3 text-white"><b>Recurring Bill</b></center>
                               </div>  
                               <div class="col-md-4 d-flex justify-content-end">
                                   <div class="text-white">
-                                      <p class="mb-0 mt-2">Invoice No: <b>{{invoice.invoice_no }}</b></p>
-                                      {%if invoice.salesOrder_no %}
-                                      <p class="mb-0 mt-2">Order No: <b>{{invoice.salesOrder_no }}</b></p>
+                                      <p class="mb-0 mt-2">Recurring Bill No: <b>{{bill1.recurring_bill_number }}</b></p>
+                                      {%if bill1.purchase_order_number %}
+                                      <p class="mb-0 mt-2">Order No: <b>{{bill1.purchase_order_number }}</b></p>
                                       {% endif %}
                                   </div>
                               </div>
@@ -1065,22 +1086,27 @@ footer p {
                                       <div class="row bb pb-2 mt-3">
                                           <div class="col-4 pl-0">
                                               <label class="text-white w-100 p-1" style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>COMPANY ADDRESS</b></label>
-                                              <h5 class="text-secondary" style="font-weight: bold;">{{cmp.Company_name}}</h5>
+                                              <h5 class="text-secondary" style="font-weight: bold;">{{companyName}}</h5>
                                               <p class="address" style="font-weight: bold;color: #000;">
-                                                  {{cmp.Address}}
+                                                  {{companyData.caddress}}
                                                   <br>
-                                                  {{cmp.City}}
+                                                  {{companyData.city}}
                                                   <br>
-                                                  {{cmp.State}} - {{cmp.Pincode}}
+                                                  {{companyData.state}} - {{companyData.pincode}}
                                                   <br>
-                                                  <span>Mob: </span><b>{{cmp.Contact}}</b>
+                                                  <span>Mob: </span><b>{{companyData.phone}}</b>
                                               </p>  
                                           </div>
                                           <div class="col-4"></div>
                                           <div class="col-4 pr-0">
                                               <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>SHIPPING ADDRESS</b></label>
-                                              <h5 class="text-secondary" style="font-weight: bold;">{{invoice.Customer.title}} {{invoice.Customer.first_name}} {{invoice.Customer.last_name}}</h5>
-                                              <p class="address" style="font-weight: bold;color: #000;">{{ invoice.billing_address | linebreaksbr}} </p>
+                                              <h5 class="text-secondary" style="font-weight: bold;"> {{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
+                                              <p class="address" style="font-weight: bold;color: #000;">{{ bill1.customer.billing_street | linebreaksbr}}
+                                                {{ bill1.customer.billing_city}} <br>
+                                                {{ bill1.customer.billing_state}}, {{ bill1.customer.billing_pincode}} <br>
+                                                {{ bill1.customer.billing_country }} <br>
+                                                <span>Mob: </span><b>{{ bill1.customer.mobile }}</b>
+                                                 </p>
                                           </div>
                                       </div>
                                       
@@ -1101,13 +1127,13 @@ footer p {
                                           </tr>
                                       </thead>
                                       <tbody  style="background-color: #999999;">
-                                          {% for itm in invItems %}
+                                          {% for itm in items %}
                                               <tr>
-                                                  <td class="text-center" style="color:black">{{ itm.Item.name}}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.items.name}}</td>
                                                   <td class="text-center" style="color:black">{{ itm.hsn }}</td>
                                                   <td class="text-center" style="color:black">{{ itm.quantity }}</td>
                                                   <td class="text-center" style="color:black">{{ itm.price  }}</td>
-                                                  <td class="text-center" style="color:black">{{ itm.tax  }}%</td>
+                                                  <td class="text-center" style="color:black">{{ itm.tax_rate  }}%</td>
                                                   <td class="text-center" style="color:black">{{ itm.discount  }}</td>
                                                   <td class="text-center" style="color:black">{{ itm.total }}</td>
                                               </tr>
@@ -1121,11 +1147,11 @@ footer p {
                                       <div class="col-4">
                                           <table class="table table-borderless">
                                               <tbody>
-                                                  {% if invoice.note %}
+                                                  {% if bill1.description %}
                                                   <tr >
                                                       <td style="color: #000;text-align: left;">Note</td>
                                                       <td style="color: #000;text-align: left;">:</td>
-                                                      <th style="color: #000;text-align: center;">{{invoice.note}}</th>
+                                                      <th style="color: #000;text-align: center;">{{bill1.description}}</th>
                                                   </tr>
                                                   {% endif %}
       
@@ -1139,48 +1165,48 @@ footer p {
                                                   <tr >
                                                       <td style="color: #000;">Sub Total</td>
                                                       <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{invoice.subtotal}}</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
                                                   </tr>
                                                   
-                                                  {% if invoice.igst != 0 %}
+                                                  {% if bill1.taxAmount_igst != 0 %}
                                                   <tr >
                                                       <td style="color: #000;">IGST</td>
                                                       <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{invoice.igst}}</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                   </tr>
                                                   {% endif %}
-                                                  {% if invoice.cgst != 0 %}
+                                                  {% if bill1.cgst != 0 %}
                                                   <tr>
                                                       <td style="color: #000;">CGST</td>
                                                       <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{invoice.cgst}}</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
                                                       
                                                   </tr>
                                                   {% endif %}
-                                                  {% if invoice.sgst != 0 %}
+                                                  {% if bill1.sgst != 0 %}
                                                   <tr>
                                                       <td style="color: #000;">SGST</td>
                                                       <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{invoice.sgst}}</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
                                                   </tr>
                                                   {% endif %}
                                                   <tr >
                                                     <td style="color: #000;">Tax Amount</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.tax_amount}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                 </tr>
-                                                {% if invoice.shipping_charge != 0 %}
+                                                {% if bill1.shipping_charge != 0 %}
                                                 <tr >
                                                     <td style="color: #000;">Shipping Charge</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.shipping_charge}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.shipping_charge}}</td>
                                                 </tr>
                                                 {% endif %}
-                                                {% if invoice.adjustment != 0 %}
+                                                {% if bill1.adjustment != 0 %}
                                                 <tr >
                                                     <td style="color: #000;">Adjustment</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.adjustment}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.adjustment}}</td>
                                                 </tr>
                                                 {% endif %}
                                               </tbody>
@@ -1192,7 +1218,7 @@ footer p {
                                                   <tr >
                                                       <th style="color: #000;">Grand Total</th>
                                                       <th style="color: #000;">:</th>
-                                                      <th class="text-right" style="color: #000;">{{invoice.grandtotal}}</th>
+                                                      <th class="text-right" style="color: #000;">{{bill1.grandtotal}}</th>
                                                   </tr>
                                               </tbody>
                                           </table>
@@ -1211,12 +1237,12 @@ footer p {
                         <div class="" id="printdiv3">
                             <div class="row">
                                 <div class="col-sm-12" style="background-image: linear-gradient(#1b83e8, black); color: white;">
-                                    <p style="font-size: 4vh; text-align: center;">INVOICE</p>
-                                    <p style=" text-align: center;"> {{cmp.Company_name}} <br>
-                                        {{cmp.Address}} <br>
-                                        {{cmp.City}},
-                                        {{cmp.State}}<br>
-                                        {{cmp.Email}}
+                                    <p style="font-size: 4vh; text-align: center;">Recurring Bill</p>
+                                    <p style=" text-align: center;"> {{companyName}} <br>
+                                        {{companyData.caddress}} <br>
+                                        {{companyData.city}},
+                                        {{companyData.state}}<br>
+                                        {{companyData.Email}}
                                         <br>
                                     </p>
                                 </div>
@@ -1226,8 +1252,11 @@ footer p {
                                     <div class="col-5">
                                         <br><br><br>
                                         <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
-                                        {{invoice.Customer.title}} {{invoice.Customer.first_name}} {{invoice.Customer.last_name}}<br>
-                                        {{invoice.billing_address|linebreaksbr }}
+                                         {{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                        {{bill1.customer.billing_street|linebreaksbr }}
+                                        {{bill1.customer.billing_city }} <br>
+                                        {{bill1.customer.billing_state }},{{bill1.customer.billing_pincode }} <br>
+                                        {{bill1.customer.billing_country }} <br>
                                         </p>
                                     </div>
                                     <div class="col-md-1"></div>
@@ -1236,30 +1265,30 @@ footer p {
                                         <table class="table table-borderless">
                                             <tbody>
                                                 <tr >
-                                                    <td style="color: #000; font-weight: bold;">Invoices No</td>
+                                                    <td style="color: #000; font-weight: bold;">Recurring Bill No</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{ invoice.invoice_no }}</td>
+                                                    <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
                                                 </tr>
-                                                {%if invoice.salesOrder_no %}
+                                                {%if bill1.recurring_bill_number %}
                                                 <tr >
                                                     <td style="color: #000; font-weight: bold;">Order No</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{ invoice.salesOrder_no }}</td>
+                                                    <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
                                                 </tr>
                                                 {% endif %}
                                                 
                                                 <tr >
-                                                    <td style="color: #000; font-weight: bold;">Invoice Date</td>
+                                                    <td style="color: #000; font-weight: bold;">Recurring Bill Date</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.invoice_date | date:'d-m-Y'}}<td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.date | date:'d-m-Y'}}<td>
                                                 </tr>
  
-                                                <tr>
+                                                <!-- <tr>
                                                     <td style="color: #000; font-weight: bold;">Shipment Date</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.duedate | date:'d-m-Y'}}</td>
+                                                    <td class="text-right" style="color: #000;"></td>
                                                     
-                                                </tr>
+                                                </tr> -->
                                             </tbody>
         
                                         </table>
@@ -1280,13 +1309,13 @@ footer p {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for itm in invItems %}
+                                            {% for itm in items %}
                                                 <tr>
-                                                    <td class="text-center" style="color: black;">{{ itm.Item.name}}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.items.name}}</td>
                                                     <td class="text-center" style="color: black;">{{ itm.hsn }}</td>
                                                     <td class="text-center" style="color: black;">{{ itm.quantity }}</td>
                                                     <td class="text-center" style="color: black;">{{ itm.price }}</td>
-                                                    <td class="text-center" style="color: black;">{{ itm.tax }}%</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.tax_rate }}%</td>
                                                     <td class="text-center" style="color: black;">{{ itm.discount }}</td>
                                                     <td class="text-center" style="color: black;">{{ itm.total }}</td>
                                                 </tr>
@@ -1305,48 +1334,48 @@ footer p {
                                                 <tr >
                                                     <td style="color: #000;">Sub Total</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.subtotal}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
                                                 </tr>
                                                 
-                                                {% if invoice.igst != 0 %}
+                                                {% if bill1.taxAmount_igst != 0 %}
                                                 <tr >
                                                     <td style="color: #000;">IGST</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.igst}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                 </tr>
                                                 {% endif %}
-                                                {% if invoice.cgst != 0 %}
+                                                {% if bill1.cgst != 0 %}
                                                 <tr>
                                                     <td style="color: #000;">CGST</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.cgst}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
                                                     
                                                 </tr>
                                                 {% endif %}
-                                                {% if invoice.sgst != 0 %}
+                                                {% if bill1.sgst != 0 %}
                                                 <tr>
                                                     <td style="color: #000;">SGST</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.sgst}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
                                                 </tr>
                                                 {% endif %}
                                                 <tr >
                                                     <td style="color: #000;">Tax Amount</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.tax_amount}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                 </tr>
-                                                {% if invoice.shipping_charge != 0 %}
+                                                {% if bill1.shipping_charge != 0 %}
                                                 <tr >
                                                     <td style="color: #000;">Shipping Charge</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.shipping_charge}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.shipping_charge}}</td>
                                                 </tr>
                                                 {% endif %}
-                                                {% if invoice.adjustment != 0 %}
+                                                {% if bill1.adjustment != 0 %}
                                                 <tr >
                                                     <td style="color: #000;">Adjustment</td>
                                                     <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{invoice.adjustment}}</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.adjustment}}</td>
                                                 </tr>
                                                 {% endif %}
                                             </tbody>
@@ -1358,7 +1387,7 @@ footer p {
                                                 <tr >
                                                     <th style="color: #000;">Grand Total</th>
                                                     <th style="color: #000;">:</th>
-                                                    <th class="text-right" style="color: #000;">{{invoice.grandtotal}}</th>
+                                                    <th class="text-right" style="color: #000;">{{bill1.grandtotal}}</th>
                                                 </tr>
                                                 <tr >
                                             </tbody>
@@ -1420,7 +1449,7 @@ footer p {
                                 <div><br>
                                     <div class="equal-length-container" style="color: black; font-weight: bold;">
                                         <div class="equal-length-item" style=" text-align: center;">
-                                            Product
+                                            Items
                                             <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
                                         </div>
                                         <div class="equal-length-item ml-2"  style=" text-align:center;">
@@ -1487,7 +1516,7 @@ footer p {
                                             {{ bill1.sub_total }}
                                         </div>
                                     </div>
-                                    {% if bill1.igst != 0 %}
+                                    {% if bill1.taxAmount_igst != 0 %}
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left " style=" color: black;">
                                             IGST
@@ -1674,7 +1703,7 @@ footer p {
             </div>
             <div class="modal-body">
                 <div class="card p-3">
-                    <form method="post" id="mailForm">
+                    <form method="post" action="{% url 'Fin_shareRBToEmail' bill1.id %}" id="mailForm">
                         {% csrf_token %}
                         <div class="modal-body">
                             <div>
@@ -1748,38 +1777,35 @@ footer p {
 
     <script>
 
-$(document).ready(function ($) {
-        $(document).on('submit', '#mailForm', function (event) {
-            event.preventDefault();
-            // Your existing code to generate the PDF
-            var print1 = document.getElementById('whatToPrint1');
-            var print2 = document.getElementById('whatToPrint2');
-            var print3 = document.getElementById('whatToPrint3');
-            var print4 = document.getElementById('slipdiv');
-
-            var newAction;
-
-            if (print1.style.display !== 'none'){
-                newAction = "{% url 'Fin_recurring_bill_template1_email' %}";
-
-            } else if (print2.style.display !== 'none'){
-                newAction = "{% url 'Fin_recurring_bill_template2_email' %}";
-
-            } else if (print3.style.display !== 'none'){
-                newAction = "{% url 'Fin_recurring_bill_template3_email' %}";
-
-            } else if (print4.style.display !== 'none'){
-                newAction = "{% url 'Fin_recurring_bill_slip_email' %}";
-
-            }  
-            // Set new action URL
-            this.action = newAction;
-
-            // Submit the form
-            this.submit();
+// $(document).ready(function ($) {
+//         $(document).on('submit', '#mailForm', function (event) {
+//             event.preventDefault();
+//             // Your existing code to generate the PDF
+//             var print1 = document.getElementById('whatToPrint1');
+//             var print2 = document.getElementById('whatToPrint2');
+//             var print3 = document.getElementById('whatToPrint3');
+//             var print4 = document.getElementById('slipdiv');
             
-        });
-    });
+
+//             var newAction;
+
+//             if (print4.style.display !== 'none'){
+//                
+//             } else {
+//                 newAction = "{% url 'Fin_shareRBToEmail' bill1.id %}";
+//             }  
+
+            
+//             // Set new action URL
+//             this.action = newAction;
+
+//             // Submit the form
+//             this.submit();
+            
+//         });
+//     }); //LATEST (MARCH 15)
+
+
         
         // $(document).ready(function ($) { //send mail
         //     $(document).on('submit', '#mailForm', function (event) {
@@ -2006,7 +2032,7 @@ $(document).ready(function ($) {
                 document.getElementById('templatelink').style.backgroundColor='transparent';
                 document.getElementById('overviewlink').style.backgroundColor='transparent';
                 document.getElementById('sliplink').style.backgroundColor='rgba(22,37,50,255)';
-                unhideButtons();
+                slipHideButtons()
             }
         </script>
 

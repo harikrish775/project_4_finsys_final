@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    /* .table2 {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color: rgb(221, 247, 247);
+
+    } */
+
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .account_data {
+        font-size: 1.2rem;
+    }
+
+    .acc_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .acc_label, .acc_value {
+        font-weight: bold;
+    }
+
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black; font-size: 1.5rem;"><b>{{account.account_name}} - TRANSACTIONS</b></center>
+                </div>
+                <div style="width: 100%;">
+                    <div class="account_data">
+                        <div class="acc_row">
+                            <div class="acc_label">Account Type: {{account.account_type}}</div>
+                            <div class="acc_value stock_value"><span id="stockValue">Account Code: {{account.account_code}}</span></div>
+                        </div>
+                        <div class="acc_row">
+                            <div class="acc_label"></div>
+                            <div class="acc_value stock_value"><span id="stockValue">Balance: {{account.balance}}</span></div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="text-transform: uppercase;">Date</th>
+                            <th class="text-center" style="text-transform: uppercase;">Type</th>
+                            <th class="text-center" style="text-transform: uppercase;">Debit</th>
+                            <th class="text-center" style="text-transform: uppercase;">Credit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="clickable-row" data-href="" >
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;"> - </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

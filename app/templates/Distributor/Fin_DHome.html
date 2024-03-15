@@ -50,4 +50,54 @@
 </div>
 
 
+<!-- Modal -->
+{% if not payment_request %}
+{% if alert_message %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="background-color: #213b52;;border: 1px solid rgba(255, 255, 255, 0.3);">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">
+            <i class="fa fa-exclamation-triangle fa-lg text-danger ms-1"></i>
+            <span class="font-monospace">
+                
+                Payment Term Ends in 
+                {% if days_left != 0 %}
+                <span class="text-danger">{{ days_left }} days</span>
+                {% else %}
+                <span class="text-danger">Today</span>
+                {% endif %}
+            </span>
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      <div class="modal-body">
+        <h6 class="text-white mt-1 ">Your current plan is expiring on {{ data.End_date }}</h6>
+        <div class="row mb-3 mt-3">
+          <div class="col-md-4"></div>
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+            <a class="btn btn-sm btn-success ms-5" href="{% url 'Fin_DProfile' %}"><small>click to renew</small></a>
+          </div>
+        </div>
+      </div>
+      
+    
+      </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
+<script>
+    // Show the modal after a delay when the page loads
+    $(document).ready(function(){
+        setTimeout(function(){
+        $('#myModal').modal('show');
+        }, 2000); // Adjust the delay time in milliseconds (e.g., 3000 for 3 seconds)
+    });
+</script>
+
 {% endblock %}

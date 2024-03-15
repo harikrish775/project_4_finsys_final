@@ -1,0 +1,191 @@
+{% extends 'Distributor/Fin_DBase.html' %}
+{% block body %}
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+                        <h3 class="mb-0" style="font-weight: bolder;">MY PROFILE</h3>
+                   
+                        {% if data.Image %}
+                        <img src="{{ data.Image.url }}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% else %}
+                        <img src="{% static 'assets\images\user-1.jpg'%}"  class="img img-fluid m-3"
+                        style="width: 150px; height: 150px; border-radius: 50%">
+                        {% endif %}
+                      
+
+
+                    <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 col-md-offset-3">
+                          
+                            <label for="last_name">Distributor Code</label>
+                            <input type="text" name="last_name" id="last_name" value="{{ data.Distributor_Code }}"
+                           class="form-control" style="background-color: #2f516f;color: white;width: 70%;" readonly>
+                           
+                         
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                    </center>
+                    <hr>
+                    <form method="post" action="" class="needs-validation mb-5" novalidate>
+                        {% csrf_token %}
+                        <h4 class="m-4">Personal Info</h4>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="first_name">First Name</label>
+                                <input type="text" name="first_name" id="first_name" value="{{ data.Login_Id.First_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" value="{{ data.Login_Id.Last_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="email">E-mail</label>
+                                <input type="email" name="email" id="email" value="{{ data.Email }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="username">Username</label>
+                                <input type="text" name="username" id="username" value="{{ data.Login_Id.User_name }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="contact">Contact</label>
+                                <input type="contact" name="contact" id="email" value="{{ data.Contact }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="jd">Join Date</label>
+                                <input type="jd" name="jd" id="jd" value="{{ data.Start_Date }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+                        <div class="row m-3">
+                            <div class="col-md-6">
+                                <label for="pt">Payment Terms</label>
+                                <div class="d-flex">
+                                    <input type="pt" name="pt" id="pt" value="{{ data.Payment_Term.payment_terms_number }} {{ data.Payment_Term.payment_terms_value }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;border-radius: 10px 0px 0px 10px;" readonly>
+
+                                       <button type="button" style="border-radius: 0px 10px 10px 0px;"
+                                       title="change Payment Term" type="button" class="btn btn-info"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                           <i class='bx bx-right-arrow-circle'></i>
+                                         </button>      
+                                </div>          
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ed">End Date</label>
+                                <input type="ed" name="ed" id="ed" value="{{ data.End_date }}"
+                                       class="form-control" style="background-color: #2f516f;color: white;" readonly>
+                            </div>
+                        </div>
+
+
+                        
+                    
+                        <div class="row mt-5">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <a href="{% url 'Fin_Edit_Dprofile' %}">
+                                <button class="btn btn-outline-info rounded-pill w-100 h-100 text-light" type="button">
+                                    Edit Profile
+                                </button>
+                            </a>
+                            </div>
+                            
+                            <div class="col-md-4"></div>
+                        </div>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+       <!-- Modal -->
+       <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content" style="background-color: white;">
+            <div class="modal-header" style="border-bottom: 1px solid gray;">
+            <h5 class="modal-title fs-5 " id="exampleModalLabel" style="color: black;"><b>Change Payment Terms</b></h5>
+            <button type="button" class="btn-close text-danger" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;border: none;">
+                <i class='bx bx-right-arrow-circle' style="font-size: 22px;"></i>
+            </button>
+            
+            </div>
+            
+            <div class="modal-body">
+                <form action="{% url 'Fin_DChange_payment_terms' %}" method="post" style="padding: 10px;">
+                    {% csrf_token %}
+                    <label for="" style="color: black;margin-left: 20px;">current Payment Term</label><br>
+                    <input type="text" value="{{ data.Payment_Term.payment_terms_number }} {{ data.Payment_Term.payment_terms_value }}" 
+                    style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly> <br>
+
+
+                    <label for="" style="color: black;margin-left: 20px;">End Date</label><br>
+                    <input type="text" value="{{ data.End_date }}" 
+                    style="border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;margin-bottom: 10px;" readonly>
+
+
+                    <label for="" style="color: black;margin-left: 20px;">Choose New</label><br>
+                    <select name="payment_term" id="" 
+                    style="margin-bottom: 20px; border: 1px solid gray; border-radius: 8px; font-weight: 500;width: 90%;margin-left: 20px;padding: 8px;" >
+                        <option value="" style="background-color: white;">Choose Payment terms</option>
+                        {% for t in terms %}
+                        <option value="{{t.id}}" style="background-color: white;">{{t.payment_terms_number}} {{t.payment_terms_value}}</option>
+                        {% endfor %}
+                    </select>
+
+                    <center><button type="submit" class="btn btn-info" style="border-radius: 30px;width: 50%;"><b>Submit</b></button></center>
+                </form>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid black;">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        $(document).ready(function() {
+         
+        var x=$('#gsttype').val();
+        if(x=="unregistered Business") 
+        {
+            $(".gstrow").removeClass('d-block');
+            $(".gstrow").addClass('d-none');
+
+        }
+        else if(x == 'Overseas'){
+            $(".gstrow").removeClass('d-block');
+            $(".gstrow").addClass('d-none');
+        }
+        else 
+        {
+            $(".gstrow").removeClass('d-none');
+            $(".gstrow").addClass('d-block');
+        }
+        
+         
+    });
+  </script>
+{% endblock %}

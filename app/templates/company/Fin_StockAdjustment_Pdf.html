@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .invoice_data {
+        font-size: 1.2rem;
+        margin-top: 10px;
+    }
+
+    .data_row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 60px;
+        /* margin-bottom: 4px; */
+    }
+
+    .data_1, .data_2 {
+        font-weight: bold;
+    }
+
+    .data_value {
+        flex: 1;
+        text-align: right;
+    }
+
+    .balance_info{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+    .balance_info .bal_head{
+        width: 48%;
+    }
+
+    .bal_value{
+        width: 48%;
+        flex: 1;
+        text-align: right;
+    }
+
+
+ 
+
+
+
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color:black; " >
+                        <b>
+                            <p style="font-size: 1.3rem;">STOCK ADJUSTMENT</p>
+                        </b>
+                        <p> {{com.Company_name}}<br>
+                            {{com.Address}} <br>
+                            {{com.City}},
+                            {{com.State}}<br>
+                            {{com.Email}}
+                        </p>
+                    </center>
+                </div>
+                <hr>
+                
+                <div style="width: 100%; " >
+                    <b>
+                        <div style="text-align: center;">
+                            <span style="font-size: 1.3rem; text-align: center;">STOCK ADJUSTMENT DETAILS</span ><br>
+                                <span  style="text-align: center;">Created by : {{stocks.login_details.First_name}}</span >
+
+                        </div>
+                        
+                    </b>
+                    <br>
+                    
+                    <div class="invoice_data" style="margin-left: 210px;">
+                        <!-- <div class="data_row">
+                            <div class="data_1 data_value">Sales Order No: {{order.sales_order_no}}</div>
+                            <div class="data_2 data_value">Sales Order Date: {{order.sales_order_date}}</div>
+                        </div> -->
+                        <div class="data_row" style="margin-left: 250px;">
+                            <div class="data_1">Reference Number &nbsp;&nbsp;:&nbsp;&nbsp;{{ stocks.reference_no }}</div>
+                            <div class="data_2" ></div>
+                        </div>
+                        <div class="data_row" >
+                            <div class="data_1">Reason &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;{{ stocks.reason }}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        <div class="data_row" >
+                            <div class="data_1">Date &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ stocks.adjusting_date }}</div>
+                            <div class="data_2" ></div>
+                        </div>
+                        <div class="data_row" >
+                            <div class="data_1">Mode of Adjustment:&nbsp;&nbsp;{{ stocks.mode_of_adjustment }}</div>
+                            <div class="data_2" ></div>
+                        </div>
+                        <div class="data_row" >
+                            <div class="data_1">Status &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ stocks.status }}</div>
+                            <div class="data_2" ></div>
+                        </div>
+                        <div class="data_row" >
+                            <div class="data_1">Created By &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;{{ stocks.login_details.First_name }}</div>
+                            <div class="data_2" ></div>
+                        </div>
+                        
+                        <!-- <div class="data_row">
+                            <div class="data_1">Customer:<br><b>{{order.Customer.title}}. {{order.Customer.first_name}} {{order.Customer.last_name}}</b><br>{{order.billing_address|linebreaksbr}}</div>
+                            <div class="data_2"></div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <br>
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        {% if stocks.mode_of_adjustment == "Quantity" %}
+                        <tr>
+                            <th style="text-align: center; text-transform:uppercase;">Item</th>
+                            <th style="text-align: center; text-transform:uppercase;">Quantity Available</th>
+                            <th style="text-align: center; text-transform:uppercase;">New Quantity on hand</th>
+                            <th style="text-align: center; text-transform:uppercase;">Quantity Adjusted</th>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <th style="text-align: center; text-transform:uppercase;">Item</th>
+                            <th style="text-align: center; text-transform:uppercase;">Value Available</th>
+                            <th style="text-align: center; text-transform:uppercase;">New Stock in Value</th>
+                            <th style="text-align: center; text-transform:uppercase;">Adjusted Stock in Value</th>
+                        </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% if stocks.mode_of_adjustment == "Quantity" %}
+                        {% for j in st_items %}
+                        <tr>
+                            <td style="text-align: center;">{{ j.item.name }}</td>
+                            <td style="text-align: center;">{{ j.quantity_avail }}</td>
+                            <td style="text-align: center;">{{ j.quantity_inhand }}</td>
+                            <td style="text-align: center;">{{ j.quantity_adj }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        {% for j in st_items %}
+                        <tr>
+                            <td style="text-align: center;">{{ j.item.name }}</td>
+                            <td style="text-align: center;">{{ j.current_val }}</td>
+                            <td style="text-align: center;">{{ j.changed_val }}</td>
+                            <td style="text-align: center;">{{ j.adjusted_val }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </section>
+            <br>
+            <hr>
+        </div>
+    </div>
+</body>
+
+</html>

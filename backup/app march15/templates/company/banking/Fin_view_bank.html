@@ -1,0 +1,1588 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+
+{% load static %}
+<style>
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 2rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+
+    /* hr {
+        border: 0;
+        clear:both;
+        display:block;
+        width: 96%;               
+        background-color:#000000;
+        height: 1px;
+      } */
+    .spaced>li {
+        color: black;
+        font-size: 20px;
+    }
+
+    .table1 {
+        font-size: 20px;
+        width: 100%;
+        color: black;
+
+    }
+
+    .label-lg {
+        padding: .3em .6em .4em;
+        font-size: 22px;
+        color: black;
+        line-height: 1.1;
+        height: 24px
+    }
+
+    .widget-header {
+        background-color: #444;
+        color: white;
+        font-size: 24px;
+    }
+
+    .widget-header:after,
+    .widget-header:before {
+        content: "";
+        display: table;
+        line-height: 0
+    }
+
+    .widget-header:after {
+        clear: right
+    }
+
+    .widget-box.collapsed>.widget-header {
+        border-bottom-width: 0
+    }
+
+    .collapsed.fullscreen>.widget-header {
+        border-bottom-width: 1px
+    }
+
+    .collapsed>.widget-body {
+        display: none
+    }
+
+    .widget-header-flat {
+        background: #F7F7F7
+    }
+
+    .widget-header-large {
+        min-height: 49px;
+        padding-left: 18px
+    }
+
+
+
+    .widget-header-small {
+        min-height: 31px;
+        padding-left: 10px
+    }
+
+    .widget-header>.widget-title {
+        line-height: 36px;
+        padding: 0;
+        margin: 0;
+        display: inline;
+        font-size: 23px;
+    }
+
+
+
+    .widget-toolbar {
+        display: inline-block;
+        padding: 0 10px;
+        line-height: 37px;
+        float: right;
+        position: relative
+    }
+
+
+
+
+
+
+
+    .widget-body {
+        background-color: #FFF
+    }
+
+    .widget-main {
+        padding: 12px
+    }
+
+    @media screen and (max-width:768px) {
+        h1 {
+            font-size: 60px !important;
+        }
+
+    }
+
+
+
+
+    #div1 {
+        /* background-color: rgb(0, 255, 21); */
+        width: 33.33%;
+        float: left;
+        height: 100px;
+        text-align: left;
+    }
+
+    #div2 {
+        /* background-color: rgb(204, 0, 255); */
+        width: 33.33%;
+        margin: auto;
+        height: 100px;
+        text-align: left;
+    }
+
+    #div3 {
+        /* background-color: rgb(255, 162, 0); */
+        width: 33.33%;
+
+        float: right;
+        margin-top: -100px;
+        height: 100px;
+
+
+
+    }
+
+    .ribbon .ribbon-inner {
+        text-align: center;
+        color: #fff;
+        top: -20px;
+        left: -90px;
+        width: 120px;
+        padding: 3px;
+        /* position: relative;
+    transform: rotate(-45deg); */
+    }
+
+    .ribbon .ribbon-open {
+        background-color: #268ddd;
+        border-color: #1c72b4;
+    }
+
+    :root {
+        --body-bg: rgb(204, 204, 204);
+        --white: #ffffff;
+        --darkWhite: #ccc;
+        --black: #000000;
+        --dark: #615c60;
+        --themeColor: #22b8d1;
+        --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    }
+
+    /* Font Include */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+    body {
+        background-color: var(--body-bg);
+    }
+
+    .page {
+        background: var(--white);
+        display: block;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: var(--pageShadow);
+    }
+
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        overflow: hidden;
+    }
+
+    .bb {
+        border-bottom: 3px solid var(--darkWhite);
+    }
+
+    /* Top Section */
+    .top-content {
+        padding-bottom: 15px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    .top-left p {
+        margin: 0;
+        color: #000000;
+    }
+
+    .top-left .graphic-path {
+        height: 40px;
+        position: relative;
+    }
+
+    .top-left .graphic-path::before {
+        content: "";
+        height: 20px;
+        background-color: var(--dark);
+        position: absolute;
+        left: 15px;
+        right: 0;
+        top: -15px;
+        z-index: 2;
+    }
+
+    .top-left .graphic-path::after {
+        content: "";
+        height: 22px;
+        width: 17px;
+        background: var(--black);
+        position: absolute;
+        top: -13px;
+        left: 6px;
+        transform: rotate(45deg);
+    }
+
+    .top-left .graphic-path p {
+        /* color: var(--white); */
+        height: 40px;
+        left: 0;
+        right: -100px;
+        text-transform: uppercase;
+        background-color: var(--themeColor);
+        font: 26px;
+        z-index: 3;
+        position: absolute;
+        padding-left: 10px;
+    }
+
+    /* User Store Section */
+    .store-user {
+        padding-bottom: 25px;
+    }
+
+    .store-user p {
+        margin: 0;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .store-user .address {
+        font-weight: 400;
+    }
+
+    .store-user h5 {
+        color: var(--themeColor);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    .extra-info p span {
+        font-weight: 400;
+
+    }
+
+    /* Product Section */
+    thead {
+        color: var(--white);
+        background: var(--themeColor);
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        text-align: left;
+    }
+
+    .media img {
+        height: 60px;
+        width: 60px;
+    }
+
+    .media p {
+        font-weight: 400;
+        margin: 0;
+
+    }
+
+    .media p.title {
+        font-weight: 600;
+
+    }
+
+    /* Balance Info Section */
+    .balance-info .table td,
+    .balance-info .table th {
+        padding: 0;
+        border: 0;
+    }
+
+    .balance-info tr td:first-child {
+        font-weight: 600;
+    }
+
+    tfoot {
+        border-top: 2px solid var(--darkWhite);
+    }
+
+    tfoot td {
+        font-weight: 600;
+    }
+
+    /* Cart BG */
+    .cart-bg {
+        height: 250px;
+        bottom: 32px;
+        left: -40px;
+        opacity: 0.3;
+        position: absolute;
+    }
+
+    /* Footer Section */
+    footer {
+        text-align: center;
+        position: absolute;
+        bottom: 30px;
+        left: 75px;
+    }
+
+    footer hr {
+        margin-bottom: -22px;
+        border-top: 3px solid var(--darkWhite);
+    }
+
+    footer a {
+        color: var(--themeColor);
+    }
+
+    footer p {
+        padding: 6px;
+        border: 3px solid var(--darkWhite);
+        background-color: var(--white);
+        display: inline-block;
+        color: #000000;
+    }
+
+    .print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        header {
+            display: none;
+        }
+
+        .print-only * {
+            visibility: visible;
+        }
+
+        .print-only {
+            /* position: absolute; */
+
+            /* position: fixed; */
+            left: 0;
+            top: 0;
+            right: 0;
+            height: auto;
+            /* page-break-before: always;
+            page-break-inside: avoid; */
+        }
+
+        @page {
+            size: 100%;
+            margin: 0;
+            height: auto;
+        }
+
+        .print-only table {
+            border-collapse: collapse;
+            border: none;
+            /* You can adjust the border color and width */
+            width: 100%;
+            /* Set the width to 100% of the printed page */
+            margin: 0;
+            /* Remove margins to maximize the width */
+        }
+
+        .print-only th,
+        .print-only td {
+            border: none;
+            /* Apply border to table cells */
+            padding: 8px;
+            /* Add padding for better readability */
+            text-align: center;
+            /* Center-align text in cells */
+        }
+
+    }
+</style>
+
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+<script>
+
+
+    async function generatePDF() {
+        // document.getElementById("downloadButton").innerHTML = "Currently downloading, please wait";
+
+        //Downloading
+        var downloading = document.getElementById("whatToPrint");
+        var doc = new jsPDF('l', 'pt');
+
+        await html2canvas(downloading, {
+            //allowTaint: true,
+            //useCORS: true,
+            // width: 600
+
+        }).then((canvas) => {
+            //Canvas (convert to PNG)
+            doc.addImage(canvas.toDataURL("image/png"), 'PNG', 100, 20, 600, 550);
+        })
+
+        doc.save("Document.pdf");
+
+        //End of downloading
+
+        // document.getElementById("downloadButton").innerHTML = "Click to download";
+    }
+
+
+</script>
+
+
+<!--attachFile modal -->
+<div class="modal fade" id="attachFile" tabindex="-1" role="dialog" aria-labelledby="attachFileLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="attachFileLabel">Add File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'Fin_banking_add_file' bank.id  %}" method="POST" enctype="multipart/form-data" style="background-color: #213b52;">
+                {%csrf_token %}
+                <div class="modal-body">
+                    <input type="file" class="form-control" name="file">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!--commentModal -->
+
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #233D52;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="commentsContainer">
+                <!-- Form to submit a new comment -->
+                <form method="post" action="{% url 'Fin_banking_add_comment' bank.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="commentText">Comment:</label>
+                        <input type="text" class="form-control" id="commentText" name="comment_text" required>
+                    </div>
+                    <!-- <button type="submit" class="btn btn-primary">Submit</button>
+                </form> -->
+                <div class="">
+                <table class="table table-responsive-md mt-4" >
+                    <thead style="background-color: #233D52;">
+                    <tr>
+                        <th>sl no.</th>
+                        <th>Comments</th>
+                        <th>Added By</th>
+                        <th>Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in comments %}
+                    <tr  class="table-row">
+                        <td>{{forloop.counter }}</td>
+                        <td>{{ comment.comment }}</td>
+                        <td>{{comment.login_details.First_name}} {{comment.login_details.Last_name}}</td>
+                        <td><a href="{% url 'Fin_banking_delete_comment' comment.id %}" class="btn delete-comment text-danger"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-info">Submit</button>
+        </div>
+    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="page-content ">
+    <div class="text-right">
+        <a href="{% url 'Fin_banking_listout' %}" class="btn-sm  px-2" ><i class="fa fa-times"></i></a>
+    </div>
+
+    <div id="Transaction">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <h5>BANK: <span style="font-size: x-large;">{{bank.bank_name}}</span></h5>
+                            <h6>Account No: {{bank.account_number}}</h6>
+                            <h6>IFSC Code: {{bank.ifsc_code}}</h6>
+                            <h6>Opening Balance:<i class="fa fa-rupee"></i> {{bank.opening_balance}}</h6>
+                        </div>
+                        <div class="col-md-3 mt-4 text-right">
+                            <h6 class="mt-1 ">Balance: <i class="fa fa-rupee"></i> {{bank.current_balance}}</h6>
+                        </div>
+
+                        <hr style="width: 95%">
+                    </div>
+
+
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="btn btn-outline-info text-grey mt-3 " style=" cursor: pointer; "
+                            onclick="Transaction()"> Transaction</a>
+                        <a class="btn btn-outline-info text-grey mt-3 " style=" cursor: pointer;" onclick="Overview()">
+                            Overview</a>
+
+                        <a class="btn btn-outline-info text-grey mt-3 " style=" cursor: pointer;" onclick="Statment()">
+                            Statement</a>
+                    </div>
+                    <div class="btn-group mx-1" style="float: right;">
+                        <a class=" btn btn-outline-info  text-grey mt-3 " style=" cursor: pointer;"
+                            onclick="ExportToExcel()"><span class="fa fa-file-excel" aria-hidden="true"></span>Export To Excel</a>
+                    </div>
+                    <div class="btn-group mx-1" style="float: right;">
+                        <div class="dropdown">
+                            <button type="button" class="fa fa-exchange dropdown-toggle btn btn-outline-info  text-grey mt-3 "
+                                style="height: 37px; cursor: pointer;" data-toggle="dropdown"> Transaction
+                            </button>
+                            <div class="dropdown-menu" style="background-color: black;">
+
+                                <a class="dropdown-item" href="{% url 'Fin_bank_to_cash' bank.id %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Bank to
+                                    Cash Transfer</a>
+                                <a class="dropdown-item" href="{% url 'Fin_cash_to_bank' bank.id %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Cash to
+                                    Bank Transfer</a>
+                                <a class="dropdown-item" href="{% url 'Fin_bank_to_bank' bank.id %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Bank to
+                                    Bank Transfer</a>
+                                <a class="dropdown-item" href="{% url 'Fin_bank_adjust' bank.id %}"
+                                    style="height: 40px; font-size: 15px; color: white; text-align: center;">Adjust Bank
+                                    Balance</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+            <div class="card-body p-0">
+                <div class="card radius-15">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <h4 class="container-fluid p-2 ml-2">Transactions</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" id="search" placeholder="Search..." class="form-control"
+                                    autocomplete="off" style="margin-top: 8px; background-color: #2f516f;color: white;">
+
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <table class="table table-responsive-md mt-4 table-hover" id="tbl_exporttable_to_xls">
+                                <thead style="background-color:#263d52;">
+                                    <tr>
+                                        <th style="text-align: center; text-transform: uppercase;">Sl No</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Date</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Type</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Name</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Amount</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in trans %}
+                                    <tr class="table-row ">
+                                        <td style="text-align: center;">{{forloop.counter}}</td>
+                                        <td style="text-align: center;">{{i.adjustment_date |date:"Y-m-d" }}</td>
+                                        <td style="text-align: center;">{{i.transaction_type}}</td>
+                                        {% if i.transaction_type == 'From Bank Transfer' or i.transaction_type == 'Cash Withdraw' or i.adjustment_type == 'Reduce Balance' %}
+                                        <td style="text-align: center;">{{i.to_type}}</td>
+                                        <td style="text-align: center;"><i class="fa fa-rupee"></i> -{{i.amount}}</td>
+                                        {% else %}
+                                        <td style="text-align: center;">{{i.from_type}}</td>
+                                        <td style="text-align: center;"><i class="fa fa-rupee"></i> {{i.amount}}</td>
+                                        {% endif %}
+                                        <td>
+                                            <div class="dropdown">
+                                                <i class="fa fa-ellipsis-v" data-toggle="dropdown"></i>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item edit-item" href="{% url 'Fin_edit_bank_trans' i.id %}">Edit</a>
+                                                    <a class="dropdown-item delete-item" href="#" data-toggle="modal"
+                                                        data-target="#deleteModal{{ i.id }}">Delete</a>
+                                                        <a class="dropdown-item edit-item" href="{% url 'Fin_bank_transcation_history' i.id %}">History</a>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <div class="modal fade" id="deleteModal{{ i.id }}" tabindex="-1" role="dialog"
+                                            aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class "modal-body">
+                                                        Are you sure you want to delete this transcation?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Cancel</button>
+                                                        <a href="{% url 'Fin_bank_transaction_delete' i.id %}" class="btn btn-danger">Delete</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    <div id="overview" style="display: none; ">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+
+                        <h2 class="mb-0">{{ bank.bank_name }}</h2>
+                        {% if  bank.bank_status == 'Active' %}
+                        <p class="text-success">{{ bank.bank_status }}</p>
+                        {% else %}
+                        <p class="text-danger blink-text">{{ bank.bank_status }}</p>
+                        {% endif %}
+
+                    </center>
+                    <hr>
+                    <style>
+                        @keyframes blink {
+                            0% {
+                                opacity: 1;
+                            }
+                            50% {
+                                opacity: 0;
+                            }
+                            100% {
+                                opacity: 1;
+                            }
+                        }
+                    
+                        .blink-text {
+                            animation: blink 1s infinite;
+                        }
+                    </style>
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="btn btn-outline-info  text-grey mt-3 "
+                            style=" cursor: pointer; " onclick="Transaction()"> Transaction</a>
+                        <a class="btn btn-outline-info  text-grey mt-3 "
+                            style=" cursor: pointer;" onclick="Overview()"> Overview</a>
+
+                        <a class="btn btn-outline-info  text-grey mt-3 "
+                            style=" cursor: pointer;" onclick="Statment()"> Statement</a>
+                    </div>
+                    <div class="btn-group" style="float: right; ">
+
+
+
+                        <div>
+                            <center>
+
+                                <a href="{% url 'Fin_edit_bank' bank.id %}" class=" fa fa-pencil  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer;" role="button">
+                                    Edit
+                                </a>&nbsp;
+                                {% if bank.bank_status == "Active" %}
+                                <a href="{% url 'Fin_change_bank_status' bank.id %}" class=" fa fa-check  btn btn-outline-info  text-grey mt-3 " id="set-inactive"
+                                    style=" cursor: pointer;" role="button" data-bank-id="{{ bank.id }}">Active</a> &nbsp;
+                                {% else %}
+                                <a href="{% url 'Fin_change_bank_status' bank.id %}" class="set-active fa fa-exclamation-triangle  btn btn-outline-info  text-grey mt-3 " id="set-active"
+                                    style=" cursor: pointer;" role="button" data-bank-id="{{ bank.id }}">in-Active</a>
+                                &nbsp;
+                                {% endif %}
+
+
+                                <a href="{% url 'Fin_delete_bank' bank.id %}" class=" fa fa-trash  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer; " role="button"> Delete</a>
+
+                                <a class=" fa fa-paperclip  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer;"  data-toggle="modal"
+                                    data-target="#attachFile"> Attach file </a>
+
+                                <a class=" fa fa-comment  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer;"  data-toggle="modal"
+                                    data-target="#commentModal"> Comment</a>
+
+                                <a href="{% url 'Fin_banking_history' bank.id %}" class=" fa fa-history  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer;"  > History </a>
+
+                             
+
+
+
+
+                            </center>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+            <div class="card-body p-0">
+
+                <div id="details">
+                    <div class="row g-0">
+
+                        <div class="col-lg-7">
+                            <div class="p-5">
+
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <div class="row">
+                                            <div class="col mt-3">
+                                                <h2 class="mb-0 text-center">Bank Details</h2>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                    </div>
+                                        <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Bank Status </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3" id="bankStatusDisplay">
+                                            {% if bank.bank_status == "Active" %}
+                                            <label for="title"><b>:<span class="text-success fa fa-check"> </span>
+                                                {{bank.bank_status }}</b></label>
+                                            {% else %}
+                                            <label for="title"><b>:<span class="text-danger fa fa-exclamation-triangle"> </span>
+                                                {{bank.bank_status }}</b></label>
+                                                {% endif %}
+
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Account Number </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ bank.account_number }}</b></label>
+
+                                        </div>
+
+                                    </div>
+                                   
+
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title ">
+                                                <h6><b>IFSC Code </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ bank.ifsc_code }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5  mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Branch Name </b></h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ bank.branch_name }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4 ml-5 mr-5 mt-3">
+                                            <label for="title">
+                                                <h6><b>Created Date</b> </h6>
+                                            </label>
+                                        </div>
+                                        <div class="col-md-4 ml-5 mt-3">
+                                            <label for="title"><b>: {{ bank.date }}</b></label>
+
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                 
+
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-5 bg-grey">
+                            <div class="row p-4">
+                                <div class="col-md-8 mt-4">
+                                    {% if last_history.action == 'Created' %}
+                                        <h6 ><span class="text-success">Created By :</span>
+                                        {{ last_history.login_details.First_name }} {{ last_history.login_details.Last_name }}</h6>
+                                    {% else %}
+                                        <h6 ><span class="text-warning">Last Edited By :</span>
+                                        {{ last_history.login_details.First_name }} {{ last_history.login_details.Last_name }}</h6>
+                                    {% endif %}
+                                </div>
+                                <div class="col text-right mt-4">
+                                    {{last_history.date|date:"Y-m-d"}}
+                                </div>
+
+                            </div>
+                           
+                            <div class="p-5">
+
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Opening Balance</h6>:
+                                    &#8377; {{bank.opening_balance }}
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Current Balance</h6>:
+                                    &#8377; {{bank.current_balance }}
+                                </div>
+                               
+                            
+                                <hr class="my-4">
+  
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+
+    <div id="statment" style="display: none; ">
+        <div class="card radius-15 ">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+
+                        <h2 class="mb-0">{{ bank.bank_name }}</h2>
+
+                    </center>
+                    <hr>
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="btn btn-outline-info   text-grey mt-3 "
+                            style=" cursor: pointer; " onclick="Transaction()"> Transaction</a>
+                        <a class="btn btn-outline-info   text-grey mt-3 "
+                            style=" cursor: pointer;" onclick="Overview()"> Overview</a>
+
+                        <a class="btn btn-outline-info   text-grey mt-3 "
+                            style=" cursor: pointer;" onclick="Statment()"> Statement</a>
+                    </div>
+                    <div class="btn-group" style="float: right; ">
+
+
+                        <div>
+                            <center>
+                              
+                                <a class="btn btn-outline-info  text-grey mt-3" style=" cursor: pointer; "
+                                    role="button" href="{% url 'Fin_render_pdfstatment_view' bank.id %}" id="downloadButton"><i class="fa fa-file-pdf"></i> PDF</a>
+
+                                <button class="btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer; " onclick="printStatement()"><i class="fa fa-print"></i> Print
+                                    Statement</button>
+
+                               
+
+                                <li class=" btn btn-outline-info text-grey  mt-3  "
+                                    style=" cursor: pointer; " 
+                                    data-toggle="dropdown"> &nbsp;Share&nbsp;</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+
+                                    <li style="display: flex; align-items: center;">
+                                        <i class="fa fa-whatsapp ml-3"></i> &nbsp
+                                        {% post_to_whatsapp object_or_url "WhatsApp" %}
+                                    </li>
+                                    
+                                    <li ><a href=""data-toggle="modal" data-target="#sharestatementEmail"><i class="fa fa-envelope ml-3"></i> 
+                                        Email</a></li>
+
+                                </ul>
+
+                               
+
+
+                            </center>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div id="whatToPrint" class="print-only">
+
+            <div class="my-5 page" size="A4">
+                <div class="p-5">
+                    <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                        <div style=" text-transform: uppercase;color: #000000;" class="ribbon-inner ribbon-open">
+                            {{bank.bank_status}}<!----></div>
+                    </div>
+                    <section class="top-content bb d-flex justify-content-between">
+                        <div class="logo">
+                            <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                        </div>
+                        <div class="top-left">
+                            <div class="graphic-path">
+                                <p style="text-transform: uppercase;color: #000000;">STATEMENT</p>
+                            </div>
+                            <div class="position-relative">
+                                <p style=" text-transform: uppercase;color: #000000;">Ac/No:
+                                    <span>{{bank.account_number }}</span></p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="store-user mt-5">
+                        <div class="col-12">
+                            <div class="row bb pb-3">
+                                <div class="col-7">
+                                    <h5 style=" color: #000000;">{{bank.bank_name }}</h5>
+                                    <p style=" color: #000000;">Ac/No: {{bank.account_number}}<br>
+                                        IFSC Code: {{bank.ifsc_code}}<br>
+                                        Branch: {{bank.branch_name}}<br>
+                                       
+                                    </p>
+
+                                </div>
+                             
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <section class="product-area mt-4">
+                        <table class="table table-hover " style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Sl No</th>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Date</th>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Type</th>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Name</th>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Amount</th>
+                                    <th style="text-align: center; text-transform: uppercase;color:black;">Balance</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in trans %}
+                                <tr class="table-row ">
+                                    <td style="text-align: center; color:black;">{{forloop.counter}}</td>
+                                    <td style="text-align: center; color:black;">{{i.adjustment_date|date:'Y-m-d'}}</td>
+                                    <td style="text-align: center; color:black;">{{i.transaction_type}}</td>
+                                    {% if i.transaction_type == 'From Bank Transfer' or i.transaction_type == 'Cash Withdraw' or i.adjustment_type == 'Reduce Balance' %}
+                                    <td style="text-align: center; color:black;">{{i.to_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> -{{i.amount}}</td>
+                                    {% else %}
+                                    <td style="text-align: center; color:black;">{{i.from_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> {{i.amount}}</td>
+                                    {% endif %}
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> {{i.current_balance}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </section>
+
+
+
+                    <!-- Cart BG -->
+                    <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+
+                 
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
+<!-- email share modal -->
+
+<div class="modal fade" id="sharestatementEmail" tabindex="-1" role="dialog" aria-labelledby="sharestatementEmailLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" >
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sharestatementEmailLabel">Share Statement Via Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'Fin_shareBankingStatementToEmail' bank.id %}" method="POST" enctype="multipart/form-data" style="background-color: #213b52;">
+                {%csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="emailIds">Email IDs</label>
+                        <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="item_unitname">Message(optional)</label>
+                        <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Statement details."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                    <button type="submit"  id="share_with_email" class="submitShareEmailBtn btn btn-info">Send Mail</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+</script>
+
+<script>
+    function printStatement() {
+        var printContent = document.getElementById('whatToPrint').innerHTML;
+        var originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
+</script>
+
+
+<script>
+
+    function uplodfile() {
+
+        async function generatePDF() {
+            // document.getElementById("downloadButton").innerHTML = "Currently downloading, please wait";
+
+            //Downloading
+            var downloading = document.getElementById("whatToPrint");
+            var doc = new jsPDF('l', 'pt');
+
+            await html2canvas(downloading, {
+                //allowTaint: true,
+                //useCORS: true,
+                // width: 600
+
+            }).then((canvas) => {
+                //Canvas (convert to PNG)
+                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+            })
+
+
+
+            data = doc.save("Document.pdf");
+
+
+            //End of downloading
+
+            // document.getElementById("downloadButton").innerHTML = "Click to download";
+        }
+
+        $.ajax({
+            method: "POST",
+            url: "",
+            processData: false,
+            contentType: false,
+            data: data,
+            success: function (res) {
+                console.log(res)
+            }
+
+
+        })
+    }
+
+</script>
+
+
+
+
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<!-- <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tbl_exporttable_to_xls');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Transaction.' + (type || 'xlsx')));
+    }
+
+</script> -->
+
+<!-- <script type="text/javascript">
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tbl_exporttable_to_xls');
+
+        // Clone the table to avoid modifying the original table
+        var clonedTable = elt.cloneNode(true);
+
+        // Remove the last column from the cloned table
+        var rows = clonedTable.getElementsByTagName('tr');
+        for (var i = 0; i < rows.length; i++) {
+            var lastCell = rows[i].lastElementChild;
+            if (lastCell) {
+                rows[i].removeChild(lastCell);
+            }
+        }
+
+        var wb = XLSX.utils.table_to_book(clonedTable, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Transaction.' + (type || 'xlsx')));
+    }
+</script> -->
+
+<script>
+    function ExportToExcel() {
+        const table = document.querySelector('#tbl_exporttable_to_xls');
+
+        // Clone the table to avoid modifying the original table
+        const clonedTable = table.cloneNode(true);
+
+        // Remove the last column from each row
+        clonedTable.querySelectorAll('tr').forEach(row => {
+            const cells = row.querySelectorAll('td, th');
+            cells[cells.length - 1].remove(); // Remove the last cell (column)
+        });
+
+        const ws = XLSX.utils.table_to_sheet(clonedTable);
+
+        // Specify column widths (in Excel characters, e.g., "15px")
+        ws['!cols'] = [
+            { wch: 12 }, // SL no
+            { wch: 15 }, // DATE
+            { wch: 20 }, // PARTY NAME
+            { wch: 15 }, // TYPE
+            { wch: 15 }, // NAME
+            // { wch: 12 }, // AMOUNT
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'Transaction.xlsx');
+    }
+</script>
+
+
+
+
+
+<script>
+
+    async function generatePDF() {
+        var downloading = document.getElementById("whatToPrint");
+        var doc = new jsPDF('l', 'pt');
+
+        await html2canvas(downloading, {
+        }).then((canvas) => {
+            doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+        })
+        doc.save("Document.pdf");
+    }
+
+    function Transaction() {
+
+        document.getElementById('overview').style.display = 'none';
+
+        document.getElementById('statment').style.display = 'none';
+        document.getElementById('Transaction').style.display = 'block';
+
+
+
+
+    }
+    function Overview() {
+
+        document.getElementById('overview').style.display = 'block';
+
+        document.getElementById('statment').style.display = 'none';
+        document.getElementById('Transaction').style.display = 'none';
+
+
+
+
+    }
+    function Statment() {
+        document.getElementById('overview').style.display = 'none';
+
+        document.getElementById('statment').style.display = 'block';
+        document.getElementById('Transaction').style.display = 'none';
+
+
+    }
+
+</script>
+<script>
+
+    const tbl1 = document.querySelector('#logic');
+    const tbl2 = document.querySelector(".tab_logic");
+    tbl2.style.display = "none";
+
+
+    $(document).on('submit', '#form_post', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "",
+            data: {
+
+                fd: $('#fdate').val(),
+                ld: $('#ldate').val(),
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+            },
+
+            success: function (response) {
+                console.log(response)
+                data = response.ct
+                data2 = response.invoiced
+                data3 = response.re
+                data4 = response.sum
+                data5 = response.df
+                data6 = response.dl
+                data7 = response.invitem
+                data8 = response.st
+                data9 = response.baldue
+                data10 = response.opening
+
+                data11 = response.fst
+
+
+                $('#tab_logic tbody').append(
+
+                    `<tr>
+                    <td>${data11}</td>
+                    <td>***Opening Balance***</td>
+                    <td></td>
+                    <td>${data10}</td>
+                    <td></td>
+                    <td>${data10}</td>
+                    </tr> `
+
+
+                )
+
+
+                for (i = 0; i < data8.length; i++) {
+
+                    $('#tab_logic tbody').append(
+
+                        `
+                              
+                                <tr>
+                                <td>${data8[i].Date}</td>
+                                <td>${data8[i].Transactions}</td>
+                                                                            
+                                <td>
+                                    
+                                    ${data8[i].Details2} 
+                                    
+                                    </td>
+                                                                            
+                                                                            
+                                <td>
+                                
+                                ${data8[i].Amount}
+                                </td>
+                                <td>
+
+                                    ${data8[i].Payments} 
+                               
+                                
+                                </td>
+                                <td>${data8[i].Balance} 
+                                
+                                 </td>
+                                </tr>
+                                 
+                                    `
+
+                    )
+
+
+
+                }
+
+
+
+
+                $('#tab_logic tbody').append(`<tr>
+                        <td colspan="5">Balance Due</td>
+                        <td>${data9} </td>
+                        
+                        </tr>`)
+                tbl1.style.display = "none";
+                tbl2.style.display = "block";
+                document.getElementById('invamount').value = data2
+                document.getElementById('received').value = data3
+                document.getElementById('due').value = data9
+                document.getElementById('df').value = data5
+                document.getElementById('dl').value = data6
+                document.getElementById('open').value = data10
+
+
+
+
+            }
+
+        });
+    });
+</script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+
+    $('.delete').click(function (event) {
+        var form = $(this).closest("form");
+        var name = $(this).data("name");
+        event.preventDefault();
+        swal({
+            title: `Are you sure you want to delete this record?`,
+            text: "If you delete this, it will be gone forever.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    swal("Poof! Your imaginary file has been deleted!", {
+                        icon: "success",
+
+                    });
+                    form.submit();
+
+
+
+
+                }
+            });
+    });
+
+
+</script>
+<script>
+    // Function to handle the search
+    function searchTable() {
+        let input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toLowerCase();
+        table = document.getElementById("dataTable");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows (excluding the first row, which contains the column headers)
+        for (i = 1; i < tr.length; i++) {
+            let rowVisible = false;
+            td = tr[i].getElementsByTagName("td");
+
+            // Loop through all table cells (columns) in each row
+            for (j = 0; j < td.length; j++) {
+                if (td[j]) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                        rowVisible = true;
+                        break;
+                    }
+                }
+            }
+
+            // Show/hide the row based on the search results
+            tr[i].style.display = rowVisible ? "" : "none";
+        }
+    }
+
+    // Attach the search function to the input field's "input" event
+    document.getElementById("searchInput").addEventListener("input", searchTable);
+</script>
+<script>
+
+    $(document).ready(function () {
+        var $rows = $('.table tbody tr');
+        $('#search').keyup(function () {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+            $rows.show().filter(function () {
+                console.log($rows.show())
+
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                console.log(text)
+                return !~text.indexOf(val);
+            }).hide();
+        });
+    });
+</script>
+
+
+{% endblock %}

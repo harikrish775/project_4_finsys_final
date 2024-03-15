@@ -1,0 +1,693 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+
+<!--<link href="style.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
+<!-- fontawesome icons -->
+<link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+<link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+<link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<!-- Include FullCalendar CSS -->
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<link rel="stylesheet" href="{% static 'assets/plugins/fullcalendar/css/main.min.css' %}">
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Include xlsx library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-- pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<!-- Add html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        #holidayList,
+        #holidayList * {
+            visibility: visible;
+            z-index: 99999;
+            margin-top: -150px;
+            color: black;
+            font-size: 30px;
+            width: 100%;
+        }
+
+        #holidayList tr td:last-child,
+        #holidayList tr th:last-child {
+            display: none;
+        }
+    }
+</style>
+<div class="page-content ">
+
+    <div class="row radius-15">
+        <div id="calendarDiv" class="col">
+            <center>
+                <h3><a href="" id="calendarLink"
+                        style="padding: 10px 20%;border-top-right-radius: 15px;border-top-left-radius: 15px;">Calendar</a>
+                </h3>
+            </center>
+        </div>
+        <div id="holidayListDiv" class="col">
+            <center>
+                <h3><a href="" id="holidayListLink"
+                        style="padding: 10px 20%;border-top-right-radius: 15px;border-top-left-radius: 15px;">Leave
+                        List</a></h3>
+            </center>
+        </div>
+    </div>
+
+
+    <div class="card radius-15">
+        <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()"><i
+                    class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+        <div class="card-body">
+
+            <div class="row" id="cal">
+                <div class="col" id="calendar"></div>
+            </div>
+
+            <div class="row" id="cal_list">
+
+                <div class="table-responsive">
+
+                    <center>
+                        <div style="display: flex;margin-left: 40%;align-content: space-between;">
+
+                            <button class="btn btn-outline-secondary mb-2 text-grey" onclick="PrintTable()"
+                                data-employee-id="{{employ.id}}" title="Print"><i class="fa fa-print"></i>
+                                Print</button>
+                            <button class="btn btn-outline-secondary mb-2 text-grey" onclick="ExportAsPDF()"
+                                title="Download PDF"><i class="fa fa-file-pdf"></i> PDF</button>
+
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-outline-secondary mb-2 text-grey"
+                                    data-toggle="dropdown"><i class="fa-solid fa-share"></i>Share</button>
+                                <div class="dropdown-menu" style="background-color: black;border-radius: 2px;">
+                                    <a class="dropdown-item" href="#"
+                                        style="height: 40px; font-size: 15px; color: white" onclick="shareOnWhatsApp()">
+                                        Whatsapp
+                                    </a>
+                                    <a class="dropdown-item"
+                                        style="height: 40px; font-size: 15px; color: white;cursor: pointer;"
+                                        data-toggle="modal" data-target="#shareBillEmail">Email</a>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </center>
+
+                    <!-- modal end -->
+
+
+                    <br><br>
+                    <table class="table ml-3" style="width: 95%;" id="holidayList">
+                        <center>
+                            <h3 id="headDing"><span id="monthName">{{month}}</span>, {{year}}</h3>
+                        </center><br>
+                        <thead class="thead">
+                            <tr style="font-size: large; ">
+                                <th>Sl No.</th>
+                                <th>NAME</th>
+                                <th>START DATE</th>
+                                <th>END DATE</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in attendance %}
+                            <tr style="font-size: large;">
+                                <td>{{forloop.counter}}</td>
+
+                                <td style="text-transform: capitalize;">{{i.reason}}</td>
+                                <td>{{i.start_date}}</td>
+                                <td>{{i.end_date}}</td>
+                                <td style="display: flex;align-content: space-between;">
+
+                                    <a href="{% url 'Fin_deleteAttendance' id=i.id mn=month_name yr=year pk=emp.id %}"><i style="color: crimson;"
+                                            class="fa-solid fa-trash"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a href="{% url 'Fin_editAttendance' id=i.id mn=month_name yr=year pk=emp.id %}">
+                                        <i style="color: cyan;" class="fa-solid fa-pen-to-square"></i>
+                                    </a>&nbsp;&nbsp;
+                                    <div class="dropdown" style="margin-top: -7px;">
+                                        <button type="button" class="btn btn-grey" data-toggle="dropdown"><i
+                                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                                        <div class="dropdown-menu" style="background-color: black;border-radius: 2px;">
+                                            <a class="dropdown-item" href="#"
+                                                style="height: 40px; font-size: 15px; color: white" data-toggle="modal"
+                                                data-target="#HistoryModal{{i.id}}" id="historyView{{i.id}}"
+                                                onclick="att_history(this.id)">
+                                                History
+                                            </a>
+                                            <a class="dropdown-item"
+                                                style="height: 40px; font-size: 15px; color: white;cursor: pointer;"
+                                                data-toggle="modal" data-target="#commentModal{{i.id}}"
+                                                id="commentView{{i.id}}" onclick="leave_comment(this.id)">Comments</a>
+
+
+                                        </div>
+
+                                    </div>
+                                    <!-- modal -->
+                                    <div class="modal fade" id="commentModal{{i.id}}" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Leave a
+                                                        Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <form action="{% url 'Fin_addcommentstoleave' id=i.id mn=month_name yr=year pk=emp.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <div class="modal-body">
+
+                                                        <div><label for="">Leave A Comment : </label> <textarea
+                                                                name="comment" cols="5" rows="3"
+                                                                class="form-control"></textarea></div><br>
+                                                        <div style="text-align: left;">
+                                                            <h5 class="pb-1 mb-3"
+                                                                style="text-decoration: underline;text-underline-offset: 10px;">
+                                                                Previous
+                                                                Comments</h5>
+                                                            <label style="font-size: large;" for=""
+                                                                id="commntlist{{i.id}}">
+                                                            </label>
+                                                            <!--<a href="#"
+                                                                id="deleteButton" style="color: crimson;"><i
+                                                                    class="fa-solid fa-trash"></i></a><br>
+
+                                                            <h5 class="pb-1 mb-2">No Comments Yet</h5>-->
+
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-secondary">Save
+                                                            changes</button>
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="HistoryModal{{i.id}}" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">History</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <table style="align-self: center;width: 100%;"
+                                                        id="historyTable{{i.id}}" class="table-bordered">
+                                                        <tr>
+                                                            <th>Sl.No.</th>
+                                                            <th>Date</th>
+                                                            <th>Action</th>
+                                                            <th>Done By</th>
+                                                        </tr>
+                                                        <tr>
+
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+        <!-- Share bill Modal -->
+        <div class="modal fade" id="shareBillEmail" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shareBillEmailLabel">Share Leave Statement Via Email</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card p-3 m-3">
+                            <form action="{% url 'Fin_shareLeaveStatementToEmail' id=emp.id mn=month_name yr=year %}" method="post" class="needs-validation" id="share_to_email_form"
+                                autocomplete="off">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="emailIds">Email IDs</label>
+                                    <textarea class="form-control text-white" name="email_ids" id="emailIds" rows="5"
+                                        placeholder="Multiple emails can be added by separating with a comma(,)."
+                                        required></textarea>
+                                </div>
+                                <div class="form-group mt-2">
+                                    <label for="item_unitname">Message(optional)</label>
+                                    <textarea name="email_message" id="email_message" class="text-white form-control"
+                                        cols="" rows="4"
+                                        placeholder="This message will be sent along with Bill details."></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffff;">
+                            <input type="submit" id="share_with_email"
+                                class="submitShareEmailBtn rounded-pill text-dark w-50 my-4 mx-3" value="SEND MAIL">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+
+    // -----------------------------------------------
+
+    $(document).ready(function () {
+        $('#share_with_email').on('click', function () {
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function (email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if (emailsString == "") {
+                alert('Enter valid email addresses..')
+            }
+            else {
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail != "" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+
+                if (invalidEmails.length > 0) {
+                    alert('Invalid emails..Please check!\n' + invalidEmails)
+                    // alert(invalidEmails)
+                } else {
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+
+
+    // Leave history
+
+    function leave_comment(id_str) {
+        id = id = id_str.split("commentView")[1];
+        $.ajax({
+            url: '{% url "Fin_attendancecomments" %}',
+            type: 'GET',
+            data: {
+                hid: id,
+            },
+
+            success: function (response) {
+                if (response.data.length > 0) {
+                    var label = document.getElementById(`commntlist${id}`);
+                    label.innerHTML = ''; // Clear existing content
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        var cmnt = response.data[i].action;
+                        console.log(cmnt);
+                        label.innerHTML += `<ol>${cmnt}</ol>`;
+
+
+                    }
+                }
+                else {
+                    var label = document.getElementById(`commntlist${id}`);
+                    label.innerHTML = 'No Comments Yet'; // Clear existing content
+                }
+            },
+            error: function () {
+                console.error('Error checking product existence.');
+            }
+        });
+    }
+
+    // Leave history
+
+    function att_history(id_str) {
+        id = id = id_str.split("historyView")[1];
+        console.log(id);
+
+        // Assume 'Some Product' is the title you want to check
+        $.ajax({
+            url: '{% url "Fin_attendance_history" %}',
+            type: 'GET',
+            data: {
+                hid: id,
+            },
+
+            success: function (response) {
+                if (response.data.length > 0) {
+                    var table = document.getElementById(`historyTable${id}`);
+
+                    while (table.rows.length > 1) {
+                        table.deleteRow(1);
+                    }
+
+                    // Populate the table with data
+                    for (var i = 0; i < response.data.length; i++) {
+                        var item = response.data[i];
+                        var row = table.insertRow(-1);
+
+                        var slNoCell = row.insertCell(0);
+                        var dateCell = row.insertCell(1);
+                        var actionCell = row.insertCell(2);
+                        var doneByCell = row.insertCell(3);
+
+                        slNoCell.innerHTML = i + 1; // Sl.No.
+                        dateCell.innerHTML = item.date; // Date
+                        actionCell.innerHTML = item.action; // Action
+                        doneByCell.innerHTML = item.first_name + " " + item.last_name; // Done By
+                    }
+                }
+            },
+            error: function () {
+                console.error('Error checking product existence.');
+            }
+        });
+
+    }
+
+
+
+
+
+    // -----------------------------------------------------------------------------------
+    // month number to name
+
+    function numberToMonth(number) {
+        const months = [
+            'January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December'
+        ];
+
+        // Ensure the number is within a valid month range
+        if (number >= 0 && number <= 12) {
+            return months[number];
+        } else {
+            return 'Invalid Month';
+        }
+    }
+
+    // Get the element with id "monthName"
+    const monthNameElement = document.getElementById('monthName');
+    console.log(monthNameElement);
+
+    // Ensure the element exists
+    if (monthNameElement) {
+        const monthNumber = parseInt(monthNameElement.textContent, 10);
+
+        // Check if the content is a valid number
+        if (!isNaN(monthNumber)) {
+            const monthString = numberToMonth(monthNumber);
+            monthNameElement.textContent = monthString;
+        } else {
+            monthNameElement.textContent = 'Invalid Number';
+        }
+    }
+
+
+    // -----------------------------------------------
+    // print
+
+
+
+    /*function PrintTable() {
+
+        var printContents = document.getElementById("holidayList").innerHTML;
+        var $printerDiv = $('<div class="printContainer hidden"></div>'); // create the div that will contain the stuff to be printed
+        $printerDiv.html(printContents); // add the content to be printed
+        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        window.print(); // call print
+        $printerDiv.remove(); // remove the div
+        $('body').removeClass("printingContent");
+
+    }*/
+
+
+    function PrintTable() {
+        window.print();
+    }
+
+
+
+
+
+    // -------------------------------------------------------------------------------------
+    // pdf
+
+
+
+    function ExportAsPDF() {
+        const container = document.getElementById('holidayList');
+        // Save the original styles
+        const originalStyles = {
+            backgroundColor: container.style.backgroundColor,
+            color: container.style.color,
+        };
+
+        // Set the container's background color to white and text color to black for specific columns
+        const headerCells = container.querySelectorAll('thead th');
+        const dataCells = container.querySelectorAll('tbody td');
+
+
+        headerCells.forEach(cell => {
+            cell.style.backgroundColor = 'white';
+            cell.style.color = 'black';
+        });
+
+        dataCells.forEach(cell => {
+            cell.style.backgroundColor = 'white';
+            cell.style.color = 'black';
+        });
+
+        const lastColumnIndex = container.rows[0].cells.length - 1; // Assuming the table has a header row
+        Array.from(container.rows).forEach(row => {
+            row.cells[lastColumnIndex].style.display = 'none';
+        });
+
+        // Add margin to the PDF
+        const margin = 10; // Adjust as needed
+        const pdfOptions = {
+            margin: [margin, margin, margin, margin], // top, right, bottom, left
+            filename: "{{emp.first_name}} {{emp.last_name}}-{{month_name}}-leaves.pdf",
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, // Adjust format and orientation
+        };
+
+        html2pdf().from(container).set(pdfOptions).save().then(() => {
+            // Display the last column again after downloading the PDF
+            Array.from(container.rows).forEach(row => {
+                row.cells[lastColumnIndex].style.display = 'flex';
+            });
+
+            headerCells.forEach(cell => {
+                cell.style.backgroundColor = '';
+                cell.style.color = originalStyles.color;
+            });
+
+            dataCells.forEach(cell => {
+                cell.style.backgroundColor = '';
+                cell.style.color = originalStyles.color;
+            });
+
+            container.style.backgroundColor = originalStyles.backgroundColor;
+            container.style.color = originalStyles.color;
+        });
+    }
+
+
+
+
+
+
+
+    // ----------------------------------------------------------------------------------
+    // calendar (ignore the error - code working fine)
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: [
+                {% for i in events %}
+            {
+
+                title: '{{i.holiday_name}}',
+                start: '{{i.start_date|date:"c"}}',
+                // Set allDay to true for one-day events
+                allDay: true,
+                // Extend the end date by one day
+                end: new Date('{{i.end_date|date:"c"}}').getTime() + (1 * 24 * 60 * 60 * 1000),
+
+
+            },
+            {% endfor %}
+
+            {% for i in attendance %}
+    {
+
+        title: '{{i.reason}}',
+            start: '{{i.start_date|date:"c"}}',
+                // Set allDay to true for one-day events
+                allDay: true,
+                    // Extend the end date by one day
+                    end: new Date('{{i.end_date|date:"c"}}').getTime() + (1 * 24 * 60 * 60 * 1000),
+                        color : 'red',
+
+
+            },
+    {% endfor %}
+        ],
+    eventContent: function (arg) {
+        // Customize the appearance of each event
+        var eventElement = document.createElement('div');
+        eventElement.innerHTML = arg.event.title;
+
+        // Increase width and height
+        eventElement.style.width = '120px'; // Adjust width as needed
+        eventElement.style.height = '30px'; // Adjust height as needed
+
+        // Add other style modifications as needed
+        eventElement.style.fontSize = '20px'; // Adjust font size as needed
+        eventElement.style.textTransform = 'capitalize'; // Capitalize the text
+        eventElement.style.marginLeft = '10px'; // Margin left
+
+        return { domNodes: [eventElement] };
+    },
+        
+    });
+
+    // Specify the year and month you want to open the calendar to
+    var yearToOpen = {{ year }};
+    var monthToOpen = {{ month }}; // (months are 0-indexed in JavaScript)
+
+    // Use gotoDate to open the calendar to the specified year and month
+    calendar.gotoDate(new Date(yearToOpen, monthToOpen));
+
+
+    calendar.render();
+});
+
+
+    // ----------------------------------------------------------------------------------
+    // hide or show calendar
+
+
+    // Get references to the links and divs
+    var calendarLink = document.getElementById("calendarLink");
+    var holidayListLink = document.getElementById("holidayListLink");
+    var calendarDiv = document.getElementById("cal");
+    var holidayListDiv = document.getElementById("cal_list");
+
+
+    holidayListDiv.style.display = "none"; // Hide the holiday list div
+    calendarLink.style.backgroundColor = '#213b52';
+
+    // Add click event listeners
+    calendarLink.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default behavior of the anchor tag
+        calendarDiv.style.display = "block"; // Show the calendar div
+        holidayListDiv.style.display = "none"; // Hide the holiday list div
+
+        // Add class to the selected div
+        calendarLink.style.backgroundColor = '#213b52';
+        holidayListLink.style.backgroundColor = 'transparent';
+
+
+
+    });
+
+    holidayListLink.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default behavior of the anchor tag
+        calendarDiv.style.display = "none"; // Hide the calendar div
+        holidayListDiv.style.display = "block"; // Show the holiday list div
+
+
+        calendarLink.style.backgroundColor = 'transparent';
+        holidayListLink.style.backgroundColor = '#213b52';
+    });
+
+
+
+    // ----------------------------------
+    // back function
+    function goBack() {
+        window.history.back();
+    }
+
+
+
+    function shareOnWhatsApp() {
+        var url = window.location.href;
+        var text = url;
+        text = encodeURIComponent(text);
+        var whatsappUrl = "whatsapp://send?text=" + text;
+        window.location.href = whatsappUrl;
+    }
+
+</script>
+
+
+
+{% endblock %}

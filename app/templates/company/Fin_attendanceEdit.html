@@ -4,6 +4,10 @@
 {% load static %}
 
 <style type="text/css">
+    #newcust {
+        overflow: scroll;
+    }
+
     html {
         overflow-y: scroll;
     }
@@ -49,7 +53,8 @@
                     </div>
                 </div>
             </div>
-            <form action="#" method="post" class="needs-validation" validate>
+            <form action="{% url 'Fin_editAttendanceVIEW' id=leave.id mn=mn yr=yr pk=pk %}" method="post"
+                class="needs-validation" validate>
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-12 mx-0">
@@ -57,9 +62,10 @@
                             <div class="col-md-6 mt-3">
                                 <label for="itemName" style="color: white;">Employee</label>
                                 <div class="d-flex">
-                                    <select class="custom-select" name="emp" id="itemUnit" required
+                                    <select class="custom-select" name="empS" id="itemUnit" required
                                         style="background-color: #2a4964; color: white;">
-                                        <option selected hidden value="{{leave.employee.id}}">{{leave.employee.first_name}} {{leave.employee.last_name}}</option>
+                                        <option selected hidden value="{{leave.employee.id}}">
+                                            {{leave.employee.first_name}} {{leave.employee.last_name}}</option>
                                         {% for a in emp %}
                                         <option value="{{a.id}}">{{ a.first_name }} {{a.last_name}}</option>
                                         {% endfor %}
@@ -73,7 +79,8 @@
                             <div class="col-md-6 mt-3">
                                 <label for="itemType" style="color: white;">Reason</label>
                                 <input type="text" name="reason" class="form-control"
-                                    style="background-color: #2a4964; color: white;" required id="" value="{{leave.reason}}">
+                                    style="background-color: #2a4964; color: white;" required id=""
+                                    value="{{leave.reason}}">
 
                             </div>
                         </div>
@@ -81,13 +88,15 @@
                             <div class="col-md-6 mt-3">
                                 <label for="sdate" style="color: white;">Start Date</label>
                                 <input type="date" name="sdate" class="form-control"
-                                    style="background-color: #2a4964; color: white;" required id="sdate" value="{{leave.start_date|date:'Y-m-d'}}">
+                                    style="background-color: #2a4964; color: white;" required id="sdate"
+                                    value="{{leave.start_date|date:'Y-m-d'}}">
 
                             </div>
                             <div class="col-md-6 mt-3">
                                 <label for="edate" style="color: white;">End Date</label>
                                 <input type="date" name="edate" class="form-control"
-                                    style="background-color: #2a4964; color: white;" required id="edate" value="{{leave.end_date|date:'Y-m-d'}}">
+                                    style="background-color: #2a4964; color: white;" required id="edate"
+                                    value="{{leave.end_date|date:'Y-m-d'}}">
                             </div>
                         </div>
 
@@ -95,7 +104,8 @@
                             <div class="col-md-6 mt-3">
                                 <label for="hsnField" style="color: white;">Status</label>
                                 <input type="text" name="status" class="form-control"
-                                    style="background-color: #2a4964; color: white;" required id="" value="{{leave.status}}" >
+                                    style="background-color: #2a4964; color: white;" required id=""
+                                    value="{{leave.status}}">
                             </div>
                         </div>
 
@@ -164,13 +174,26 @@
                                 </div>
                             </tr>
                         </div>
-                        <div class="col-md-4 ">
-                            <label for="Image" class="ml-5 mt-5"
-                                style="cursor:pointer; padding: 20% 35%; background-image: url('static/assets/images/upload.png'); background-repeat: no-repeat; background-size: contain;"></label>
+                        <div class="col-md-4 " id="fileffff">
+                            <!--<label for="image" class="ml-5 mt-5"
+                                style="cursor:pointer; padding: 20% 35%; background-image: url('C:\Users\vishn\OneDrive\Desktop\Finsys_2.0\Finsys_2.0\Finsys\static\assets\images\upload.png'); background-repeat: no-repeat; background-size: contain;"></label>-->
+                            <img src="{% static 'C:\Users\vishn\OneDrive\Desktop\Finsys_2.0\Finsys_2.0\Finsys\static\assets\images\upload.png' %}"
+                                alt="" width="40%" class="ml-5 mt-5" style="cursor:pointer; ">
                             <br> <span class="ml-5">Upload Image</span>
                             <input type="file" id="image" accept="image/*" style="display: none;">
                         </div>
+                        <script>
+                            // Get a reference to the div element
+                            const divElement = document.getElementById('fileffff');
 
+                            // Add a click event listener
+                            divElement.addEventListener('click', () => {
+                                // Your code to open the files goes here
+                                // For example, you can trigger a file input click event
+                                const fileInput = document.getElementById('image');
+                                fileInput.click();
+                            });
+                        </script>
                     </div> <br>
                     <div class="row">
                         <div class="col">
@@ -188,6 +211,18 @@
                                             class="form-control"></td>
                                 </div>
                             </tr>
+                            <script>
+                                // joining date = current date
+
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    var currentDate = new Date();
+                                    var dateString = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+
+                                    document.getElementById("JoiningDate").value = dateString;
+                                });
+                                // -------------------------------------
+
+                            </script>
                         </div>
                         <div class="col">
                             <tr>
@@ -243,6 +278,31 @@
                             </tr>
                         </div>
                     </div>
+
+                    <script>
+                        // display salary --------------------------------------------
+                        $(document).ready(function () {
+                            $("#salary_amount").hide();
+                            $("#salary_timebase").hide();
+
+                            $("#salary_type").change(function () {
+                                var selectedValue = $(this).val();
+
+                                if (selectedValue === "Temporary" || selectedValue === "Fixed") {
+                                    // Display the salary_amount div
+                                    $("#salary_amount").show();
+                                    $("#salary_timebase").hide();
+                                } else if (selectedValue === 'Time Based') {
+                                    $("#salary_amount").show();
+                                    $("#salary_timebase").show();
+                                } else {
+                                    // Hide the salary_amount div for other options
+                                    $("#salary_amount").hide();
+                                    $("#salary_timebase").hide();
+                                }
+                            });
+                        });
+                    </script>
                     <!-- basic end -->
 
 
@@ -304,15 +364,68 @@
                                                 type="text"></div>
                                     </div>
                                 </td>
+                                <script>
+                                    // age display
+
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        // Add change event listener to the DOB input
+                                        document.getElementById("DOB").addEventListener("input", function () {
+                                            // Get the selected date of birth
+                                            var dobValue = this.value;
+
+                                            // Calculate the age
+                                            var age = calculateAge(new Date(dobValue));
+
+                                            // Display the age in the ageDisplay input
+                                            document.getElementById("ageDisplay").value = age;
+                                        });
+
+                                        // Function to calculate age based on the provided date of birth
+                                        function calculateAge(dob) {
+                                            var today = new Date();
+                                            var birthDate = new Date(dob);
+                                            var age = today.getFullYear() - birthDate.getFullYear();
+                                            var monthDiff = today.getMonth() - birthDate.getMonth();
+
+                                            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                                                age--;
+                                            }
+
+                                            return age;
+                                        }
+                                    });
+
+                                    // --------------------------------------------------------------------
+                                    // age validation
+
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        // Get the current date
+                                        var currentDate = new Date();
+
+                                        // Calculate the date 18 years ago
+                                        var eighteenYearsAgo = new Date(currentDate);
+                                        eighteenYearsAgo.setFullYear(currentDate.getFullYear() - 18);
+
+                                        // Format the date to YYYY-MM-DD for the input field
+                                        var formattedDate = eighteenYearsAgo.toISOString().split('T')[0];
+
+                                        // Set the default value and maximum allowed date of the input field
+                                        var dobInput = document.getElementById('DOB');
+                                        // dobInput.value = formattedDate;
+                                        dobInput.max = formattedDate;
+                                    });
+                                    // -----------------------------------------------------------------------------
+                                </script>
                             </div>
 
                         </tr>
                         <tr>
                             <div class="form-group col">
                                 <td><Label>Blood Group</Label></td>
-                                <td>
-                                    <select name="Blood" id="bloodGroupSelect" style="width: 100%;"
-                                        class="form-control">
+
+                                <div style="display: flex;">
+                                    <select name="Blood" id="bloodGroupSelect" style="width: 85%;"
+                                        class="form-control col-11">
                                         <option value="">--select--</option>
                                         <option value="A+">A+</option>
                                         <option value="A-">A-</option>
@@ -323,9 +436,103 @@
                                         <option value="{{i.blood_group}}">{{i.blood_group}}</option>
                                         {% endfor %}
                                     </select>
-                                </td>
+                                    <button onclick="handleBloodSelection()"
+                                        class="btn btn-outline-secondary text-grey mb-2 ml-1">+</button>
+
+                                </div>
                             </div>
+
                         </tr>
+                        <script>
+                            function handleBloodSelection() {
+
+                                $('#bloodGroupModal').modal('show');
+
+                            }
+                            // -------------------------------------
+
+                            $(document).ready(function () {
+                                $('#bloodGroupForm').submit(function (e) {
+                                    e.preventDefault(); // Prevent the default form submission
+
+                                    // Get the form data
+                                    var formData = {
+                                        'bloodGroup': $('#bloodGroupInput').val()
+                                    };
+
+                                    // Perform Ajax request
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '{% url "employee_blood_group" %}',
+                                        data: formData,
+                                        dataType: 'json',
+                                        headers: {
+                                            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                                        },
+                                        success: function (response) {
+                                            if (response.success) {
+                                                // Success case: Blood group added successfully
+                                                alert('Blood group added successfully!');
+
+                                                // Update the entire section in the dropdown with the new bloodgroup data
+                                                updateBloodGroupSection(response.bloodgroup);
+                                            } else {
+                                                // Failure case: Display an error message
+                                                alert('Error: ' + response.error);
+                                            }
+                                        },
+                                        error: function (xhr, status, error) {
+                                            // Handle Ajax errors here
+                                            console.error('Ajax Error: ' + status + ' - ' + error);
+                                        }
+                                    });
+                                });
+
+                                // Function to update the entire section in the dropdown
+                                function updateBloodGroupSection(bloodgroup) {
+                                    // Assuming you have a select element with the id 'bloodGroupSelect'
+                                    var bloodGroupSelect = $('#bloodGroupSelect');
+
+                                    // Remove all existing options
+                                    bloodGroupSelect.empty();
+
+                                    // Append new options based on the received data
+                                    bloodGroupSelect.append($('<option>', {
+                                        value: '',  // Default option
+                                        text: '--select--'
+                                    }));
+
+                                    addStaticOption('A+', 'A+');
+                                    addStaticOption('A-', 'A-');
+                                    addStaticOption('B+', 'B+');
+                                    addStaticOption('O+', 'O+');
+
+                                    for (var i = 0; i < bloodgroup.length; i++) {
+                                        bloodGroupSelect.append($('<option>', {
+                                            value: bloodgroup[i].blood_group,
+                                            text: bloodgroup[i].blood_group
+                                        }));
+                                    }
+
+                                    $('#bloodGroupModal').modal('hide');
+                                    document.getElementById('bloodGroupInput').value = " ";
+
+                                }
+
+                                function addStaticOption(value, text) {
+                                    // Assuming you have a select element with the id 'bloodGroupSelect'
+                                    var bloodGroupSelect = $('#bloodGroupSelect');
+
+                                    bloodGroupSelect.append($('<option>', {
+                                        value: value,
+                                        text: text
+                                    }));
+                                }
+
+                            });
+
+
+                        </script>
 
                     </div>
 
@@ -438,7 +645,26 @@
                     </div>
 
 
+                    <script>
+                        // address copy 
 
+                        $(document).ready(function () {
+
+
+                            $('#addressCheckBox').on('change', function () {
+                                if ($(this).is(':checked')) {
+                                    $('#temStreet').val($('#perStreet').val());
+                                    $('#temCity').val($('#perCity').val());
+                                    $('#temState').val($('#perState').val());
+                                    $('#temPincode').val($('#perPincode').val());
+                                    $('#temCountry').val($('#perCountry').val());
+
+                                    $('#temAddress').show();
+                                }
+                            });
+                        });
+
+                    </script>
 
 
 
@@ -558,7 +784,87 @@
                     </div>
 
 
+                    <script>
+                        // display banking ---
 
+                        $(document).ready(function () {
+                            // Initially hide the salary_amount div
+                            $("#BankInfo").hide();
+
+
+                            // Add change event listener to the salary_details dropdown
+                            $("#bankDetails").change(function () {
+                                // Get the selected value
+                                var selectedValue = $(this).val();
+
+                                if (selectedValue === "Yes") {
+                                    // Display the bankinfo div
+                                    $("#BankInfo").show();
+                                } else if (selectedValue === 'No') {
+                                    // Hide the BankInfo div for other options
+                                    $("#BankInfo").hide();
+                                } else {
+                                    // Hide the BankInfo div for other options
+                                    $("#BankInfo").hide();
+                                }
+                            });
+                        });
+
+                        // TDS display-----------
+                        $(document).ready(function () {
+                            // Initially hide the salary_amount div
+                            $("#TDSinfo").hide();
+
+
+                            // Add change event listener to the salary_details dropdown
+                            $("#TDS").change(function () {
+                                // Get the selected value
+                                var selectedValue = $(this).val();
+
+                                if (selectedValue === "Yes") {
+                                    // Display the bankinfo div
+                                    $("#TDSinfo").show();
+                                } else if (selectedValue === 'No') {
+                                    // Hide the BankInfo div for other options
+                                    $("#TDSinfo").hide();
+                                } else {
+                                    // Hide the BankInfo div for other options
+                                    $("#TDSinfo").hide();
+                                }
+                            });
+                        });
+
+                        // ------------------------------------------------------------------------------
+                        // Tds percentage/amount display
+
+                        $(document).ready(function () {
+                            // Initially hide the salary_amount div
+                            $("#TDSamount").hide();
+                            $("#TDSpercentage").hide();
+
+                            // Add change event listener to the salary_details dropdown
+                            $("#TDStype").change(function () {
+                                // Get the selected value
+                                var selectedValue = $(this).val();
+
+                                // Check if the selected value is "Temporary" or "Fixed"
+                                if (selectedValue === "Percentage") {
+                                    // Display the salary_amount div
+                                    $("#TDSamount").hide();
+                                    $("#TDSpercentage").show();
+                                } else if (selectedValue === 'Amount') {
+                                    // Hide the salary_amount div and show salary_timebase div for other options
+                                    $("#TDSamount").show();
+                                    $("#TDSpercentage").hide();
+                                } else {
+                                    // Hide the salary_amount div for other options
+                                    $("#TDSamount").hide();
+                                    $("#TDSpercentage").hide();
+                                }
+                            });
+                        });
+
+                    </script>
 
 
                     <!-- ---general end ------>
@@ -620,7 +926,26 @@
                                             class="form-control " id="pr"></td>
                                 </tr>
                             </div><br>
+                            <script>// 12 digit aadhar number 
 
+                                document.addEventListener('input', function (event) {
+                                    var input = event.target;
+
+                                    // Check if the input has the id "accountnumber"
+                                    if (input.tagName === 'INPUT' && input.type === 'text' && input.id === 'aadhar' && input.pattern) {
+                                        var pattern = new RegExp(input.pattern);
+
+                                        if (!pattern.test(input.value)) {
+                                            // Remove any non-digit characters
+                                            var digitsOnly = input.value.replace(/\D/g, '');
+
+                                            // Add a space after every 4 digits
+                                            var formattedValue = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
+                                            // Update the input value
+                                            input.value = formattedValue;
+                                        }
+                                    }
+                                });</script>
                         </div>
 
                     </div><br>
@@ -633,33 +958,20 @@
 
         </div>
     </div>
-
-    </form>
-
-
-
 </div>
 
 
-
-
-
-
 <script>
-
-
-
     // employee save
     $(document).on("click", "#emp_save", function () {
 
         $.ajax({
 
             type: 'POST',
-            url: "{% url 'fin_employee_save_atndnce' %}",
+            url: "{% url 'fin_employee_save_atndnce_EDIT' mn=mn yr=yr pk=pk %}",
             headers: { "X-CSRFToken": "{{ csrf_token }}" },
 
             data: {
-                //csrfmiddlewaretoken: '{{ csrf_token }}',
                 Title: $('#title').val(),
                 First_Name: $('#firstname').val(),
                 Last_Name: $('#lastname').val(),
@@ -720,19 +1032,47 @@
             },
         });
     });
-    // -------------------------------------
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="bloodGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Blood Group </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="bloodGroupForm" method="post">
+                    {% csrf_token %}
+
+                    <label for="">Add New Blood Group</label>
+                    <input type="text" name="bloodGroup" class="form-control" id="bloodGroupInput">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
-    /*var today = new Date();
-    var yyyy = today.getFullYear();
-    var mm = String(today.getMonth() + 1).padStart(2, '0');
-    var dd = String(today.getDate()).padStart(2, '0');
-    var todayFormatted = yyyy + '-' + mm + '-' + dd;
 
-    document.getElementById("sdate").value = todayFormatted;
-    document.getElementById("edate").value = todayFormatted;*/
 
-    // -------------------------------------
+
+
+
+<script>
+
+
+
+
 
     $(document).on("input", "#sdate", function () {
 
@@ -741,7 +1081,7 @@
             url: '{% url "Fin_Holiday_check_for_attendance" %}',
             method: 'POST',
             data: {
-                empid : $("#itemUnit").val(),
+                empid: $("#itemUnit").val(),
                 sdate: $("#sdate").val(),
                 csrfmiddlewaretoken: $("input[name = csrfmiddlewaretoken]").val(),
             },
@@ -769,7 +1109,7 @@
             url: '{% url "Fin_Holiday_check_for_attendance" %}',
             method: 'POST',
             data: {
-                empid : $("#itemUnit").val(),
+                empid: $("#itemUnit").val(),
                 sdate: $("#edate").val(),
                 csrfmiddlewaretoken: $("input[name = csrfmiddlewaretoken]").val(),
             },
@@ -792,37 +1132,13 @@
     });
     // -------------------------------------
 
-    // display salary --------------------------------------------
-    $(document).ready(function () {
-        $("#salary_amount").hide();
-        $("#salary_timebase").hide();
 
-        $("#salary_type").change(function () {
-            var selectedValue = $(this).val();
-
-            if (selectedValue === "Temporary" || selectedValue === "Fixed") {
-                // Display the salary_amount div
-                $("#salary_amount").show();
-                $("#salary_timebase").hide();
-            } else if (selectedValue === 'Time Based') {
-                $("#salary_amount").show();
-                $("#salary_timebase").show();
-            } else {
-                // Hide the salary_amount div for other options
-                $("#salary_amount").hide();
-                $("#salary_timebase").hide();
-            }
-        });
-    });
     // -------------------------------------
 
-    // calculate salary amount in time base 
     function calculateAndSetSalary() {
-        // Get values from amount_perhour and working_hours
         var firstValue = parseFloat($('#amount_perhour').val()) || 0;
         var secondValue = parseFloat($('#working_hours').val()) || 0;
 
-        // Check if both values are greater than 0
         if (firstValue > 0 && secondValue > 0) {
             // Perform calculations and set the value for salary_amount2
             var thirdValue = firstValue * secondValue;
@@ -834,268 +1150,14 @@
     }
     // -------------------------------------
 
-    // joining date = current date
-
-    document.addEventListener("DOMContentLoaded", function () {
-        var currentDate = new Date();
-        var dateString = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
-
-        document.getElementById("JoiningDate").value = dateString;
-    });
-    // -------------------------------------
-
-    // age display
-
-    document.addEventListener("DOMContentLoaded", function () {
-        // Add change event listener to the DOB input
-        document.getElementById("DOB").addEventListener("input", function () {
-            // Get the selected date of birth
-            var dobValue = this.value;
-
-            // Calculate the age
-            var age = calculateAge(new Date(dobValue));
-
-            // Display the age in the ageDisplay input
-            document.getElementById("ageDisplay").value = age;
-        });
-
-        // Function to calculate age based on the provided date of birth
-        function calculateAge(dob) {
-            var today = new Date();
-            var birthDate = new Date(dob);
-            var age = today.getFullYear() - birthDate.getFullYear();
-            var monthDiff = today.getMonth() - birthDate.getMonth();
-
-            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                age--;
-            }
-
-            return age;
-        }
-    });
-
-    // --------------------------------------------------------------------
-    // age validation
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get the current date
-        var currentDate = new Date();
-
-        // Calculate the date 18 years ago
-        var eighteenYearsAgo = new Date(currentDate);
-        eighteenYearsAgo.setFullYear(currentDate.getFullYear() - 18);
-
-        // Format the date to YYYY-MM-DD for the input field
-        var formattedDate = eighteenYearsAgo.toISOString().split('T')[0];
-
-        // Set the default value and maximum allowed date of the input field
-        var dobInput = document.getElementById('DOB');
-        // dobInput.value = formattedDate;
-        dobInput.max = formattedDate;
-    });
-    // -----------------------------------------------------------------------------
-    // display banking ---
-
-    $(document).ready(function () {
-        // Initially hide the salary_amount div
-        $("#BankInfo").hide();
 
 
-        // Add change event listener to the salary_details dropdown
-        $("#bankDetails").change(function () {
-            // Get the selected value
-            var selectedValue = $(this).val();
 
-            if (selectedValue === "Yes") {
-                // Display the bankinfo div
-                $("#BankInfo").show();
-            } else if (selectedValue === 'No') {
-                // Hide the BankInfo div for other options
-                $("#BankInfo").hide();
-            } else {
-                // Hide the BankInfo div for other options
-                $("#BankInfo").hide();
-            }
-        });
-    });
 
     // ------------------------------------------------------------------
-    // TDS display-----------
-    $(document).ready(function () {
-        // Initially hide the salary_amount div
-        $("#TDSinfo").hide();
 
 
-        // Add change event listener to the salary_details dropdown
-        $("#TDS").change(function () {
-            // Get the selected value
-            var selectedValue = $(this).val();
 
-            if (selectedValue === "Yes") {
-                // Display the bankinfo div
-                $("#TDSinfo").show();
-            } else if (selectedValue === 'No') {
-                // Hide the BankInfo div for other options
-                $("#TDSinfo").hide();
-            } else {
-                // Hide the BankInfo div for other options
-                $("#TDSinfo").hide();
-            }
-        });
-    });
-
-    // ------------------------------------------------------------------------------
-    // Tds percentage/amount display
-
-    $(document).ready(function () {
-        // Initially hide the salary_amount div
-        $("#TDSamount").hide();
-        $("#TDSpercentage").hide();
-
-        // Add change event listener to the salary_details dropdown
-        $("#TDStype").change(function () {
-            // Get the selected value
-            var selectedValue = $(this).val();
-
-            // Check if the selected value is "Temporary" or "Fixed"
-            if (selectedValue === "Percentage") {
-                // Display the salary_amount div
-                $("#TDSamount").hide();
-                $("#TDSpercentage").show();
-            } else if (selectedValue === 'Amount') {
-                // Hide the salary_amount div and show salary_timebase div for other options
-                $("#TDSamount").show();
-                $("#TDSpercentage").hide();
-            } else {
-                // Hide the salary_amount div for other options
-                $("#TDSamount").hide();
-                $("#TDSpercentage").hide();
-            }
-        });
-    });
-
-    // address copy 
-
-    $(document).ready(function () {
-
-
-        // Handle checkbox click event
-        $('#addressCheckBox').on('change', function () {
-            if ($(this).is(':checked')) {
-                // Copy values from permanent address to temporary address
-                $('#temStreet').val($('#perStreet').val());
-                $('#temCity').val($('#perCity').val());
-                $('#temState').val($('#perState').val());
-                $('#temPincode').val($('#perPincode').val());
-                $('#temCountry').val($('#perCountry').val());
-
-                // Show temporary address
-                $('#temAddress').show();
-            }
-        });
-    });
-
-    // 12 digit aadhar number 
-
-    document.addEventListener('input', function (event) {
-        var input = event.target;
-
-        // Check if the input has the id "accountnumber"
-        if (input.tagName === 'INPUT' && input.type === 'text' && input.id === 'aadhar' && input.pattern) {
-            var pattern = new RegExp(input.pattern);
-
-            if (!pattern.test(input.value)) {
-                // Remove any non-digit characters
-                var digitsOnly = input.value.replace(/\D/g, '');
-
-                // Add a space after every 4 digits
-                var formattedValue = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
-                // Update the input value
-                input.value = formattedValue;
-            }
-        }
-    });
-
-    // -------------------------------------
-
-    $(document).ready(function () {
-        $('#bloodGroupForm').submit(function (e) {
-            e.preventDefault(); // Prevent the default form submission
-
-            // Get the form data
-            var formData = {
-                'bloodGroup': $('#bloodGroupInput').val()
-            };
-
-            // Perform Ajax request
-            $.ajax({
-                type: 'POST',
-                url: '#',
-                data: formData,
-                dataType: 'json',
-                headers: {
-                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-                },
-                success: function (response) {
-                    if (response.success) {
-                        // Success case: Blood group added successfully
-                        alert('Blood group added successfully!');
-
-                        // Update the entire section in the dropdown with the new bloodgroup data
-                        updateBloodGroupSection(response.bloodgroup);
-                    } else {
-                        // Failure case: Display an error message
-                        alert('Error: ' + response.error);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Handle Ajax errors here
-                    console.error('Ajax Error: ' + status + ' - ' + error);
-                }
-            });
-        });
-
-        // Function to update the entire section in the dropdown
-        function updateBloodGroupSection(bloodgroup) {
-            // Assuming you have a select element with the id 'bloodGroupSelect'
-            var bloodGroupSelect = $('#bloodGroupSelect');
-
-            // Remove all existing options
-            bloodGroupSelect.empty();
-
-            // Append new options based on the received data
-            bloodGroupSelect.append($('<option>', {
-                value: '',  // Default option
-                text: '--select--'
-            }));
-
-            addStaticOption('A+', 'A+');
-            addStaticOption('A-', 'A-');
-            addStaticOption('B+', 'B+');
-            addStaticOption('O+', 'O+');
-
-            for (var i = 0; i < bloodgroup.length; i++) {
-                bloodGroupSelect.append($('<option>', {
-                    value: bloodgroup[i].blood_group,
-                    text: bloodgroup[i].blood_group
-                }));
-            }
-
-            $('#bloodGroupModal').modal('hide');
-        }
-
-        function addStaticOption(value, text) {
-            // Assuming you have a select element with the id 'bloodGroupSelect'
-            var bloodGroupSelect = $('#bloodGroupSelect');
-
-            // Append the new static option
-            bloodGroupSelect.append($('<option>', {
-                value: value,
-                text: text
-            }));
-        }
-
-    });
 
 
 

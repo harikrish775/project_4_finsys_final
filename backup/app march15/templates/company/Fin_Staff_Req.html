@@ -1,0 +1,51 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+
+
+<div class="body-wrapper p-3">
+    <div class="container-fluid">
+        <div class="card radius-15">
+            <a href="">
+                <div class="card-body">
+                    <div class="card-title">
+                    </div>
+                    <table class="table table-responsive-md mt-4 table-hover" >
+                        <thead>
+                            <tr>
+                                <th  style="text-align: center; text-transform: uppercase;"><b>ID</b></th>
+                                <th  style="text-align: center; text-transform: uppercase;"><b>Name</b></th>
+                                <th  style="text-align: center; text-transform: uppercase;"><b>User Name</b></th>
+                                <th  style="text-align: center; text-transform: uppercase;"><b>Email</b></th>
+                                <th  style="text-align: center; text-transform: uppercase;"><b>Contact</b></th>
+                                
+                                <th  style="text-align: center; text-transform: uppercase;"><b>Action</b></th>
+    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in data1 %}
+                            <tr>
+                                <td  style="text-align: center;">{{d.id}}</td>
+                                <td style="text-align: center;"><a href="">
+                                     {{d.Login_Id.First_name}} {{d.Login_Id.Last_name}} </a></td>
+                                     <td  style="text-align: center;">{{d.Login_Id.User_name}}</td>
+                                <td  style="text-align: center;">{{d.Email}}</td>
+                                
+                                <td style="text-align: center;">{{d.contact}}</td>
+                                
+                                <td style="text-align: center;"><a href="{% url 'Fin_Staff_Req_Accept' d.id %}" class="btn btn-success m-1">Accept</a>
+                                    <a href="{% url 'Fin_Staff_Req_Accept' d.id %}" class="btn btn-danger m-1">Reject</a></td>
+                                
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

@@ -95,7 +95,7 @@
                                 <div class="row mb-5">
                                     <div class="col-md-8 mt-3"></div>
                                     <div class="col-md-2 mt-3">
-                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                             
                                     </div>
                                     <div class="col-md-2 mt-3">
@@ -107,9 +107,9 @@
                                   </div>
                             </form>
               
-            {% elif bank.transaction_type == 'Opening Balance' %}
+            {% comment %} {% elif bank.transaction_type == 'Opening Balance' %}
 
-            <form id="bankForm" method="post" action="{% url 'Fin_edit_bank' bank.id %}">
+            <form id="bankForm" method="post" action="{% url 'Fin_edit_bank_account' bank.id %}">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-5 p-2">
@@ -175,14 +175,13 @@
 
                 <div class="row">
                     <div class="col-md-5 form-inline p-2">
-
-                        <input class="form-control" type="number" name="Opening" value="{{bank.banking.opening_balance}}">
                         <select class="form-control" name="op_type" id="">
                             <option value="{{bank.banking.opening_balance_type}}">{{bank.banking.opening_balance_type}}</option>
                             <option value="DEBIT">DEBIT</option>
                             <option value="CREDIT">CREDIT</option>
 
                         </select>
+                        <input class="form-control" type="number" name="Opening" value="{{bank.banking.opening_balance}}">
                     </div>
                     <div class="col-md-2">
 
@@ -199,6 +198,7 @@
                 <div class="row mb-5">
                     <div class="col-md-8 mt-3"></div>
                     <div class="col-md-2 mt-3">
+                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
 
                     </div>
                     <div class="col-md-2 mt-3">
@@ -208,7 +208,7 @@
                     </div>
                     <div class="col-md-1"></div>
                 </div>
-            </form>
+            </form> {% endcomment %}
 
             {% elif bank.adjustment_type == 'Increase Balance' %}
 
@@ -294,7 +294,7 @@
                                <div class="row mb-5">
                                 <div class="col-md-8 mt-3"></div>
                                 <div class="col-md-2 mt-3">
-                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                         
                                 </div>
                                 <div class="col-md-2 mt-3">
@@ -397,7 +397,7 @@
                                 <div class="row mb-5">
                                     <div class="col-md-8 mt-3"></div>
                                     <div class="col-md-2 mt-3">
-                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                        <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                             
                                     </div>
                                     <div class="col-md-2 mt-3">
@@ -451,7 +451,7 @@
                                             <option value="{{bank.banking.id}}" selected>{{bank.banking.bank_name}}</option>
                                             
                                                 {% for i in all_banks %}
-                                                <option value="{{i.id}}">{{i.bank_name}}{{i.id}}</option>
+                                                <option value="{{i.id}}">{{i.bank_name}}</option>
                                                 {% endfor %}
                                              </select>
                                     </div>
@@ -503,7 +503,7 @@
                                <div class="row mb-5">
                                 <div class="col-md-8 mt-3"></div>
                                 <div class="col-md-2 mt-3">
-                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                         
                                 </div>
                                 <div class="col-md-2 mt-3">
@@ -553,7 +553,7 @@
                                         <option value="{{banks.banking.id}}" selected>{{banks.banking.bank_name}}</option>
         
                                         {% for i in all_banks %}
-                                        <option value="{{i.id}}">{{i.bank_name}}{{i.id}}</option>
+                                        <option value="{{i.id}}">{{i.bank_name}}</option>
                                         {% endfor %}
                                      </select>
                                 </div>
@@ -608,7 +608,7 @@
                             <div class="row mb-5">
                                 <div class="col-md-8 mt-3"></div>
                                 <div class="col-md-2 mt-3">
-                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                    <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                         
                                 </div>
                                 <div class="col-md-2 mt-3">
@@ -709,7 +709,7 @@
                            <div class="row mb-5">
                             <div class="col-md-8 mt-3"></div>
                             <div class="col-md-2 mt-3">
-                                <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+                                <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{% url 'Fin_banking_listout' %}">Close</a>
                     
                             </div>
                             <div class="col-md-2 mt-3">

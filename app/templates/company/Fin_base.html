@@ -494,7 +494,7 @@
                 {% endif %}
 
                 {% if allmodules.Stock_Adjustment == 1 %}
-                <li id="stockadjustment"><a href=""><i class="bx bx-right-arrow-alt"></i>Stock
+                <li id="stockadjustment"><a href="{% url 'StockAdjustment' %}"><i class="bx bx-right-arrow-alt"></i>Stock
                     Adjustments</a>
                 </li>
                 {% endif %}
@@ -539,7 +539,7 @@
                 {% endif %}
 
                 {% if allmodules.Loan_Account == 1 %}
-                <li><a href=""><i class="bx bx-right-arrow-alt"></i>Loan Account</a>
+                <li><a href="{% url 'loan_ac_listoutpage' %}"><i class="bx bx-right-arrow-alt"></i>Loan Account</a>
                 </li>
                 {% endif %}
 
@@ -597,7 +597,7 @@
             {% endif %}
 
             {% if allmodules.Delivery_Challan == 1 %}
-            <li id="deliverychallan"><a href=""><i class="bx bx-right-arrow-alt"></i> Delivery Challan</a>
+            <li id="deliverychallan"><a href="{% url 'deliverylist' %}"><i class="bx bx-right-arrow-alt"></i> Delivery Challan</a>
             </li>
             {% endif %}
 
@@ -625,7 +625,7 @@
               {% endif %}
 
               {% if allmodules.Purchase_Order == 1 %}
-              <li id="purchaseorder"><a href=""><i class="bx bx-right-arrow-alt"></i>Purchase Order</a>
+              <li id="purchaseorder"><a href="{% url 'Fin_purchaseOrder' %}"><i class="bx bx-right-arrow-alt"></i>Purchase Order</a>
               </li>
               {% endif %}
 
@@ -635,7 +635,7 @@
               {% endif %}
 
               {% if allmodules.Expenses == 1 %}
-              <li id="expense"><a href=""><i class="bx bx-right-arrow-alt"></i>Expense</a>
+              <li id="expense"><a href="{% url 'Fin_expense' %}"><i class="bx bx-right-arrow-alt"></i>Expense</a>
               </li>
               {% endif %}
 
@@ -645,7 +645,7 @@
               {% endif %}
 
               {% if allmodules.Debit_Note == 1 %}
-              <li id="debitnote"><a href=""><i class="bx bx-right-arrow-alt"></i>Debit Note</a>
+              <li id="debitnote"><a href="{% url 'Fin_debitnotelist' %}"><i class="bx bx-right-arrow-alt"></i>Debit Note</a>
               </li>
               {% endif %}
 

@@ -1,0 +1,875 @@
+{% extends 'company/Fin_base.html' %}
+{% load static %}
+{% block body %}
+
+
+
+<style>
+    /* Apply styles to all input fields */
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        font-size: large;
+        background-color: rgba(79, 99, 117, 0.7);
+        border: 1px solid grey;
+        border-radius: 4px;
+        color: white;
+    }
+  
+    /* Style specific input fields by targeting their type or class */
+    input[type="text"] {
+        border: 1px solid  grey;
+        border-radius: 4px;
+        background-color:rgba(79, 99, 117, 0.7);
+        color: white;
+        font-size: 16px;
+       
+    }
+  
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid  grey;;
+        border-radius: 4px;
+        color: white;
+        background-color:rgba(79, 99, 117, 0.7);
+        font-size: 16px;
+    }
+  
+    /* Add more styles as needed */
+  </style>
+  
+ 
+  <div class="page-content">
+    
+     
+      <div class="card radius-15 p-5 ">
+        <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+    <script>
+        function goBack() {
+        window.history.back();
+        }
+    </script>
+        <center>
+            <h2> Edit loan Acount</h2>
+         </center>
+  
+       <br>
+       <hr>
+  <form id="bankForm" method="post" action="{% url 'edit_loan_account' loan.id %}">
+      {% csrf_token %}
+      <div class="row p">
+          <div class="col-md-5 p-2">ACCOUNT NAME</div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2">LENDER BANK</div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 d-flex p-2">
+              <!-- <select name="acc_name" id="acc_name" class="form-control text-white">
+            
+            {% for i in accounts %}
+            {% if i.id == accounts.holder_name.id %}
+            <option value="{{i.id}}" selected>{{i.holder_name}}</option>
+            {% else %}
+              <option data-acc-number="{{ i.account_number }}" value="{{ i.holder_name }}">{{ i.holder_name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select> -->
+          <select name="acc_name" id="acc_name" class="form-control text-white">
+            
+              
+              
+              <option value="{{loan.account_name}}" selected>{{loan.account_name}}</option>
+              {% for i in accounts %}
+              <option data-acc-number="{{ i.account_number }}" value="{{ i.holder.name }}">{{ i.holder.name }}</option>
+               
+              {% endfor %}
+            </select>
+           <!-- <button data-toggle="modal" data-target="#accountModal" class="btn btn-outline-secondary text-grey mb-2 ml-1">+</button>  -->
+        </div>
+          
+           
+          
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2"> <input class="form-control" type="text" name="lender" value="{{loan.lenderbank}}"> </div>
+      </div>
+      
+  
+  
+  
+      <div class="row">
+          <div class="col-md-5 p-2">ACCOUNT NUMBER</div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2">DESCRIPTION</div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2"><input class="form-control" type="text" name="acc_number" id="acc_number" value="{{loan.account_number}}"></div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2"><input class="form-control" type="text" name="desc" value="{{loan.desc}}"></div>
+      </div>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var accNameSelect = document.getElementById("acc_name");
+            var accNumberInput = document.getElementById("acc_number");
+    
+            accNameSelect.addEventListener("change", function () {
+                var selectedOption = accNameSelect.options[accNameSelect.selectedIndex];
+                var accNumber = selectedOption.getAttribute("data-acc-number");
+    
+                // Update the account number input field
+                accNumberInput.value = accNumber;
+            });
+        });
+    </script>
+      <div class="row">
+          <div class="col-md-5 p-2">LOAN AMOUNT</div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2">LOAN DATE</div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2"><input class="form-control" type="text" name="balance" value="{{loan.loan_amount}}"></div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2"><input class="form-control" type="date" name="date" value="{{loan.date |date:'Y-m-d'}}"></div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2">LOAN RECIEVED in</div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5 p-2">PROCESSING FEE</div>
+      </div>
+      
+      
+      <div class="row">
+        <div class="col-md-5 p-2 pt-3"><select   name="recieved" class="form-control  text-white" id="pay" required>
+          <option class="form-control bg-dark text-white"  value="{{loan.recieced_bank}}" selected>{{loan.recieced_bank}}</option>  
+          <option class="form-control bg-dark text-white" value="cash">CASH</option>
+            <option class="form-control bg-dark text-white" value="upi">UPI</option>
+            <option class="form-control bg-dark text-white" value="cheque">CHEQUE</option>
+  
+            {% for i in bank %}
+                                    <option value="{{ i.id }}" style="background-color: #294f76;" {% if employ.type == i.id|stringformat:"s" %}Selected{% endif %} >
+                                        {{ i.bank_name }} ( ********  {{ "*"|stringformat:"<"|rjust:12 }}{{ i.account_number|slice:"-4:" }})
+                                    </option>
+                                {% endfor %}
+        </select>  </div> 
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="text" name="processing" value="{{loan.processing}}"></div>
+  
+    </div>
+
+      <div class="row">
+        {% if loan.recieved_cheque %}
+        <div class="col-md-5 p-2"  id="chequedi">
+          <label class="col-form-label" >Cheque No</label>
+          <input type="text" class="form-control" name="recieved_cheque_id" value="{{loan.recieved_cheque}}" id="cheque_i" placeholder="Enter Cheque No">
+      </div>
+      {%else%}
+      <div class="col-md-5 p-2" style="display:none;"  id="chequedi">
+        <label class="col-form-label" >Cheque No</label>
+        <input type="text" class="form-control" name="recieved_cheque_id"  id="cheque_i" placeholder="Enter Cheque No">
+    </div>
+      {%endif%}
+      {%if loan.recieved_upi%}
+      <div class="col-md-5 p-2"   id="upidi">
+          <label class="col-form-label" >UPI ID</label>
+          <input type="text" class="form-control" name="recieved_upi_id" value="{{loan.recieved_upi}}" id="upi_i" placeholder="Enter UPI ID">
+      </div>
+      {%else%}
+      <div class="col-md-5 p-2"  style="display:none;" id="upidi">
+        <label class="col-form-label" >UPI ID</label>
+        <input type="text" class="form-control" name="recieved_upi_id"  id="upi_i" placeholder="Enter UPI ID">
+    </div>
+
+      {%endif%}
+      {% if loan.bank_acc_number %}
+      <div class="col-md-5 p-2"   id="bnkdi">
+          <label class="col-form-label" >Bank Account</label>
+          <input type="text" class="form-control" name="recieved_bnk_id" id="bnk_i" value="{{loan.bank_acc_number}}" style="background-color: #43596c;" readonly>
+      </div>
+      {%else%}
+      <div class="col-md-5 p-2" style="display:none;"   id="bnkdi">
+        <label class="col-form-label" >Bank Account</label>
+        <input type="text" class="form-control" name="recieved_bnk_id" id="bnk_i"  style="background-color: #43596c;" readonly>
+    </div>
+
+      {%endif%}
+      </div>
+      <div class="row">
+          <div class="col-md-5 p-2">TERM</div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5">INTREST AMOUNT</div>
+  
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2"> <input type="text" name="term" class="form-control" value="{{loan.term}}"></div>
+          <div class="col-md-2"></div>
+          <div class="col-md-5">
+            <input class="form-control" type="text" placeholder="0" name="intrest" value="{{loan.intrest}}">
+  
+          </div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2">PROCESSING PAID FROM</div>
+          <div class="col-md-2"></div>
+      </div>
+      
+      <div class="row">
+          <div class="col-md-5 p-2"> <select     name="paid" class="form-control  text-white" id="pay_method">
+              <option value="{{loan.paid}}" selected>{{loan.paid}}</option>
+      <option class="form-control bg-dark text-white" value="cash">CASH</option>
+      <option class="form-control bg-dark text-white" value="upi">UPI</option>
+      <option class="form-control bg-dark text-white" value="cheque">CHEQUE</option>
+  
+      {% for i in bank %}
+                                    <option value="{{ i.id }}" style="background-color: #294f76;" {% if loan.type == i.id|stringformat:"s" %}Selected{% endif %} >
+                                        {{ i.bank_name }} ( ********  {{ "*"|stringformat:"<"|rjust:12 }}{{ i.account_number|slice:"-4:" }})
+                                    </option>
+                                {% endfor %}
+  </select>    </div>
+          <div class="col-md-2"></div>
+        
+      </div>
+      
+      <div class="row">
+        {% if loan.paid_cheque %}
+        <div class="col-md-5"   id="chequediv">
+          <label class="col-form-label" >Cheque No</label>
+          <input type="text" class="form-control" name="paid_cheque_id" value="{{loan.paid_cheque}}" id="cheque_id" placeholder="Enter Cheque No">
+      </div>
+      {%else%}
+      <div class="col-md-5" style="display:none;"  id="chequediv">
+        <label class="col-form-label" >Cheque No</label>
+        <input type="text" class="form-control" name="paid_cheque_id" id="cheque_id" placeholder="Enter Cheque No">
+    </div>
+    {%endif%}
+    {% if loan.paid_upi %}
+      <div class="col-md-5" id="upidiv">
+          <label class="col-form-label" >UPI ID</label>
+          <input type="text" class="form-control" name="paid_upi_id" value="{{loan.paid_upi}}" id="upi_id" placeholder="Enter UPI ID">
+      </div>
+      {%else%}
+      <div class="col-md-5"  style="display:none;" id="upidiv">
+        <label class="col-form-label" >UPI ID</label>
+        <input type="text" class="form-control" name="paid_upi_id" id="upi_id" placeholder="Enter UPI ID">
+    </div>
+    {%endif%}
+    {% if loan.paid_bank_acc_number %}
+
+      <div class="col-md-5"   id="bnkdiv">
+          <label class="col-form-label" >Bank Account</label>
+          <input type="text" class="form-control" name="paid_bnk_id" id="bnk_id" value="{{loan.paid_bank_acc_number}}" style="background-color: #43596c;" readonly>
+      </div>
+      {%else%}
+      <div class="col-md-5" style="display:none;" id="bnkdiv">
+        <label class="col-form-label" >Bank Account</label>
+        <input type="text" class="form-control" name="paid_bnk_id" id="bnk_id"  style="background-color: #43596c;" readonly>
+    </div>
+      {%endif%}
+       </div>
+      
+      <div class="row mb-5">
+          <div class="col-md-9 mt-3"></div>
+          <div class="col-md-2 mt-3">
+            <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+              Save Loan Account
+            </button>
+          </div>
+          <div class="col-md-1"></div>
+        </div>
+  </form>
+  </div>
+  </div>
+  <!-- Modal -->
+  
+  <div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content ">
+      <div class="page-content">
+        <div class="card radius-15">
+          <div class="ml-auto">  <a style="cursor: pointer;" id="closeButton" title="Close" href="{% url 'loan_create_page' %}" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-12 col-xl-12">
+                        <div class="card" style="background-color: #2a4964;">
+                            <div class="row no-gutters">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8 mt-4 mb-4">
+                                    <center>
+                                        <h5 class="card-title"><h3> ADD BANK HOLDER </h3></h5>
+                                    </center>
+                                </div><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+  
+        <div class="container">
+          <form method="post" action="" class="form-style" enctype="multipart/form-data" id="emploandata">
+            {% csrf_token %}
+            <div class="row" >
+                <div class="col-md-6">
+                    <h2>Bank Account Holder Form</h2>
+                    <br>
+                    <div class="form-group row">
+                        <label for="name" class="col-sm-4 col-form-label">Name</label>
+                        <input type="text" class="col-sm-8 form-control" placeholder="Enter Name" name="name" id="name" value="{{account.name}}" pattern="[A-Za-z]+" title="Only alphabets are allowed" required><br>
+                    
+                        <label for="alias" class="col-sm-4 col-form-label">Alias</label>
+                        <input type="text" class="col-sm-8 form-control" placeholder="Enter Alias" name="alias" id="alias"  pattern="[A-Za-z]+" title="Only alphabets are allowed"><br>
+                        
+                    
+                        <label for="phone_number" class="col-sm-4 col-form-label">Phone Number</label>
+                        <input type="text" class="col-sm-8 form-control" placeholder="Enter Phone Number" name="phone_number" id="phone_number" pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number" required><br>
+                        <div class="text-danger m-2 invalid-feedback" id="phone_number">Please provide a valid Number</div>
+                    
+                        <label class="col-sm-4 col-form-label" for="email">Email</label>
+                        <input type="email" class="col-sm-8 form-control" placeholder="Enter Email" name="email" id="email" title="Please enter a valid email address" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" required><br>
+                        <div class="invalid-feedback">Please provide a valid Email</div>
+
+                        <label class="col-sm-4 col-form-label" for="account_type">Account Type</label>
+                        <select name="account_type" id="account_type" class="col-sm-8 form-control" required>
+                            <option value="">Select Account Type</option>
+                            <option value="Bank Account">Bank Account</option>
+                        </select>
+                    </div>   
+                </div>
+
+                <div class="col-md-6">
+                    <h2>Bank Account Form</h2><br>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="bankName">Bank Name</label>
+                        <div class="col-sm-7">
+                            <select name="bank_name" id="bank_name" class="form-control" placeholder="Select Bank" required>
+                                <option value="">Select Bank</option>
+                                {% for bank_name in bank_names %}
+                                    <option value="{{ bank_name }}">{{ bank_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-1">
+                            <a class="btn btn-outline-secondary" role="button" data-target="#bankholdercreation" data-toggle="modal" title="Add Bank">+</a>
+                        </div>
+                        <label class="col-sm-4 col-form-label" for="accountNumber">Account Number</label>
+                        <div class="col-sm-8">
+                            <select name="accountNumber" id="accountNumber" class="form-control" placeholder="Select Account Number" >
+                                <option value="">Select Account Number</option>
+                            </select>
+                        </div>
+                        
+                        <label class="col-sm-4 col-form-label" for="ifscCode">IFSC Code</label>
+                        <input type="text" class="col-sm-8 form-control" name="ifscCode" id="ifscCode" placeholder="Enter IFSC Code" readonly value="{{ account_holder.Ifsc_code }}"><br>
+                        
+
+                        <label class="col-sm-4 col-form-label">Branch Name</label>
+                        <input type="text" class="col-sm-8 form-control" name="branch_name" id="branch_name" placeholder="Enter Branch Name" readonly value="{{ account_holder.Branch_name }}"><br>
+                        
+
+                        <label class="col-sm-4 col-form-label" for="swiftCode">Swift Code</label>
+                        <input type="text" class="col-sm-8 form-control" name="swiftCode" id="swiftCode" placeholder="Enter Swift Code" onblur="checkSwiftCode()"><br>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-8 offset-sm-4">
+                        {% if error_messages_account %}
+                            <div class="error-box">
+                                <ul class="list-unstyled">
+                                    {% for error_message in error_messages_account %}
+                                        <li class="text-danger">{{ error_message }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Bank Configuration Form</h2>
+                    <br>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label"for="accountName" style="white-space: nowrap;"> Select cheque book range</label>
+                        <select name="set_cheque_book_range" id="set_cheque_book_range" class="col-sm-8">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select><br>
+                        <label class="col-sm-4 col-form-label" for="accountName"style="white-space: nowrap;">Enable cheque printing</label>
+                        <select name="enable_cheque_printing" id="enable_cheque_printing" class="col-sm-8">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select><br>
+                        <label class="col-sm-4 col-form-label">Set cheque printing configuration</label>
+                        <select name="set_cheque_printing_configuration" id="set_cheque_printing_configuration" class="col-sm-8">
+                            <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Mailing Address Form</h2>
+                        <br>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="mailingName">Mailing Name</label>
+                            <input type="text" class="col-sm-8  form-control" name="mailingName" id="mailingName" pattern="[A-Za-z]+" title="Only alphabets are allowed" required><br>
+
+                            <label class="col-sm-4 col-form-label" for="address">Address</label>
+                            <textarea class="col-sm-8 mb-2 form-control " id="address" name="address" pattern="[A-Za-z]+" title="Only alphabets are allowed" required></textarea><br>
+
+                            <label class="col-sm-4 col-form-label"for="mailingCountry">Country</label>
+                            <input type="text" class="col-sm-8 form-control" placeholder="Enter Country" name="country" id="country" pattern="[A-Za-z]+" title="Only alphabets are allowed" required>
+                            <div class="invalid-feedback">Please provide a valid Country</div>
+
+                            <label class="col-sm-4 col-form-label" for="mailingState">State</label>
+                            <select id="state" name="state" class="col-sm-8">
+                                <option value="">Select State</option>
+                                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                <option value="Daman and Diu">Daman and Diu</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Lakshadweep">Lakshadweep</option>
+                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Orissa">Orissa</option>
+                                <option value="Pondicherry">Pondicherry</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttaranchal">Uttaranchal</option>
+                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                <option value="West Bengal">West Bengal</option>
+                            </select>
+                            <div class="invalid-feedback">Please provide a valid State</div>
+                            <label class="col-sm-4 col-form-label" for="mailingPin">Pin</label>
+                            <input type="text" class="col-sm-8 form-control" id="pin" name="pin" placeholder="PIN code" pattern="[0-9]{6}" required><br> 
+                            <div class="invalid-feedback">Please provide a valid Pin Code</div> 
+                        </div>
+                    </div>
+                   
+                </div> 
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Tax Registration Form</h2> 
+                        <br>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="pan_it_number">Pan it number</label>
+                            <input type="text" class="col-sm-8  form-control" name="pan_it_number" id="pan_it_number" placeholder="ABCDE1234A" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" required><br>
+                            <label class="col-sm-4 col-form-label" for="registration_type">Registration Type</label>
+                            <select name="registration_type" id="registration_type" class="col-sm-8" onchange="toggleGstinUn()" required>
+                                <option value="">Select Registration Type</option>
+                                <option value="Regular">Regular</option>
+                                <option value="Composition">Composition</option>
+                                <option value="Consumer">Consumer</option>
+                                <option value="Unregistered">Unregistered</option>
+                            </select><br>
+                            <label class="col-sm-4 col-form-label" for="gstin_un" id="gstin_un_label" style="display:none;">GSTin un</label>
+                            <input type="text" class="col-sm-8 form-control" name="gstin_un" id="gstin_un" style="display:none;"><br>
+                        </div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Opening Balance Form</h2> <br>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="date">Date</label>
+                        <input type="date" class="col-sm-8 form-control" name="date" id="date"><br>
+                        
+                        <label class="col-sm-4 col-form-label" for="amount">Amount</label>  
+                        <input class="col-sm-5 form-control" type="text" name="Opening" id="amount" value="0">
+                        
+                        <select class="col-sm-3 form-control" name="termof" id="termof">
+                            <option value="CREDIT">CREDIT</option>
+                            <option value="DEBIT">DEBIT</option>
+                        </select>
+                    </div> 
+                </div>
+
+            <div class="container">
+              <div class="row mt-5 mb-5">
+                <div class="col-md-4"></div>
+                <div class="col-md-4 text-center">
+                  <div class="d-flex justify-content-between">
+                    <button class="btn btn-outline-secondary text-light" type="submit" style="margin-right: 10px; width: 60%;" id="saveAccountBtn">SUBMIT</button>
+                    <a href="" class="btn btn-outline-secondary text-light" style="margin-left: 10px; width: 40%;">CANCEL</a>
+                  </div>
+                </div>
+                <div class="col-md-4"></div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade" id="bankholdercreation" tabindex="-1" role="dialog" aria-labelledby="bankModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bankModalLabel">Add Bank</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form  class="add-bank-form" action="{% url 'Fin_AddBankinHolder' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="bankName">Bank Name:</label>
+                        <input type="text" class="form-control" id="bankName" name="bank_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ifscCode">IFSC Code:</label>
+                        <input type="text" class="form-control" id="ifscCode" name="ifsc_code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number:</label>
+                        <input type="text" class="form-control" id="accountNumber" name="account_number" required>
+                    </div>
+                    <div id="error-message" class="text-danger"></div>
+                    <div class="form-group">
+                        <label for="branchName">Branch Name:</label>
+                        <input type="text" class="form-control" id="branchName" name="branch_name" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Bank</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+      
+  <script>
+    $(document).ready(function() {
+      // Function to handle the initial display based on the existing value
+      var initialMethod = $('#pay_method').val();
+      if (initialMethod === 'cheque') {
+        $('#chequediv').show();
+      } else if (initialMethod === 'upi') {
+        $('#upidiv').show();
+      } else if (initialMethod !== 'cash') {
+        $('#bnkdiv').show();
+        // Assuming you want to make an AJAX call only when the initial value is a bank
+        var customer = $('#pay_method').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'loan_bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#bnk_id").val(acc);
+                 
+                    }
+                    });
+      }
+    
+      // Function to handle changes in the select dropdown
+      $("#pay_method").change(function() {
+        var x = $('#pay_method').val();
+        if (x === 'cheque') {
+          $('#chequediv').show();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x === 'upi') {
+          $('#upidiv').show();
+          $('#chequediv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        } else if (x !== 'cash') {
+          $('#bnkdiv').show();
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          // Assuming you want to make an AJAX call only when the value is a bank
+          var customer = $('#pay_method').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'loan_bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#bnk_id").val(acc);
+                 
+                    }
+                    });
+        } else {
+          $('#chequediv').hide();
+          $('#upidiv').hide();
+          $('#bnkdiv').hide();
+          document.getElementById('cheque_id').value = null;
+          document.getElementById('upi_id').value = null;
+          document.getElementById('bnk_id').value = null;
+        }
+      });
+    });
+    
+    </script>
+  
+  
+  
+  <script>
+    $(document).ready(function() {
+      // Function to handle the initial display based on the existing value
+      var initialMethod = $('#pay').val();
+      if (initialMethod === 'cheque') {
+        $('#chequedi').show();
+      } else if (initialMethod === 'upi') {
+        $('#upidi').show();
+      } else if (initialMethod !== 'cash') {
+        $('#bnkdi').show();
+        // Assuming you want to make an AJAX call only when the initial value is a bank
+        var customer = $('#pay').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'loan_bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#bnk_i").val(acc);
+                 
+                    }
+                    });
+      }
+    
+      // Function to handle changes in the select dropdown
+      $("#pay").change(function() {
+        var x = $('#pay').val();
+        if (x === 'cheque') {
+          $('#chequedi').show();
+          $('#upidi').hide();
+          $('#bnkdi').hide();
+          document.getElementById('upi_i').value = null;
+          document.getElementById('bnk_i').value = null;
+        } else if (x === 'upi') {
+          $('#upidi').show();
+          $('#chequedi').hide();
+          $('#bnkdi').hide();
+          document.getElementById('cheque_i').value = null;
+          document.getElementById('bnk_i').value = null;
+        } else if (x !== 'cash') {
+          $('#bnkdi').show();
+          $('#chequedi').hide();
+          $('#upidi').hide();
+          document.getElementById('cheque_i').value = null;
+          document.getElementById('upi_i').value = null;
+          // Assuming you want to make an AJAX call only when the value is a bank
+          var customer = $('#pay').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'loan_bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#bnk_i").val(acc);
+                 
+                    }
+                    });
+        } else {
+          $('#chequedi').hide();
+          $('#upidi').hide();
+          $('#bnkdi').hide();
+          document.getElementById('cheque_i').value = null;
+          document.getElementById('upi_i').value = null;
+          document.getElementById('bnk_i').value = null;
+        }
+      });
+    });
+    
+    </script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var accNameSelect = document.getElementById("bank_name");
+        var accNumberInput = document.getElementById("accountNumber");
+        var accIfscInput = document.getElementById("ifscCode");
+  
+        accNameSelect.addEventListener("change", function () {
+            var selectedOption = accNameSelect.options[accNameSelect.selectedIndex];
+            var accNumber = selectedOption.getAttribute("data-acc-number");
+            var accifsc = selectedOption.getAttribute("data-ifsc-code");
+  
+            // Update the account number input field
+            accNumberInput.value = accNumber;
+            accIfscInput.value = accifsc;
+        });
+    });
+  </script>
+  
+  <script>
+    function toggleGstinUn() {
+        var registrationType = document.getElementById("registration_type").value;
+        var gstinUnLabel = document.getElementById("gstin_un_label");
+        var gstinUnInput = document.getElementById("gstin_un");
+  
+        if (registrationType === "Regular" || registrationType === "Composition") {
+            gstinUnLabel.style.display = "block";
+            gstinUnInput.style.display = "block";
+        } else {
+            gstinUnLabel.style.display = "none";
+            gstinUnInput.style.display = "none";
+        }
+    }
+  </script>
+
+
+<script>
+  $(document).ready(function() {
+  $("#saveAccountBtn").click(function() {
+    $("#accountModal").modal("hide");
+  })
+})
+</script>
+<script>
+  
+
+  $(document).on("click", "#saveAccountBtn", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+      
+        $.ajax({
+          type: 'POST',
+          url: "{% url 'save_account' %}",
+          data: {
+           
+              account_number:$("#accountNumber").val(),
+              ifsc_code:$("#ifscCode").val(),
+              swift_code:$("#swiftCode").val(),
+              bank_name:$("#bank_name").val(),
+              branch_name:$("#branch_name").val(),
+              name:$("#name").val(),
+              alias:$("#alias").val(),
+              phone_number:$("#phone_number").val(),
+              email:$("#email").val(),
+              account_type:$("#account_type").val(),
+              mailing_name:$("#mailingName").val(),
+              address:$("#address").val(),
+              country:$("#country").val(),
+              state:$("#state").val(),
+              pin:$("#pin").val(),
+              date:$("#date").val(),
+              amount:$("#amount").val(),
+              pan_it_number:$("#pan_it_number").val(),
+              registration_type:$("#registration_type").val(),
+              retype:$("#termof").val(),
+
+              gstin_un:$("#gstin_un").val(),
+
+              set_cheque_book_range:$("#set_cheque_book_range").val(),
+              enable_cheque_printing:$("#enable_cheque_printing").val(),
+              set_cheque_printing_configuration:$("#set_cheque_printing_configuration").val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+          success: function (response) {
+          console.log("added")
+  
+          document.getElementById("emploandata").reset();
+          reloadEnit();
+      },
+        });
+      });
+      
+      
+      function reloadEnit() {
+      
+        $.ajax({
+          url: "{% url 'loanac_dropdown' %}",
+          type: "GET",
+          dataType: "json",
+          data: $(this).serialize(),
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+        
+          success: function(data) {
+              console.log("success2")
+            var dropdown = $('#acc_name');
+      
+            $.each(data, function(key, value) {
+         
+              dropdown.append($('<option></option>').attr('value', key).text(value[0]));
+              console.log("emp load")
+            });
+      
+          },
+       
+        });
+        }
+</script>    
+
+{%endblock%}

@@ -1,0 +1,399 @@
+<!-- CREATED BY TINTO MT -->
+
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+<!-- 
+<div class="card radius-15 h-20 m-3">
+    <div class="row p-2">
+       
+            <div class="col-md-12">
+               <center>
+               <h2>  loan Payment</h2>
+            </center>
+            </div>
+            
+            
+            <hr style="width:95%">
+        
+    </div>
+</div> -->
+<div class="page-content" onmouseover="updateTotal()">
+
+    <a href="{% url 'employee_loan_list' %}">
+        <i class="fa fa-times-circle text-white" style="font-size: 1.2rem;margin-left: 100%;"></i></a>
+<div class="card radius-15 p-5 ">
+<form id="bankForm" method="post" action="{% url 'emploanrepaymentedit' loan_re.id %}" style="margin-left: 10%;margin-right: 10%;">
+    <div class="col-md-12">
+        <center>
+        <h2>  Loan Payment</h2>
+        <br>     <hr><br>   <br>
+      
+     </center>
+     </div>
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-5 p-2">EMPLOYEE NAME</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">PRINCIPAL AMOUNT</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <select class="form-control bg-grey" name="empname" id="empname" onmouseover="updateTotal()">
+            <option>{{employee.title}}&nbsp;{{employee.first_name}}&nbsp;{{employee.last_name}}</option>
+        </select>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control bg-grey" type="text" name="principal" id="principal" value="{{loan_re.principle_amount}}"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-5 p-2">INTEREST AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">DATE</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <input class="form-control" type="text" name="interest" id="interest" value="{{loan_re.interest_amount}}">
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control" value="{{loan_re.payment_date|date:'Y-m-d'}}" required></div>
+    </div>
+
+    
+    <div class="row">
+        <div class="col-md-5 p-2">PAID FROM</div>
+        <div class="col-md-2"></div>
+        <!-- <div class="col-md-5 p-2">TOTAL AMOUNT</div> -->
+    </div>
+    
+
+    <div class="row">
+        <div class="col-md-5 p-2">  <select name="select_payment" id="select_payment" onmouseover="show_fields()"  class="form-control "  >
+
+          <option class="form-control bg-dark text-white" value="Cash" {% if loan_re.payment_method == 'Cash' %}Selected{% endif %}>CASH</option>
+
+          <option class="form-control bg-dark text-white" value="UPI" {% if loan_re.payment_method == 'UPI' %}Selected{% endif %}>UPI</option>
+          <option class="form-control bg-dark text-white" value="Cheque" {% if loan_re.payment_method == 'Cheque' %}Selected{% endif %}>CHEQUE</option>
+          {% for i in banks %}
+          <option value="{{ i.id }}" style="background-color: #294f76;" {% if loan_re.payment_method == i.id|stringformat:"s" %}Selected{% endif %}>
+          {{ i.bank_name }} ( ********  {{ "*"|stringformat:"<"|rjust:12 }}{{ i.account_number|slice:"-4:" }})
+          </option>
+          {% endfor %}
+          
+
+      </select> </div>
+
+
+        <div class="col-md-5" style="margin-left: 16%;">
+
+          <div class="form-group" > 
+            <td><Label id="cheque_no_label" style="display: none;">Cheque Number</Label></td>
+            <td>
+                <td><input placeholder="Cheque Number"  style="display: none;" value="{{loan_re.cheque_number}}" name="cheque_no" id="cheque_no" type="text" class="form-control"></td>
+          
+            </td>
+        </div>
+        <div class="form-group" > 
+            <td><Label id="upi_id_label" style="display: none;">UPI ID</Label></td>
+            <td>
+                <td><input placeholder=" upi_id_label"  style="display: none;" name="upi_id" id="upi_id" value="{{loan_re.upi_id}}" type="text" class="form-control"></td>
+          
+            </td>
+        </div>
+        <div class="form-group" > 
+            <td><Label id="acc_no_label" style="display: none;">Ac/Number</Label></td>
+            <td>
+
+                <td><input placeholder=" upi_id_label"  style="display: none;" value="{{loan_re.bank_account}}" name="acc_no" id="acc_no" type="text" class="form-control"></td>
+          
+            </td>
+        </div>
+        </div>
+        <!-- <div class="col-md-5 p-2"><input class="form-control" type="number" name="total" id="total" readonly></div> -->
+    </div>
+    <script>
+      function show_fields()
+  {
+      var option=document.getElementById('select_payment').value;
+      if(option == 'Cash'){
+          document.getElementById('acc_no_label').style.display='none';
+          document.getElementById('acc_no').style.display='none';
+          document.getElementById('cheque_no_label').style.display='none';
+          document.getElementById('cheque_no').style.display='none';
+          document.getElementById('upi_id_label').style.display='none';
+          document.getElementById('upi_id').style.display='none';
+      }
+      else if(option == 'Cheque'){
+          document.getElementById('acc_no_label').style.display='none';
+          document.getElementById('acc_no').style.display='none';
+          document.getElementById('cheque_no_label').style.display='block';
+          document.getElementById('cheque_no').style.display='block';
+          document.getElementById('upi_id_label').style.display='none';
+          document.getElementById('upi_id').style.display='none';
+
+      }
+      else if(option == 'UPI'){
+          document.getElementById('acc_no_label').style.display='none';
+          document.getElementById('acc_no').style.display='none';
+          document.getElementById('cheque_no_label').style.display='none';
+          document.getElementById('cheque_no').style.display='none';
+          document.getElementById('upi_id_label').style.display='block';
+          document.getElementById('upi_id').style.display='block';
+      }
+      else if(option == 'no_option'){
+          document.getElementById('acc_no_label').style.display='none';
+          document.getElementById('acc_no').style.display='none';
+          document.getElementById('cheque_no_label').style.display='none';
+          document.getElementById('cheque_no').style.display='none';
+          document.getElementById('upi_id_label').style.display='none';
+          document.getElementById('upi_id').style.display='none';
+      }
+      else
+      {
+          
+          document.getElementById('acc_no_label').style.display='block';
+          document.getElementById('acc_no').style.display='block';
+          document.getElementById('cheque_no_label').style.display='none';
+          document.getElementById('cheque_no').style.display='none';
+          document.getElementById('upi_id_label').style.display='none';
+          document.getElementById('upi_id').style.display='none';
+
+         
+                    var customer = $('#select_payment').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#acc_no").val(acc);
+                 
+                    }
+                    });
+                    }
+      }
+
+
+
+   
+</script>
+    <div class="row">
+      <div class="col-md-5 p-2">TOTAL AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div>
+    <div class="row">
+      <!-- <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="pay_method">
+          <option class="form-control bg-dark text-white" value="Cash">CASH</option>
+
+          <option class="form-control bg-dark text-white" value="UPI">UPI</option>
+          <option class="form-control bg-dark text-white" value="Cheque">CHEQUE</option>
+
+
+          {% for i in bank %}
+          <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+          {% endfor %}
+      </select>  </div> -->
+      <!-- <div class="col-md-2"></div> -->
+      <div class="col-md-5 p-2"><input class="form-control" type="number" name="total" id="total" readonly></div>
+  </div>
+    <!-- <div class="row">
+        <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="pay_method">
+            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+
+            <option class="form-control bg-dark text-white" value="upi">UPI</option>
+            <option class="form-control bg-dark text-white" value="cheque">CHEQUE</option>
+
+
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>  </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div> -->
+    <!-- <div class="row">
+        <div class="col-md-5" style="display:none;"  id="chequediv">
+          <label class="col-form-label" >Cheque No</label>
+          <input type="text" class="form-control" name="paid_cheque_id" value="" id="cheque_id" placeholder="Enter Cheque No">
+      </div>
+      <div class="col-md-5"  style="display:none;" id="upidiv">
+          <label class="col-form-label" >UPI ID</label>
+          <input type="text" class="form-control" name="paid_upi_id" value="" id="upi_id" placeholder="Enter UPI ID">
+      </div>
+      <div class="col-md-5"  style="display:none;" id="bnkdiv">
+          <label class="col-form-label" >Bank Account</label>
+          <input type="text" class="form-control" name="paid_bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+      </div>
+       </div> -->
+
+    <div class="row mb-5">
+        <div class="col-md-8 mt-3"></div>
+        <div class="col-md-2 mt-3">
+            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+
+        </div>
+        <div class="col-md-2 mt-3">
+          <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+            Save Loan Account
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    
+</form>
+<!-- 
+    <div class="row">
+        <div class="col-md-5 p-2">PAID FROM</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">TOTAL AMOUNT</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="pay_method">
+            <option class="form-control bg-dark text-white" value="Cash" {% if loan_re.payment_method == 'Cash' %}Selected{% endif %}>CASH</option>
+
+            <option class="form-control bg-dark text-white" value="UPI" {% if loan_re.payment_method == 'UPI' %}Selected{% endif %}>UPI</option>
+            <option class="form-control bg-dark text-white" value="Cheque" {% if loan_re.payment_method == 'Cheque' %}Selected{% endif %}>CHEQUE</option>
+
+
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>  </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="number" name="total" id="total" readonly></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div> -->
+
+    <!-- <div class="row">
+        <div class="col-md-5 p-2"> <select   name="recieved" class="form-control  text-white" id="pay_method">
+            <option class="form-control bg-dark text-white" value="cash">CASH</option>
+
+            <option class="form-control bg-dark text-white" value="upi">UPI</option>
+            <option class="form-control bg-dark text-white" value="cheque">CHEQUE</option>
+
+
+            {% for i in bank %}
+            <option class="form-control bg-dark text-white" value="{{i.bankname}}">{{i.bankname}}</option>
+            {% endfor %}
+        </select>  </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div> -->
+    <!-- <div class="row">
+        <div class="col-md-5" style="display:none;"  id="chequediv">
+          <label class="col-form-label" >Cheque No</label>
+          <input type="text" class="form-control" name="paid_cheque_id" value="" id="cheque_id" placeholder="Enter Cheque No">
+      </div>
+      <div class="col-md-5"  style="display:none;" id="upidiv">
+          <label class="col-form-label" >UPI ID</label>
+          <input type="text" class="form-control" name="paid_upi_id" value="" id="upi_id" placeholder="Enter UPI ID">
+      </div>
+      <div class="col-md-5"  style="display:none;" id="bnkdiv">
+          <label class="col-form-label" >Bank Account</label>
+          <input type="text" class="form-control" name="paid_bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+      </div>
+       </div>
+
+    <div class="row mb-5">
+        <div class="col-md-8 mt-3"></div>
+        <div class="col-md-2 mt-3">
+            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="">Close</a>
+
+        </div>
+        <div class="col-md-2 mt-3">
+          <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+            Save Loan Account
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+    
+</form> -->
+</div>
+</div>
+
+<script>
+    // Get references to input elements
+    const principalInput = document.getElementById('principal');
+    const interestInput = document.getElementById('interest');
+    const totalInput = document.getElementById('total');
+
+    // Add an event listener to calculate the total amount
+    principalInput.addEventListener('input', updateTotal);
+    interestInput.addEventListener('input', updateTotal);
+
+    function updateTotal() {
+        const principal = parseFloat(principalInput.value) || 0;
+        const interest = parseFloat(interestInput.value) || 0;
+        const total = principal + interest;
+        totalInput.value = total.toFixed(); // Display total with 2 decimal places
+    }
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+      $("#pay_method").change(function() {
+        var x=$('#pay_method').val();
+        if(x==='cash'){
+          $('#chequediv').hide()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+        }else if(x==='cheque'){
+          $('#chequediv').show()
+          $('#bnkdiv').hide()
+          $('#upidiv').hide()
+          document.getElementById('upi_id').value=null
+        }else if(x==='upi'){
+          $('#upidiv').show()
+          $('#bnkdiv').hide()
+          $('#chequediv').hide()
+          document.getElementById('cheque_id').value=null
+        }else{
+          $('#bnkdiv').show()
+          $('#chequediv').hide()
+          $('#upidiv').hide()
+          document.getElementById('cheque_id').value=null
+          document.getElementById('upi_id').value=null
+  
+          $.ajax({
+              type: "GET",
+              url: "",
+              data: {
+                  id: x,
+              },
+              success: function (response) {
+                  data = response.bank
+                  document.getElementById('cheque_id').value=null
+                  document.getElementById('upi_id').value=null
+                  document.getElementById("bnk_id").value = data
+              }
+          });
+        }
+      });
+    });
+  </script>
+
+
+
+{% endblock %}

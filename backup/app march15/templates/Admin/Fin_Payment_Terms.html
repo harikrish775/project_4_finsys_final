@@ -1,0 +1,105 @@
+{% extends 'Admin/Fin_AdminBase.html' %}
+{% block body %}
+{% if user.is_authenticated %}
+
+<style>
+    table tr td:hover {
+        cursor: pointer;
+    }
+
+    @media (max-width:768px) {
+        .h2 {
+            font-size: 20px;
+        }
+        input {
+            margin-bottom: 20px !important;
+        }
+        .btn{
+            width: 70% !important;
+        }
+    }
+</style>
+
+
+<div class="body-wrapper p-3">
+    <div class="container-fluid">
+
+        <center>
+            <div class="card radius-15">
+                <div class="card-body">
+                    <div class="card-title">
+                        <center>
+                            <h2 class="mb-0 h2">ADD PAYMENT TERMS</h2>
+                        </center>
+                        <hr>
+                    </div>
+                    <form action="{% url 'Fin_add_payment_terms' %}" method="post" class="pt-5">
+                        {% csrf_token %}
+
+                        
+                        <div class="row d-flex align-items-center" style="display: flex;">
+                            <div class="col"></div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="num" name="num"
+                                    placeholder="Enter Number Of" required>
+
+                                <!-- <input type="text" name="num" class="form-control mt-5"
+                                style="outline: none;border: none;border-bottom: 3px solid rgb(113, 179, 240);" required> -->
+
+                            </div>
+                            <div class="col-md-4">
+                                <select name="select" id="" class="form-control">
+                                    <option value="Months">Months</option>
+                                    <option value="Years">Years</option>
+                                </select>
+                            </div>
+                            <div class="col"></div>
+
+
+
+                        </div>
+                        <input type="submit" class="btn btn-outline-info rounded-pill  text-grey mt-5 mb-4"
+                            style="width: 20%;">
+                        <!-- <center><button type="submit" class="">
+                            Submit
+                        </button></center> -->
+                    </form>
+                </div>
+            </div>
+        </center>
+
+        <div class="card radius-15">
+            <div class="card-body">
+                
+
+                
+                <h4 style="text-transform: uppercase;">All Payment Terms</h4>
+                <table class="table table-responsive-md mt-4 table-hover" >
+                    <thead>
+                        <tr>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>ID</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>Payment Terms</b></th>
+                            <th  style="text-align: center; text-transform: uppercase;"><b>No. Of Days</b></th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in terms %}
+                        <tr>
+                            <td  style="text-align: center;">{{t.id}}</td>
+
+                            <td style="text-align: center;">{{t.payment_terms_number}} {{t.payment_terms_value}}</td>
+                            <td style="text-align: center;">{{t.days}} days</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

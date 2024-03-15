@@ -1,0 +1,838 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+    {% load static %}
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <center><h3 class="mb-0">EDIT VENDOR</h3></center>
+            </div>
+            <hr/>
+        </div>
+    </div>
+    <div class="card radius-15" style="background-color: #243e54;">
+        <div class="card-body">
+            <div class="card-title">
+                <h4 class="mb-0">Vendor Details</h4>
+            </div>
+            <hr/>
+            <form action="{% url 'Fin_updateVendor' vendor.id %}" method="post" class="needs-validation">
+                {% csrf_token %}
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label for="title">Title</label>
+                            <select name="title" id="title" class="form-control">
+                                <option value="Mr">Mr</option>
+                                <option value="Mrs">Mrs</option>
+                                <option value="Ms">Ms</option>
+                                <option value="Dr">Dr</option>
+                            </select>
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" value="{{vendor.first_name}}" name="first_name" required style="background-color: #43596c;color: white;">
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" value="{{vendor.last_name}}" name="last_name" required style="background-color: #43596c;color: white;">
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="companyName">Company</label>
+                            <input type="text" class="form-control" id="companyName" value="{{vendor.company}}" name="company_name" style="background-color: #43596c;color: white;">
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label for="location">Location</label>
+                            <input type="text" class="form-control" id="location" value="{{vendor.location}}" name="location" style="background-color: #43596c;color: white;">
+                            <div class="valid-feedback">Looks good!</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="vendorEmail">Email</label>
+                            <input type="email" class="form-control" required id="vendorEmail" value="{{vendor.email}}" name="email" onchange="checkEmail(this)" style="background-color: #43596c;color: white;" placeholder="finsys@gmail.com">
+                            <div class="invalid-feedback">Please provide a valid Email</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="vendorWebsite">Website</label>
+                            <input type="text" class="form-control" id="vendorWebsite" value="{{vendor.website}}" required placeholder="www.finsys.com" onchange="checkWebsite(this)" name="website" style="background-color: #43596c;color: white;">
+                            <div id="warnweb" class="text-danger"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="vendorMobile">Mobile</label>
+                            <input type="text" class="form-control" id="vendorMobile" value="{{vendor.mobile}}" required onchange="checkPhone(this)" name="mobile" style="background-color: #43596c;color: white;">
+                            <div class="text-danger m-2" id="warnphone"></div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <h4>Other Options</h4>
+                    <hr>
+
+                    <div class="row mt-3">
+                        <div class="col-md-3">
+                            <label for="gstType">GST Type</label>
+                            <select class="form-control" id="gstType" name="gst_type" onclick="toggleGSTIN('gstInValue', this)" style="background-color: #43596c; color: white;" required>
+                                <option selected value="">Select GST Type</option>
+                                <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
+                                <option value="Registered Business - Composition">Registered Business - Composition (Business that is registered under composition scheme in gst)</option>
+                                <option value="Unregistered Business">Unregistered Business (Business that has not been registered under gst)</option>
+                                <option value="Overseas">Overseas (Import/Export of supply outside india)</option>
+                                <option value="Consumer">Consumer</option>
+                                <option value="Special Economic Zone (SEZ)">Special Economic Zone (SEZ) (Business that is located in a special economic zone of india or a SEZ developer)</option>
+                                <option value="Demed Exports">Demed Exports (Supply of woods to an exports oriented unit or againsed advanced authorization or export promotion capital woods)</option>
+                                <option value="Tax Deductor">Tax Deductor (State of central gov,government agencies or local authority)</option>
+                                <option value="SEZ Developer">SEZ Developer (A person or organization who owns atleast 26% equality in creating business units in special economic zone)</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a valid registration type.</div>
+                        </div>
+
+                        <div class="col-md-3 gstrow d-block" id="gstInValue">
+                            <div>
+                                <label for="gstIN">GSTIN</label>
+                                <input type="text" class="form-control" onchange="checkGSTIN(this)" value="{{vendor.gstin}}" id="gstIN" name="gstin" style="background-color: #43596c;color: white;" placeholder="29APPCK7465F1Z1">
+                                <a data-toggle="modal" href="#exampleModal" style="color:#3dd5f3">Get Taxpayer Details</a>
+                                <div class="text-danger m-2" id="warngst"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="panNo">PAN No.</label>
+                            <input type="text" class="form-control" id="panNo" value="{{vendor.pan_no}}" name="pan_no" style="background-color: #43596c;color: white;" required onchange="checkPAN(this)" placeholder="APPCK7465F">
+                            <div class="text-danger m-2" id="warnpan"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="placeOfSupply">Place of Supply</label>
+                            <select class="custom-select form-control" id="placeOfSupply" name="place_of_supply" style="background-color: #43596c; color: white;" required>
+                                <option selected value="">Select Place of Supply</option>
+                                <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                <option value="Assam">Assam</option>
+                                <option value="Bihar">Bihar</option>
+                                <option value="Chandigarh">Chandigarh</option>
+                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                <option value="Damn anad Diu">Damn anad Diu</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Goa">Goa</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Haryana">Haryana</option>
+                                <option value="Himachal Predesh">Himachal Predesh</option>
+                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                <option value="Jharkhand">Jharkhand</option>
+                                <option value="Karnataka">Karnataka</option>
+                                <option value="Kerala">Kerala</option>
+                                <option value="Ladakh">Ladakh</option>
+                                <option value="Lakshadweep">Lakshadweep</option>
+                                <option value="Madhya Predesh">Madhya Predesh</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Manipur">Manipur</option>
+                                <option value="Meghalaya">Meghalaya</option>
+                                <option value="Mizoram">Mizoram</option>
+                                <option value="Nagaland">Nagaland</option>
+                                <option value="Odisha">Odisha</option>
+                                <option value="Puducherry">Puducherry</option>
+                                <option value="Punjab">Punjab</option>
+                                <option value="Rajasthan">Rajasthan</option>
+                                <option value="Sikkim">Sikkim</option>
+                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                <option value="Telangana">Telangana</option>
+                                <option value="Tripura">Tripura</option>
+                                <option value="Uttar Predesh">Uttar Predesh</option>
+                                <option value="Uttarakhand">Uttarakhand</option>
+                                <option value="West Bengal">West Bengal</option>
+                                <option value="Other Territory">Other Territory</option>
+                            </select>
+                            <div class="invalid-feedback">Please select a valid registration type.</div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 mt-3">
+                            <label for="">Currency</label>
+                            <select name="currency" id="currency" class="form-control">
+                                <option value="INR - Indian Rupee">INR - Indian Rupee</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="">Opening Balance</label>
+                            <div class="d-flex">
+                                <select name="balance_type" id="bal_type" class="form-select text-white mr-1" style="background-color: #243e54; border-radius: 5px;">
+                                    <option value="credit">Credit</option>
+                                    <option value="debit">Debit</option>
+                                </select>
+                                <input type="text" class="form-control" name="open_balance" value="{{vendor.opening_balance}}" id="openbalance" step="any" style="background-color: #43596c;color: white;">
+                                <div class="text-danger m-2" ></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="creditLimit">Credit Limit</label>
+                            <input type="text" class="form-control" name="credit_limit" value="{{vendor.credit_limit}}" style="background-color: #43596c;color: white;" value="0" step="any" id="creditLimit">
+                            <div class="text-danger m-2" ></div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="paymentTerms">Payment Terms</label>
+                            <div class="d-flex">
+                                <select name="payment_terms" id="paymentTerms" class="form-control">
+                                    <option value="" selected>Choose</option>
+                                    {% for p in pTerms %}
+                                    <option value="{{p.id}}">{{p.term_name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <a href="#newPaymentTerm" data-toggle="modal" class="btn btn-outline-secondary ml-1">+</a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 mt-3">
+                            <label for="priceList">Price List</label>
+                            <select name="price_list" id="priceList" class="form-control">
+                                <option value="" selected>Choose</option>
+                                {% for l in list %}
+                                <option value="{{l.id}}">{{l.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12 card-title">
+                                    <h5 class="mb-0">Billing Address</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mt-3">
+                                    <div class="form-row">
+                                        <label for="street">Street</label>
+                                        <textarea class="form-control street" required id="street" name="street" style="background-color: #43596c;color: white;">{{vendor.billing_street}}</textarea>
+                                        <div class="invalid-feedback">Please provide a valid Street</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="city">City</label>
+                                        <input type="text" class="form-control" required value="{{vendor.billing_city}}" id="city" name="city" style="background-color: #43596c;color: white;" placeholder="City">
+                                        <div class="invalid-feedback">Please provide a valid City</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="state">State</label>
+                                        <select type="text" class="form-control" id="state" name="state" required style="background-color: #43596c; color: white;">
+                                            <option value="" selected hidden>Choose</option>
+                                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chandigarh">Chandigarh</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                            <option value="Damn anad Diu">Damn anad Diu</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Madhya Predesh">Madhya Predesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Puducherry">Puducherry</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Predesh">Uttar Predesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                            <option value="Other Territory">Other Territory</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please provide a valid State</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="pinco">Pin Code</label>
+                                        <input type="text" class="form-control" required  value="{{vendor.billing_pincode}}" id="pinco" name="pincode" style="background-color: #43596c;color: white;" placeholder="PIN code">
+                                        <div class="invalid-feedback">Please provide a valid Pin Code</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="country">Country</label>
+                                        <input type="text" class="form-control" required value="{{vendor.billing_country}}" id="country" name="country" style="background-color: #43596c;color: white;" placeholder="Country">
+                                        <div class="invalid-feedback">Please provide a valid Country</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12 d-flex">
+                                    <h5>Shipping Address</h5>
+                                    <input class="ml-4 ml-5" type="checkbox" onclick="placeShipAddress()" id="shipAddress" name="ship_address">
+                                    <label class="ml-2 mt-1 ml-2" for="shipAddress">Same As Billing Address</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mt-3">
+                                    <div class="form-row">
+                                        <label for="shipstreet">Street</label>
+                                        <textarea class="form-control" id="shipstreet" name="shipstreet" style="background-color: #43596c;color: white;">{{vendor.ship_state}}</textarea>
+                                        <div class="invalid-feedback">Please provide a valid Street</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="shipcity">City</label>
+                                        <input type="text" class="form-control" value="{{vendor.ship_city}}" id="shipcity" name="shipcity" style="background-color: #43596c;color: white;" placeholder="City">
+                                        <div class="invalid-feedback">Please provide a valid City</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="shipstate">State</label>
+                                        <select type="text" class="form-control" id="shipState" name="shipstate" style="background-color: #43596c; color: white;">
+                                            <option value="" selected>Choose</option>
+                                            <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                            <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                            <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chandigarh">Chandigarh</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                            <option value="Damn anad Diu">Damn anad Diu</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Madhya Predesh">Madhya Predesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Puducherry">Puducherry</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Predesh">Uttar Predesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                            <option value="Other Territory">Other Territory</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please provide a valid State</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="shippinco">Pin Code</label>
+                                        <input type="text" class="form-control" value="{{vendor.ship_pincode}}" id="shippinco" name="shippincode" style="background-color: #43596c;color: white;" placeholder="PIN code">
+                                        <div class="invalid-feedback">Please provide a valid Pin Code</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-3">
+                                    <div class="form-row">
+                                        <label for="shipcountry">Country</label>
+                                        <input type="text" class="form-control" value="{{vendor.ship_country}}" id="shipcountry" name="shipcountry" style="background-color: #43596c;color: white;" placeholder="Country">
+                                        <div class="invalid-feedback">Please provide a valid Country</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="agreeTerms" required style="background-color: #43596c;">
+                                <label for="agreeTerms">Agree to Terms and Conditions</label>
+                                <div class="invalid-feedback">You must agree before submitting.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5 mb-5">
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-center">
+                            <button class="btn btn-outline-secondary w-50 text-light" type="submit">SAVE</button>
+                            <a href="{% url 'Fin_viewVendor' vendor.id %}"class="btn btn-outline-secondary w-25 ml-1 text-light">CANCEL</a>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Unit Create Modal -->
+
+<div class="modal fade" id="newPaymentTerm">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">New Payment Term</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form method="post" id="newTermForm">
+                        {% csrf_token %}
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <label for="name">Term Name</label>
+                                <input type="text" name="term_name" id="termName" class="form-control w-100">
+                            </div>
+                            <div class="col-6">
+                                <label for="name">Days</label>
+                                <input type="number" name="days" id="termDays" class="form-control w-100" min="0" step="1">
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-4"></div>
+                            <div class="col-4 d-flex justify-content-center">
+                                <button class="btn btn-outline-secondary text-grey w-75" data-dismiss="modal" type="submit" id="savePaymentTerm">Save</button>
+                            </div>
+                            <div class="col-4"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    $(document).ready(()=>{
+        
+        document.querySelector('#gstType').value = `{{vendor.gst_type}}`;
+        var x = $('#gstType').val();
+        if(x == "Unregistered Business" || x == 'Overseas' || x == 'Consumer'){
+            $(".gstrow").removeClass('d-block');
+            $(".gstrow").addClass('d-none');
+            $('#gstIN').prop('required',false);
+        }else {
+            $('#gstIN').prop('required',true);
+            $(".gstrow").removeClass('d-none');
+            $(".gstrow").addClass('d-block');
+        }
+        
+        document.querySelector('#title').value = `{{vendor.title}}`;
+        document.querySelector('#placeOfSupply').value = `{{vendor.place_of_supply}}`;
+        document.querySelector('#bal_type').value = `{{vendor.open_balance_type}}`;
+        document.querySelector('#paymentTerms').value = `{{vendor.payment_terms.id}}`;
+        document.querySelector('#priceList').value = `{{vendor.price_list.id}}`;
+        document.querySelector('#state').value = `{{vendor.billing_state}}`;
+        document.querySelector('#shipState').value = `{{vendor.ship_state}}`;
+    })
+
+    function placeShipAddress() {
+        var chkbtn = document.getElementById('shipAddress');
+        if (chkbtn.checked == true) {
+            document.getElementById('shipstreet').value = document.getElementById('street').value;
+            document.getElementById('shipcity').value = document.getElementById('city').value;
+            document.getElementById('shippinco').value = document.getElementById('pinco').value;
+            document.getElementById('shipcountry').value = document.getElementById('country').value;
+            document.getElementById('shipState').value = document.getElementById('state').value;
+        } else {
+            document.getElementById('shipstreet').value = '';
+            document.getElementById('shipcity').value = '';
+            document.getElementById('shippinco').value = '';
+            document.getElementById('shipcountry').value = '';
+            document.getElementById('shipState').value = '';
+            
+        }
+    }
+
+    $(document).on("click","#savePaymentTerm",function(){
+        var trm = $('#termName').val();
+        var dys = $("#termDays").val();
+        if (trm !="" && dys !=""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_newCustomerPaymentTerm' %}",
+                data:{
+                    'term' : trm,
+                    'days' : dys,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.status){
+                        document.getElementById("newTermForm").reset();
+                        
+                        var dropdown = $('#paymentTerms');
+                        dropdown.empty();
+                        dropdown.append(`<option value="" selected>Choose</option>`);
+                        $.each(response, function(key, value) {
+                            for(let i=0; i<value.length; i++){
+                                if(value[i].name == trm){
+                                    dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].id))
+                                }else{
+                                    dropdown.append($('<option></option>').text(value[i].name).val(value[i].id))
+                                }   
+                            }
+                        });
+
+                    }else{
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+        else{
+            alert('Invalid')
+        }
+    });
+
+    // function toggleGSTIN(divId, element) {
+    //     if (element.value == 'GST-registered-Regular'  || element.value == 'Consumer' || element.value == 'Overseas') {
+    //         document.getElementById(divId).style.display = 'block';
+    //     } else {
+    //         document.getElementById(divId).style.display = 'none';
+    //         document.getElementById("gstIN").value = '';
+    //     }
+    // }
+
+    $(document).ready(function() {
+        $("#gstType").change(function() {
+            var x=$('#gstType').val();
+            if(x == "Unregistered Business" || x == 'Overseas' || x == 'Consumer'){
+                $(".gstrow").removeClass('d-block');
+                $(".gstrow").addClass('d-none');
+                $('#gstIN').prop('required',false);
+            }else {
+                $('#gstIN').prop('required',true);
+                $(".gstrow").removeClass('d-none');
+                $(".gstrow").addClass('d-block');
+            }
+        });
+    });
+
+        
+    function showMessage(input) {
+        const gstin = input.value;
+
+        if (gstin.length === 15) {
+            // document.getElementById("message").textContent = "Please wait, validating GSTIN format...";
+            setTimeout(() => checkGSTIN(input), 1000);  // Wait for a second and then validate GSTIN
+        } else {
+            document.getElementById("message").textContent = "";
+        }
+    }
+
+    
+
+
+    function checkGSTIN(element) {
+        var gstinput = element.value;
+        var gstregexp = "[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9A-Za-z]{1}[Z]{1}[0-9a-zA-Z]{1}";
+
+        if (gstinput.length === 15) {
+            if(`{{vendor.gstin}}` != gstinput){
+                if (gstinput.match(gstregexp)) {
+                    document.getElementById('warngst').innerHTML = '';
+                    checkVendorGSTIN(gstinput)
+                } else {
+                    document.getElementById('warngst').innerHTML = 'Please provide a valid GST Number';
+                    alert('Please provide a valid GST Number');
+                }
+            }
+            
+        }
+            else {
+            document.getElementById('warngst').innerHTML = 'Please provide a valid GST Number';
+            alert('Please provide a valid GST Number');
+        }
+    }
+
+    function checkPAN(element) {
+        var paninput = element.value;
+        var panregexp = ["[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}"]
+        if(`{{vendor.pan_no}}` != paninput){
+            if (paninput.match(panregexp)) {
+                document.getElementById('warnpan').innerHTML = '';
+                checkVendorPAN(paninput)
+            } else {
+                document.getElementById('warnpan').innerHTML = 'Please provide a valid PAN Number';
+                alert('Please provide a valid PAN Number')
+            }
+        }
+    }
+
+    function checkWebsite(element) {
+        var webinput = element.value;
+        var webregexp = "www."
+        if (webinput.startsWith(webregexp)) {
+            document.getElementById('warnweb').innerHTML = '';
+        } else {
+            document.getElementById('warnweb').innerHTML = 'Please provide a valid Website Address';
+            alert('Please provide a valid Website Address')
+        }
+    }
+
+    function checkPhone(element) {
+        var phoneinput = element.value;
+        var phoneregexp = /^\d{10}$/;
+        if(`{{vendor.mobile}}` != phoneinput){
+            if (phoneinput.match(phoneregexp)) {
+                document.getElementById('warnphone').innerHTML = '';
+                checkVendorPhone(phoneinput)
+            } else {
+                document.getElementById('warnphone').innerHTML = 'Please provide a valid Phone Number';
+                alert('Please provide a valid Phone Number')
+            }
+        }
+        
+    }
+
+    function checkEmail(element) {
+        var emailinput = element.value;
+        var emailregexp = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+        if (`{{vendor.email}}` != emailinput){
+            if (emailinput.match(emailregexp)) {
+                document.getElementById('warnemail').innerHTML = '';
+                checkVendorEmail(emailinput)
+            } else {
+                document.getElementById('warnemail').innerHTML = 'Please provide a valid Email ID';
+                alert('Please provide a valid Email id')
+            }
+        }
+        
+    }
+
+    // (function () {
+    //     'use strict';
+    //     window.addEventListener('load', function () {
+    //         // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    //         var forms = document.getElementsByClassName('needs-validation');
+    //         // Loop over them and prevent submission
+    //         var validation = Array.prototype.filter.call(forms, function (form) {
+    //             form.addEventListener('submit', function (event) {
+    //                 if (form.checkValidity() === false) {
+    //                     event.preventDefault();
+    //                     event.stopPropagation();
+    //                 }
+    //                 form.classList.add('was-validated');
+    //             }, false);
+    //         });
+    //     }, false);
+    // })();
+
+    $(document).on('change', '#openbalance',function () {
+        openbal = $("#openbalance").val()
+        if($('#bal_type').val()=='credit'){
+            if(openbal.slice(0,1) != '-'){
+                if(parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            }else{
+                if(parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = openbal
+                }else{
+                    document.getElementById("openbalance").value = -1 * parseFloat(openbal)
+                }
+            }
+        }else{
+            document.getElementById("openbalance").value = openbal
+        }
+    });
+
+    $(document).on('change', '#bal_type',function () {
+        openbal = $("#openbalance").val()
+        if(openbal != ""){
+            if($('#bal_type').val()=='credit'){
+                openbal = $("#openbalance").val()
+                if (parseFloat(openbal) != 0){
+                    document.getElementById("openbalance").value = "-"+openbal
+                }else{
+                    document.getElementById("openbalance").value = openbal
+                }
+            }else{
+                openbal = $("#openbalance").val()
+                document.getElementById("openbalance").value = -1*(parseFloat(openbal))
+            }
+        }
+    });
+
+    $(document).ready(function(){
+        $('#lastName').on('change',()=>{
+            var fName = $('#firstName').val().replace(/\d/g, '');
+            var lName = $('#lastName').val().replace(/\d/g, '');
+            if(fName !="" && lName !=""){
+                checkVendorName(fName,lName)
+            }else{
+                alert('Please enter a valid Full Name.!')
+                return false
+            }
+        });
+
+        $('#firstName').on('change',()=>{
+            var fName = $('#firstName').val().replace(/\d/g, '');
+            var lName = $('#lastName').val().replace(/\d/g, '');
+            if(fName !="" && lName !=""){
+                checkVendorName(fName,lName)
+            }else if(fName == "" && lName !=""){
+                alert('Please enter a valid First Name.!')
+            }
+
+        })
+    });
+
+    function checkVendorName(fname,lname){
+        if (fname != "" && lname !=""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_checkVendorName' %}",
+                data:{
+                    'fname' : fname,
+                    'lname' : lname,
+
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.is_exist){
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+    }
+
+    function checkVendorGSTIN(gstin){
+        var gstNo = gstin;
+        if (gstNo != ""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_checkVendorGSTIN' %}",
+                data:{
+                    'gstin' : gstNo,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.is_exist){
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+    }
+
+    function checkVendorPAN(pan){
+        var panNo = pan;
+        if (panNo != ""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_checkVendorPAN' %}",
+                data:{
+                    'pan' : panNo,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.is_exist){
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+    }
+
+    function checkVendorPhone(phone){
+        var phoneNo = phone;
+        if (phoneNo != ""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_checkVendorPhone' %}",
+                data:{
+                    'phone' : phoneNo,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.is_exist){
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+    }
+
+    function checkVendorEmail(email){
+        var vendorEmail = email;
+        if (vendorEmail != ""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_checkVendorEmail' %}",
+                data:{
+                    'email' : vendorEmail,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.is_exist){
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+    }
+</script>
+
+{% endblock %}

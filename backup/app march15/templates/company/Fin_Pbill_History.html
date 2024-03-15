@@ -1,0 +1,144 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+
+<style>
+    tr:hover{
+        cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    ::-webkit-scrollbar{
+        display: none;
+    }
+</style>
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-6">
+                        <h2 class="mb-0">PURCHASE BILL : {{pbill.bill_no}}</h2>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                        <a href="/Purchase_Bill_View/{{ pbill.id }}" class="float-right"><i class="fa fa-close"></i></a>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </div>
+    </div>
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="container-fluid">
+                <table class="table table-bordered table-responsive-md mt-4" id="billtable">
+                    <thead>
+                    <tr class="text-center">
+                        <th>#</th>
+                        <th>DATE</th>
+                        <th>ACTION</th>
+                        <th>BY</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for h in hist %}
+                        <tr class="text-center">
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ h.change_date | date:'d-m-Y' }}</td>
+                            <td>{{ h.action }}</td>
+                            <th class="text-capitalize">{{ h.logindetails.First_name }} {{ h.logindetails.Last_name }}</th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search Table -->
+<script>
+    $(document).ready(function() {
+      var $rows = $('#billtable tbody tr');
+      $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+        $rows.show().filter(function() {
+          var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+          return !~text.indexOf(val);
+        }).hide();
+      });
+    });
+</script>
+
+<!-- Export To Excel -->
+<script>
+    document.getElementById("exportBtn").addEventListener("click", function () {
+        const Table = document.getElementById("table");
+        const ws = XLSX.utils.table_to_sheet(Table);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.writeFile(wb, "table.xlsx");
+    });
+</script>
+
+<!-- Sort Table -->
+<script>
+    function sorttable(col) {
+        var table, rows, switching, i, x, y, shouldSwitch;
+        table = document.getElementById("billtable");
+        switching = true;
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[col].textContent.toLowerCase();
+                y = rows[i + 1].getElementsByTagName("td")[col].textContent.toLowerCase();
+                if (x > y) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+    }
+</script>
+
+<!-- Filter Table -->
+<script>
+    function filtertable(key) {
+        var input, filter, table, tr, td, i, txtValue;
+        table = document.getElementById("billtable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[5];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase() == key.toUpperCase()) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+<!-- Go to View Page -->
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+{% endblock %}

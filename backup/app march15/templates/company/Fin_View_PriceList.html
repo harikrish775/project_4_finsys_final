@@ -1,0 +1,392 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+<style>
+    @media print {
+        body{
+            visibility: hidden !important;
+            background-color: white;
+        }
+
+        .printContainer {
+            visibility: visible !important;
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: medium;
+        }
+
+    }
+    /* #printIframe {
+        display: block;
+    } */
+    @keyframes blink {
+        0% {
+        visibility: hidden;
+        }
+        50% {
+        visibility: visible;
+        }
+        100% {
+        visibility: hidden;
+        }
+    }
+
+    .blinking-text {
+        animation: blink 2s step-start infinite;
+    }
+    .item_data p{
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .submitShareEmailBtn, #commentSaveBtn {
+        background: #192d3e;
+        border: 1px solid #3a4b5a;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+    .submitShareEmailBtn:hover, #commentSaveBtn:hover {
+        background: #3a4b5a;
+    }
+</style>
+<div class="page-content " >
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_priceList' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body" style="width:100%;">
+            <div class="card-title">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" id="overviewBtn" >Overview</a>
+                        <!-- <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="transaction()" id="transactionBtn" > Transactions</a> -->
+                    </div> 
+
+                    <div class="col-md-8 d-flex justify-content-end">
+                        {% if list.status == 'Inactive' %}
+                        <a href="{% url 'Fin_changePriceListStatus' list.id 'Active' %}" class="ml-2 fa fa-ban btn btn-outline-secondary text-grey " role="button" >&nbsp;Inactive</a> 
+                        {% else %}
+                        <a href="{% url 'Fin_changePriceListStatus' list.id 'Inactive' %}" class="ml-2 fa fa-check-circle btn btn-outline-secondary text-grey" role="button" >&nbsp;Active</a> 
+                        {% endif %}
+                        <a href="{% url 'Fin_priceListViewPdf' list.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" id="pdfBtn"> &nbsp;PDF</a> 
+                        <a class="ml-2 btn btn-outline-secondary text-grey fa fa-print" role="button" id="printBtn" onclick="printSection('printContent')">&nbsp;Print</a>
+                        <div class="dropdown p-0 nav-item"  id="shareBtn">
+                            <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
+                            <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                <li style="text-align: center;" >{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                <li style="text-align: center;color: #e5e9ec; cursor: pointer;" data-toggle="modal" data-target="#shareToEmail">Email</li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'Fin_editPriceList' list.id %}" class="ml-2 fa fa-pencil btn btn-outline-secondary text-grey" id="editBtn" role="button">&nbsp;Edit</a>
+                        <a href="{% url 'Fin_deletePriceList' list.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" id="deleteBtn" role="button" onclick="return confirm('Are you sure you want to delete price list `{{list.name}}`.?')">&nbsp;Delete</a>
+                        <a href="#"  class="ml-2 btn btn-outline-secondary text-grey fa fa-comments" id="commentsBtn" role="button" data-toggle="modal" data-target="#commentModal">&nbsp;Comment</a>
+                        <a href="{% url 'Fin_priceListHistory' list.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                    </div>
+                </div> 
+                <center>
+                    <h3 class="card-title" style="text-transform:Uppercase;">{{ list.name }}</h3>
+                    {% if list.status == 'Inactive' %}
+                    <h6 class="blinking-text" style="color:red;width:140px;font-weight: bold;">INACTIVE</h6>
+                    {% else%}
+                    <h6 style="width:140px;color: green;font-weight: bold;">ACTIVE</h6>
+                    {% endif %}
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+        <div class="card-body p-0">
+            <div id="overview">
+                <div class="row g-0 d-flex justify-content-center">
+                    <div class="col-10">
+                        <div class="px-5 pt-2">
+                            <div class="history_highlight py-3 d-flex">
+                                <div class="col-12 d-flex justify-content-start align-items-center">
+                                    {% if history %}{% if history.action == 'Created' %}<p class="text-success m-0" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text-warning m-0" style="font-size: 1.07rem; font-weight: 500;">Last Edited by :</p>{% endif %}{% endif %}
+                                    <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{history.LoginDetails.First_name}} {{history.LoginDetails.Last_name}}</span>
+                                    <span class="ml-5">{{history.date}}</span>
+                                </div>
+                            </div>
+
+                            <div id="printContent">
+                                <center><h4>PRICE LIST DETAILS </h4></center>
+                                <hr>
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Name </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;"> {{list.name}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Type </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;"> {{list.type}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Item Rate </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;">
+                                            {% if list.item_rate == "Customized individual rate" %}
+                                            Customized individual rate
+                                            {% elif list.up_or_down == "Markup" %}
+                                            Markup the item rates by a percentage
+                                            {% elif list.up_or_down == "Markdown" %}
+                                            Markdown the item rates by a percentage
+                                            {% else %}
+                                            {{ list.item_rate }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Description </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;"> {{list.description}}</p>
+                                    </div>
+                                </div>
+                                {% if plItems %}
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Currency </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;">{{list.currency}} </p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <table class="table table-bordered" style="background-color: #2f516f;color: white;font-size: medium;">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Item Details</th>
+                                                <th class="text-center">Standard Rate(INR)</th>
+                                                <th class="text-center">Custom Rate(INR)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in plItems %}
+                                            <tr>
+                                                <td class="text-center">{{i.item.name}}</td>
+                                                <td class="text-center">{{i.standard_rate}}</td>
+                                                <td class="text-center"><b>{{i.custom_rate}}</b></td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Percentage </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;"> {{list.percentage}}% </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <label style="color: white;" > Round Off To </label>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p>:</p>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-center">
+                                        <p style="color: white;font-size:15px;text-transform:Uppercase;">{{list.round_off}} </p>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Share To Email Modal -->
+<div class="modal fade" id="shareToEmail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Share Price List Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'Fin_sharePriceListViewToEmail' list.id %}" method="post" class="needs-validation" id="share_to_email_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase">SEND MAIL</button>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- Add Comments Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{% url 'Fin_addPriceListComment' list.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <textarea type="text" class="form-control" name="comment" placeholder="Add Comments.." required></textarea>
+                    {% if not comments %}
+                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                    {% else %}
+                    <div class="container-fluid">
+                        <table class="table mt-4">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">sl no.</th>
+                                    <th class="text-center">Comment</th>
+                                    <th class="text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in comments %}
+                                <tr class="">
+                                    <td class="text-center">{{forloop.counter }}</td>
+                                    <td class="text-center">{{c.comments}}</td>
+                                    <td class="text-center"><a class="text-danger" href="{% url 'Fin_deletePriceListComment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')"><i class="fa fa-trash" style="font-size: 1.1rem;"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printSection(sectionId) {
+        document.body.style.backgroundColor = 'white';
+        $('#printContent, #printContent *').css('color', 'black');
+
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var $printerDiv = $('<div class="printContainer"></div>');
+        $printerDiv.html(printContents);
+        $('body').append($printerDiv).addClass("printingContent");
+
+        window.print();
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+        $('#printContent, #printContent *').css('color', 'white');
+
+        
+        // var contentToPrint = document.getElementById(sectionId).innerHTML;
+
+        // var iframe = document.getElementById('printIframe');
+
+        // iframe.contentDocument.body.innerHTML = contentToPrint;
+
+        // iframe.style.display = 'block';
+
+        // iframe.contentWindow.print();
+
+        // iframe.style.display = 'none';
+        
+    
+    }
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+
+</script>
+{% endblock %}

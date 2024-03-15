@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from codervent.com/syntrans/demo/horizontal/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 07 Jan 2021 05:00:52 GMT -->
+
+<head>
+  {% load static %}
+  <!-- Required meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Reset styles -->
+  <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css" />
+  <!-- Google Fonts Muli -->
+  <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Fin sYs</title>
+  <!--favicon-->
+  <link rel="icon" href="{% static 'assets/images/favicon-32x32.png' %}" type="image/png" />
+  <!-- Vector CSS -->
+  <link href="{% static 'assets/plugins/vectormap/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
+  <!--plugins-->
+  <link href="{% static 'assets/plugins/simplebar/css/simplebar.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css' %}" rel="stylesheet" />
+  <link href="{% static 'assets/plugins/metismenu/css/metisMenu.min.css' %}" rel="stylesheet" />
+  <!-- loader-->
+  <link href="{% static 'assets/css/pace.min.css' %}" rel="stylesheet" />
+  <script src="{% static 'assets/js/pace.min.js' %}"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+  <!-- Icons CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/icons.css' %}" />
+  <!-- App CSS -->
+  
+  <!--Fa icon -->
+ <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+
+  <link rel="stylesheet" href="{% static 'assets/css/app.css' %}" />
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+
+
+
+  <style>
+    .a {
+      font-family: "Poppins", sans-serif;
+    }
+
+    li {
+      list-style: none;
+      padding-top: 10px;
+    }
+
+    .one {
+      border-collapse: separate;
+      white-space: normal;
+      line-height: normal;
+      font-weight: normal;
+      font-size: medium;
+      font-style: normal;
+      color: -internal-quirk-inherit;
+      text-align: start;
+      border-spacing: 0px !important;
+      font-variant: normal;
+    }
+
+
+    .submenu {
+      max-height: 500px;
+      overflow: auto;
+    }
+
+    .submenu::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var $select1 = $('#select1'),
+        $select2 = $('#select2'),
+        $select3 = $('#name'),
+        $options = $select2.find('option'),
+        $options1 = $select3.find('option');
+      $select1.on('change', function () {
+        $select2.html($options.filter('[text="' + this.value + '"]'));
+        $select3.html($options1.filter('[text="' + this.value + '"]'));
+      }).trigger('change');
+    });
+  </script>
+</head>
+
+<body style="background-color: #2f516f;">
+  <!-- wrapper -->
+  <div class="wrapper">
+    <!--header-->
+    <div class="wrapper">
+      <!--header-->
+      <header class="top-header" style="background-color: #213b52;">
+        <nav class="navbar navbar-expand">
+          <div class="sidebar-header">
+            <div class="d-none d-lg-flex">
+              <img src="{% static 'assets/images/logo-icon.png' %}" class="logo-icon-2" alt="" />
+            </div>
+            <div class="a">
+              <h4><b>Fin sYs</b></h4>
+            </div>
+            <a href="javascript:;" class="toggle-btn ml-lg-auto"> <i class="bx bx-menu"></i>
+            </a>
+          </div>
+          <div class="flex-grow-1 search-bar">
+            <div class="input-group">
+              <div class="input-group-prepend search-arrow-back">
+                <button class="btn btn-search-back" type="button"><i class="bx bx-arrow-back"></i>
+                </button>
+              </div>
+              <input type="text" autocomplete="off" id="myInput" onkeyup="filter(this);" onclick="myFunction1()"
+                class="form-control" placeholder="search" />
+              <div class="input-group-append">
+                <button class="btn btn-search" type="button"><i class="lni lni-search-alt"></i>
+                </button>
+              </div>
+              <div class=" mt-5" id="myDIV" style="z-index:1;position:absolute; 
+              background-color: #213b52;width:550px;height:1px;">
+
+                <ul id="myList" class="one" style="background-color: #213b52;">
+                  <li><a href="">Dashboard</a></li>
+                  <li><a href="">Item</a></li>
+                  <li><a href="">Online Banking</a></li>
+                  <li><a href="">Bank Reconcilation</a></li>
+                  <li><a href="">Sales Records</a></li>
+                  <li><a href="">Invoices</a></li>
+                  <li><a href="">Customers</a></li>
+                  <li><a href="">Product and Services</a></li>
+                  <li><a href="">Expenses</a></li>
+                  <li><a href="">Suppliers</a></li>
+                  <li><a href="">Chart of Accounts</a></li>
+                  <li><a href="">Reconcile</a></li>
+                  <li><a href="">Cash Position</a></li>
+                  <li><a href="">Reconcile</a></li>
+                  <li><a href="">Cash Position</a></li>
+                  <li><a href="">Vendor</li>
+                  <li><a href="">Purchase Order</li>
+                  <li><a href="">Bill</li>
+                  <li><a href="">Cash In Hand</a></li>
+                  <li><a href="">Offline Banking</a></li>
+                  <li><a href="">Loan Account</a>
+                    <li><a href="">Sales</a></li>                   
+                  <li><a href="">Employee</a></li>
+                  <li><a href="">Employee Loan</a></li>
+
+                </ul>
+              </div>
+
+
+
+            </div>
+          </div>
+          <div class="right-topbar ml-auto">
+            <ul class="navbar navbar-expand" style="list-style-type: none; margin: 0; padding: 0;">
+              <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;"
+                data-toggle="dropdown" style=" display: block; padding: 8px 16px; text-decoration: none;">
+                <i class="fa fa-gear" style="font-size:24px"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <ul class="a" style=" list-style-type: none; margin: 0; padding: 0; width: 200px;">
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Company Profile</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Users</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Branches</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Currencies</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Tax</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Templates</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Accounts and Settings</a></li>
+                  <li><a href=""
+                      style="display: block; padding: 8px 16px; text-decoration: none">Customize Form Style</a></li>
+                  <li><a href="" style="display: block; padding: 8px 16px; text-decoration: none">Chart
+                      of Accounts</a></li>
+                  <li><a href="" style="display: block; padding: 8px 16px; text-decoration: none">
+                        Module Settings</a></li>
+                </ul>
+              </div>
+            </ul>
+          </div>
+          <div class="right-topbar ml-auto">
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown dropdown-lg">
+                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;"
+                  data-toggle="dropdown"> <i class="bx bx-bell vertical-align-middle"></i>
+                  <span class="msg-count">{{n}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a href="javascript:;">
+                    <div class="msg-header">
+                      <h6 class="msg-header-title">{{n}} New</h6>
+                      <p class="msg-header-subtitle">Application Notifications</p>
+                    </div>
+                  </a>
+                  <div class="header-notifications-list">
+                    {% if noti %}
+                    {% for i in noti %}
+                    <a class="dropdown-item" href="{% url 'Fin_Dnotification' %}">
+                      <div class="media align-items-center">
+                        <div class="notify bg-light-primary text-primary"><i class="bx bx-group"></i>
+                        </div>
+                        <div class="media-body">
+                          <h6 class="msg-name">{{i.Title}}<span class="msg-time float-right">{{i.Noti_date}}</span></h6>
+                          <p class="msg-info">{{i.Discription}}</p>
+                        </div>
+                      </div>
+                    </a>
+                    {% endfor %}
+                    
+                  </div>
+                  <a href="{% url 'Fin_Dnotification' %}">
+                    <div class="text-center msg-footer">View All Notifications</div>
+                  </a>
+                  {% else %}
+                  <p class="msg-info text-center mt-5">Notifications is not found</p>
+                  {% endif %}
+                </div>
+              </li>
+              <li class="nav-item dropdown dropdown-user-profile">
+                <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="javascript:;" data-toggle="dropdown">
+                 
+                  <div class="media user-box align-items-center">
+                    <div class="media-body user-info">
+                      <p class="user-name mb-0">
+                        
+                        <label style="text-align: center; font-size: 15px;">{{data.Login_Id.First_name}} {{data.Login_Id.Last_name}}</label>
+                       
+                      </p>
+                      <p class="designattion mb-0">Online</p>
+                    </div>
+                    {% if data.Image %}
+                    <img src="{{ data.Image.url }}" class="user-img">
+                    {% else %}
+                    <img src="{% static 'assets\images\user-1.jpg'%}" class="user-img">
+                    {% endif %}
+
+                  </div>
+                
+                </a>
+                
+                <div class="dropdown-menu dropdown-menu-right">
+                  <a class="dropdown-item"
+                    href="{% url 'Fin_DProfile' %}"><i class="bx bx-user"></i><span>Profile</span></a>
+                  <a class="dropdown-item" href="{% url 'Fin_DHome' %}"><i
+                      class="bx bx-tachometer"></i><span>Dashboard</span></a>
+                  <div class="dropdown-divider mb-0"></div>
+                  <a class="dropdown-item" href="{% url 'logout' %}"><i
+                      class="bx bx-power-off"></i><span>Logout</span></a>
+                </div>
+                
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--end header-->
+
+
+      <!--navigation-->
+      
+      <div id="nav1" class="nav-container" style="background-color: #213b52;">
+        <nav class="topbar-nav">
+          <ul class="metismenu" id="menu">
+            <li>
+              
+              <a href="{% url 'Fin_DHome' %}" class="has-arrow">
+                <div class="parent-icon"><i class='bx bx-home-alt'></i>
+                </div>
+                <div class="menu-title">Dashboard</div>
+              </a>
+            </li>
+            
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            
+          </ul>
+        </nav>
+      </div>
+     
+      
+      <div class="page-wrapper">
+        <div class="page-content-wrapper" style="background-color: #2f516f;">
+          <div class="container pt-3">
+            {% for message in messages %}
+            {% if message %}
+            <div class="alert" onclick="this.parentElement.style.display='none';">
+              <div class="row d-flex">
+                <div class="col-md-12">
+                  <center>
+                    <h5 style="color: goldenrod;">{{ message }}</h5>
+                  </center>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          <div></div>
+
+          {% block body %}
+
+          {% endblock %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Get the list from the context passed by the view
+    const selected_options = JSON.parse(localStorage.getItem('selectedCheckboxes'));
+
+    function disableOptions() {
+      selected_options.forEach(function (id) {
+        var optionelement = document.getElementById(id)
+        if(optionelement){
+          optionelement.style.display= "none";
+        }
+      })
+    };
+
+  // Call the function to disable options when the page loads
+  disableOptions();   
+</script>
+
+
+  <script>
+
+    $(document).ready(function () {
+      $("#myList li").hide();
+
+      $("#myInput").on("keyup", function () {
+
+        var value = $(this).val().toLowerCase();
+        if (value !== '') {
+          $("#myList li").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        } else {
+          $("#myList li").hide();
+        }
+      });
+    });
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+  <!-- end wrapper -->
+  <!-- JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/js/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <!--plugins-->
+  <script src="{% static 'assets/plugins/simplebar/js/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/metismenu/js/metisMenu.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js' %}"></script>
+  <!-- Vector map JavaScript -->
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-in-mill.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-us-aea-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-uk-mill-en.js' %}"></script>
+  <script src="{% static 'assets/plugins/vectormap/jquery-jvectormap-au-mill.js' %}"></script>
+  <script src="{% static 'assets/plugins/apexcharts-bundle/js/apexcharts.min.js' %}"></script>
+  <script src="{% static 'assets/js/index.js' %}"></script>
+  <!-- App JS -->
+  <script src="{% static 'assets/js/app.js' %}"></script>
+
+  <script>
+    new PerfectScrollbar('.dashboard-social-list');
+    new PerfectScrollbar('.dashboard-top-countries');
+  </script>
+</body>
+
+
+<!-- Mirrored from codervent.com/syntrans/demo/horizontal/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 07 Jan 2021 05:00:53 GMT -->
+
+</html>

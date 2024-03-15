@@ -1,6 +1,5 @@
 {% extends 'company/Fin_base.html' %}
 {% block body %}
-{% load social_share %}
 
 {% load static %}
 <style>
@@ -502,25 +501,25 @@
 </script>
 
 
-<!--attachFile modal -->
-<div class="modal fade" id="attachFile" tabindex="-1" role="dialog" aria-labelledby="attachFileLabel"
+<!-- modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document" >
-        <div class="modal-content" style="background-color: #213b52;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="attachFileLabel">Add File</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{% url 'Fin_banking_add_file' bank.id  %}" method="POST" enctype="multipart/form-data" style="background-color: #213b52;">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {%csrf_token %}
                 <div class="modal-body">
                     <input type="file" class="form-control" name="file">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-info">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
@@ -528,66 +527,13 @@
 </div>
 
 
-<!--commentModal -->
 
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content" style="background-color: #233D52;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="commentsContainer">
-                <!-- Form to submit a new comment -->
-                <form method="post" action="{% url 'Fin_banking_add_comment' bank.id %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="commentText">Comment:</label>
-                        <input type="text" class="form-control" id="commentText" name="comment_text" required>
-                    </div>
-                    <!-- <button type="submit" class="btn btn-primary">Submit</button>
-                </form> -->
-                <div class="">
-                <table class="table table-responsive-md mt-4" >
-                    <thead style="background-color: #233D52;">
-                    <tr>
-                        <th>sl no.</th>
-                        <th>Comments</th>
-                        <th>Added By</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for comment in comments %}
-                    <tr  class="table-row">
-                        <td>{{forloop.counter }}</td>
-                        <td>{{ comment.comment }}</td>
-                        <td>{{comment.login_details.First_name}} {{comment.login_details.Last_name}}</td>
-                        <td><a href="{% url 'Fin_banking_delete_comment' comment.id %}" class="btn delete-comment text-danger"><i class="fa fa-trash"></i></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="d-flex justify-content-end mt-3">
-            <button type="submit" class="btn btn-info">Submit</button>
-        </div>
-    </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 
 
 <div class="page-content ">
-    <div class="text-right">
-        <a href="{% url 'Fin_banking_listout' %}" class="btn-sm  px-2" ><i class="fa fa-times"></i></a>
-    </div>
+
 
     <div id="Transaction">
         <div class="card radius-15">
@@ -620,12 +566,12 @@
                     </div>
                     <div class="btn-group mx-1" style="float: right;">
                         <a class=" btn btn-outline-info  text-grey mt-3 " style=" cursor: pointer;"
-                            onclick="ExportToExcel()"><span class="fa fa-file-excel" aria-hidden="true"></span>Export To Excel</a>
+                            onclick="ExportToExcel('xlsx')">Export To Excel</a>
                     </div>
                     <div class="btn-group mx-1" style="float: right;">
                         <div class="dropdown">
-                            <button type="button" class="fa fa-exchange dropdown-toggle btn btn-outline-info  text-grey mt-3 "
-                                style="height: 37px; cursor: pointer;" data-toggle="dropdown"> Transaction
+                            <button type="button" class="dropdown-toggle btn btn-outline-info  text-grey mt-3 "
+                                style=" cursor: pointer;" data-toggle="dropdown"> Transaction
                             </button>
                             <div class="dropdown-menu" style="background-color: black;">
 
@@ -681,7 +627,7 @@
                                     {% for i in trans %}
                                     <tr class="table-row ">
                                         <td style="text-align: center;">{{forloop.counter}}</td>
-                                        <td style="text-align: center;">{{i.adjustment_date |date:"Y-m-d" }}</td>
+                                        <td style="text-align: center;">{{i.adjustment_date}}</td>
                                         <td style="text-align: center;">{{i.transaction_type}}</td>
                                         {% if i.transaction_type == 'From Bank Transfer' or i.transaction_type == 'Cash Withdraw' or i.adjustment_type == 'Reduce Balance' %}
                                         <td style="text-align: center;">{{i.to_type}}</td>
@@ -694,7 +640,12 @@
                                             <div class="dropdown">
                                                 <i class="fa fa-ellipsis-v" data-toggle="dropdown"></i>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item edit-item" href="{% url 'Fin_edit_bank_trans' i.id %}">Edit</a>
+                                                    {% if i.transaction_type == "Opening Balance" %}
+                                                        <a class="dropdown-item edit-item" href="{% url 'Fin_edit_bank' i.banking.id %}">Edit</a>
+                                                    {% else %}
+                                                        <a class="dropdown-item edit-item" href="{% url 'Fin_edit_bank_trans' i.id %}">Edit</a>
+                                                    {% endif %}
+
                                                     <a class="dropdown-item delete-item" href="#" data-toggle="modal"
                                                         data-target="#deleteModal{{ i.id }}">Delete</a>
                                                         <a class="dropdown-item edit-item" href="{% url 'Fin_bank_transcation_history' i.id %}">History</a>
@@ -725,7 +676,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                       
+
+
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -736,6 +688,80 @@
 
 
             </div>
+
+
+
+
+
+
+            <script>
+                function sortTableBySalary(order) {
+                    const table = document.getElementById('tbl_exporttable_to_xls');
+                    const rows = Array.from(table.getElementsByTagName('tr'));
+
+                    rows.shift(); // Remove the table header row from sorting
+
+                    rows.sort(function (a, b) {
+                        const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+                        const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
+
+                        if (order === 'asc') {
+                            return salaryA - salaryB;
+                        } else if (order === 'desc') {
+                            return salaryB - salaryA;
+                        }
+                    });
+
+                    rows.forEach(function (row) {
+                        table.appendChild(row);
+                    });
+                }
+
+
+                function sortTable(order) {
+                    const table = document.getElementById('tbl_exporttable_to_xls');
+                    const rows = Array.from(table.getElementsByTagName('tr'));
+
+                    rows.shift(); // Remove the table header row from sorting
+
+                    rows.sort(function (a, b) {
+                        const bankNameA = a.querySelector('td:nth-child(2)').textContent;
+                        const bankNameB = b.querySelector('td:nth-child(2)').textContent;
+
+                        if (order === 'asc') {
+                            return bankNameA.localeCompare(bankNameB);
+                        } else if (order === 'desc') {
+                            return bankNameB.localeCompare(bankNameA);
+                        }
+                    });
+
+                    rows.forEach(function (row) {
+                        table.appendChild(row);
+                    });
+                }
+            </script>
+
+
+
+            <script>
+                function showAlertdelet() {
+                    alert("You Can't Delete, pls go to loan section");
+                }
+                function showAlertedit() {
+                    alert("You Can't Edit, pls go to loan section");
+                }
+
+            </script>
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -750,31 +776,9 @@
                     <center>
 
                         <h2 class="mb-0">{{ bank.bank_name }}</h2>
-                        {% if  bank.bank_status == 'Active' %}
-                        <p class="text-success">{{ bank.bank_status }}</p>
-                        {% else %}
-                        <p class="text-danger blink-text">{{ bank.bank_status }}</p>
-                        {% endif %}
 
                     </center>
                     <hr>
-                    <style>
-                        @keyframes blink {
-                            0% {
-                                opacity: 1;
-                            }
-                            50% {
-                                opacity: 0;
-                            }
-                            100% {
-                                opacity: 1;
-                            }
-                        }
-                    
-                        .blink-text {
-                            animation: blink 1s infinite;
-                        }
-                    </style>
                     <div class="btn-group" style="float: left; ">
 
                         <a class="btn btn-outline-info  text-grey mt-3 "
@@ -806,21 +810,18 @@
                                 {% endif %}
 
 
-                                <a href="{% url 'Fin_delete_bank' bank.id %}" class=" fa fa-trash  btn btn-outline-info  text-grey mt-3 "
+                                <a href="" class=" fa fa-trash  btn btn-outline-info  text-grey mt-3 mr-2 "
                                     style=" cursor: pointer; " role="button"> Delete</a>
 
-                                <a class=" fa fa-paperclip  btn btn-outline-info  text-grey mt-3 "
-                                    style=" cursor: pointer;"  data-toggle="modal"
-                                    data-target="#attachFile"> Attach file </a>
+                                <button type="button" class=" fa fa-paperclip  btn btn-outline-info  text-grey mt-3 "
+                                    style=" cursor: pointer;" style="cursor: pointer;" data-toggle="modal"
+                                    data-target="#exampleModal">
 
-                                <a class=" fa fa-comment  btn btn-outline-info  text-grey mt-3 "
-                                    style=" cursor: pointer;"  data-toggle="modal"
-                                    data-target="#commentModal"> Comment</a>
-
-                                <a href="{% url 'Fin_banking_history' bank.id %}" class=" fa fa-history  btn btn-outline-info  text-grey mt-3 "
-                                    style=" cursor: pointer;"  > History </a>
-
-                             
+                                    Attach file
+                                </button>
+                                <!-- <a data-toggle="modal"
+                                    class=" fa fa-download btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                    data-target="#commentModal"> Download</a> -->
 
 
 
@@ -840,7 +841,7 @@
                 <div id="details">
                     <div class="row g-0">
 
-                        <div class="col-lg-7">
+                        <div class="col-lg-8">
                             <div class="p-5">
 
                                 <div class="card-body">
@@ -850,7 +851,6 @@
                                                 <h2 class="mb-0 text-center">Bank Details</h2>
                                             </div>
                                         </div>
-                                        <hr>
 
                                     </div>
                                         <div class="row">
@@ -871,7 +871,7 @@
                                         </div>
 
                                     </div>
-                                    
+                                    <hr>
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
                                             <label for="title">
@@ -884,7 +884,7 @@
                                         </div>
 
                                     </div>
-                                   
+                                    <hr>
 
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
@@ -897,7 +897,7 @@
 
                                         </div>
                                     </div>
-                                    
+                                    <hr>
                                     <div class="row">
                                         <div class="col-md-4 ml-5  mr-5 mt-3">
                                             <label for="title">
@@ -909,7 +909,7 @@
 
                                         </div>
                                     </div>
-                                    
+                                    <hr>
                                     <div class="row">
                                         <div class="col-md-4 ml-5 mr-5 mt-3">
                                             <label for="title">
@@ -932,35 +932,22 @@
 
                             </div>
                         </div>
-                        <div class="col-lg-5 bg-grey">
-                            <div class="row p-4">
-                                <div class="col-md-8 mt-4">
-                                    {% if last_history.action == 'Created' %}
-                                        <h6 ><span class="text-success">Created By :</span>
-                                        {{ last_history.login_details.First_name }} {{ last_history.login_details.Last_name }}</h6>
-                                    {% else %}
-                                        <h6 ><span class="text-warning">Last Edited By :</span>
-                                        {{ last_history.login_details.First_name }} {{ last_history.login_details.Last_name }}</h6>
-                                    {% endif %}
-                                </div>
-                                <div class="col text-right mt-4">
-                                    {{last_history.date|date:"Y-m-d"}}
-                                </div>
-
-                            </div>
-                           
+                        <div class="col-lg-4 bg-grey">
                             <div class="p-5">
 
-                                <hr class="my-2">
+                                <hr class="my-4">
                                 <div class="d-flex justify-content-between mb-4">
-                                    <h6 class="">Opening Balance</h6>:
+                                    <h6 class="">Opening Balance</h6>
                                     &#8377; {{bank.opening_balance }}
                                 </div>
                                 <div class="d-flex justify-content-between mb-4">
-                                    <h6 class="">Current Balance</h6>:
+                                    <h6 class="">Current Balance</h6>
                                     &#8377; {{bank.current_balance }}
                                 </div>
-                               
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Last Updated By</h6>
+                                    {{ bank.login_details.First_name }} {{ bank.login_details.Last_name }}
+                                </div>
                             
                                 <hr class="my-4">
   
@@ -1008,30 +995,27 @@
                             <center>
                               
                                 <a class="btn btn-outline-info  text-grey mt-3" style=" cursor: pointer; "
-                                    role="button" href="{% url 'Fin_render_pdfstatment_view' bank.id %}" id="downloadButton"><i class="fa fa-file-pdf"></i> PDF</a>
+                                    role="button" href="" id="downloadButton">PDF</a>
 
                                 <button class="btn btn-outline-info  text-grey mt-3 "
-                                    style=" cursor: pointer; " onclick="printStatement()"><i class="fa fa-print"></i> Print
+                                    style=" cursor: pointer; " onclick="printStatement()">Print
                                     Statement</button>
 
-                               
+                                <!-- <a data-toggle="modal"
+                                class=" fa fa-download btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                data-target="#commentModal"> Download</a> -->
 
                                 <li class=" btn btn-outline-info text-grey  mt-3  "
-                                    style=" cursor: pointer; " 
+                                    style=" cursor: pointer; " onclick="uplodfile()"
                                     data-toggle="dropdown"> &nbsp;Share&nbsp;</li>
                                 <ul class="dropdown-menu" style="background-color: black;">
 
-                                    <li style="display: flex; align-items: center;">
-                                        <i class="fa fa-whatsapp ml-3"></i> &nbsp
-                                        {% post_to_whatsapp object_or_url "WhatsApp" %}
-                                    </li>
-                                    
-                                    <li ><a href=""data-toggle="modal" data-target="#sharestatementEmail"><i class="fa fa-envelope ml-3"></i> 
-                                        Email</a></li>
+                                    <li style="margin-left: 50px;"> </li>
+                                    <li style="margin-left: 50px;"></li>
 
                                 </ul>
 
-                               
+
 
 
                             </center>
@@ -1125,7 +1109,34 @@
                     <!-- Cart BG -->
                     <img src="cart.jpg" class="img-fluid cart-bg" alt="">
 
-                 
+                    <!-- <footer>
+                            <hr>
+                            <p class="m-0 text-center">
+                                View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                            </p>
+                            <div class="social pt-3">
+                                <span class="pr-2">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>0123456789</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>me@saburali.com</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-facebook-f"></i>
+                                    <span>/sabur.7264</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>/abdussabur</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-github"></i>
+                                    <span>/example</span>
+                                </span>
+                            </div>
+                        </footer> -->
                 </div>
             </div>
 
@@ -1138,77 +1149,8 @@
 
 </div>
 
-<!-- email share modal -->
-
-<div class="modal fade" id="sharestatementEmail" tabindex="-1" role="dialog" aria-labelledby="sharestatementEmailLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document" >
-        <div class="modal-content" style="background-color: #213b52;">
-            <div class="modal-header">
-                <h5 class="modal-title" id="sharestatementEmailLabel">Share Statement Via Email</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form action="{% url 'Fin_shareBankingStatementToEmail' bank.id %}" method="POST" enctype="multipart/form-data" style="background-color: #213b52;">
-                {%csrf_token %}
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="emailIds">Email IDs</label>
-                        <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="item_unitname">Message(optional)</label>
-                        <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Statement details."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
-                    <button type="submit"  id="share_with_email" class="submitShareEmailBtn btn btn-info">Send Mail</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 
-<script>
-
-    $(document).ready(function(){
-        $('#share_with_email').on('click',function(){
-            var emailsInput = document.getElementById('emailIds');
-            var emailsString = emailsInput.value.trim();
-
-            var emails = emailsString.split(',').map(function(email) {
-                return email.trim();
-            });
-
-            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-
-            var invalidEmails = []
-            if(emailsString == ""){
-                alert('Enter valid email addresses..')
-            }
-            else{
-                for (var i = 0; i < emails.length; i++) {
-                    var currentEmail = emails[i];
-
-                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
-                        console.log(currentEmail + ' is invalid!');
-                        invalidEmails.push(currentEmail)
-                    }
-                }
-                
-                if(invalidEmails.length > 0){
-                    alert('Invalid emails..Please check!\n'+invalidEmails)
-                    // alert(invalidEmails)
-                }else{
-                    $('#share_to_email_form').submit();
-                }
-            }
-        })
-    });
-</script>
 
 <script>
     function printStatement() {
@@ -1273,7 +1215,7 @@
 
 <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
-<!-- <script type="text/javascript">function ExportToExcel(type, fn, dl) {
+<script type="text/javascript">function ExportToExcel(type, fn, dl) {
         var elt = document.getElementById('tbl_exporttable_to_xls');
         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
         return dl ?
@@ -1281,64 +1223,7 @@
             XLSX.writeFile(wb, fn || ('Transaction.' + (type || 'xlsx')));
     }
 
-</script> -->
-
-<!-- <script type="text/javascript">
-    function ExportToExcel(type, fn, dl) {
-        var elt = document.getElementById('tbl_exporttable_to_xls');
-
-        // Clone the table to avoid modifying the original table
-        var clonedTable = elt.cloneNode(true);
-
-        // Remove the last column from the cloned table
-        var rows = clonedTable.getElementsByTagName('tr');
-        for (var i = 0; i < rows.length; i++) {
-            var lastCell = rows[i].lastElementChild;
-            if (lastCell) {
-                rows[i].removeChild(lastCell);
-            }
-        }
-
-        var wb = XLSX.utils.table_to_book(clonedTable, { sheet: "sheet1" });
-        return dl ?
-            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
-            XLSX.writeFile(wb, fn || ('Transaction.' + (type || 'xlsx')));
-    }
-</script> -->
-
-<script>
-    function ExportToExcel() {
-        const table = document.querySelector('#tbl_exporttable_to_xls');
-
-        // Clone the table to avoid modifying the original table
-        const clonedTable = table.cloneNode(true);
-
-        // Remove the last column from each row
-        clonedTable.querySelectorAll('tr').forEach(row => {
-            const cells = row.querySelectorAll('td, th');
-            cells[cells.length - 1].remove(); // Remove the last cell (column)
-        });
-
-        const ws = XLSX.utils.table_to_sheet(clonedTable);
-
-        // Specify column widths (in Excel characters, e.g., "15px")
-        ws['!cols'] = [
-            { wch: 12 }, // SL no
-            { wch: 15 }, // DATE
-            { wch: 20 }, // PARTY NAME
-            { wch: 15 }, // TYPE
-            { wch: 15 }, // NAME
-            // { wch: 12 }, // AMOUNT
-        ];
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-        XLSX.writeFile(wb, 'Transaction.xlsx');
-    }
 </script>
-
-
-
 
 
 <script>

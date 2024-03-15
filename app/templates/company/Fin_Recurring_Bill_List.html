@@ -12,6 +12,7 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> <!-- Include jQuery -->
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> <!-- Include DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" /> <!-- Include DataTables CSS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <!-- Include xlsx library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -259,7 +260,7 @@ document.getElementById('exportButton').addEventListener('click', function () {
             return buf;
         }
 
-        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'exported_table.xlsx');
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'Recurring_Bill.xlsx');
     }
 
     </script>

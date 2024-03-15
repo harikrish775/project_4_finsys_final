@@ -1,0 +1,1090 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+    {% load static %}
+    
+
+<style>
+
+.itm {
+
+        width: 300px!important;
+    }
+    .inneritm{
+        width: 300px!important;
+       
+    }
+
+    .form-control.selectss3 {
+        width: 350px;
+    }
+
+    .item_select2{
+      width: 300px!important;
+    }
+    .item_selectss2{
+      width: 300px!important;
+    }
+
+    .inneritm2{
+      width: 300px!important;
+
+    }
+
+  
+    .form-control.select2,
+  .select2-container--default .select2-selection--single {
+      background-color: #41586bff !important;
+      color: black !important;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+      color: white !important;
+  }
+
+  .select2-container--default .select2-search--dropdown .select2-search__field {
+      background-color: black !important;
+      /* color: white !important; */
+  }
+
+  .select2-container--default .select2-results__option {
+      background-color: black !important;
+      /* color: white !important; */
+  }
+
+  .select2-container--default .select2-results__option:hover {
+      background-color: #274a81 !important;
+      /* color: white !important; */
+  }
+
+  .select2-container--default .select2-results__option[aria-disabled=true] {
+      background-color: black !important;
+  }
+
+  .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: black !important;
+      /* color: white; */
+  }
+
+  #quantityDiv {
+      display: none;
+  }
+
+  .select2-selection__rendered {
+      line-height: 31px !important;
+  }
+
+  .select2-container .select2-selection--single {
+      height: 38px !important;
+      font-size: 16px;
+  }
+
+  .select2-selection__arrow {
+      height: 44px !important;
+  }
+     
+        
+</style>
+
+
+    <div class="page-content">
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+                        <h2 class="mb-0" style="">EDIT ADJUSTMENT</h2>
+
+                        
+                 
+                    </center>
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+    <br>
+
+    <div class="d-flex justify-content-end mb-1">
+      <a href="{% url 'StockAdjustmentOverview' stocks.id %}"><i class="fa fa-times-circle text-white mx-4 p-1" style="font-size: 1.2rem;margin-left: -54px !important;"></i></a>
+    </div>
+    <form action="{% url 'updatedStockAdj' stocks.id%}" method="POST" enctype="multipart/form-data">
+    <div class="page-content" style="margin-top:-2rem ;">
+      
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+
+                </div>
+
+
+                
+                <div class="row mt-3">
+                  <div class="col-md-3">
+                      {% csrf_token %}
+                    <label for="" style="color: white;">Mode of Adjustment</label>
+
+                    <select name="mode" id="adjust" class="form-control" onchange="toggleDiv(this.value)" required>
+                      {% if stocks.mode_of_adjustment == 'Value' %}
+                          <option value="{{ stocks.mode_of_adjustment }}" selected >{{ stocks.mode_of_adjustment }} Adjustment</option>
+                          <option value="Quantity">Quantity Adjustment</option>
+                      {% else %}
+                          <option value="{{ stocks.mode_of_adjustment }}" >{{ stocks.mode_of_adjustment }} Adjustment</option>
+                          <option value="Value">Value Adjustment</option>
+                      {% endif %}
+                  </select>
+
+
+                </div>
+                </div>
+
+                <div class="row mt-3">
+                  <div class="col-md-3">
+
+                   
+                      <label class="col-form-label">Reference Number</label>
+                 
+                      <input class="form-control" type="text" id="bname" name="refno" value="{{ stocks.reference_no }}" >
+                  </div>
+              </div>
+
+              <div class="row mt-3">
+                    <div class="col-md-3 mt-2">
+                        <label for="">Date *</label>
+                        <input type="date" class="form-control" id="date" name="date" value="{{ stocks.adjusting_date|date:'Y-m-d' }}" placeholder="">
+                    </div>
+
+                    <script>
+                      // $('#date').val(new Date().toJSON().slice(0,10));
+                    </script>
+                    
+                    <div class="col-md-3">
+                        <label class="col-form-label " for="validationCustom02">Account *</label>
+                        <select name="account" class="form-control text-white" required>
+                          <option selected  value="{{ stocks.account }}">{{ stocks.account }}</option>
+                          
+                          
+
+                           <optgroup label="Expense" class="text-dark">
+                         <option value="Advertising and Marketing" class="text-white">Advertising and Marketing</option>
+                         <option value="Automobile Expense" class="text-white">Automobile Expense</option>
+                         <option value=">Bad Debt" class="text-white">Bad Debt</option>
+                         <option value="Bank Fees and Charges" class="text-white">Bank Fees and Charges</option>
+                         <option value="Consultant Expense" class="text-white">Consultant Expense</option>
+                         <option value="Credit Card Charges" class="text-white">Credit Card Charges</option>
+                         <option value="Depreciation Expense" class="text-white">Depreciation Expense</option>
+                         <option value="Exchange Gain or Loss" class="text-white">Exchange Gain or Loss</option>
+                         <option value="IT and Internet Expenses" class="text-white">IT and Internet Expenses</option>
+                         <option value="Janitorial Expense" class="text-white">Janitorial Expense</option>
+                         <option value="Lodging" class="text-white">Lodging</option>
+                         <option value="Meals and Entertainment" class="text-white">Meals and Entertainment</option>
+                         <option value="Other Expenses" class="text-white"> Other Expenses</option>
+                         <option value="Postage" class="text-white">Postage</option>
+                         <option value="Salaries and Employee Wages" class="text-white">Salaries and Employee Wages</option>
+                         <option value="Telephone Expense" class="text-white">Telephone Expense</option>
+                         <option value="Travel Expense" class="text-white">Travel Expense</option>
+                         <option value="Uncategorized" class="text-white">Uncategorized</option>
+                         <option value="Contract Assets" class="text-white">Contract Assets</option>
+                         <option value="Depreciation And Amortisation" class="text-white">Depreciation And Amortisation</option>
+                         <option value="Merchandise" class="text-white">Merchandise</option>
+                         <option value="Raw Materials And Consumables" class="text-white">Raw Materials And Consumables</option>
+                         <option value="Transportation Expense" class="text-white">Transportation Expense</option>
+                         </optgroup>
+
+                         <optgroup label="Fixed Asset" class="text-dark">
+                          <option value="Furniture and Equipment" class="text-white">Furniture and Equipment</option>
+                          </optgroup>
+
+                          <optgroup label="Other Current Asset" class="text-dark">
+                            <option value="Employee Advance" class="text-white">Employee Advance</option>
+                            <option value="Advance Tax" class="text-white">Advance Tax</option>
+                            <option value="Prepaid Expenses" class="text-white">Prepaid Expenses</option>
+                            <option value="GST TCS Receivable" class="text-white">GST TCS Receivable</option>
+                            <option value="GST TDS Receivable" class="text-white">GST TDS Receivable</option>
+                            <option value="Input Tax Credits" class="text-white">Input Tax Credits </option>
+                            <option value="Input CGST" class="text-white">Input CGST</option>
+                            <option value="Reverse Charge Tax Input but not due" class="text-white">Reverse Charge Tax Input but not due</option>
+                            <option value="Sales to Customers (Cash)" class="text-white">Sales to Customers (Cash)</option>
+                            <option value="TDS Receivable" class="text-white">TDS Receivable</option>
+                            <option value="Input SGST" class="text-white">Input SGST</option>
+                            <option value="Input SGST" class="text-white">Input SGST</option>
+                            <option value="Input SGST" class="text-white">Input SGST</option>
+                            <option value="Input SGST" class="text-white">Input SGST</option>
+                            </optgroup>
+
+                            <optgroup label="Cost Of Goods Sold" class="text-dark">
+                              <option value="Labor" class="text-white">Labor</option>
+                              <option value="Materials" class="text-white">Materials</option>
+                              <option value="Subcontractor" class="text-white">Subcontractor</option>
+                              <option value="Cost of Goods Sold" class="text-white">Cost of Goods Sold</option>
+                              <option value="Job Costing" class="text-white">Job Costing</option>
+                            </optgroup>
+
+                            <optgroup label="Long Term Liability" class="text-dark">
+                              <option value="Mortgages" class="text-white">Mortgages</option>
+                              <option value="Construction Loans" class="text-white">Construction Loans</option>
+                            </optgroup>
+
+                            <optgroup label="Equity" class="text-dark">
+                              <option value="Drawings" class="text-white">Drawings</option>
+                              <option value="Opening Balance Offset" class="text-white">Opening Balance Offset</option>
+                              <option value="Owner's Equity" class="text-white">Owner's Equity</option>
+                              <option value="Retained Earnings" class="text-white">Retained Earnings</option>
+                              <option value="Capital Stock" class="text-white">Capital Stock</option>
+                              <option value="Distributions" class="text-white">Distributions</option>
+                              <option value="Dividends Paid" class="text-white">Dividends Paid</option>
+                              <option value="Investments" class="text-white">Investments</option>
+                            </optgroup>
+
+                            <optgroup label="Other Current Liability" class="text-dark">
+                              <option value="Employee Reimbursements" class="text-white">Employee Reimbursements</option>
+                              <option value="Opening Balance Adjustments" class="text-white">Opening Balance Adjustments</option>
+                              <option value="Unearned Revenue" class="text-white">Unearned Revenue</option>
+                              <option value="GST Payable" class="text-white">GST Payable</option>
+                              <option value="Output CGST" class="text-white">Output CGST</option>
+                              <option value="Output IGST" class="text-white">Output IGST</option>
+                              <option value="Output SGST" class="text-white">Output SGST</option>
+                              <option value="TDS Payable" class="text-white">TDS Payable</option>
+                            </optgroup>
+
+                            {% for a in accounts %}
+                            {% if a.account_type == 'Bank' %}
+                            <optgroup label="Bank" class="text-dark">
+                              <option value="{{ a.account_name }}" class="text-white">{{ a.account_name }}</option>
+                            </optgroup>
+                            {% endif %}
+                            {% endfor %}
+
+                            <optgroup label="Cash" class="text-dark">
+                              {% for a in accounts %}
+                                {% if a.account_type == 'Cash' %}
+                                  <option value="{{ a.account_name }}" class="text-white">{{ a.account_name }}</option>
+                                {% endif %}
+                              {% endfor %}
+                            </optgroup>
+                       
+            
+                            <optgroup label="Credit Card" class="text-dark">
+                            {% for a in accounts %}
+                            {% if a.account_type == 'Credit Card' %}
+                              <option value="{{ a.account_name }}" class="text-white">{{ a.account_name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                            </optgroup>
+
+                           
+                            <optgroup label="Payment Clearing Account" class="text-dark">
+                              {% for a in accounts %}
+                              {% if a.account_type == 'Payment Clearing Account' %}
+                              <option value="{{ a.account_name }}" class="text-white">{{ a.account_name }}</option>
+                              {% endif %}
+                              {% endfor %}  
+                            </optgroup>
+                            
+
+                    </select>
+            </div>
+
+            <div class="col-md-3 ">
+              <label class="col-form-label" for="validationCustom03">Reason * </label>
+              
+              <div class="d-flex">
+                <select name="reason" class="form-control" id="reasons1" required>
+                <option selected  value="{{ stocks.reason }}">{{ stocks.reason }}</option>
+              {% for i in reason %}
+                    {% if stocks.reason == i.reason %}
+                      <option value="{{ i.reason }}" hidden>{{ i.reason }}</option>
+                    {% else %}
+                      <option value="{{ i.reason }}">{{ i.reason }}</option>
+                    {% endif %}
+                  {% endfor %}
+             </select>
+
+             <a href="#newreason"class="btn btn-outline-secondary ml-1" data-toggle="modal">+</a>
+
+  </div>
+</div>
+</div>
+
+
+        <div class="row">
+          <div class="col-md-3 mt-3">
+            <label class="col-form-label">Description</label>
+           <textarea name="desc" rows="5" class="form-control">{{ stocks.description }}</textarea>
+          </div>
+          <div class="col-md-3 mt-3"></div>
+          <div class="col-md-3 mt-3"></div>
+          <div class="col-md-3 mt-3"></div>
+        </div>
+
+        <br>
+
+
+        <input type="text" name="" id="count" value="{{cnt_item}}" hidden>
+
+<!----------------------------------------------------------- Quantity Adjustment ------------------------------------------------------------->
+<div class="row" id="quantityDiv">
+  <div class="col-md-12 table-responsive-md mt-3">
+    <table class="table table-bordered table-hover mt-3" id="item_table">
+      <thead>
+        <tr>
+          <th class="text-center">Sl No.</th>
+          <th class="text-center">Item details</th>
+          <th class="text-center">Quantity Available</th>
+          <th class="text-center">New Quantity on hand</th>
+          <th class="text-center">Quantity Adjusted</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="item_table">
+        {% for m in st_items %}
+        <tr id='row1'>
+          <td class="bg-transparent text-white rownum" id="" value="">{{forloop.counter}}</td>
+          <td>
+              <div class='form-group mt-3'>
+                <select class=' item_select  text-white itm select2 mt-1 selectssss' name='item1' id='selectss1{{m.id}}' onchange="selectonchange(this,`{{m.id}}`)" >
+                  {% for i in items %}
+                  {% if i.name == m.item.name %}
+                      <option value="{{ i.name }}" data-tokens="{{ i.name }}" selected>{{ i.name }}</option>
+                  {% else %}
+                      <option value="{{ i.name }}" data-tokens="{{ i.name }}">{{ i.name }}</option>
+                  {% endif %}
+                  {% endfor %}
+
+                  </select>
+              </div>
+          </td>
+          <td class='text-right text-dark ' ><input type='number' step="0.01" class='form-control  border-1  text-light text-right qty ' value='{{m.quantity_avail}}' name="qtyav[]" id="qtyavail{{m.id}}">
+          </td>
+          <td class='text-right'><input type='number' id='onhandqty{{m.id}}' class='form-control border-1  text-light text-right rate' name='newqty[]' value='{{m.quantity_inhand}}' oninput="qtyInhand(this,`{{m.id}}`)">
+          </td>
+          
+          <td class='text-right'><input type='text' id='adjustedQty{{m.id}}' class='form-control border-1  text-light text-right discount' name='qtyadj[]' value='{{m.quantity_adj}}'>
+          </td>
+          <td class='text-center'>
+              <button type='button' id='del_btn1'  data-id="{{m.id}}" class='btn btn-outline-secondary delete-row1'>-</button> 
+          </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table> 
+    <button type="button" class="btn btn-outline-secondary tab1" id="add-row" title="add row">+</button>
+
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    // Initialize select2 for the select element with ID 'selectss1'
+    $('#selectss1').select2();
+    
+    // Iterate through each select element with class 'selectssss'
+    $('.selectssss').each(function () {
+        // Extract the unique ID from the element's ID attribute
+        var id = $(this).attr('id');
+        
+        // Initialize select2 for the current select element based on its ID
+        $('#' + id).select2();
+    });
+  });
+</script>
+
+<script>
+function qtyInhand(j,m){
+  const currentQty = parseInt(document.getElementById(`qtyavail${m}`).value)
+  const changeQty = parseInt(document.getElementById(`onhandqty${m}`).value)
+  const difference = changeQty - currentQty
+  document.getElementById(`adjustedQty${m}`).value=difference
+}
+
+
+</script>
+
+
+<script>
+  // FIRST ROW
+  let rowNum = document.getElementById('count').value;
+  const rownumber = document.querySelector('.rownum');
+ 
+  
+  
+// quantity
+function selectonchange(m,j) {
+  var select = m.value;
+    $.ajax({
+        type: "GET",
+        url: "{% url 'getitemdata1' %}",
+        data: {
+            id: select,
+    
+        },
+        success: function (response) {
+        
+          
+        var stck = response.stock;
+        document.getElementById(`qtyavail${j}`).value = stck;   
+        },
+        error: function (error) {
+          console.error('Ajax request failed:', error);
+        }
+        
+    });
+};
+  
+  // NEW ROW
+  document.addEventListener('DOMContentLoaded', function() {
+
+      const addRowButton = document.getElementById('add-row');
+      const tableBody = document.querySelector('#item_table tbody');
+  
+      addRowButton.addEventListener('click', function() {
+          const newRow = document.createElement('tr');
+          rowNum++;
+  
+          newRow.innerHTML = `
+              <td class="bg-transparent text-light">${rowNum}</td>
+              <td>
+                  <div class='form-group mt-3'><select class='text-light -0 item_select${rowNum} inneritm' name='item1' id='item${rowNum}' onchange='selectonchange2(${rowNum})'>
+                          <option class='text-white'hidden disabled selected>Select Items</option>
+                          {% for i in items %}
+                          <option class="text-dark" value="{{i.name}}" data-stock="{{i.stock}}" >{{i.name}}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+              </td>
+              <td class='text-right'><input type='number' id='qty2${rowNum}' class='form-control    text-light text-right qty2${rowNum}'  name="qtyav[]"></td>
+              <td class='text-right'><input type='number' id='rates${rowNum}' class='form-control    text-light text-right rate'  name="newqty[]" value=''></td>
+              <td class='text-right'><input type='text' id='diff${rowNum}' class='form-control  border-1  text-light text-right discount' name="qtyadj[]" value=''></td>
+              <td class='text-center'>
+                  <button type='button' class='btn btn-outline-secondary delete-row' style='width:30px'>-</button>
+              </td>
+          `;
+  
+          tableBody.appendChild(newRow);
+
+
+          $(`#item${rowNum}`).select2();
+
+          const itemSelectNewRow = document.querySelector(`#item${rowNum}`);
+          const qtyInputNewRow = document.querySelector(`.qty2${rowNum}`);
+          const rateInputNewRow = document.querySelector(`#rates${rowNum}`);
+          const diffInputNewRow = document.querySelector(`#diff${rowNum}`);
+  
+          itemSelectNewRow.addEventListener('change', function() {
+              const selectedOption = itemSelectNewRow.options[itemSelectNewRow.selectedIndex];
+
+              const selectedValue = selectedOption.value;
+              qtyInputNewRow.value=selectedValue
+
+              updateDiscount(diffInputNewRow, rateInputNewRow, qtyInputNewRow);
+          });
+  
+          rateInputNewRow.addEventListener('input', function() {
+              updateDiscount(diffInputNewRow, rateInputNewRow, qtyInputNewRow);
+          });
+  
+          const deleteButton = newRow.querySelector('.delete-row');
+          deleteButton.addEventListener('click', function() {
+              newRow.remove();
+              rowNum--;
+          });
+      });
+  });
+  
+
+function selectonchange2(no){
+  const itemSelect = document.querySelector(`.item_select${no}`);
+    const qtyInput = document.querySelector(`.qty2${no}`); 
+    const selectedOption = itemSelect.options[itemSelect.selectedIndex];
+    const selectedValue = selectedOption.value;
+
+     $.ajax({
+    type: "GET",
+    url: "{% url 'getitemdata1' %}",
+    data: {
+      id: selectedValue,
+
+  
+    },
+    success: function (response) {
+      var stck = response.stock;
+      document.getElementById(`qty2${rowNum}`).value = stck;
+    },
+    error: function (error) {
+      console.error('err', error);
+    }
+  });
+
+
+}
+  
+  function updateDiscount(diffInput, rateInput, qtyInput) {
+      const rateValue = parseFloat(rateInput.value) || 0;
+      const qtyValue = parseFloat(qtyInput.value) || 0;
+      const difference = rateValue - qtyValue;
+      diffInput.value = difference.toFixed(2);
+  }
+  
+
+
+  </script> 
+     
+   
+
+
+
+
+<script type="text/javascript">
+  $(document).on('input', '#qty_hand1', function() {
+    var qtyhnd = parseFloat(document.getElementById('qty_hand1').value);
+    var qtyavail = parseFloat(document.getElementById('qtyavail1').value);
+    var difference = qtyhnd - qtyavail
+    document.getElementById('new_qty1').value=difference
+  });
+</script>
+
+
+
+
+
+
+<!--------------------------------------------------------------------------- End Quantity Adjustment----------------------------------------------------------------->
+
+
+
+
+  <!------------------------------------------------------------------------------ Value Adjustment ---------------------------------------------------------------->
+
+
+    
+  <div class="row" id="valueDiv">
+    <div class="col-sm-12 col-lg-12 col-md-12 ">
+        <label for="" id="label_tab2" class="tab2"></label><br>
+        <div style="width: 100%;" class="table-responsive"> 
+            <table class="table  text-black  table-bordered tab2" id="item_table2" style="width: 100%;">
+            <thead>
+                <tr class="text-center">
+                  <th class="" style="font-weight: bold;;">Sl No.</th>
+                    <th class="" style="font-weight: bold;;"  >Item Details <a href="" data-toggle="modal" data-target="#newitem"></a></th>
+                    <th class="" style="font-weight: bold;;">Current Value</th>
+                    <th class="" style="font-weight: bold;;">Changed Value</th>
+                    <th class="" style="font-weight: bold;;">Adjusted Value</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for m in st_items %}
+                <tr id='row2' class="">
+                    <td class="bg-transparent text-light rownum2 " data-set="{{forloop.counter}}">{{forloop.counter}}</td>
+                    <td>
+                        <div class='form-group mt-3'>
+                          <select class=' bg-transparent text-light border-0 item_selectss2 itm2 select2 text-left selectsssss' name='item2[]' id='item_selectss2{{m.id}}' onchange="valuechange(this,`{{ m.id }}`)">
+                                
+                                {% for i in items %}
+                                {% if i.name == m.item.name %}
+                                  <option value="{{ i.name }}" data-tokens="{{ i.name }}" selected>
+      
+                                      {{ i.name }} 
+                                  </option>
+                                {% else %}
+                              <option value="{{ i.name }}" data-tokens="{{ i.name }}">
+              
+                              {{ i.name }}
+                              </option>
+                              {% endif %}
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                 
+                    <td class=''><input type='number'  class='form-control bg-transparent border-1  text-light  text-right  value' id="currentval{{ m.id }}" name='cuval[]'
+                            value='{{m.current_val}}' style="background-color: rgb(255 255 255 / 14%)!important;">
+                    </td>
+                    
+                    <td class=''><input type='number'  class='form-control bg-transparent border-1  text-light  text-right  changval' name='chval[]'
+                            value='{{m.changed_val}}' style="background-color: rgb(255 255 255 / 14%)!important;" id="changval{{ m.id }}"  oninput="changeval(this,`{{m.id}}`)">
+                    </td>
+                    
+                    <td class=''><input type='text'  class='form-control bg-transparent border-1  text-light  text-right  adjval' name='adjval[]'
+                            value='{{m.adjusted_val}}' style="background-color: rgb(255 255 255 / 14%)!important;" id="adjustedVal{{m.id}}">
+                    </td>
+
+                    <td class='text-center'><a type='button' id='del_btn2' data-id="{{m.id}}" class='text-light btn btn-outline-secondary delete-row1' style='width:30px' onclick="this">-</a>
+                                
+                              </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+        <button type="button" class="btn btn-outline-secondary text-white tab2 " style=""
+            id="add-row2"  title="add row">+</button>
+    </div>
+    
+
+</div>
+
+</div>
+
+<script>
+
+  
+
+$(document).ready(function () {
+    $('.delete-row1').on('click', function () {
+        
+        var itemId = $(this).data('id');
+        var deleteUrl = "{% url 'deleteitem' 0 %}".replace('0', itemId);
+        console.log('deleteUrl',deleteUrl)
+        if (confirm('Are you sure you want to delete this item?')) {
+            
+            $.ajax({
+                url: deleteUrl,
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function (response) {
+
+                    location.reload();  
+                },
+                error: function (error) {
+                    
+                    console.log(error);
+                },
+            });
+        } else {
+            alert("Deletion cancelled")
+        }
+    });
+});
+
+
+
+</script>
+
+
+<script>
+  $(document).ready(function () {
+    // Initialize select2 for the select element with ID 'selectss1'
+    $('#item_selectss2').select2();
+    
+    // Iterate through each select element with class 'selectssss'
+    $('.selectsssss').each(function () {
+        // Extract the unique ID from the element's ID attribute
+        var id = $(this).attr('id');
+        
+        // Initialize select2 for the current select element based on its ID
+        $('#' + id).select2();
+    });
+  });
+</script>
+
+
+<script>
+function changeval(j,m){
+  const currentVal =parseFloat(document.getElementById(`currentval${m}`).value)
+  const changval = parseFloat(document.getElementById(`changval${m}`).value)
+  const difference = changval - currentVal
+  document.getElementById(`adjustedVal${m}`).value=difference
+  
+}
+</script>
+
+
+
+<script>
+  <!-- Adding row for table 1 -->
+  document.addEventListener('DOMContentLoaded', function() {
+    const addRowButton2 = document.getElementById('add-row2');
+    let rowNum2 = document.getElementById('count').value; 
+
+    addRowButton2.addEventListener('click', function() {
+       
+        const newRow2 = document.createElement('tr');
+
+        rowNum2++;
+
+        newRow2.innerHTML = `
+            <td class="bg-transparent text-white">${rowNum2}</td>
+            <td>
+                <div class='form-group mt-3'>
+                  <select class='bg-transparent border-0 item_select2${rowNum2} inneritm2 text-light text-left select2' id='item2${rowNum2}' name='item2[]' onchange='valuechange2(${rowNum2})' style="text-align:left">
+                        <option class='text-light' disabled hidden selected>Select Items</option>
+                        {% for i in items %}
+                       
+                        <option  value="{{i.name}}" data-stock="{{i.stock}}" data-rate="{{i.rate}}" >{{i.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </td>
+            <td class='text-right'><input type='number' class='form-control bg-transparent border-1  text-light text-right values' name='cuval[]' value='' id='currentval2${rowNum2}'  style="background-color: rgb(255 255 255 / 14%)!important;"></td>
+            <td class='text-right'><input type='number' class='form-control bg-transparent border-1 text-light text-right rate' name='chval[]' value=''  style="background-color: rgb(255 255 255 / 14%)!important;"></td>
+            <td class='text-right'><input type='text' class='form-control bg-transparent border-1 text-light text-right discount' name='adjval[]' value=''  style="background-color: rgb(255 255 255 / 14%)!important;"></td>
+            <td class='text-center'>
+                <button type='button' class='btn btn-transparent btn-sm btn-outline-secondary  delete-row' style='width:30px'>-</button>
+            </td>
+        `;
+
+        const tableBody2 = document.querySelector('#item_table2 tbody');
+        tableBody2.appendChild(newRow2);
+
+        $(`#item2${rowNum2}`).select2()
+
+      
+    });
+
+
+
+
+
+
+
+
+    // set row number for the first row
+    document.querySelector('#item_table2 tbody tr:first-child .bg-transparent').textContent = "1";
+
+    // Event delegation for dynamic rows
+    document.querySelector('#item_table2 tbody').addEventListener('change', function(e) {
+      
+        const target = e.target;
+
+        if (target.classList.contains('item_select2')) {
+            const selectedOption = target.options[target.selectedIndex];
+            const stock = selectedOption.getAttribute('data-stock');
+            const stockrate = selectedOption.getAttribute('data-rate');
+            const row = target.closest('tr');
+
+            console.log('selectedOption 2',selectedOption)
+
+            // Calculate and set the value
+            const valuesInput = row.querySelector('.values');
+            valuesInput.value = stock * stockrate;
+
+            // Recalculate adjusted value
+            const valuesValue = parseFloat(valuesInput.value) || 0;
+            const rateValue = parseFloat(row.querySelector('.rate').value) || 0;
+            const difference2 = rateValue - valuesValue;
+            row.querySelector('.discount').value = difference2.toFixed(2);
+        }
+
+        // valuechange2(target, target.closest('tr'));
+    });
+
+    document.querySelector('#item_table2 tbody').addEventListener('input', function(e) {
+        const target = e.target;
+        if (target.classList.contains('values') || target.classList.contains('rate')) {
+            const row = target.closest('tr');
+            const valuesValue = parseFloat(row.querySelector('.values').value) || 0;
+            const rateValue = parseFloat(row.querySelector('.rate').value) || 0;
+            const difference2 = rateValue - valuesValue;
+            row.querySelector('.discount').value = difference2.toFixed(2);
+        }
+    });
+    
+    document.querySelector('#item_table2 tbody').addEventListener('click', function(e) {
+        const target = e.target;
+        if (target.classList.contains('delete-row')) {
+            const row = target.closest('tr');
+            row.remove();
+            rowNum2--; 
+        }
+    });
+
+
+
+    
+});
+
+
+
+// value for row 1
+function valuechange(m,j){
+  var select = m.value;
+$.ajax({
+          type: "GET",
+          url: "{% url 'getitemdata2' %}",
+          data: {
+              id: select,
+              
+          },
+          success: function (response) {
+            var val = response.value;
+            document.getElementById(`currentval${j}`).value=val;
+                                        
+                                },
+                                  
+                          });
+                    };
+                  
+
+</script>
+
+
+
+  
+<script>
+            // value-innerhtml
+            function valuechange2(nos){
+              const selects = document.getElementById(`item2${nos}`)
+              console.log(selects,'sssss')
+              const selectedOption = selects.options[selects.selectedIndex];
+              const selectedItem = selectedOption.value
+         
+              $.ajax({
+                        type: "GET",
+                        url: "{% url 'getitemdata2' %}",
+                        data: {
+                            id: selectedItem,
+                            
+                        },
+                        success: function (response) {
+                          var val = response.value;
+                          document.getElementById(`currentval2${nos}`).value=val;
+                                                      
+                                              },
+                                                
+                                        });
+                                  };
+
+       
+
+</script>
+
+  <script>
+    $(document).ready(function() {
+     $('.select2').select2();
+  $(document).on('change', '#selectss3', function () {
+                                     
+      console.log('Select changed');
+      var selectedValue = $(this).val();
+      $.ajax({
+          type: "GET",
+          url: "{% url 'getitemdata2' %}",
+          data: {
+              id: selectedValue,
+              
+          },
+          success: function (response) {
+            var val = response.value;
+            document.getElementById('valavail1').value=val;
+                                        
+                                },
+                                  
+                          });
+                    });
+  
+                });
+  </script>
+
+
+
+
+
+<!-----------------------------------------------------------------------End Value Adjustment----------------------------------------------------------------->
+
+
+  <br><br>
+
+  <div class="row mt-3">
+    <div class="col-md-3">
+        <input class="form-control" type="file" id="file" name="file" >
+     
+    </div>
+</div>
+
+<br><br>
+
+<div class="notices mt-3">
+  <div class="text-muted text-light">NOTICE:</div>
+  <div class="text-muted text-light">
+    <input type="checkbox" required>
+    Fin sYs Terms and Conditions Apply
+  </div>
+</div>
+
+<br><br>
+
+<div class="text-center">
+  <button type="submit" class="btn btn-outline-secondary text-grey mx-3 w-25" name="save">Update</button>
+
+  
+</div>
+
+
+    </div>
+
+
+  </form>
+</form>
+    <!-- ---------------------------------------------------- REASON MODAL ------------------------------------------------------------------- -->
+
+
+    <div class="modal fade" id="newreason">
+      <div class="modal-dialog">
+     
+          <div class="modal-content" style="background-color: #213b52;">
+              <form action="" method="post"  id="newReasonForm"   >
+                  {% csrf_token %}
+              <div class="modal-header">
+                  <h3 class="m-3">New Reason</h3>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="modalReason">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                
+                
+                  <div>
+                      <div class="form-check">
+                          <label class="form-check-label">Reason *</label> 
+                          <input type="text" class="form-control" name="reason" id="reasoninp">
+                         
+                      </div>
+    
+      
+                  </div>
+             
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-info" id="saveReasonButton" >Save</button>
+                  <button type="button" class="btn btn-outline-info" data-dismiss="modal" id="cancelBtn">Close</button>
+              </div>
+          </form>
+          </div>
+      </div>
+    </div>       
+    
+
+
+
+<script>
+
+
+
+$(document).on("click","#saveReasonButton",function(){
+  var reasons = $('#reasoninp').val();
+        
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'add_reason' %}",
+                data:{
+                  'reason' : reasons,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.status){
+                        document.getElementById("newReasonForm").reset();
+                        
+                        var dropdown = $('#reasons1');
+                        dropdown.empty();
+                        dropdown.append(`<option value="" selected>Choose</option>`);
+                        $.each(response, function(key, value) {
+                            for(let i=0; i<value.length; i++){
+                                if(value[i].name == reasons){
+                                    dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].id))
+                                }else{
+                                    dropdown.append($('<option></option>').text(value[i].name).val(value[i].id))
+                                }   
+                            }
+                        });
+
+                        $('#newreason').modal('hide');
+
+                    }else{
+                        alert("Something went wrong.!")
+                    }
+                },         
+            });
+    });
+
+
+
+</script>
+
+
+
+
+
+
+ <!-- ---------------------------------------------------- END REASON MODAL ------------------------------------------------------------------- -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script>
+   $(document).ready(function() {
+        $('.select2').select2();
+    });
+
+ 
+
+
+
+   
+        // function toggleDiv() {
+        //     var selectedValue = document.getElementById("adjust").value;
+        //     var quantityDiv = document.getElementById("quantityDiv");
+        //     var valueDiv = document.getElementById("valueDiv");
+
+        //     if (selectedValue === "Quantity") {
+        //         quantityDiv.style.display = "block";
+        //         valueDiv.style.display = "none";
+        //     } else {
+                
+        //         valueDiv.style.display = "block";
+        //         quantityDiv.style.display = "none";
+        //         console.log("hi")
+
+        //     }
+        // }
+
+
+
+
+    </script>
+
+<script>
+  function toggleDiv() {
+      var selectedValue = document.getElementById("adjust").value;
+      var quantityDiv = document.getElementById("quantityDiv");
+      var valueDiv = document.getElementById("valueDiv");
+
+      if (selectedValue === "Quantity") {
+          quantityDiv.style.display = "block";
+          valueDiv.style.display = "none";
+      } else {
+          valueDiv.style.display = "block";
+          quantityDiv.style.display = "none";
+      }
+  }
+
+  // Call toggleDiv function when the page loads
+  window.onload = toggleDiv;
+</script>
+
+
+  
+
+   
+ <!-- #search dropdown -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>
+
+{% endblock %}

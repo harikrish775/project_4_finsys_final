@@ -5,9 +5,9 @@
 <div class="body-wrapper p-3">
     <div class="container-fluid">
         <div class="row p-4">
-            <div class="col"></div>
-            <div class="col-md-5">
-                <div class="card radius-15 p-3">
+            
+            <div class="col-md-4">
+                <div class="card radius-15 p-3 mb-0 h-100">
                     <a href="{% url 'Fin_Distributor_Request' %}">
                     <div class="card-body">
                         <div class="card-title">
@@ -24,8 +24,8 @@
                     </a>
                 </div>
             </div>
-            <div class="col-md-5">
-                <div class="card radius-15 p-3">
+            <div class="col-md-4">
+                <div class="card radius-15 p-3 mb-0 h-100">
                     <a href="{% url 'Fin_All_distributors' %}">
                         <div class="card-body">
                             <div class="card-title">
@@ -42,7 +42,26 @@
                     </a>
                 </div>
             </div>
-            <div class="col"></div>
+
+            <div class="col-md-4">
+                <div class="card radius-15 p-3 mb-0 h-100">
+                    <a href="{% url 'Fin_Clients_under_distributors' %}">
+                        <div class="card-body">
+                            <div class="card-title">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <h5 class="card-title mb-9 fw-semibold"><b>CLIENTS UNDER</b></h5>
+                                </div>
+                                <div class="col">
+                                    <i class="fa fa-users text-white" style="font-size: 2.5em;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
             
         </div>
 

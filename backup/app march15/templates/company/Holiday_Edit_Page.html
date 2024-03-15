@@ -1,0 +1,124 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <div class="page-content ">
+        <div class="card radius-15">
+            <form action="{% url 'holiday_update' holiday.id month year %}" method="post">
+                {% csrf_token %}
+            <div class="card-body">
+                <center><h2>EDIT HOLIDAY </h2></center><br>
+            <div class="container">
+                <center>
+                    
+                        <table class="w-100">
+                            <tbody>
+                                <tr>
+                                    <th>TITLE</th>
+                                    <td><input style="margin: 10px;" value="{{holiday.holiday_name}}" name="title" type="text" class="form-control"></td>
+                                </tr>
+                                <tr>
+                                    <th>START DATE</th>
+                                    <td><input style="margin: 10px;" value="{{ holiday.start_date|date:'Y-m-d' }}" name="date1" id="date1" type="date" class="form-control"></td>
+                                </tr>
+                                <tr>
+                                    <th>END DATE</th>
+                                    <td><input style="margin: 10px;" value="{{ holiday.end_date|date:'Y-m-d' }}" name="date2" id="date2" type="date" class="form-control"></td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+
+                        
+                    
+                </center>
+                <div style="float: right;"><input type="checkbox" style="margin: 10px;" required> Agree to terms and condition</div>
+
+            </div>
+            
+            </div><br><br>
+                <center><button type="submit" class="btn btn-secondary">Update</button> <a class="btn btn-secondary" onclick="goBack()" >Cancel</a></center><br><br>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+// ----------------------------------------------
+// back
+
+function goBack() {
+      window.history.back();
+    }
+        
+// -----------------------------------------------------------
+// date
+        var fromDate;
+$('#date1').on('change', function () {
+    fromDate = $(this).val();
+    $('#date2').prop('min', function () {
+        return fromDate;
+    });
+
+    // Check if #date2 is in the same month as #date1
+    var toDate = $('#date2').val();
+    if (toDate) {
+        var isSameMonth = new Date(fromDate).getMonth() === new Date(toDate).getMonth();
+        if (!isSameMonth) {
+            $('#date2').val('');
+            alert('Please select a date within the same month.');
+        }
+    }
+
+    updateDateDisplay();
+});
+
+var toDate;
+$('#date2').on('change', function () {
+    toDate = $(this).val();
+    $('#date1').prop('max', function () {
+        return toDate;
+    });
+
+    // Check if #date1 is in the same month as #date2
+    var fromDate = $('#date1').val();
+    if (fromDate) {
+        var isSameMonth = new Date(fromDate).getMonth() === new Date(toDate).getMonth();
+        if (!isSameMonth) {
+            $('#date1').val('');
+            alert('Please select a date within the same month.');
+        }
+    }
+
+    updateDateDisplay();
+});
+
+function updateDateDisplay() {
+    var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+    var fromDateValue = new Date(fromDate).toLocaleDateString(undefined, options);
+    document.getElementById("d1").innerHTML = fromDateValue;
+
+    if (toDate) {
+        var toDateValue = new Date(toDate).toLocaleDateString(undefined, options);
+        document.getElementById("d2").innerHTML = "  To  " + toDateValue;
+    }
+}
+
+   
+
+
+    </script>
+    
+   
+
+{% endblock %}

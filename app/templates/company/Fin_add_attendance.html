@@ -117,9 +117,18 @@
 </div>
 
 
+<style>
+    #newcust {
+        overflow: scroll;
+    }
+</style>
 
+<script>
+    $('#newcust').modal('handleUpdate');
 
-<div class="modal fade" id="newcust" style="position: absolute;">
+</script>
+
+<div class="modal fade bd-example-modal-xl" id="newcust" style="position: absolute;">
     <div class="modal-dialog modal-xl">
         <div class="modal-content" style="background-color: #213b52;">
             <div class="modal-header">
@@ -164,11 +173,12 @@
                                 </div>
                             </tr>
                         </div>
-                        <div class="col-md-4 ">
-                            <label for="Image" class="ml-5 mt-5"
+                        <div class="col-md-4 " id="fileffff">
+                            <label for="image" class="ml-5 mt-5"
                                 style="cursor:pointer; padding: 20% 35%; background-image: url('static/assets/images/upload.png'); background-repeat: no-repeat; background-size: contain;"></label>
-                            <br> <span class="ml-5">Upload Image</span>
-                            <input type="file" id="image" accept="image/*" style="display: none;">
+                            <br><span class="ml-5">Upload Image</span>
+                            <input type="file" id="image" accept="image/*" style="display: none;" name="Image">
+
                         </div>
 
                     </div> <br>
@@ -310,9 +320,11 @@
                         <tr>
                             <div class="form-group col">
                                 <td><Label>Blood Group</Label></td>
-                                <td>
-                                    <select name="Blood" id="bloodGroupSelect" style="width: 100%;"
-                                        class="form-control">
+
+
+                                <div style="display: flex;">
+                                    <select name="Blood" id="bloodGroupSelect" style="width: 85%;"
+                                        class="form-control col-11">
                                         <option value="">--select--</option>
                                         <option value="A+">A+</option>
                                         <option value="A-">A-</option>
@@ -323,8 +335,19 @@
                                         <option value="{{i.blood_group}}">{{i.blood_group}}</option>
                                         {% endfor %}
                                     </select>
-                                </td>
+                                    <button onclick="handleBloodSelection()"
+                                        class="btn btn-outline-secondary text-grey mb-2 ml-1">+</button>
+                                </div>
+
+
                             </div>
+                            <script>
+                                function handleBloodSelection() {
+
+                                    $('#bloodGroupModal').modal('show');
+
+                                }
+                            </script>
                         </tr>
 
                     </div>
@@ -641,12 +664,135 @@
 </div>
 
 
+<!-- Modal -->
+<div class="modal fade" id="bloodGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Blood Group </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content goes here -->
+                <form id="bloodGroupForm" method="post">
+                    {% csrf_token %}
+
+                    <label for="">Add New Blood Group</label>
+                    <input type="text" name="bloodGroup" class="form-control" id="bloodGroupInput">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 
 
 
 <script>
 
+
+    // Get a reference to the div element
+    const divElement = document.getElementById('fileffff');
+
+    // Add a click event listener
+    divElement.addEventListener('click', () => {
+        // Your code to open the files goes here
+        // For example, you can trigger a file input click event
+        const fileInput = document.getElementById('image');
+        fileInput.click();
+    });
+
+
+    // blood group add
+
+    $(document).ready(function () {
+        $('#bloodGroupForm').submit(function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Get the form data
+            var formData = {
+                'bloodGroup': $('#bloodGroupInput').val()
+            };
+
+            // Perform Ajax request
+            $.ajax({
+                type: 'POST',
+                url: '{% url "employee_blood_group" %}',
+                data: formData,
+                dataType: 'json',
+                headers: {
+                    'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Success case: Blood group added successfully
+                        alert('Blood group added successfully!');
+
+                        // Update the entire section in the dropdown with the new bloodgroup data
+                        updateBloodGroupSection(response.bloodgroup);
+                    } else {
+                        // Failure case: Display an error message
+                        alert('Error: ' + response.error);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Handle Ajax errors here
+                    console.error('Ajax Error: ' + status + ' - ' + error);
+                }
+            });
+        });
+
+        // Function to update the entire section in the dropdown
+        function updateBloodGroupSection(bloodgroup) {
+            // Assuming you have a select element with the id 'bloodGroupSelect'
+            var bloodGroupSelect = $('#bloodGroupSelect');
+
+            // Remove all existing options
+            bloodGroupSelect.empty();
+
+            // Append new options based on the received data
+            bloodGroupSelect.append($('<option>', {
+                value: '',  // Default option
+                text: '--select--'
+            }));
+
+            addStaticOption('A+', 'A+');
+            addStaticOption('A-', 'A-');
+            addStaticOption('B+', 'B+');
+            addStaticOption('O+', 'O+');
+
+            for (var i = 0; i < bloodgroup.length; i++) {
+                bloodGroupSelect.append($('<option>', {
+                    value: bloodgroup[i].blood_group,
+                    text: bloodgroup[i].blood_group
+                }));
+            }
+
+            $('#bloodGroupModal').modal('hide');
+            document.getElementById('bloodGroupInput').value = " ";
+        }
+
+        function addStaticOption(value, text) {
+            // Assuming you have a select element with the id 'bloodGroupSelect'
+            var bloodGroupSelect = $('#bloodGroupSelect');
+
+            // Append the new static option
+            bloodGroupSelect.append($('<option>', {
+                value: value,
+                text: text
+            }));
+        }
+
+    });
 
 
     // employee save
@@ -741,7 +887,7 @@
             url: '{% url "Fin_Holiday_check_for_attendance" %}',
             method: 'POST',
             data: {
-                empid : $("#itemUnit").val(),
+                empid: $("#itemUnit").val(),
                 sdate: $("#sdate").val(),
                 csrfmiddlewaretoken: $("input[name = csrfmiddlewaretoken]").val(),
             },
@@ -769,7 +915,7 @@
             url: '{% url "Fin_Holiday_check_for_attendance" %}',
             method: 'POST',
             data: {
-                empid : $("#itemUnit").val(),
+                empid: $("#itemUnit").val(),
                 sdate: $("#edate").val(),
                 csrfmiddlewaretoken: $("input[name = csrfmiddlewaretoken]").val(),
             },

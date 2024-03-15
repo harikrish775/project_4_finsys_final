@@ -1,0 +1,527 @@
+{% extends 'company/Fin_base.html' %}
+{% load static %}
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+{% block body %}
+<style>
+    /* Apply styles to all input fields */
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        font-size: large;
+        background-color: rgba(79, 99, 117, 0.7);
+        border: 1px solid grey;
+        border-radius: 4px;
+        color: white;
+    }
+
+    /* Style specific input fields by targeting their type or class */
+    input[type="text"] {
+        border: 1px solid  grey;
+        border-radius: 4px;
+        background-color:rgba(79, 99, 117, 0.7);
+        color: white;
+        font-size: 16px;
+       
+    }
+
+    select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid  grey;;
+        border-radius: 4px;
+        color: white;
+        background-color:rgba(79, 99, 117, 0.7);
+        font-size: 16px;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+    function fetchAccountNumbers(selectedBank) {
+        $.ajax({
+            url: '/Fin_fetchaccountnumbers/',
+            type: 'GET',
+            data: { bank_name: selectedBank },
+            success: function(data) {
+                var accountNumberDropdown = $('#accountNumber');
+                accountNumberDropdown.empty();
+                accountNumberDropdown.append('<option value="">Select Account Number</option>');
+
+                for (var i = 0; i < data.account_numbers.length; i++) {
+                    var accountNumber = data.account_numbers[i].account_number;
+                    var ifscCode = data.account_numbers[i].ifsc_code;
+                    var branchName = data.account_numbers[i].branch_name;
+
+                    var option = $('<option>', {
+                        value: accountNumber,
+                        'data-ifsc-code': ifscCode,
+                        'data-branch-name': branchName,
+                        text: accountNumber
+                    });
+                    if (accountNumber === '{{ account_holder.Account_number }}') {
+                        option.attr('selected', true);
+                    }
+
+                    accountNumberDropdown.append(option);
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+    $('#bank_name').change(function() {
+        var selectedBank = $(this).val();
+        fetchAccountNumbers(selectedBank);
+    });
+    $('#accountNumber').change(function() {
+        var selectedOption = $('option:selected', this);
+        var ifscCode = selectedOption.data('ifsc-code');
+        var branchName = selectedOption.data('branch-name');
+
+        $('#ifscCode').val(ifscCode);
+        $('#branch_name').val(branchName);
+    });
+
+    function fetchAllBanks() {
+    $.ajax({
+        url: '/Fin_fetchallbanks/',
+        type: 'GET',
+        success: function(data) {
+            var bankDropdown = $('#bank_name');
+            bankDropdown.empty();
+            bankDropdown.append('<option value="">Select Bank</option>');
+
+            var uniqueBankNames = new Set();
+
+            for (var i = 0; i < data.banks.length; i++) {
+                var bankName = data.banks[i].bank_name;
+
+                if (!uniqueBankNames.has(bankName)) {
+                    uniqueBankNames.add(bankName);
+
+                    var option = $('<option>', {
+                        value: bankName,
+                        text: bankName
+                    });
+
+                    if (bankName === '{{ account_holder.Bank_name }}') {
+                        option.attr('selected', true);
+                    }
+
+                    bankDropdown.append(option);
+                }
+            }
+            var selectedBank = bankDropdown.val();
+            fetchAccountNumbers(selectedBank);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+fetchAllBanks();
+});    
+</script>
+
+<div class="page-content">
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_Bankholderview' account_holder.id %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12">
+                    <div class="card" style="background-color: #2a4964;">
+                        <div class="row no-gutters">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-8 mt-4 mb-4">
+                                <center>
+                                    <h5 class="card-title"><h3> EDIT BANK HOLDER </h3></h5>
+                                </center>
+                            </div><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                    <form method="post" action="{% url 'Fin_Editholder'  account_holder.id %}"  enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                    <div class="row" >
+                            <div class="col-md-6">
+                                <h2>Bank Account Holder Form</h2>
+                                <br>
+                                <div class="form-group row">
+                                    <label for="name" class="col-sm-4 col-form-label">Name</label>
+                                    <input type="text" class="col-sm-8 form-control" name="name" id="name" value="{{ account_holder.Holder_name }}"><br>
+                                
+                                    <label for="alias" class="col-sm-4 col-form-label">Alias</label>
+                                    <input type="text" class="col-sm-8 form-control" name="alias" id="alias" value="{{account_holder.Alias}}"><br>
+                                
+                                    <label for="phone_number" class="col-sm-4 col-form-label">Phone Number</label>
+                                    <input type="text" class="col-sm-8 form-control" name="phone_number" id="phone_number" pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number"  value="{{ account_holder.phone_number }}" required><br>
+                                    <div class="text-danger m-2 invalid-feedback" id="">Please provide a valid Number</div>
+
+                                    <label class="col-sm-4 col-form-label" for="email">Email</label>
+                                    <input type="text" class="col-sm-8 form-control" name="email" id="email" value="{{ account_holder.Email }}" title="Please enter a valid email address" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" required><br>
+                                    <div class="invalid-feedback">Please provide a valid Email</div>
+
+                                    <label class="col-sm-4 col-form-label" for="account_type">Account Type</label>
+                                    <select name="account_type" id="account_type" class="col-sm-8 form-control">
+                                        <option value="">Select Account Type</option>
+                                        <option value="{{ account_holder.Account_type }}" selected hidden>{{ account_holder.Account_type }}</option>
+                                        <option value="Bank Account">Bank Account</option>
+                                        <option value="Credit card">Credit card</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+                            <div class="col-md-6">
+                                <h2>Bank Account Form</h2><br>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label" for="bankName">Bank name</label>
+                                        <div class="col-sm-7">
+                                            <select name="bank_name" id="bank_name" class="col-sm-8 form-control">
+                                                <option value="">Select Bank</option>
+                                                <option value="{{ account_holder.Bank_name }}" selected>{{ account_holder.Bank_name }}</option>
+                                                {% for bank_name in bank_names %}
+                                                    <option value="{{ bank_name }}">{{ bank_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a class="btn btn-outline-secondary" role="button" data-target="#bankholdercreation" data-toggle="modal" title="Add Bank">+</a>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label class="col-form-label" for="accountNumber">Account Number</label>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <select name="accountNumber" id="accountNumber" class="form-control">
+                                                <option value="{{ account_holder.Account_number }}" selected>{{ account_holder.Account_number }}</option>
+                                        
+                                            </select>
+                                        </div>
+                                        <label class="col-sm-4 col-form-label" for="ifscCode">IFSC code</label>
+                                        <input type="text" class="col-sm-8 form-control" name="ifscCode" id="ifscCode" value="{{account_holder.Ifsc_code}}"><br>
+                
+                                        <label class="col-sm-4 col-form-label" for="swiftCode">Swift Code</label>
+                                        <input type="text" class="col-sm-8 form-control" name="swiftCode" id="swiftCode" value="{{account_holder.Swift_code}}" onblur="checkSwiftCode()"><br>
+                                        
+                                        <label class="col-sm-4 col-form-label">Branch Name</label>
+                                        <input type="text" class="col-sm-8 form-control" name="branch_name" id="branch_name" value="{{account_holder.Branch_name}}"><br>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-8 offset-sm-4">
+                                            <!-- Error messages -->
+                                            {% if error_message_email %}
+                                                <div class="text-danger">{{ error_message_email }}</div>
+                                            {% endif %}
+                                            {% if error_message_phone %}
+                                                <div class="error-box">
+                                                    <div class="text-danger">{{ error_message_phone }}</div>
+                                                </div>
+                                            {% endif %}
+                                            {% if error_message_swift %}
+                                                <div class="text-danger">{{ error_message_swift }}</div>
+                                            {% endif %}
+                                            {% if error_message_account %}
+                                                <div class="text-danger">{{ error_message_account }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>       
+                                    <br>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2>Bank Configuration Form</h2>
+                                <br>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label"for="accountName" style="white-space: nowrap;"> Select cheque book range</label>
+                                    <select name="set_cheque_book_range" id="set_cheque_book_range" class="col-sm-8">
+                                        <option value="{{account_holder.Set_cheque_book_range|yesno:"Yes,No" }}" selected hidden>{{account_holder.Set_cheque_book_range|yesno:"Yes,No" }}</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select><br>
+                                    
+                                        <label class="col-sm-4 col-form-label" for="accountName"style="white-space: nowrap;">Enable cheque printing</label>
+                                        <select name="enable_cheque_printing" id="enable_cheque_printing" class="col-sm-8">
+                                            <option value=" {{  account_holder.Enable_cheque_printing|yesno:"Yes,No" }}" selected hidden> {{  account_holder.Enable_cheque_printing|yesno:"Yes,No"   }}</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select><br>
+                                    
+                                            <label class="col-sm-4 col-form-label">Set cheque printing configuration</label>
+                                            <select name="set_cheque_printing_configuration" id="set_cheque_printing_configuration" class="col-sm-8">
+                                                <option value="{{ account_holder.Set_cheque_printing_configuration|yesno:"Yes,No" }}" selected hidden>{{ account_holder.Set_cheque_printing_configuration|yesno:"Yes,No" }}</option>
+                                                <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                            </select>
+                            </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h2>Mailing Address Form</h2>
+                            <br>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label" for="mailingName">Mailing Name</label>
+                                        <input type="text" class="col-sm-8  form-control" name="mailingName" id="mailingName" value="{{account_holder.Mailing_name}}"><br>
+                                        <label class="col-sm-4 col-form-label" for="address">Address</label>
+                                        <textarea class="col-sm-8 mb-2 form-control " id="address" name="address">{{account_holder.Address}}</textarea><br>
+                                
+                                
+                                        <label class="col-sm-4 col-form-label"for="mailingCountry">Country</label>
+                                        <input type="text" class="col-sm-8 form-control" placeholder="Enter Country" name="country" id="country" value="{{ account_holder.Country }}" required>
+                                        <div class="invalid-feedback">Please provide a valid Country</div>
+                                        
+                                    
+                                            <label class="col-sm-4 col-form-label" for="mailingState">State</label>
+                                            <select id="state" name="state" class="col-sm-8">
+                                                <option value="{{account_holder.State}}" selected>{{account_holder.State}}</option>
+                                                <option value="">Select State</option>
+                                                <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                <option value="Assam">Assam</option>
+                                                <option value="Bihar">Bihar</option>
+                                                <option value="Chandigarh">Chandigarh</option>
+                                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                <option value="Daman and Diu">Daman and Diu</option>
+                                                <option value="Delhi">Delhi</option>
+                                                <option value="Goa">Goa</option>
+                                                <option value="Gujarat">Gujarat</option>
+                                                <option value="Haryana">Haryana</option>
+                                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                <option value="Jharkhand">Jharkhand</option>
+                                                <option value="Karnataka">Karnataka</option>
+                                                <option value="Kerala">Kerala</option>
+                                                <option value="Lakshadweep">Lakshadweep</option>
+                                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                                <option value="Maharashtra">Maharashtra</option>
+                                                <option value="Manipur">Manipur</option>
+                                                <option value="Meghalaya">Meghalaya</option>
+                                                <option value="Mizoram">Mizoram</option>
+                                                <option value="Nagaland">Nagaland</option>
+                                                <option value="Orissa">Orissa</option>
+                                                <option value="Pondicherry">Pondicherry</option>
+                                                <option value="Punjab">Punjab</option>
+                                                <option value="Rajasthan">Rajasthan</option>
+                                                <option value="Sikkim">Sikkim</option>
+                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                                <option value="Tripura">Tripura</option>
+                                                <option value="Uttaranchal">Uttaranchal</option>
+                                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                                <option value="West Bengal">West Bengal</option>
+                                                
+                                            </select>
+                                        <label class="col-sm-4 col-form-label" for="mailingPin">pin</label>
+                                        <input type="text" class="col-sm-8 form-control" id="pin" name="pin" value="{{account_holder.Pin}}"><br>
+                                        <div class="invalid-feedback">Please provide a valid Pin Code</div> 
+                                         
+                                        </div>
+                                    </div>
+                            
+                            </div> 
+                    
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2>Tax Registration Form</h2> 
+                                <br>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label" for="pan_it_number">Pan it number</label>
+                                        <input type="text" class="col-sm-8  form-control" name="pan_it_number" id="pan_it_number" value="{{ account_holder.Pan_it_number }}"><br>
+                                        
+                                        <label class="col-sm-4 col-form-label" for="registration_type">Registration Type</label>
+                                        <select name="registration_type" id="registration_type" class="col-sm-8" onchange="toggleGstinUn()">
+                                            <option value="{{ account_holder.Registration_type }}" selected hidden>{{ account_holder.Registration_type }}</option>
+                                            <option value="">Select Registration Type</option>
+                                            <option value="Regular">Regular</option>
+                                            <option value="Composition">Composition</option>
+                                            <option value="Consumer">Consumer</option>
+                                            <option value="Unregistered">Unregistered</option>
+                                        </select><br>
+                                        {% if account_holder.Gstin_un %}
+                                        <label class="col-sm-4 col-form-label" for="gstin_un" id="gstin_un_label" >GSTin un</label>
+                                        <input type="text" class="col-sm-8 form-control" name="gstin_un" id="gstin_un" value="{{account_holder.Gstin_un}}" ><br>
+                                        {% else %}
+                                        <label class="col-sm-4 col-form-label" for="gstin_un" id="gstin_un_label" style="display:none;">GSTin un</label>
+                                        <input type="text" class="col-sm-8 form-control" name="gstin_un" id="gstin_un" style="display:none;"><br>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                            <!-- Opening Balance Form -->
+                            <div class="col-md-6">
+                                <h2>Opening Balance Form</h2> <br>
+                            
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 col-form-label" for="date">Date</label>
+                                        <input type="date" class="col-sm-8  form-control" name="date" id="date" value="{{account_holder.Date| date:'Y-m-d'  }}"><br>
+                                        <label class="col-sm-4 col-form-label" for="amount" >Amount</label>  
+                                        <input class="col-sm-5" type="text" name="Opening" id="amount" value="{{account_holder.ArithmeticErrormount}}" >
+                                        <select class="col-sm-3" name="termof" id="">
+                                        <option value="{{account_holder.Open_type}}" selected hidden>{{account_holder.Open_type}}</option>
+                                        <option  value="CREDIT">CREDIT</option>
+                                        <option value="DEBIT">DEBIT</option>
+                                    </select>
+                        </div> 
+                
+                    </div>
+                    <div class="container">
+                        <div class="row mt-5 mb-5">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 text-center">
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-outline-secondary text-light" type="submit" style="margin-right: 10px; width: 60%;">UPDATE</button>
+                                    <a href="{% url 'Fin_bankholder' %}" class="btn btn-outline-secondary text-light" style="margin-left: 10px; width: 40%;">CANCEL</a>
+                                </div>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    </div>
+                    </form> 
+                </div>
+
+
+                <div class="modal fade" id="bankholdercreation" tabindex="-1" role="dialog" aria-labelledby="bankModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bankModalLabel">Add Bank</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form  class="add-bank-form" action="{% url 'Fin_AddBankinHolder' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="bankName">Bank Name:</label>
+                                        <input type="text" class="form-control" id="bankName" name="bank_name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ifscCode">IFSC Code:</label>
+                                        <input type="text" class="form-control" id="ifscCode" name="ifsc_code" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="accountNumber">Account Number:</label>
+                                        <input type="text" class="form-control" id="accountNumber" name="account_number" required>
+                                    </div>
+                                    <div id="error-message" class="text-danger"></div>
+                                    <div class="form-group">
+                                        <label for="branchName">Branch Name:</label>
+                                        <input type="text" class="form-control" id="branchName" name="branch_name" required>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save Bank</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    <script>
+        function checkSwiftCode() {
+            var swiftCodeInput = document.getElementById("swiftCode");
+            var swiftCodeValue = swiftCodeInput.value.trim();
+            swiftCodeInput.value = swiftCodeValue !== "" ? swiftCodeValue : "NIL";
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.add-bank-form').submit(function (e) {
+                e.preventDefault();
+    
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function (data) {
+                        var bankDropdown = $('#bank_name');
+                        bankDropdown.append('<option value="' + data.bank_name + '">' + data.bank_name + '</option>');
+    
+                        $('#bankholdercreation').modal('hide');
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.status); 
+                        if (xhr.status === 400) {
+                            
+                            var errorMessage = xhr.responseJSON.error_message;
+                            
+                            $('#error-message').text(errorMessage);
+                        } else {
+                            alert("An error occurred. Please try again.");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var accNameSelect = document.getElementById("bank_name");
+            var accNumberInput = document.getElementById("accountNumber");
+            var accIfscInput = document.getElementById("ifscCode");
+            var swiftCodeInput = document.getElementById("swiftCode");
+            var branchNameInput = document.getElementById("branch_name");
+    
+            accNameSelect.addEventListener("change", function () {
+                var selectedOption = accNameSelect.options[accNameSelect.selectedIndex];
+                var accNumber = selectedOption.getAttribute("data-acc-number");
+                var accIfsc = selectedOption.getAttribute("data-ifsc-code");
+                var accSwiftCode = selectedOption.getAttribute("data-swift-code");
+                var accBranchName = selectedOption.getAttribute("data-branch-name");
+    
+                accNumberInput.value = accNumber || '';
+                accIfscInput.value = accIfsc || '';
+                swiftCodeInput.value = accSwiftCode || '';
+                branchNameInput.value = accBranchName || '';
+            });
+        });
+    </script> -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var accNameSelect = document.getElementById("bank_name");
+            var accNumberInput = document.getElementById("accountNumber");
+            var accIfscInput = document.getElementById("ifscCode");
+    
+            accNameSelect.addEventListener("change", function () {
+                var selectedOption = accNameSelect.options[accNameSelect.selectedIndex];
+                var accNumber = selectedOption.getAttribute("data-acc-number");
+                var accifsc = selectedOption.getAttribute("data-ifsc-code");
+    
+                // Update the account number input field
+                accNumberInput.value = accNumber;
+                accIfscInput.value = accifsc;
+            });
+        });
+    </script>
+    
+    <script>
+        function toggleGstinUn() {
+            var registrationType = document.getElementById("registration_type").value;
+            var gstinUnLabel = document.getElementById("gstin_un_label");
+            var gstinUnInput = document.getElementById("gstin_un");
+    
+            if (registrationType === "Regular" || registrationType === "Composition") {
+                gstinUnLabel.style.display = "block";
+                gstinUnInput.style.display = "block";
+            } else {
+                gstinUnLabel.style.display = "none";
+                gstinUnInput.style.display = "none";
+            }
+        }
+    </script>
+
+{%endblock%}
+
+

@@ -74,8 +74,14 @@
                             <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms </h5>
                         </div>
                         <div class="col">
+                            {% if data.Payment_Term %}
                             <h4 class="h4"> <b>: {{data.Payment_Term.payment_terms_number}}
-                                    {{data.Payment_Term.payment_terms_value}}</b></h4>
+                                {{data.Payment_Term.payment_terms_value}}</b>
+                            </h4>
+                            {% else %}
+                            <h4 class="h4"> <b>: Trial Period</b>
+                            </h4>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="row p-5 pt-3 pb-3">

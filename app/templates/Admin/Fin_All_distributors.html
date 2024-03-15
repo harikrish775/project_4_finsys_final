@@ -25,7 +25,7 @@
                         <tbody>
                             {% for d in data %}
                             <tr>
-                                <td  style="text-align: center;">{{d.id}}</td>
+                                <td  style="text-align: center;">{{forloop.counter}}</td>
                                 <td style="text-align: center;"><a href="{% url 'Fin_All_Distributor_Overview' d.id %}">
                                      {{d.Login_Id.First_name}} {{d.Login_Id.Last_name}} </a></td>
                                 <td  style="text-align: center;">{{d.Email}}</td>

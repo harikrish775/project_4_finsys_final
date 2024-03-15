@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+#transactionTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#transactionTable th, #transactionTable td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    text-align: center;
+}
+
+#transactionTable th {
+    background-color: #f2f2f2;
+}
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                        <div class="widget-box">
+                            <div class="widget-header widget-header-large py-3 px-4" style="background-color: #343a40;padding: 1.1rem 1rem;">
+                                <h5 class="widget-title mb-4 print-visible" style="color: white;">
+                                    <strong><span style="color: #fff; font-size: 1.3rem; font-weight: bold;">Statement of {{vendor.title}}. {{vendor.first_name}} {{vendor.last_name}}</span></strong><br>
+                                    <span id="df" style="border: none;color: #F7F7F7;background-color: #343a40;">{{vendor.date|date:'Y-m-d'}}</span> to
+                                <span id="dl" style="border: none; background-color: none;color: #F7F7F7;background-color: #343a40;">{% now 'Y-m-d' %}</span>
+                                </h5>
+                            </div>
+            
+                            <div class="widget-body bg-white" style="padding: 1rem 0.5rem;">
+                                <div class="widget-main">
+                                    <div class="row"  style="padding:20px;" >
+                                        <div class="col-sm-12" style="display: flex;">
+                                            <div class="col-6" style="width: 50%;">
+                                                <div style="width:20px;">
+                                                    {% if cmp.Image %}<img src="{{cmp.Image.url}}" style="width: 25px;">{% endif %}
+                                                </div>
+                                                <p style="color:black;"><strong>{{ cmp.Company_name }}</strong> <br>
+                                                    {{cmp.City}} <br>
+                                                    {{cmp.State}},{{cmp.Country}} <br>
+                                                    {{cmp.Email}}<br>
+                                                    {{cmp.Pincode}}<br>
+                                                </p>  
+                                            </div>
+                                            <div style="width: 50%;padding-top:1rem;">
+                                                <p style="color:black;">To,<br><strong>{{vendor.first_name}} {{vendor.last_name}}</strong><br>
+                                                    {{vendor.billing_street}},{{vendor.billing_city}}<br>
+                                                    {{vendor.billing_state}},{{vendor.billing_country}}<br>
+                                                    {{vendor.billing_pincode }}<br>
+                                                    {{vendor.email}}<br>
+                                                    {{vendor.mobile}}<br>
+                                                </p>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <span style="font-size: 1.1rem; font-weight: bold;">Account Summary</span>
+                                        <p>Opening balance: {{vendor.opening_balance}}<br>
+                                        Balance: {{BALANCE}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-bottom: 1.5rem;">
+                                    <table id="transactionTable" class="" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Type</th>
+                                                <th>Number</th>
+                                                <th>Total</th>
+                                                <th>Balance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for data in combined_data %}
+                                                <tr>
+                                                    <td>{{data.Date|date:'d-m-Y'}}</td>
+                                                    <td>{{data.Type}}</td>
+                                                    <td>{{data.Number|default:None}}</td>
+                                                    <td>{{data.Total}}</td>
+                                                    <td>{{data.Balance}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            <!-- <br>
+                                            <tr >
+                                                <td colspan="4">BALANCE</td>
+                                                <td >{{BALANCE}}</td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
