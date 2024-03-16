@@ -8,6 +8,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <style>
+
+    
     #button1,#button2{
         background-color: rgba(22,37,50,255);
     }
@@ -15,9 +17,44 @@
         background-color: #2f516f;
         color: white    ;
     }
+
+    input:read-only, select:disabled, textarea:read-only {
+        background-color: #43596c !important;
+        color: #fff;
+    }
 </style>
 
 <script>
+    // check gst field
+    $(document).ready(function() {
+    function checkGstCondition() {
+        var gstValue = $("#customerGST").val(); // Assuming you have an input field with id "gstInput"
+        var gstValue2 = $("#vendorGST").val();
+        if(gstValue == "Unregistered Business" || gstValue == 'Overseas' || gstValue == 'Consumer') {
+            $("#customerGstinDiv").hide();
+        } else {
+            $("#customerGstinDiv").show();
+        }
+        if(gstValue2 == "Unregistered Business" || gstValue2 == 'Overseas' || gstValue2 == 'Consumer') {
+            $("#vendorGstinDiv").hide();
+        } else {
+            $("#vendorGstinDiv").show();
+        }
+    }
+    // Call the function when the page loads
+    checkGstCondition();
+    
+
+    // Assuming there's an event that triggers the check, you can bind it here.
+    // For example, if you want to check when the value of the GST input changes:
+    // $("#gstInput").on("change", function() {
+    //     checkGstCondition();
+    // });
+});
+// -----------------------------
+
+
+    //form save----------
     $(document).ready(function() {
         $('#button1').click(function() {
         $('#buttonClicked').val($(this).val()); // Set the value of the clicked button in the hidden input field
@@ -46,8 +83,9 @@
                 // Function to be called if the request succeeds
                 console.log(response);
                 alert(response.messages)
-                
-                window.location.href = "{% url 'Fin_recurring_bill_overview' recur.id %}";
+                if (response.relo){
+                    window.location.href = "{% url 'Fin_recurring_bill_overview' recur.id %}";
+                }
                 
             },
             error: function(xhr, status, error) {
@@ -93,7 +131,9 @@ function goBack() {
                                                     <div class="col-md-3"><label class="">Vendor Email</label></div>
                                                     <div class="col-4"><label class="">Address</label></div>
                                                 </div> -->
-
+                                                        <br><br>
+                                                        <div class="border-bottom pb-2 m-md-2"><h5 class="ml-4 ">Vendor Details</h5> </div>
+                                                        <br>
                                     
                                                 <div class="row ml-2 mr-2 mt-5" >
                                                     <div class="col-md-6">
@@ -112,11 +152,11 @@ function goBack() {
 
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" value="{{recur.vendor.id}}" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input required type="text" autocomplete="off" value="{{recur.vendor.first_name}} {{recur.vendor.first_name}}" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search Vendors" aria-haspopup="true" aria-expanded="false">
+                                                                    <input required type="text" autocomplete="off" style="text-transform: uppercase;" value="{{recur.vendor.first_name}} {{recur.vendor.last_name}}" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search Vendors" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu vendorDropdown" style="width:280px;">
                                                                             {% for i in vendors %}
-                                                                            <a class="dropdown-item drop1" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
+                                                                            <a class="dropdown-item drop1" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
                                                                             {% endfor %}
                                                                         </div>
                                                                     </div>
@@ -182,7 +222,7 @@ function goBack() {
                                                                             $('#select_vendor2').val(data.firstname + ' ' + data.lastname);
                                                                             $('#select_vendor').val(data.id);
 
-                                                                            if(data.gst === 'Unregistered Business'){
+                                                                            if(data.gst == "Unregistered Business" || data.gst == 'Overseas' || data.gst == 'Consumer'){
                                                                                 $("#vendorGstinDiv").hide();
                                                                             }else{
                                                                                 $("#vendorGstinDiv").show();
@@ -333,9 +373,9 @@ function goBack() {
                                                     </div> -->
                                                 </div>
 
-                                                <!-- <br><br>
+                                                <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Bill Details</h5> </div>
-                                                <br><br> -->
+                                                <br>
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
@@ -380,7 +420,7 @@ function goBack() {
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Purchase Order No.</label>
-                                                        <input required type="text" value="{{recur.purchase_order_number}}" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
+                                                        <input type="text" value="{{recur.purchase_order_number}}" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
                                                     </div>
                                                 </div>
 
@@ -426,9 +466,9 @@ function goBack() {
                                                     </div>
                                                 </div>
 
-                                                <!-- <br><br>
+                                                <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Customer Details</h5> </div>
-                                                <br><br> -->
+                                                <br>
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
@@ -445,11 +485,11 @@ function goBack() {
 
                                                         <div class="input-group">
                                                             <input type="text" style="display: none;" value="{{recur.customer.id}}" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" autocomplete="off" value="{{recur.customer.first_name}} {{recur.customer.last_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
+                                                            <input type="text" style="text-transform: uppercase;" autocomplete="off" value="{{recur.customer.first_name}} {{recur.customer.last_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
                                                             <div class="input-group-append">
                                                                 <div class="dropdown-menu customerDropdown" style="width:380px;">
                                                                     {% for i in customers %}
-                                                                    <a class="dropdown-item drop2" value="{{i.id}}">{{i.first_name}} {{i.last_name}}</a>
+                                                                    <a class="dropdown-item drop2" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
                                                                     {% endfor %}
                                                                 </div>
                                                             </div>
@@ -481,7 +521,7 @@ function goBack() {
                                                     </div>
                                                     <script>
                                                         $(document).ready(function() {
-                                                            $(".drop2").on('click',function() {  
+                                                            $('.customerDropdown').on('click', '.drop2', function() {  
                                                                 var customerID = $(this).attr('value');
                                                     
                                                                 // Make an AJAX request to the backend to fetch vendor details
@@ -491,7 +531,7 @@ function goBack() {
                                                                     success: function(data) {
                                                                         // Update the placeholder elements with the fetched details
                                                                         $("#customerEmail").val(data.email);
-                                                                        $("#GSTTypeCustomer").val(data.gst);
+                                                                        $("#customerGST").val(data.gst);
                                                                         $("#customerGSTIN").val(data.gstin);
                                                                         $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
                                                                         $('#SelectCustomer').val(data.id);
@@ -503,7 +543,7 @@ function goBack() {
                                                                         option.prop('selected', true);
                                                                         placeOfSupplyDropdown.append(option); 
 
-                                                                        if(data.gst === 'Unregistered Business'){
+                                                                        if(data.gst == "Unregistered Business" || data.gst == 'Overseas' || data.gst == 'Consumer' ){
                                                                                 $("#customerGstinDiv").hide();
                                                                             }else{
                                                                                 $("#customerGstinDiv").show();
@@ -572,7 +612,7 @@ function goBack() {
                                                 <div class="row m-md-2 border-bottom pb-4">
                                                     <div class="col-md-4 mb-3 mt-2">
                                                         <label for="">GST Type</label>
-                                                        <input required type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
+                                                        <input required type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
                                                         <label class="">GST Number</label>
@@ -592,15 +632,15 @@ function goBack() {
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2" id="bankAccount" style="display: none;">
                                                         <label for="">Bank Account</label>
-                                                        <input value="{{recur.bank_account}}" type="text" class="form-control" name="bankAccount" >
+                                                        <input value="{{recur.bank_account}}" id="bankInput" type="text" class="form-control" name="bankAccount" >
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2" id="Cheque" style="display: none;">
                                                         <label for="">Cheque</label>
-                                                        <input value="{{recur.cheque_number}}" type="text" class="form-control" name="Cheque">
+                                                        <input value="{{recur.cheque_number}}" id="chequeInput" type="text" class="form-control" name="Cheque">
                                                     </div>
                                                     <div class="col-md-4 mb-3 mt-2" id="UPI" style="display: none;">
                                                         <label for="">UPI</label>
-                                                        <input value="{{recur.upi_id}}" type="text" class="form-control" name="UPI">
+                                                        <input value="{{recur.upi_id}}" id="upiInput" type="text" class="form-control" name="UPI">
                                                     </div>
                                                      
                                                 </div>
@@ -736,18 +776,30 @@ function goBack() {
                                                             $('#bankAccount').hide();
                                                             $('#Cheque').hide();
                                                             $('#UPI').hide();
+                                                            $('#bankInput').removeAttr('required');
+                                                            $('#chequeInput').removeAttr('required');
+                                                            $('#upiInput').removeAttr('required');
                                                         } else if (payment === 'Cheque') {
                                                             $('#bankAccount').hide();
                                                             $('#Cheque').show();
                                                             $('#UPI').hide();
+                                                            $('#bankInput').removeAttr('required');
+                                                            $('#chequeInput').attr('required', true);
+                                                            $('#upiInput').removeAttr('required');
                                                         } else if (payment === 'UPI') {
                                                             $('#bankAccount').hide();
                                                             $('#Cheque').hide();
                                                             $('#UPI').show();
+                                                            $('#bankInput').removeAttr('required');
+                                                            $('#chequeInput').removeAttr('required');
+                                                            $('#upiInput').attr('required', true);
                                                         }else{
                                                             $('#bankAccount').show();
                                                             $('#Cheque').hide();
                                                             $('#UPI').hide();
+                                                            $('#bankInput').attr('required', true);
+                                                            $('#chequeInput').removeAttr('required');
+                                                            $('#upiInput').removeAttr('required');
                                                         }
                                                     });
                                                     $('#paymentType').change();
@@ -775,7 +827,7 @@ function goBack() {
                                                                 {% for itm in itemTable %}
                                                                 <tr class="item-row">
                                                                     <td></td>
-                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}{% if itm.items_id == i.id %}<option selected value="{{i.id}}">{{i.name}}</option>{% else %}<option value="{{i.id}}">{{i.name}}</option>{% endif %}{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
+                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}{% if itm.items_id == i.id %}<option selected value="{{i.id}}">{{i.name}}</option>{% else %}<option value="{{i.id}}">{{i.name}}</option>{% endif %}{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" value="{{itm.hsn}}" id="itemHSN"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="{{itm.quantity}}"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" value="{{itm.price}}" placeholder="Enter price" id="itemPrice"></td>
@@ -800,9 +852,9 @@ function goBack() {
                                                                         </select>
                                                                     </td>
                                                                     <td class="border GSTtext" style="min-width: 150px;display: none;" id="GSTtext">
-                                                                        <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
+                                                                        <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
-                                                                        </select>
+                                                                        </select> -->
                                                                         <small style="color: crimson;">Select Vendor & Customer</small>
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="{{itm.discount}}"></td>
@@ -1627,8 +1679,8 @@ $(document).ready(function () {
             
                                 <div class="row mt-3">
                                     <div class="col-md-3">
-                                        <label for="gstType">GST Type</label>
-                                        <select class="form-control" id="gstType" name="gst_type" onclick="toggleGSTIN('gstInValue', this)" style="background-color: #43596c; color: white;" required>
+                                        <label for="gstTypeVen">GST Type</label>
+                                        <select class="form-control" id="gstTypeVen" name="gst_type" onclick="toggleGSTIN('gstInValue', this)" style="background-color: #43596c; color: white;" required>
                                             <option selected value="">Select GST Type</option>
                                             <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
                                             <option value="Registered Business - ComPlaceOfSupplyCustomerition">Registered Business - ComPlaceOfSupplyCustomerition (Business that is registered under comPlaceOfSupplyCustomerition scheme in gst)</option>
@@ -1980,7 +2032,7 @@ $(document).ready(function () {
                                             $.each(response.vendors, function(index, vendor) {
                                             // Assuming each vendor has properties 'first_name', 'last_name', and 'id'
                                             var fullName = vendor.first_name + ' ' + vendor.last_name;
-                                            newVen = $('<a></a>').addClass('dropdown-item drop1').attr('value', vendor.id).text(fullName);
+                                            newVen = $('<a class="dropdown-item drop1" style="text-transform: uppercase;" ></a>').addClass('').attr('value', vendor.id).text(fullName);
                                             dropdown.append(newVen);
                                             $('#vendorModal').modal('hide');
                                             $("#vendorForm").reset();
@@ -2113,8 +2165,8 @@ $(document).ready(function () {
                 // }
             
                 $(document).ready(function() {
-                    $("#gstType").change(function() {
-                        var x=$('#gstType').val();
+                    $("#gstTypeVen").change(function() {
+                        var x=$('#gstTypeVen').val();
                         if(x == "Unregistered Business" || x == 'Overseas' || x == 'Consumer'){
                             $(".gstrow").removeClass('d-block');
                             $(".gstrow").addClass('d-none');
@@ -2392,10 +2444,10 @@ $(document).ready(function () {
             
             
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-        </div>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div> -->
       </div>
     </div>
   </div>
@@ -2510,8 +2562,8 @@ $(document).ready(function () {
             
                                 <div class="row mt-3">
                                     <div class="col-md-4">
-                                        <label for="gstType">GST Type</label>
-                                        <select class="form-control" id="gstType" name="gst_type" onclick="toggleGSTIN('gstInValue', this)" style="background-color: #43596c; color: white;" required>
+                                        <label for="gstTypeCus">GST Type</label>
+                                        <select class="form-control" id="gstTypeCus" name="gst_type" onclick="toggleGSTIN('gstInValue', this)" style="background-color: #43596c; color: white;" required>
                                             <option selected value="">Select GST Type</option>
                                             <option value="Registered Business - Regular">Registered Business - Regular <span><i>(Business that is registered under gst)</i></span></option>
                                             <option value="Registered Business - ComPlaceOfSupplyCustomerition">Registered Business - ComPlaceOfSupplyCustomerition (Business that is registered under comPlaceOfSupplyCustomerition scheme in gst)</option>
@@ -2826,7 +2878,7 @@ $(document).ready(function () {
                                             $.each(response.customers, function(index, customer) {
                                             // Assuming each customer has properties 'first_name', 'last_name', and 'id'
                                             var fullName = customer.first_name + ' ' + customer.last_name;
-                                            newCus = $('<a></a>').addClass('dropdown-item drop2').attr('value', customer.id).text(fullName);
+                                            newCus = $('<a class="dropdown-item drop2" style="text-transform: uppercase;" ></a>').attr('value', customer.id).text(fullName);
                                             dropdown.append(newCus);
                                             $('#customerModal').modal('hide');
                                             $("#customerForm").reset()
@@ -2962,8 +3014,8 @@ $(document).ready(function () {
                 // }
             
                 $(document).ready(function() {
-                    $("#gstType").change(function() {
-                        var x=$('#gstType').val();
+                    $("#gstTypeCus").change(function() {
+                        var x=$('#gstTypeCus').val();
                         if(x == "Unregistered Business" || x == 'Overseas' || x == 'Consumer'){
                             $(".gstrow").removeClass('d-block');
                             $(".gstrow").addClass('d-none');
@@ -3242,10 +3294,10 @@ $(document).ready(function () {
             
             
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -4064,10 +4116,10 @@ $(document).on("click","#saveNewAccount",function(){
       
 
         </div>
-        <div class="modal-footer">
+        <!-- <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
