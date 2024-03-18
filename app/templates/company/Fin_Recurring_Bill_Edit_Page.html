@@ -416,7 +416,7 @@ function goBack() {
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Profile Name</label>
-                                                        <input required type="text" value="{{recur.profile_name}}" class="form-control" name="ProfileName" id="ProfileName">
+                                                        <input type="text" value="{{recur.profile_name}}" class="form-control" name="ProfileName" id="ProfileName">
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Purchase Order No.</label>
@@ -428,7 +428,7 @@ function goBack() {
                                                     <div class="col-md-3 mt-2">
                                                         <label for="">Repeat Every</label>
                                                         <div style="display: flex;">
-                                                            <select required class="form-control" name="RepeatEvery" id="RepeatEvery" >
+                                                            <select class="form-control" name="RepeatEvery" id="RepeatEvery" >
                                                                 {% for r in RepeatEvery %}
                                                                 {% if recur.repeat_every_id == r.id %}
                                                                 <option selected value="{{r.id}}">{{r.repeat_every}}</option>
@@ -855,6 +855,7 @@ function goBack() {
                                                                         <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
                                                                         </select> -->
+                                                                        <input class="form-control mt-4" type="text" placeholder="Tax Rate" readonly>
                                                                         <small style="color: crimson;">Select Vendor & Customer</small>
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="{{itm.discount}}"></td>
@@ -1331,6 +1332,11 @@ $(document).ready(function () {
                                                         clone.querySelectorAll('input').forEach(function (input) {
                                                             input.value = 0;
                                                         });
+                                                        
+                                                        clone.querySelectorAll('.item-stockin').forEach(function (element) {
+                                                            element.innerText = '0';
+                                                        });
+
                                                         initializeCalculations();
                                                         
                                                     }

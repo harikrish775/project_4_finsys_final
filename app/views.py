@@ -23251,6 +23251,7 @@ def Fin_recurring_bill_create_page(request):
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
+        bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
 
         # Finding next invoice number w r t last invoic number if exists.
         nxtInv = ""
@@ -23306,6 +23307,7 @@ def Fin_recurring_bill_create_page(request):
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
+        bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
 
         nxtInv = ""
         lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
@@ -23350,7 +23352,7 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist,'nxtRB':nxtInv})
+    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist,'nxtRB':nxtInv,'bank':bank})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
@@ -23908,6 +23910,7 @@ def Fin_recurring_bill_edit_page(request,pk):
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
+        bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
         
         
 
@@ -23932,6 +23935,7 @@ def Fin_recurring_bill_edit_page(request,pk):
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
         pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
+        bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
         if recurringBill:
@@ -23944,7 +23948,7 @@ def Fin_recurring_bill_edit_page(request,pk):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist})
+    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist,'bank':bank})
 
 def Fin_recurring_bill_edit_save(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
