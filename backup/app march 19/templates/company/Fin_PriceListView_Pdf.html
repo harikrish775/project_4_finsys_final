@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    /* .table2 {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color: rgb(221, 247, 247);
+
+    } */
+
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .item_data {
+        font-size: 1.2rem;
+    }
+
+    .item_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .item_label, .item_value {
+        font-weight: bold;
+    }
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black; font-size: 1.5rem;"><b>Price List - {{list.name}}</b></center>
+                    <hr>
+                </div>
+                <div style="width: 100%;">
+                    <div class="item_data">
+                        <div class="item_row">
+                            <div class="item_label">Type: {{list.type}}</div>
+                            <div class="item_label">
+                                Item Rate: {% if list.item_rate == "Customized individual rate" %}
+                                Customized individual rate
+                                {% elif list.up_or_down == "Markup" %}
+                                Markup the item rates by a percentage
+                                {% elif list.up_or_down == "Markdown" %}
+                                Markdown the item rates by a percentage
+                                {% else %}
+                                {{ list.item_rate }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if not plItems %}
+                        <div class="item_row">
+                            <div class="item_label">Percentage: {{list.percentage}}%</div>
+                            <div class="item_label">Round Off To: {{list.round_off}}</div>
+                            <div class="item_label">Description: {{list.description}}</div>
+                        </div>
+                        {% else %}
+                        <div class="item_row">
+                            <div class="item_label">Description: {{list.description}}</div>
+                            <div class="item_label"><span>Currency: {{list.currency}}</span></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            {% if plItems %}
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Item Details</th>
+                            <th class="text-center">Standard Rate(INR)</th>
+                            <th class="text-center">Custom Rate(INR)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in plItems %}
+                        <tr>
+                            <td class="text-center">{{i.item.name}}</td>
+                            <td class="text-center">{{i.standard_rate}}</td>
+                            <td class="text-center"><b>{{i.custom_rate}}</b></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </tbody>
+                </table>
+            </section>
+           {% endif %} 
+        </div>
+    </div>
+</body>
+
+</html>

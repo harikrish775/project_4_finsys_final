@@ -1,0 +1,1110 @@
+<!-- Created -- shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<style>
+    .filterTable-column .dropdown-toggle::after{
+        content: none;
+    }
+    .filterTable-column .btn:focus{
+        box-shadow: none;
+    }
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+    .submitShareEmailBtn, .submitFileAttachBtn, #commentSaveBtn {
+        background: #192d3e;
+        border: 1px solid #3a4b5a;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+    .submitShareEmailBtn:hover, .submitFileAttachBtn:hover, #commentSaveBtn:hover {
+        background: #3a4b5a;
+    }
+    .print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+    .ribbon .ribbon-inner {
+        text-align: center;
+        color: #fff;
+        top: -20px;
+        left: -90px;
+        width: 120px;
+        padding: 3px;
+        /* position: relative;
+        transform: rotate(-45deg); */
+    }
+    .ribbon .ribbon-open {
+        background-color: #268ddd;
+        border-color: #1c72b4;
+    }
+    :root {
+        --body-bg: rgb(204, 204, 204);
+        --white: #ffffff;
+        --darkWhite: #ccc;
+        --black: #000000;
+        --dark: #615c60;
+        --themeColor: #22b8d1;
+        --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    }
+    @media print {
+        body{
+            visibility: hidden !important;
+            /* background-color: white; */
+        }
+
+        #slip{
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .printContainer {
+            visibility: visible !important;
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        }
+
+    }
+    /* Font Include */
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+    body {
+        background-color: var(--body-bg);
+    }
+
+    .page {
+        background: var(--white);
+        display: block;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: var(--pageShadow);
+    }
+
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        overflow: hidden;
+    }
+
+    .bb {
+        border-bottom: 3px solid var(--darkWhite);
+    }
+
+    /* Top Section */
+    .top-content {
+        padding-bottom: 15px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    .top-left p {
+        margin: 0;
+        color: #000000;
+    }
+
+    .top-left .graphic-path {
+        height: 40px;
+        position: relative;
+    }
+
+    .top-left .graphic-path::before {
+        content: "";
+        height: 20px;
+        background-color: var(--dark);
+        position: absolute;
+        left: 15px;
+        right: 0;
+        top: -15px;
+        z-index: 2;
+    }
+
+    .top-left .graphic-path::after {
+        content: "";
+        height: 22px;
+        width: 17px;
+        background: var(--black);
+        position: absolute;
+        top: -13px;
+        left: 6px;
+        transform: rotate(45deg);
+    }
+
+    .top-left .graphic-path p {
+        /* color: var(--white); */
+        height: 40px;
+        left: 0;
+        right: 0;
+        text-transform: uppercase;
+        background-color: var(--themeColor);
+        /* font: 26px; */
+        z-index: 3;
+        position: absolute;
+        padding-left: 10px;
+    }
+    
+    /* User Store Section */
+    .store-user {
+        padding-bottom: 25px;
+    }
+
+    .store-user p {
+        margin: 0;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .store-user .address {
+        font-weight: 400;
+    }
+
+    .store-user h5 {
+        color: var(--themeColor);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    .extra-info p span {
+        font-weight: 400;
+    
+    }
+
+    /* Product Section */
+    thead {
+        color: var(--white);
+        background: var(--themeColor);
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        text-align: left;
+    }
+
+    /* Balance Info Section */
+    .balance-info .table td,
+    .balance-info .table th {
+        padding: 0;
+        border: 0;
+    }
+
+    .balance-info tr td:first-child {
+        font-weight: 600;
+    }
+
+    /* SLIP VIEW STYLINGS */
+    .slip h5{
+        font-family: serif;
+    }
+    p {
+        font-size: 1.2em;
+    }
+    .address{
+        display: flex;
+        flex-direction: column;
+    }
+    .address p,.slip-footer p{
+        font-size: 1rem;
+        margin: 0;
+    }
+    .slip-container{
+        width: 110mm;
+        margin: 2rem auto;
+        padding: 2rem;
+        border: 1px dotted black;
+        box-shadow: rgba(60, 64, 67, 0.5) 0px 1px 2px 0px, rgba(60, 64, 67, 0.35) 0px 2px 6px 2px;
+    }
+    .divider{
+        margin: 1rem 0;
+        border-bottom: 3px dotted black;
+    }
+    .trns-id p,.datetime p, .createdby p{
+        font-size: 0.85rem;
+        margin: 0;
+    }
+    .equal-length-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        margin-left: 2vh;
+        margin-right: 2vh;
+    }
+
+    .equal-length-item {
+        flex: 1;
+        text-align: center;
+    }
+
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<div class="page-content " id="page-content">
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_expense' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body" style="width:100%;">
+            <div class="card-title">
+                <div class="container-fluid mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="overview()" id="overviewBtn" >Overview</a>
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="template()" id="templateBtn" > Templates</a>
+                        </div> 
+
+                        <div class="col-md-6 d-flex justify-content-end">
+                            {% if expense.status == 'Draft' %}
+                            <div class="dropdown p-0 nav-item"  id="convertBtn" style="display: block;">
+                                <li  class="dropdown-toggle btn btn-outline-secondary text-grey fa fa-exchange" data-toggle="dropdown">&nbsp;Convert</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="">
+                                    <a class="dropdown-item" href="{% url 'Fin_convertExpense' expense.id %}">Saved</a>
+                                </ul>
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'Fin_expensePdf' expense.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" id="pdfBtn" style="display: none;"> &nbsp;PDF</a> 
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-print" role="button" id="printBtn" style="display: none; " onclick="printSection('whatToPrint')">&nbsp;Print</a>
+                            <div class="dropdown p-0 nav-item"  id="shareBtn" style="display: none;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                    <li style="text-align: center;" >{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="text-align: center;color: #e5e9ec; cursor: pointer;" data-toggle="modal" data-target="#shareToEmail">Email</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'Fin_editExpense' expense.id %}" class="ml-2 fa fa-pencil btn btn-outline-secondary text-grey" id="editBtn" role="button">&nbsp;Edit</a>
+                            <a href="{% url 'Fin_deleteExpense' expense.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" id="deleteBtn" role="button" onclick="return confirm('Are you sure you want to delete Expense - {{expense.expense_no}} ?')">&nbsp;Delete</a>
+                            <a href="#"  class="ml-2 btn btn-outline-secondary text-grey fa fa-comments" id="commentsBtn" role="button" data-toggle="modal" data-target="#commentModal">&nbsp;Comment</a>
+                            <a href="{% url 'Fin_expenseHistory' expense.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                            <div class="dropdown p-0 nav-item"  id="attachBtn" style="display: block;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-paperclip" data-toggle="dropdown">&nbsp;Attach</li>
+                                <ul class="dropdown-menu" style="background-color: black;">
+                                    <a class="dropdown-item fa fa-paperclip" style="cursor: pointer;" data-toggle="modal" data-target="#attachFileModal">&nbsp; Attach file</a>
+                                    {% if expense.file %}
+                                    <a class="dropdown-item fa fa-download" style="cursor: pointer;" download  href="{{ expense.file.url }}">&nbsp; Download file</a>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <center>
+                    <h3 class="card-title">EXPENSE OVERVIEW</h3>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+        <div class="card-body p-0">
+
+            <div id="overview">
+                <div class="row g-0 mx-0">
+                    <div class="col-lg-8">
+                        <div class="history_highlight pt-3 px-2 d-flex">
+                            <div class="col-12 d-flex justify-content-start align-items-center">
+                                {% if history %}{% if history.action == 'Created' %}<p class="text-success m-0" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text-warning m-0" style="font-size: 1.07rem; font-weight: 500;">Last Edited by :</p>{% endif %}{% endif %}
+                                <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{history.LoginDetails.First_name}} {{history.LoginDetails.Last_name}}</span>
+                                <span class="ml-5">{{history.date}}</span>
+                            </div>
+                        </div>
+
+                        <div class="pb-3 px-2">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="row">
+                                        <div class="col mt-3">
+                                            <h2 class="mb-0"># {{ expense.expense_no }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Company</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Company_name}}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Email }}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Mobile</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Contact }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Address</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ cmp.Address }} <br>
+                                            {{cmp.City}},{{cmp.State}} - {{cmp.Pincode}}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <hr class="my-4">
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Vendor</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Vendor Name</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.Vendor.title}}. {{expense.Vendor.first_name}} {{expense.Vendor.last_name}}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Address</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.vendor_address}}</p>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{expense.vendor_email}}</p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Source Of Supply</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.vendor_source_of_supply}}</p>
+                                    </div>
+                                </div>
+
+                                <hr/>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Expense Details</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Expense No.</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{ expense.expense_no  }}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Reference No.</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.reference_no}}</p>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Expense Date</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.expense_date | date:'d-m-Y'}}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Expense Account</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.Account.account_name}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    {% if expense.expense_type == 'Goods' %}
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">HSN</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.hsn_number}}</p>
+                                    </div>
+                                    {% else %}
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">SAC</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.sac_number}}</p>
+                                    </div>
+                                    {% endif %}
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Expense Type</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.expense_type}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Payment Method</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.payment_method}}</p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Tax Rate</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.tax_rate}}</p>
+                                    </div>
+                                </div>
+                                
+                                <hr>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-3 mt-3">
+                                        <h6 class="mb-0">Customer Name</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.Customer.title}}. {{expense.Customer.first_name}} {{expense.Customer.last_name}}</p>
+                                    </div>
+    
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Address</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.customer_address}}</p>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                    <div class="col-md-3 mt-3"> 
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{expense.customer_email}}</p>
+                                    </div>
+                                    <div class="col-md-3 mt-3 vl">
+                                        <h6 class="mb-0">Place Of Supply</h6>
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0 text-right">{{expense.customer_place_of_supply}}</p>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey">
+
+                        <div class="px-3">
+                            <h4 class="fw-bold mb-2 mt-4 pt-1">Expense Details</h4>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Status</h6>
+                                {% if expense.status == 'Draft' %} <span class="text-info h5 font-weight-bold">DRAFT</span> {% else %} <span class="text-success h5 font-weight-bold">SAVED</span> {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h4 class="">Amount</h4>
+                                <span class="font-weight-bold h6">&#8377; {{ expense.amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Vendor</h6>
+                                {{expense.vendor_name }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Source of Supply</h6>
+                                {{ expense.vendor_source_of_supply }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Customer</h6>
+                                {{ expense.customer_name }}
+                            </div>
+                            <hr class="my-4">
+                            {% if expense.note != "" %}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Note</h6>
+                                <span class="font-weight-bold">{{ expense.note }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="template" style="display: none;" >
+                <div  id="whatToPrint" class="print-only">
+            
+                    <!-- template1 -->
+                    <div id="whatToPrint1" class="printTemplates template1">
+                        <div class="my-5 page" size="A4" >
+                            <div class="p-4" id="printdiv1">
+                                <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                                    <!-- <div class="ribbon-inner ribbon-open">{{expense.status}}</div> -->
+                                </div>
+                                <section class="top-content bb d-flex justify-content-between">
+                                    <div class="logo">
+                                        <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                                    </div>
+                                    <div class="top-left">
+                                        <div class="graphic-path">
+                                            <p>Expense</p>
+                                        </div>
+                                        <div class="position-relative">
+                                            <p> Expense No. <span>{{ expense.expense_no }}</span></p>
+                                        </div>
+                                    </div>
+                                </section>
+                    
+                                <section class="store-user mt-5">
+                                    <div class="col-12">
+                                        <div class="row bb pb-3">
+                                            <div class="col-7">
+                                                <p>Company Details,</p>
+                                                <h5>{{cmp.Company_name }}</h5>
+                                                <p class="address "> {{cmp.Address}}<br>
+                                                    {{cmp.City}},
+                                                    {{cmp.State}}<br>
+                                                    {{cmp.Pincode}}<br>
+                                                </p>
+                                                
+                                            </div>
+                                            <div class="col-5">
+                                                <p>Vendor Details,</p>
+                                                <h5>{{expense.Vendor.title}} {{expense.Vendor.first_name}} {{expense.Vendor.last_name}}</h5>
+                                                <p class="address col-9" style="margin-left: -14px;" > {{ expense.vendor_address}} </p>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="row extra-info pt-3">
+                                            <div class="col-7">
+                                                <h4 class="font-weight-bold text-dark">Expense Details</h4>
+                                                <p>Expense Date: <span>{{expense.expense_date | date:'d-m-Y'}}</span></p>
+                                                <p>Tax Rate: <span>{{expense.tax_rate}}</span></p>
+                                                <p>Payment Method: <span>{{expense.payment_method}}</span></p>
+                                            </div>
+                                            <div class="col-5">
+                                                <p>Customer</p>
+                                                <h5>{{expense.Customer.title}} {{expense.Customer.first_name}} {{expense.Customer.last_name}}</h5>
+                                                <p class="address col-9" style="margin-left: -14px;" > {{ expense.customer_address}} </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="product-area mt-4">
+                                    <table class=" table table-hover table-bordered " id="table1">
+                                        <thead >
+                                            <tr>
+                                                <th style="font-weight:bold; color:black">Expense Account</th>
+                                                <th style="font-weight:bold; color:black">Expense Type</th>
+                                                {% if expense.expense_type == 'Goods' %}<th style="font-weight:bold; color:black">HSN</th>{% else %}<th style="font-weight:bold; color:black">SAC</th>{% endif %}
+                                                <th style="font-weight:bold; color:black">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style="background-color: gainsboro;">
+                                                <td style="color:black">{{expense.expense_account}}</td>
+                                                <td style="color:black">{{expense.expense_type}}</td>
+                                                {% if expense.expense_type == 'Goods' %}<td style="color:black">{{expense.hsn_number}}</td>{% else %}<td style="color:black">{{expense.sac_number}}</td>{% endif %}
+                                                <td style="color:black">{{expense.amount}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br><br>
+                                </section>
+                    
+                            </div>
+                        </div>
+                    </div>
+        
+    
+                    <!-- template2 -->
+                    <div  id="whatToPrint2"  class="printTemplates template2" style="display: none;">
+                        <div class="my-5 page" size="A4" >
+                            <div id="printdiv2">
+                                <div class="row px-5 py-4" style="background-color:#268ddd;" >
+                                    <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
+                                      <!-- <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{expense.status}}</div> -->
+                                  </div>
+                                  <div class="col-md-4 d-flex justify-content-center">
+                                      <center class="h3 text-white"><b>Expense</b></center>
+                                  </div>  
+                                  <div class="col-md-4 d-flex justify-content-end">
+                                      <div class="text-white">
+                                          <p class="mb-0 mt-2">Expense No: <b>{{expense.expense_no }}</b></p>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="px-5 py-1">
+                                  <section class="store-user"><br><br>
+                                      <div class="col-12">
+                                          <div class="row bb pb-2 mt-3">
+                                              <div class="col-4 pl-0">
+                                                  <label class="text-white w-100 p-1" style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>COMPANY ADDRESS</b></label>
+                                                  <h5 class="text-secondary" style="font-weight: bold;">{{cmp.Company_name}}</h5>
+                                                  <p class="address" style="font-weight: bold;color: #000;">
+                                                      {{cmp.Address}}
+                                                      <br>
+                                                      {{cmp.City}}
+                                                      <br>
+                                                      {{cmp.State}} - {{cmp.Pincode}}
+                                                      <br>
+                                                      <span>Mob: </span><b>{{cmp.Contact}}</b>
+                                                  </p>  
+                                              </div>
+                                              <div class="col-4"></div>
+                                              <div class="col-4 pr-0">
+                                                  <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>Vendor</b></label>
+                                                  <h5 class="text-secondary" style="font-weight: bold;">{{expense.Vendor.title}} {{expense.Vendor.first_name}} {{expense.Vendor.last_name}}</h5>
+                                                  <p class="address" style="font-weight: bold;color: #000;">{{ expense.vendor_address | linebreaksbr}} </p>
+                                              </div>
+                                          </div>
+                                          <div class="row my-3">
+                                            <div class="col-6">
+                                                <h4 class="font-weight-bold text-dark">Expense Details</h4>
+                                                <p>Expense Date: <span>{{expense.expense_date | date:'d-m-Y'}}</span></p>
+                                                <p>Tax Rate: <span>{{expense.tax_rate}}</span></p>
+                                                <p>Payment Method: <span>{{expense.payment_method}}</span></p>
+                                            </div>
+                                            <div class="col-2"></div>
+                                            <div class="col-4">
+                                                <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>Customer</b></label>
+                                                <h5 class="text-secondary">{{expense.Customer.title}} {{expense.Customer.first_name}} {{expense.Customer.last_name}}</h5>
+                                                <p class="address col-9" style="margin-left: -14px;" > {{ expense.customer_address}} </p>
+                                            </div>
+                                          </div>
+                                          
+                                      </div>
+                                  </section>
+                      
+                                  <section class="product-area mt-2">
+                                      <table class="table table-hover table-bordered  template2table" id="table2">
+                                          <thead >
+                                              <tr class="template3tablehead">
+                                                  <th class="text-center bg-dark" style="color:black">Expense Account</th>
+                                                  <th class="text-center bg-dark" style="color:black">Expense Type</th>
+                                                  {% if expense.expense_type == 'Goods' %}<th class="text-center bg-dark" style="color:black">HSN</th>{% else %}<th class="text-center bg-dark" style="color:black">SAC</th>{% endif %}
+                                                  <th class="text-center bg-dark" style="color:black">Amount</th>
+                                              </tr>
+                                          </thead>
+                                          <tbody  style="background-color: #999999;">
+                                            <tr>
+                                                <td class="text-center" style="color:black">{{expense.expense_account}}</td>
+                                                <td class="text-center" style="color:black">{{expense.expense_type}}</td>
+                                                {% if expense.expense_type == 'Goods' %}<td class="text-center" style="color:black">{{expense.hsn_number}}</td>{% else %}<td class="text-center" style="color:black">{{expense.sac_number}}</td>{% endif %}
+                                                <td class="text-center" style="color:black">{{expense.amount}}</td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+                                  </section>
+                                     
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- template3 -->
+                    <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
+                        <div class="my-5 page"  size="A4" >
+                            <div class="" id="printdiv3">
+                                <div class="row">
+                                    <div class="col-sm-12 py-2" style="background-image: linear-gradient(#1b83e8, black); color: white;">
+                                        <p style="font-size: 4vh; text-align: center;">EXPENSE</p>
+                                        <p style=" text-align: center;"> {{cmp.Company_name}} <br>
+                                            {{cmp.Address}} <br>
+                                            {{cmp.City}},
+                                            {{cmp.State}}<br>
+                                            {{cmp.Email}}
+                                            <br>
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="row col-12">
+                                        <div class="col-md-1"></div>
+                                        <div class="col-5">
+                                            <br><br><br>
+                                            <p style="color:black;"> <span style=" font-weight: bold;">Vendor: </span><br>
+                                            {{expense.Vendor.title}} {{expense.Vendor.first_name}} {{expense.Vendor.last_name}}<br>
+                                            {{expense.vendor_address|linebreaksbr }}
+                                            </p>
+                                        </div>
+                                        <!-- <div class="col-md-1"></div> -->
+                                        <div class="col-6">
+                                            <br><br><br>
+                                            <table class="table table-borderless">
+                                                <tbody>
+                                                    <tr >
+                                                        <td style="color: #000; font-weight: bold;">Expense No.</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-right" style="color: #000;">{{ expense.expense_no }}</td>
+                                                    </tr>
+
+                                                    <tr >
+                                                        <td style="color: #000; font-weight: bold;">Expense Date</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-right" style="color: #000;">{{expense.expense_date | date:'d-m-Y'}}<td>
+                                                    </tr>
+     
+                                                    <tr>
+                                                        <td style="color: #000; font-weight: bold;">Tax Rate</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-right" style="color: #000;">{{expense.tax_rate}}</td>
+                                                        
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color: #000; font-weight: bold;">Payment Method</td>
+                                                        <td style="color: #000;">:</td>
+                                                        <td class="text-right" style="color: #000;">{{expense.payment_method}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10"><br>
+                                        <table class="table table-hover table-bordered  template3table" id="table3">
+                                            <thead >
+                                                <tr class="template3tablehead">
+                                                    <th class="text-center bg-dark" style="color:black">Expense Account</th>
+                                                    <th class="text-center bg-dark" style="color:black">Expense Type</th>
+                                                    {% if expense.expense_type == 'Goods' %}<th class="text-center bg-dark" style="color:black">HSN</th>{% else %}<th class="text-center bg-dark" style="color:black">SAC</th>{% endif %}
+                                                    <th class="text-center bg-dark" style="color:black">Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" style="color:black">{{expense.expense_account}}</td>
+                                                    <td class="text-center" style="color:black">{{expense.expense_type}}</td>
+                                                    {% if expense.expense_type == 'Goods' %}<td class="text-center" style="color:black">{{expense.hsn_number}}</td>{% else %}<td class="text-center" style="color:black">{{expense.sac_number}}</td>{% endif %}
+                                                    <td class="text-center" style="color:black">{{expense.amount}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="col-12 mt-4">
+                                            <p style="color:black;"> <span style=" font-weight: bold;">Customer: </span><br>
+                                            {{expense.Customer.title}} {{expense.Customer.first_name}} {{expense.Customer.last_name}}<br>
+                                            {{expense.customer_address|linebreaksbr }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                    <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                    <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                    <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<!-- Attach File Modal -->
+<div class="modal fade" id="attachFileModal">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Attach File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'Fin_attachExpenseFile' expense.id %}" method="post" enctype="multipart/form-data" class="needs-validation">
+                <div class="modal-body">
+                    <div class="card p-3">
+                        
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="emailIds">Input File</label>
+                                <input type="file" class="form-control" name="file" id="fileAttachInput" required>
+                            </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" class="submitFileAttachBtn w-50 text-uppercase">SAVE</button>
+                </div>
+            </form>
+        </div>   
+    </div>
+</div>
+
+
+<!-- Share To Email Modal -->
+<div class="modal fade" id="shareToEmail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Share Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'Fin_shareExpenseToEmail' expense.id %}" method="post" class="needs-validation" id="share_to_email_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase">SEND MAIL</button>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- Add Comments Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{% url 'Fin_addExpenseComment' expense.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <textarea type="text" class="form-control" name="comment" placeholder="Add Comments.." required></textarea>
+                    {% if not comments %}
+                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                    {% else %}
+                    <div class="container-fluid">
+                        <table class="table mt-4">
+                            <thead class="bg-transparent">
+                                <tr>
+                                    <th class="text-center">sl no.</th>
+                                    <th class="text-center">Comment</th>
+                                    <th class="text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in comments %}
+                                <tr class="">
+                                    <td class="text-center">{{forloop.counter }}</td>
+                                    <td class="text-center">{{c.comments}}</td>
+                                    <td class="text-center"><a class="text-danger" href="{% url 'Fin_deleteExpenseComment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')"><i class="fa fa-trash" style="font-size: 1.1rem;"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    function overview() {
+        document.getElementById('overview').style.display = 'block';
+        document.getElementById('template').style.display = 'none';
+        document.getElementById('overviewBtn').style.backgroundColor='rgba(22,37,50,255)'
+        document.getElementById('templateBtn').style.backgroundColor='transparent';
+        $('#shareBtn').hide();
+        $('#printBtn').hide();
+        $('#pdfBtn').hide();
+        $('#convertBtn').show();
+        $('#editBtn').show();
+        $('#deleteBtn').show();
+        $('#historyBtn').show();
+        $('#commentsBtn').show();
+        $('#attachBtn').show();
+    }
+    
+    function template() {
+        document.getElementById('overview').style.display = 'none';
+        document.getElementById('template').style.display = 'block';
+        document.getElementById('overviewBtn').style.backgroundColor='transparent';
+        document.getElementById('templateBtn').style.backgroundColor='rgba(22,37,50,255)';
+        $('#shareBtn').show();
+        $('#printBtn').show();
+        $('#pdfBtn').show();
+        $('#editBtn').hide();
+        $('#convertBtn').hide();
+        $('#deleteBtn').hide();
+        $('#historyBtn').show();
+        $('#commentsBtn').show();
+        $('#attachBtn').hide();
+    }
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+
+    function updateDateTime() {
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1;
+        var year = currentDate.getFullYear();
+        var hours = currentDate.getHours();
+        var minutes = currentDate.getMinutes();
+        var seconds = currentDate.getSeconds();
+        var formattedDay = (day < 10) ? `0${day}` : day;
+        var formattedMonth = (month < 10) ? `0${month}` : month;
+        var formattedHours = (hours < 10) ? `0${hours}` : hours;
+        var formattedMinutes = (minutes < 10) ? `0${minutes}` : minutes;
+        var formattedSeconds = (seconds < 10) ? `0${seconds}` : seconds;
+        var formattedDateTime = `${formattedDay}/${formattedMonth}/${year} ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        document.getElementById('dateTimeDisplay').textContent = formattedDateTime;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    function printSection(sectionId) {
+        document.body.style.backgroundColor = 'white';
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        var $printerDiv = $('<div class="printContainer"></div>');
+
+        $printerDiv.html(printContents); 
+        $('body').append($printerDiv).addClass("printingContent"); 
+        window.print(); 
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+    }
+
+    function toggleTemplate(templateId,buttonId){
+        $('.printTemplates').css('display','none');
+        $('#'+templateId).css('display','block');
+        $('.templateToggleButtons').removeClass('active');
+        $('#'+buttonId).addClass('active');
+        $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+        document.getElementById('page-content').scrollIntoView();
+    }
+</script>
+
+{% endblock %}

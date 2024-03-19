@@ -403,7 +403,7 @@ footer p {
                             </button>
                             <div class="collapse navbar-collapse" id="navbarScroll">
                                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                                    <li class="nav-item mx-1">
+                                    <li class="nav-item mx-1" id="editLi">
                                         <a href="{% url 'Fin_recurring_bill_edit_page' pk=bill1.id %}" role="button" class=" ml-2 btn btn-outline-secondary text-grey"> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
                                       </li>
                                       <li class="nav-item mx-1" id="deleteLi">
@@ -474,12 +474,12 @@ footer p {
                                             
                                         </ul>
                                     </div>
-                                    <li  >
+                                    <li id="commentLi" >
                                         <button class="ml-2 btn btn-outline-secondary text-grey " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
                                     </li>
 
                                     <div class="dropdown nav-item " style="margin-top: 10px;"  >
-                                        <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey "data-toggle="dropdown">History</li>
+                                        <li id="historyLi" class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey "data-toggle="dropdown">History</li>
                                         <ul class="dropdown-menu" style="background-color: black;">
                                             
                                             <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
@@ -500,30 +500,40 @@ footer p {
             function slipHideButtons() {
                 document.getElementById("printLi").style.display = "";
                 document.getElementById("pdfLi").style.display = "";
-                document.getElementById("shareLi").style.display = "none";
+                document.getElementById("shareLi").style.display = "";
                 document.getElementById("deleteLi").style.display = "none";
                 document.getElementById("attachLi").style.display = "none";
+                document.getElementById("commentLi").style.display = "none";
+                document.getElementById("historyLi").style.display = "none";
+                document.getElementById("editLi").style.display = "none";
+
             }
 
-            function unhideButtons() {
+            function templateButtons() {
                 document.getElementById("printLi").style.display = "";
                 document.getElementById("pdfLi").style.display = "";
                 document.getElementById("shareLi").style.display = "";
                 document.getElementById("deleteLi").style.display = "none";
                 document.getElementById("attachLi").style.display = "none";
+                document.getElementById("commentLi").style.display = "none";
+                document.getElementById("historyLi").style.display = "none";
+                document.getElementById("editLi").style.display = "none";
             }
             // Function to hide buttons
-            function hideButtons() {
+            function overviewButtons() {
                 document.getElementById("printLi").style.display = "none";
                 document.getElementById("pdfLi").style.display = "none";
                 document.getElementById("shareLi").style.display = "none";
                 document.getElementById("deleteLi").style.display = "";
                 document.getElementById("attachLi").style.display = "";
+                document.getElementById("commentLi").style.display = "";
+                document.getElementById("historyLi").style.display = "";
+                document.getElementById("editLi").style.display = "";
             }
     
             // Call the hideButtons function when the page loads
             window.onload = function() {
-                hideButtons();
+                overviewButtons();
             };
         </script>
 
@@ -645,11 +655,15 @@ footer p {
                             <hr>
                          
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                <div class="col-md-4 mt-3">
-                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Other Details</h5>
+                                <div class="col-md-6 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Vendor Details</h5>
                                 </div>
-                                <div class="col-md-4 mt-3"></div>
-                                <div class="col-md-4 mt-3"></div>
+                                <!-- <div class="col-md-4 mt-3"></div> -->
+                                <div class="col-md-6 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
+                                </div>
+
+                                
                                 
 
                                 <div class="col-md-3 mt-3">
@@ -667,6 +681,9 @@ footer p {
                                
                             </div>
                                 <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <!-- <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
+                                    </div> -->
                         
                                 <div class="col-md-3 mt-3 ">
                                     <h6 class="mb-0">Vendor Email</h6>
@@ -727,7 +744,7 @@ footer p {
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-12 mt-3">
-                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Product Details</h5>
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Items Details</h5>
 
                                     {% for j in items  %}
                                         <div class="row mb-4 d-flex justify-content-between align-items-center">
@@ -737,41 +754,53 @@ footer p {
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.items.name}}</p>
                                             </div>
-            
+
                                             <div class="col-md-3 mt-3 vl">
+                                                <h6 class="mb-0">HSN</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.items.hsn}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-3 mt-3 ">
                                                 <h6 class="mb-0">Price</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.price}}</p>
                                             </div>
-                                            
-                                        </div>
-                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                            <div class="col-md-3 mt-3">
+                                            <div class="col-md-3 mt-3 vl">
                                                 <h6 class="mb-0">Quantity</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{ j.quantity }}</p>
-                                            </div>
-                                            <div class="col-md-3 mt-3 vl">
+                                            </div>                                            
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                            <div class="col-md-3 mt-3 ">
                                                 <h6 class="mb-0">Tax Amount</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.tax_rate}} %</p>
                                             </div>
-                                        </div>
-                                        <div class="row mb-4 d-flex justify-content-start align-items-center">
-                                            <div class="col-md-3 mt-3"> 
+                                            <div class="col-md-3 mt-3 vl"> 
                                                 <h6 class="mb-0">Discount</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.discount}}</p>
                                             </div>
-                                            <div class="col-md-3 mt-3 vl"> 
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-start align-items-center" >
+                                            <div class="col-md-3 mt-3 "> 
                                                 <h6 class="mb-0">Total</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.total}}</p>
+                                            </div><div class="col-md-3 mt-3 vl"> 
+                                                <h6 class="mb-0">&nbsp;</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <!-- <p class="mb-0 text-right">{{j.total}}</p> -->
                                             </div>
                                         </div>
                                         <hr class="my-4" style="width: 50%;">
@@ -787,21 +816,13 @@ footer p {
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Bill status</h5>
-                                <h4 {%if bill1.status == 'Save'%} style="color: green;" {% else %} style="color: yellow;" {% endif %} >{{ bill1.status }}</h4>
+                                <h4 {%if bill1.status == 'Save'%} style="color: green;" {% else %} style="color: red;" {% endif %} >{{ bill1.status }}</h4>
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Grand Total</h5>
                                 <h6>{{ bill1.grand_total }}</h6>
                             </div>
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="">Paid Amount</h5>
-                                <h6>{{ bill1.advanceAmount_paid }}</h6>
-                            </div>
-                           
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="">Balance</h5>
-                                <h6>{{ bill1.balance }}</h6>
-                            </div>
+                            
                             {%if bill1.taxAmount_igst%}
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">IGST</h5>
@@ -824,15 +845,26 @@ footer p {
                                 <h5 class="">Tax Amount</h5>
                                 <h6>{{bill1.taxAmount_igst }}</h6>
                             </div>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Shipping Charge</h5>
+                                <h6>{{ bill1.shipping_charge}}</h6>
+                            </div>
                             
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Adjustment</h5>
                                 <h6>{{bill1.adjustment }}</h6>
                             </div>
                             
+                            
                             <div class="d-flex justify-content-between mb-4">
-                                <h5 class="">Shipping Charge</h5>
-                                <h6>{{ bill1.shipping_charge}}</h6>
+                                <h5 class="">Paid Amount</h5>
+                                <h6>{{ bill1.advanceAmount_paid }}</h6>
+                            </div>
+                           
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Balance</h5>
+                                <h6>{{ bill1.balance }}</h6>
                             </div>
                             <!-- <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Status</h5>
@@ -2010,7 +2042,7 @@ footer p {
                 document.getElementById('overviewlink').style.backgroundColor='rgba(22,37,50,255)';
                 document.getElementById('templatelink').style.backgroundColor='transparent';
                 document.getElementById('sliplink').style.backgroundColor='transparent';
-                hideButtons()
+                overviewButtons()
                 
             }
 
@@ -2021,7 +2053,7 @@ footer p {
                 document.getElementById('overviewlink').style.backgroundColor='transparent';
                 document.getElementById('templatelink').style.backgroundColor='rgba(22,37,50,255)';
                 document.getElementById('sliplink').style.backgroundColor='transparent';
-                unhideButtons();
+                templateButtons();
                 
             }
 

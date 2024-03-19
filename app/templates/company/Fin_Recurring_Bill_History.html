@@ -6,7 +6,7 @@
         0% {
         visibility: hidden;
         }
-        50% {
+        60% {
         visibility: visible;
         }
         100% {
@@ -34,7 +34,7 @@ function goBack() {
             <div class="card-title">
                 <center>
                     <h3 class="card-title" style="text-transform:Uppercase;">RECURRING BILL TRANSACTIONS</h3>
-                    {% if invoice.status == 'Draft' %}
+                    {% if RB.status == 'Draft' %}
                     <h6 class="blinking-text" style="color:red;width:140px;font-weight: bold;">DRAFT</h6>
                     {% else%}
                     <h6 style="width:140px;color: green;font-weight: bold;">SAVED</h6>

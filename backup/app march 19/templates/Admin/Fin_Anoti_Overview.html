@@ -1,0 +1,902 @@
+{% extends 'Admin/Fin_AdminBase.html' %}
+{% block body %}
+{% if user.is_authenticated %}
+{% load static %}
+<style>
+    @media (max-width:768px) {
+        .h3 {
+            font-size: 20px;
+        }
+
+        .h4 {
+            font-size: 15px;
+        }
+        .row{
+            padding: 2px !important;
+        }
+        .h5{
+            font-size: 13px !important;
+        }
+        .h4{
+            font-size: 13px !important;
+        }
+        h2{
+            font-size: 20px !important;
+        }
+    }
+</style>
+
+<body style="background-color: rgba(176, 199, 205, 0.4);">
+    <div class="body-wrapper">
+        <div class="container-fluid">
+            <div class="card radius-15 mt-3 mb-3">
+
+                <div class="card-body">
+                    <div class="card-title">
+
+                        <h2 class="card-title mb-9 fw-semibold text-center">
+                            {% if data.Login_Id.User_Type == "Company" %}
+                            <b>COMPANY DETAILS</b>
+                            {% else %}
+                            <b>DISTRIBUTOR DETAILS</b>
+                            {% endif %}  
+                        </h2>
+                        <hr>
+                    </div>
+                    <center>
+                        {% if data.Modules_List %}
+                            {% if data.Modules_List.company_id.Image %}
+                            <img class="img-thumbnail" width="30%" src="{{ data.Modules_List.company_id.Image.url }}" alt="">
+                            {% else %}
+                            <img src="{% static 'assets/images/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
+                            {% endif %}
+                        {% else %} 
+                            {% if data1.Image %}
+                            <img class="img-thumbnail" width="30%" src="{{ data1.Image.url }}" alt="">
+                            {% else %}
+                            <img src="{% static 'assets/images/user-1.jpg' %}" width="20%" wi class="img-thumbnail">
+                            {% endif %}  
+                        {% endif %}     
+                    </center>
+                    {% if data.Login_Id.User_Type == "Company" %}
+                        {% if data.Modules_List %}
+                            <h3 class="h3 text-center"><b>{{data.Modules_List.company_id.Company_name}}</b></h3>
+                        {% else %}
+                            <h3 class="h3 text-center"><b>{{data1.Company_name}}</b></h3>
+                        {% endif %}  
+                        
+                    {% else %}  
+                    <h3 class="h3 text-center"><b>{{data1.Login_Id.First_name}} {{data1.Login_Id.Last_name}}</b></h3>
+                    {% endif %}  
+                    <!-- <h3 class="h3 text-center"><b>AthulMon Gp</b></h3> -->
+
+                    <hr>
+                    <div class="row  pb-2 pt-2 p-5">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b>
+                                {% if data.Login_Id.User_Type == "Company" %}
+                                    Company Code 
+                                {% else %}
+                                    Distributor Code 
+                                {% endif %}    
+                            </h5>
+                        </div>
+                        <div class="col">
+                            
+
+                            {% if data.Login_Id.User_Type == "Company" %}
+                                {% if data.Modules_List %}
+                                <h4 class="h4"><b>: {{data.Modules_List.company_id.Company_Code}}</b></h4>
+                                {% else %}
+                                <h4 class="h4"><b>: {{data1.Company_Code}}</b></h4>
+                                {% endif %}
+                            {% else %}
+                                <h4 class="h4"><b>: {{data1.Distributor_Code}}</b></h4>
+                            {% endif %} 
+                        </div>
+                    </div>
+
+                    <div class="row  pb-2 pt-2 p-5">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Email </h5>
+                        </div>
+                        <div class="col">
+                            
+                            {% if data.Modules_List %}
+                            <h4 class="h4"><b>: {{data.Modules_List.company_id.Email}}</b></h4>
+                            {% else %}
+                            <h4 class="h4"><b>: {{data1.Email}}</b></h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> User Name</h5>
+                        </div>
+                        <div class="col">
+                            
+                            {% if data.Modules_List %}
+                            <h4 class="h4"><b> : {{data.Modules_List.company_id.Login_Id.User_name}}</b></h4>
+                            {% else %}
+                            <h4 class="h4"><b> : {{data1.Login_Id.User_name}}</b></h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Contact </h5>
+                        </div>
+                        <div class="col">
+                            
+                            {% if data.Modules_List %}
+                            <h4 class="h4"> <b>: {{data.Modules_List.company_id.Contact}}</b></h4>
+                            {% else %}
+                            <h4 class="h4"> <b>: {{data1.Contact}}</b></h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms (current)</h5>
+                        </div>
+                        <div class="col">
+                            
+                            {% if data.Modules_List %}
+                            {% if data.Modules_List.company_id.Payment_Term %}
+                            <h4 class="h4"> <b>: {{data.Modules_List.company_id.Payment_Term.payment_terms_number}}
+                                {{data.Modules_List.company_id.Payment_Term.payment_terms_value}}</b>
+                            </h4>
+                            {% else %}
+                            <h4 class="h4"> <b>: Trial Period</b></h4>
+                            {% endif %}
+                            
+                            {% else %}
+                            {% if data1.Payment_Term %}
+                            <h4 class="h4 text-danger"> <b>: {{data1.Payment_Term.payment_terms_number}}
+                                {{data1.Payment_Term.payment_terms_value}}</b>
+                            </h4>
+                            {% else %}
+                            <h4 class="h4 text-danger"> <b>: Trial Period</b></h4>
+                            {% endif %}
+
+
+
+                            {% endif %}
+
+                            
+                        </div>
+                    </div>
+                    {% if data.PaymentTerms_updation %}
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> Payment Terms (New)</h5>
+                        </div>
+                        <div class="col">
+                            
+
+                                   
+                            <h4 class="h4 text-success"> <b>: {{data.PaymentTerms_updation.Payment_Term.payment_terms_number}}
+                                {{data.PaymentTerms_updation.Payment_Term.payment_terms_value}}</b>
+                            </h4>
+                                    
+                                    
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="row p-5 pt-3 pb-3">
+                        <div class="col">
+                            <h5 class="h5"><b style="margin-right: 10px;">-> </b> End Date (current)</h5>
+                        </div>
+                        <div class="col">
+                            {% if data.Modules_List %}
+                            <h4 class="h4"> <b> : {{data.Modules_List.company_id.End_date}}</b></h4>
+                            {% else %}
+                            <h4 class="h4"> <b> : {{data1.End_date}}</b></h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <hr>
+                {% if data.Modules_List %}
+                <h3 class="h3 p-5 pb-3 pt-3 text-center"><b><u>Old Modules</u></b></h3>
+                <div class="row p-3" style="margin-left: 20px;">
+                    <div class="col-md-3 p-3">
+                        <h5><u>ITEMS</u></h5>
+
+                        {% if allmodules.Items != NULL %}
+                        <b>-> </b> Items <br>
+                        {% endif %}
+
+
+                        {% if allmodules.Price_List != NULL %}
+                        <b>-> </b>Price List <br>
+                        {% endif %}
+
+                        {% if allmodules.Stock_Adjustment != NULL %}
+                        <b>-> </b> Stock Adjustment <br>
+                        {% endif %}
+
+                       
+
+                    </div>
+
+                    <div class="col-md-3 p-3">
+                        <h5><u>CASH & BANK</u></h5>
+
+                        {% if allmodules.Cash_in_hand != NULL %}
+                        <b>-> </b> Cash in hand <br>
+                        {% endif %}
+
+
+                        {% if allmodules.Offline_Banking  != NULL %}
+                        <b>-> </b>Offline Banking  <br>
+                        {% endif %}
+
+                        
+
+                        {% if allmodules.UPI != NULL %}
+                        <b>-> </b>UPI<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Bank_Holders  != NULL %}
+                        <b>-> </b> Bank Holders  <br>
+                        {% endif %}
+
+                        {% if allmodules.Cheque  != NULL %}
+                        <b>-> </b> Cheque  <br>
+                        {% endif %}
+
+                        {% if allmodules.Loan_Account  != NULL %}
+                        <b>-> </b> Loan Account  <br>
+                        {% endif %}
+
+                       
+
+                    </div>
+
+                    <div class="col-md-3 p-3">
+                        <h5><u>SALES</u></h5>
+
+                        {% if allmodules.Customers != NULL %}
+                        <b>-> </b> Customers<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Invoice  != NULL %}
+                        <b>-> </b>Invoice<br>
+                        {% endif %}
+
+                        {% if allmodules.Estimate != NULL %}
+                        <b>-> </b>Estimate <br>
+                        {% endif %}
+
+                        {% if allmodules.Sales_Order != NULL %}
+                        <b>-> </b>Sales Order<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Recurring_Invoice != NULL %}
+                        <b>-> </b> Recurring Invoice  <br>
+                        {% endif %}
+
+                        {% if allmodules.Retainer_Invoice != NULL %}
+                        <b>-> </b> Retainer Invoice  <br>
+                        {% endif %}
+
+                        {% if allmodules.Credit_Note  != NULL %}
+                        <b>-> </b> Credit Note <br>
+                        {% endif %}
+
+                        {% if allmodules.Payment_Received  != NULL %}
+                        <b>-> </b> Payment Received <br>
+                        {% endif %}
+
+                        {% if allmodules.Delivery_Challan != NULL %}
+                        <b>-> </b> Delivery Challan <br>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="col-md-3 p-3">
+                        <h5><u>PURCHASE</u></h5>
+
+                        {% if allmodules.Vendors != NULL %}
+                        <b>-> </b>Vendors<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Bills  != NULL %}
+                        <b>-> </b>Bills<br>
+                        {% endif %}
+
+                        {% if allmodules.Recurring_Bills != NULL %}
+                        <b>-> </b>Recurring Bills <br>
+                        {% endif %}
+
+                        {% if allmodules.Debit_Note != NULL %}
+                        <b>-> </b>Debit Note<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Purchase_Order != NULL %}
+                        <b>-> </b> Purchase Order  <br>
+                        {% endif %}
+
+                        {% if allmodules.Expenses != NULL %}
+                        <b>-> </b> Expenses  <br>
+                        {% endif %}
+
+                        
+
+                        {% if allmodules.Payment_Made  != NULL %}
+                        <b>-> </b> Payment Made <br>
+                        {% endif %}
+
+                        
+
+                    </div>
+                    <div class="col-md-3 p-3 mt-4">
+                        <h5><u>EWAY BILL</u></h5>
+                        {% if allmodules.EWay_Bill != NULL %}
+                        <b>-> </b> EWay Bill <br>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-3 p-3 mt-4">
+                        <h5><u>ACCOUNTS</u></h5>
+
+                        {% if allmodules.Chart_of_Accounts != NULL %}
+                        <b>-> </b>Chart of Accounts<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Manual_Journal  != NULL %}
+                        <b>-> </b>Manual Journal<br>
+                        {% endif %}
+
+
+                    </div>
+
+                    <div class="col-md-3 p-3 mt-4">
+                        <h5><u>PAYROLL</u></h5>
+
+                        {% if allmodules.Employees != NULL %}
+                        <b>-> </b>Employees<br>
+                        {% endif %}
+
+
+                        {% if allmodules.Employees_Loan  != NULL %}
+                        <b>-> </b>Employees Loan<br>
+                        {% endif %}
+
+                        {% if allmodules.Holiday != NULL %}
+                        <b>-> </b>Holiday<br>
+                        {% endif %}
+
+                        {% if allmodules.Attendance != NULL %}
+                        <b>-> </b>Attendance<br>
+                        {% endif %}
+
+                        {% if allmodules.Salary_Details != NULL %}
+                        <b>-> </b>Salary Details<br>
+                        {% endif %}
+
+
+                    </div>
+                </div>       
+                <hr>
+                
+                    
+                
+                <!-- module update details with added and removed ones -->
+                <h3 class="h3 p-5 pb-3 pt-3 text-center"><b><u>New Modules</u></b></h3>
+                <div class="row mt-3 mb-3">
+                    <div class="col-md-6">
+                        <h5 class="p-5 pb-3 pt-3 text-light"><u>Added Modules</u></h5>
+
+                        {% if added_modules %}
+                        <div class="row p-3" style="margin-left: 20px;">
+                           
+                            <div class="col">
+                                <h5 class="text-light "><u>ITEMS</u></h5>
+                                {% for i in added_modules %}
+
+                                {% if i == "Items" %}
+                                <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Items <br>
+                                {% endif %}
+        
+                                {% if i == "Price_List" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Price List <br>
+                                {% endif %}
+        
+                                {% if i == "Stock_Adjustment" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Stock Adjustment <br>
+                                {% endif %}
+
+                                {% endfor %}
+
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>CASH & BANK</u></h5>
+                                {% for i in added_modules %}
+                                {% if i == "Cash_in_hand" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Cash In Hand <br>
+                                {% endif %}
+        
+                                {% if i == "Offline_Banking" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Offline Banking <br>
+                                {% endif %}
+        
+                                {% if i == " UPI" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; UPI <br>
+                                {% endif %}
+        
+                                {% if i == "Bank_Holders" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Bank Holders <br>
+                                {% endif %}
+        
+                                {% if i == "Cheque" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Cheques <br>
+                                {% endif %}
+        
+        
+                                {% if i == "Loan_Account" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Loan Accounts <br>
+                                {% endif %}
+        
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h5 class="text-light"><u>SALES</u></h5>
+
+                                {% for i in added_modules %}
+
+                                {% if i == "Customers" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Customers <br>
+                                {% endif %}
+    
+                                {% if i == "Invoice" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Invoice <br>
+                                {% endif %}
+    
+                                {% if i == "Estimate" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Estimate <br>
+                                {% endif %}
+    
+                                {% if i == "Sales_Order" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Sale Order <br>
+                                {% endif %}
+        
+                                {% if i == "Recurring_Invoice" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Recurring Invoice <br>
+                                {% endif %}
+        
+                                {% if i == "Retainer_Invoice" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Retainer Invoice <br>
+                                {% endif %}
+                                
+    
+                                {% if i == "Credit_Note" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Credit Note <br>
+                                {% endif %}
+        
+    
+                                {% if i == "Payment_Received" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Payment Received <br>
+                                {% endif %}
+                            
+        
+                                {% if i == "Delivery_Challan" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Delivery Challan <br>
+                                {% endif %}
+        
+                                
+                                {% endfor %}
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>PURCHASE</u></h5>
+
+                                {% for i in added_modules %}
+
+                                {% if i == "Vendors" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Vendors<br>
+                                {% endif %}
+                                {% if i == "Bills" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Bills <br>
+                                {% endif %}
+        
+                                {% if i == "Recurring_Bills" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Recurring Bills<br>
+                                {% endif %}
+        
+                                {% if i == "Debit_Note" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp; Debit Note<br>
+                                {% endif %}
+        
+                                {% if i == "Purchase_Order" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Purchase Order <br>
+                                {% endif %}
+    
+                                {% if i == "Expenses" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Expenses <br>
+                                {% endif %}
+        
+    
+                                {% if i == "Recurring_Expenses" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Recurring Expenses <br>
+                                {% endif %}
+        
+                                
+        
+                                {% if i == "Payment_Made" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Payment Made <br>
+                                {% endif %}
+
+                                {% endfor %}
+                            </div>
+                        </div>
+        
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h5 class="text-light"><u>PAYROLL</u></h5>
+
+                                {% for i in added_modules %}
+
+                                {% if i == "Employees" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Employees <br>
+                                {% endif %}
+    
+                                {% if i == "Employees_Loan" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Employees Loan<br>
+                                {% endif %}
+        
+                                {% if i == "Holiday" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Holiday <br>
+                                {% endif %}
+        
+                                {% if i == "Attendance" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Attendance <br>
+                                {% endif %}
+        
+                                {% if i == "Salary_Details" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Salary Details <br>
+                                {% endif %}
+
+                                {% endfor %}
+                               
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>ACCOUNTS</u></h5>
+        
+                                {% for i in added_modules %}
+
+                                {% if i == "Chart_of_Accounts" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Chart of Accounts <br>
+                                {% endif %}
+        
+                                {% if i == "Manual_Journal" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;Manual Journal <br>
+                                {% endif %}
+        
+                                {% endfor %}
+        
+        
+                            </div>
+                            
+                        </div>
+        
+                        <div class="row p-3" style="margin-left: 20px;">
+                            
+                            <div class="col">
+                                <h5 class="text-light"><u>EWAY BILL</u></h5>
+                                
+                                {% for i in added_modules %}
+
+                                {% if i == "EWay_Bill" %}
+                                 <i class="fa fa-check-circle fa-sm text-light"></i>&nbsp;E-Way Bill <br>
+                                {% endif %}
+        
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+        
+                        
+                        {% else %}
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h6 class="text-white-50">No Modules Added</h6> 
+                            </div>
+                            
+                            
+                        </div>
+                        {% endif %}
+    
+                
+                   
+
+                  
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="p-5 pb-3 pt-3 text-light"><u>Removed Modules</u> </h5>
+
+                        {% if deducted_modules %}
+                        <div class="row p-3" style="margin-left: 20px;">
+                           
+                            <div class="col">
+                                <h5 class="text-light"><u>ITEMS</u></h5>
+
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Items" %}
+                                <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Items <br>
+                                {% endif %}
+        
+                                {% if i == "Price_List" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Price List <br>
+                                {% endif %}
+        
+                                {% if i == "Stock_Adjustment" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Stock Adjustment <br>
+                                {% endif %}
+        
+                                
+                                {% endfor %}
+
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>CASH & BANK</u></h5>
+
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Cash_in_Hand" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Cash In Hand <br>
+                                {% endif %}
+        
+                                {% if i == "Offline_Banking" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Offline Banking <br>
+                                {% endif %}
+        
+                                {% if i == "UPI" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; UPI <br>
+                                {% endif %}
+        
+                                {% if i == "Bank_Holders" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Bank Holders <br>
+                                {% endif %}
+        
+                                {% if i == "Cheque" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Cheques <br>
+                                {% endif %}
+        
+        
+                                {% if i == "Loan_Account" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Loan Accounts <br>
+                                {% endif %}
+        
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h5 class="text-light"><u>SALES</u></h5>
+
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Customers" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Customers <br>
+                                {% endif %}
+    
+                                {% if i == "Invoice" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Invoice <br>
+                                {% endif %}
+    
+                                {% if i == "Estimate" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Estimate <br>
+                                {% endif %}
+    
+                                {% if i == "Sales_Order" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Sale Order <br>
+                                {% endif %}
+        
+                                {% if i == "Recurring_Invoice" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Recurring Invoice <br>
+                                {% endif %}
+        
+                                {% if i == "Retainer_Invoice" == 1 %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Retainer Invoice <br>
+                                {% endif %}
+                                
+    
+                                {% if i == "Credit_Note" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Credit Note <br>
+                                {% endif %}
+        
+    
+                                {% if i == "Payment_Received" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Payment Received <br>
+                                {% endif %}
+                            
+        
+                                {% if i == "Delivery_Challan" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Delivery Challan <br>
+                                {% endif %}
+        
+                                
+                                {% endfor %}
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>PURCHASE</u></h5>
+
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Vendors" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Vendors<br>
+                                {% endif %}
+                                {% if i == "Bills" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Bills <br>
+                                {% endif %}
+        
+                                {% if i == "Recurring_Bills" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Recurring Bills<br>
+                                {% endif %}
+        
+                                {% if i == "Debit_Note" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp; Vendor Credit<br>
+                                {% endif %}
+        
+                                {% if i == "Ourchase_Order" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Purchase Order <br>
+                                {% endif %}
+    
+                                {% if i == "Expenses" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Expenses <br>
+                                {% endif %}
+        
+    
+                                {% if i == "Recurring_Expenses" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Recurring Expenses <br>
+                                {% endif %}
+        
+                                
+        
+                                {% if i == "Payment_Made" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Payment Made <br>
+                                {% endif %}
+
+                                {% endfor %}
+                            </div>
+                        </div>
+        
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h5 class="text-light"><u>PAYROLL</u></h5>
+
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Employees" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Employees <br>
+                                {% endif %}
+    
+                                {% if i == "Employees_Loan" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Employees Loan<br>
+                                {% endif %}
+        
+                                {% if i == "Holiday" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Holiday <br>
+                                {% endif %}
+        
+                                {% if i == "Attendance" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Attendance <br>
+                                {% endif %}
+        
+                                {% if i == "Salary_Details" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Salary Details <br>
+                                {% endif %}
+
+                                {% endfor %}
+                               
+                            </div>
+                            <div class="col">
+                                <h5 class="text-light"><u>ACCOUNTS</u></h5>
+        
+                                {% for i in deducted_modules %}
+
+                                {% if i == "Chart_of_Accounts" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Chart of Accounts <br>
+                                {% endif %}
+        
+                                {% if i == "Manual_Journal" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;Manual Journal <br>
+                                {% endif %}
+        
+                                {% endfor %}
+        
+        
+                            </div>
+                            
+                        </div>
+        
+                        <div class="row p-3" style="margin-left: 20px;">
+                            
+                            <div class="col">
+                                <h5 class="text-light"><u>EWAY BILL</u></h5>
+                                
+                                {% for i in deducted_modules %}
+
+                                {% if i == "EWay_Bill" %}
+                                 <i class="fa fa-times-circle fa-sm text-light"></i>&nbsp;E-Way Bill <br>
+                                {% endif %}
+        
+                                {% endfor %}
+                            </div>
+                            
+                        </div>
+        
+                        
+                        {% else %}
+                        <div class="row p-3" style="margin-left: 20px;">
+                            <div class="col">
+                                <h6 class="text-white-50">No Modules Removed</h6> 
+                            </div>
+                            
+                            
+                        </div>
+                        {% endif %}
+
+
+
+                    </div>
+
+             
+                </div> 
+                <hr>
+                {% endif %}
+                
+                <div class="row pb-5 mt-5">
+                    <div class="col-md-3"></div>
+                    {% if data.Login_Id.User_Type == "Company" %}
+                    <div class="col-md-3">
+                        {% if data.Modules_List %}
+                        <a href="{% url 'Fin_Module_Updation_Accept' data.id %}" class="btn btn-success" style="width: 100%;">ACCEPT</a>
+                        {% else %}
+                        <a href="{% url 'Fin_payment_terms_Updation_Accept' data.id %}" class="btn btn-success" style="width: 100%;">ACCEPT</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        {% if data.Modules_List %}
+                        <a href="{% url 'Fin_Module_Updation_Reject' data.id %}" class="btn btn-danger"  style="width: 100%;">REJECT</a>
+                        {% else %}
+                        <a href="{% url 'Fin_payment_terms_Updation_Reject' data.id %}" class="btn btn-danger"  style="width: 100%;">REJECT</a>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="col-md-3">
+                        <a href="{% url 'Fin_ADpayment_terms_Updation_Accept' data.id %}" class="btn btn-success" style="width: 100%;">ACCEPT</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'Fin_ADpayment_terms_Updation_Reject' data.id %}" class="btn btn-danger"  style="width: 100%;">REJECT</a>
+                    </div>
+                    {% endif %}
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+            </div>
+            
+        </div>
+    </div>
+</body>
+{% endif %}
+{% endblock %}

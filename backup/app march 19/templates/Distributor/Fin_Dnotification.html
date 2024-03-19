@@ -1,0 +1,80 @@
+{% extends 'Distributor/Fin_DBase.html' %}
+{% block body %}
+
+
+<style>
+@media (max-width: 768px) {
+  .msg-name{
+    padding-left: 1px !important;
+  }
+}
+</style>
+<div class="body-wrapper p-3">
+    <div class="container-fluid">
+        {% if noti %}
+        {% for i in noti %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                    {% if i.Modules_List   or i.PaymentTerms_updation %}
+                    
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h6 class="card-title mb-9 fw-semibold"><b>{{i.Title}}</b></h6>
+                                <hr>
+                            </div>
+                            <h6 class="msg-name pl-5">{{i.Discription}}<span class="msg-time float-right" style="color: gray;">{{i.date_created}} {{i.time}}</span></h6>
+                            {% if i.Title != "Payment Terms Alert" %}
+                            <div class="row mt-5">
+                                <div class="col-5"></div>
+                                <div class="col-4"></div>
+                                <div class="col-3">
+                                <a class="btn btn-info btn-sm" href="{% url 'Fin_Dnoti_Overview' i.id %}">View More</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                       
+
+                    {% else %}
+
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h6 class="card-title mb-9 fw-semibold"><b>{{i.Title}}</b></h6>
+                            <hr>
+                        </div>
+                        <h6 class="msg-name pl-5">{{i.Discription}}<span class="msg-time float-right" style="color: gray;">{{i.date_created}} {{i.time}}</span></h6>
+                        {% if i.Discription == "Your Payment Terms End Soon" %}
+                        <center><a href="{% url 'Fin_DProfile' %}"><input type="button" class="btn btn-danger" style="margin-top: 30px;" value="Upgrade Now"></a></center>
+                        {% endif %}
+
+                    </div>
+                    
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                    <a href="">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h5 class="card-title mb-9 fw-semibold text-center"><b> No New Notifications</b></h5>
+                            
+                        </div>
+                        
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+       
+        {% endif %}
+    </div>
+</div>            
+
+
+{% endblock %}

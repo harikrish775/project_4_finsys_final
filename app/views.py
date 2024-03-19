@@ -23250,7 +23250,8 @@ def Fin_recurring_bill_create_page(request):
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
-        pricelist = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
+        pricelist_p = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
+        pricelist_s = Fin_Price_List.objects.filter(Company_id=com.id,type='Sales')
         bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
 
         # Finding next invoice number w r t last invoic number if exists.
@@ -23306,8 +23307,9 @@ def Fin_recurring_bill_create_page(request):
         units = Fin_Units.objects.filter(Company_id = com.company_id_id)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
-        pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
+        pricelist_p = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
         bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
+        pricelist_s = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Sales')
 
         nxtInv = ""
         lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
@@ -23352,7 +23354,7 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist,'nxtRB':nxtInv,'bank':bank})
+    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist_p,'list_s':pricelist_s,'nxtRB':nxtInv,'bank':bank})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
@@ -23396,13 +23398,15 @@ def Fin_recurring_bill_save(request):
         if source == place:
             cgst = request.POST['cgst']  
             sgst = request.POST['sgst']
-            taxAmount_igst = ''
+            taxAmount_igst = None
         else:
-            cgst = 0
-            sgst = 0
+            cgst = None
+            sgst = None
             taxAmount_igst = request.POST['taxAmount']
-            
-        
+        if request.POST['priceListRB']:
+            pricelist = request.POST['priceListRB']
+        else:
+            pricelist = None
         sub_total = request.POST['subTotal'] 
 
         if request.POST['shippingCharge'] :
@@ -23455,7 +23459,7 @@ def Fin_recurring_bill_save(request):
                                         sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
                                         status = status,grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
                                         company=com,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
-                                        repeat_every_id=repeat_every)
+                                        repeat_every_id=repeat_every,pricelist_id=pricelist)
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company=com,login_details_id = sid,recurring_bill_id =newBill.id)
             history.save()
@@ -23498,6 +23502,7 @@ def Fin_recurring_bill_save(request):
             return JsonResponse({'messages': 'Bill created successfully','success':True})
     else:
         return JsonResponse()
+
 
 def Fin_recurring_bill_usercheck(request):
     sid = request.session['s_id']
@@ -23700,6 +23705,7 @@ def Fin_get_item_details(request, item_id):
             com = Fin_Company_Details.objects.get(Login_Id = sid)
             items = Fin_Items.objects.get(Company_id=com.id,id=item_id)
             data = {
+                'id' : int(items.id),
                 'hsn': items.hsn,
                 'price': items.purchase_price,
                 'gst_tax': items.intra_state_tax,
@@ -23713,6 +23719,7 @@ def Fin_get_item_details(request, item_id):
             com = Fin_Staff_Details.objects.get(Login_Id = sid)
             items = Fin_Items.objects.get(Company_id=com.company_id_id,id=item_id)
             data = {
+                'id' : int(items.id),
                 'hsn': items.hsn,
                 'price': items.purchase_price,
                 'gst_tax': items.intra_state_tax,
@@ -23916,8 +23923,9 @@ def Fin_recurring_bill_edit_page(request,pk):
         units = Fin_Units.objects.filter(Company = com)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company=com).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.id)
-        pricelist = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
+        pricelist_p = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
         bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
+        pricelist_s = Fin_Price_List.objects.filter(Company_id=com.id,type='Sales')
         
         
 
@@ -23941,8 +23949,9 @@ def Fin_recurring_bill_edit_page(request,pk):
         units = Fin_Units.objects.filter(Company_id = com.company_id_id)
         acc = Fin_Chart_Of_Account.objects.filter(Q(account_type='Expense') | Q(account_type='Other Expense') | Q(account_type='Cost Of Goods Sold'), Company_id=com.company_id_id).order_by('account_name')
         repeat = Fin_CompanyRepeatEvery.objects.filter(company_id=com.company_id_id)
-        pricelist = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
+        pricelist_p = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
         bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
+        pricelist_s = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Sales')
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
         if recurringBill:
@@ -23955,7 +23964,7 @@ def Fin_recurring_bill_edit_page(request,pk):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist,'bank':bank})
+    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist_p,'list_s':pricelist_s,'bank':bank})
 
 def Fin_recurring_bill_edit_save(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
@@ -23970,6 +23979,8 @@ def Fin_recurring_bill_edit_save(request,pk):
         recur.company_payment_terms_id = request.POST['payment_terms']
         recur.purchase_order_number = request.POST['PurchaseOrderNo']
         recur.payment_method = request.POST['paymentType']
+        if request.POST['priceListRB']:
+            recur.pricelist = request.POST['priceListRB']
 
         if len(request.POST['Cheque']) > 0:
             recur.cheque_number = request.POST['Cheque'] 
@@ -23993,11 +24004,16 @@ def Fin_recurring_bill_edit_save(request,pk):
         #     recur.document = request.FILES['Document']
 
         recur.sub_total = request.POST['subTotal']
-        if request.POST['cgst'] :
-            recur.cgst = request.POST['cgst'] 
-        if request.POST['sgst'] :
-            recur.sgst = request.POST['sgst'] 
-        recur.taxAmount_igst = request.POST['taxAmount']
+
+        if request.POST['placeOfSupply'] == 'Kerala' and request.POST['sourceOfSupply'] == 'Kerala':
+            recur.taxAmount_igst = None
+            recur.cgst = request.POST['cgst']
+            recur.sgst = request.POST['sgst']
+        else:
+            recur.taxAmount_igst = request.POST['taxAmount']
+            recur.cgst = None
+            recur.sgst = None
+
         recur.shipping_charge = request.POST['shippingCharge'] 
         recur.adjustment = request.POST['adjustment'] 
         recur.grand_total = request.POST['grandTotal'] 
@@ -24110,20 +24126,15 @@ def Fin_createVendor_modal(request):
             phn = request.POST['mobile']
 
             if Fin_Vendors.objects.filter(Company = com, first_name__iexact = fName, last_name__iexact = lName).exists():
-                res = f'<script>alert("Vendor `{fName} {lName}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Vendor already exists, try another!','success':False})
             elif Fin_Vendors.objects.filter(Company = com, gstin__iexact = gstIn).exists():
-                res = f'<script>alert("GSTIN `{gstIn}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'GSTIN numeber already exists, try another!','success':False})
             elif Fin_Vendors.objects.filter(Company = com, pan_no__iexact = pan).exists():
-                res = f'<script>alert("PAN No `{pan}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'PAN No already exists, try another!','success':False})
             elif Fin_Vendors.objects.filter(Company = com, mobile__iexact = phn).exists():
-                res = f'<script>alert("Phone Number `{phn}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Phone Number already exists, try another!','success':False})
             elif Fin_Vendors.objects.filter(Company = com, email__iexact = email).exists():
-                res = f'<script>alert("Email `{email}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Email already exists, try another!','success':False})
 
             vnd = Fin_Vendors(
                 Company = com,
@@ -24187,20 +24198,15 @@ def Fin_createCustomer_modal(request):
             phn = request.POST['mobile']
 
             if Fin_Customers.objects.filter(Company = com, first_name__iexact = fName, last_name__iexact = lName).exists():
-                res = f'<script>alert("Customer `{fName} {lName}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Customer already exists, try another!','success':False})
             elif Fin_Customers.objects.filter(Company = com, gstin__iexact = gstIn).exists():
-                res = f'<script>alert("GSTIN `{gstIn}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'GSTIN number already exists, try another!','success':False})
             elif Fin_Customers.objects.filter(Company = com, pan_no__iexact = pan).exists():
-                res = f'<script>alert("PAN No `{pan}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'PAN No already exists, try another!','success':False})
             elif Fin_Customers.objects.filter(Company = com, mobile__iexact = phn).exists():
-                res = f'<script>alert("Phone Number `{phn}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Phone Number already exists, try another!','success':False})
             elif Fin_Customers.objects.filter(Company = com, email__iexact = email).exists():
-                res = f'<script>alert("Email `{email}` already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':'Email already exists, try another!','success':False})
 
             cust = Fin_Customers(
                 Company = com,
@@ -24286,11 +24292,9 @@ def Fin_createNewItem_modal(request):
             
             #save item and transaction if item or hsn doesn't exists already
             if Fin_Items.objects.filter(Company=com, name__iexact=name).exists():
-                res = f'<script>alert("{name} already exists, try another!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':"Name already exists, try another!",'success':False})
             elif Fin_Items.objects.filter(Company = com, hsn__iexact = hsn).exists():
-                res = f'<script>alert("HSN - {hsn} already exists, try another.!");window.history.back();</script>'
-                return HttpResponse(res)
+                return JsonResponse({'msg':"HSN already exists, try another!",'success':False})
             else:
                 item = Fin_Items(
                     Company = com,
@@ -24347,9 +24351,10 @@ def Fin_saveItemUnit_modal(request):
 
         if request.method == "POST":
             Name = request.POST['name'].upper()
-
+            
             if Fin_Units.objects.filter(Company = com, name = Name).exists():
-                return JsonResponse({'status':False, 'message':'Unit already exists.!'})
+                return JsonResponse({'status':False, 'msg':'Unit already exists.!'})
+
             else:
                 unit = Fin_Units(
                     Company = com,
@@ -24571,8 +24576,6 @@ def Fin_shareRBToEmail(request,id):
             messages.error(request, f'{e}')
             return redirect(Fin_recurring_bill_overview, id)
 
-
-
 def Fin_get_bank_details(request,bank_id):
         bank = Fin_Banking.objects.get(id=bank_id)
         data = {
@@ -24580,7 +24583,47 @@ def Fin_get_bank_details(request,bank_id):
         }
         return JsonResponse(data)
         
-    
+def Fin_check_hsn_RB(request):
+    hsnVal = request.POST['hsn']
+    s_id = request.session['s_id']
+    data = Fin_Login_Details.objects.get(id = s_id)
+    if data.User_Type == 'Company':
+        com = Fin_Company_Details.objects.get(Login_Id=s_id)
+    else:
+        com = Fin_Staff_Details.objects.get(Login_Id = s_id).company_id
+        
+    if Fin_items.objects.filter(Company=com,hsn=hsnVal).exists():
+        data = {
+            'status':True
+        }
+        return JsonResponse(data)
+    else:
+        data = {
+            'status':False
+        }
+        return JsonResponse(data)
+
+def Fin_get_pricelist_details(request,price_id,items_id):
+    plist = Fin_Price_List.objects.get(id=price_id)
+
+    if plist.item_rate == "Customized individual rate":
+        lists = Fin_PriceList_Items.objects.filter(list_id=price_id,item_id=items_id)
+        cusRate = lists.custom_rate
+        return JsonResponse({'opr':'Custom','customerRate':cusRate})
+        
+    else:
+        if plist.up_or_down == 'Markup':
+            perc = int(plist.percentage)
+            return JsonResponse({'opr':'UP','perc':perc})
+        else:
+            perc = int(plist.percentage)
+            return JsonResponse({'opr':'DOWN','perc':perc
+            })
+
+
+
+
+
         
         
     

@@ -1,0 +1,323 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<!-- Include xlsx library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<style>
+    table tr td{
+        font-size: larger;
+    }
+    
+    table tbody tr:hover{
+        background-color: #5a7684;
+    }
+
+</style>
+    <!-- <div style="float: right;font-size: larger;" class="mr-5">Company : {{companyName}}</div> -->
+    <div class="page-content ">
+        <div class="card radius-15">
+            
+            <div class="card-body">
+                <center><h2>ALL HOLIDAYS </h2></center><br>
+                
+                <div class="row">
+                    <div class="col-3 ml-1">
+                        <input type="search" placeholder="Search... " id="holidaySearchInput" onkeyup="searchHoliday()" class="form-control ">                         
+                    </div>
+
+                    <div class="dropdown show">
+                        <a class="btn btn-outline-secondary text-grey" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-sort"></i> Sort by
+                        </a>
+                      
+                        <div class="dropdown-menu"  >
+                          <a class="dropdown-item" id="drop1" style="cursor: pointer;" >All</a>
+                          <a class="dropdown-item" id="drop2"  style="cursor: pointer;" >Sort By Month</a>
+                          <a class="dropdown-item" id="drop3"  style="cursor: pointer;" >Sort By Year</a>
+                        </div>
+                      </div>
+
+                    <div class="col-3 ml-auto">
+                        <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
+                        <a class="btn btn-outline-secondary text-grey" href="{% url 'holiday_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
+                    </div>
+                    
+                </div>
+
+                <br><br><br>
+
+                <div class="table-responsive" >
+                    <table class="table ml-3" style="width: 95%;text-align: center;" id="holiday">
+                        <thead>
+                            <tr>
+                                <th>Sl No.</th>
+                                <th>MONTH</th>
+                                <th>YEAR</th>
+                                <th>HOLIDAYS</th>
+                                <th>WORKING DAYS</th>
+                                
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                           
+                            {% for i in holiday %}
+                            <tr onclick="window.location.href='/holiday_calendar_view/{{i.month}}/{{i.year}}';" style="cursor: pointer;">
+                                <td id="month" onclick="">{{i.month}}</td>
+                                <td>{{i.year}}</td>
+                                <td>{{i.total_holiday}}</td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+
+
+// -----------------------------------------------------------------------------------
+// excel
+
+document.getElementById('exportButton').addEventListener('click', function () {
+        exportToExcel('holiday');
+    });
+
+    function exportToExcel(tableId) {
+        var table = document.getElementById(tableId);
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'Holiday_Table.xlsx');
+    }
+
+
+// -----------------------------------------------------------------------------------
+// month number to name
+
+function getMonthName(monthNumber) {
+        const months = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Ensure the monthNumber is valid (between 1 and 12)
+        if (monthNumber >= 1 && monthNumber <= 12) {
+            return months[monthNumber - 1];
+        } else {
+            return "Invalid Month";
+        }
+    }
+
+    function getTotalDates(year, monthNumber) {
+    // Create a new Date object for the first day of the next month (monthNumber + 1)
+    const nextMonthFirstDay = new Date(year, monthNumber, 1);
+
+    // Subtract one day from the first day of the next month to get the last day of the current month
+    const lastDayOfMonth = new Date(nextMonthFirstDay - 1);
+
+    // Get the day of the month (the last day of the current month)
+    return lastDayOfMonth.getDate();
+}
+
+// Automatically convert month numbers to month names on page load
+document.addEventListener('DOMContentLoaded', function () {
+    const tableRows = document.querySelectorAll('#holiday tbody tr');
+
+    tableRows.forEach(row => {
+        const yearCell = row.querySelector('td:nth-child(2)');
+        const monthNumberCell = row.querySelector('td:nth-child(1)');
+        const leaveCell = row.querySelector('td:nth-child(3)');
+        const totalDatesCell = row.querySelector('td:nth-child(4)');
+
+        if (yearCell && monthNumberCell && leaveCell) {
+            const year = parseInt(yearCell.textContent, 10);
+            const monthNumber = parseInt(monthNumberCell.textContent, 10);
+            const monthName = getMonthName(monthNumber);
+
+            // Update the content of the third td element with the month name
+            monthNumberCell.textContent = monthName;
+
+            // Get the total dates
+            const totalDates = getTotalDates(year, monthNumber);
+
+             // Count the number of Sundays in the month
+             let numberOfSundays = 0;
+            for (let i = 1; i <= totalDates; i++) {
+                const currentDate = new Date(year, monthNumber - 1, i);
+                if (currentDate.getDay() === 0) {
+                    numberOfSundays++;
+                }
+            }
+
+            // Subtract the number of leave & sundays from the total dates
+            const leave = parseInt(leaveCell.textContent, 10) || 0;
+            const remainingDays = totalDates - (leave ); // add + numberOfSundays for adding sundays holiday
+
+            
+
+            // Update the content of the fourth td element with the remaining days
+            totalDatesCell.textContent = ` ${remainingDays} Days`;
+        }
+    });
+});
+
+    
+    // ------------------------------------------------------------------------------------------------
+    // index number
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get the table element
+    var table = document.getElementById('holiday');
+
+    // Get all rows in the table body
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    // Loop through each row and add an index number
+    for (var i = 0; i < rows.length; i++) {
+        var cell = document.createElement('td');
+        cell.textContent = i + 1; // Index starts from 1
+        rows[i].insertBefore(cell, rows[i].firstChild);
+    }
+});
+
+// ------------------------------------------------------------------------------------------
+// search function
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Get the table element
+        var table = document.getElementById('holiday');
+
+        // Get all rows in the table body
+        var rows = table.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
+
+        // Loop through each row and add an index number
+        for (var i = 0; i < rows.length; i++) {
+            var cell = document.createElement('td');
+            cell.textContent = i + 1; // Index starts from 1
+            rows[i].insertBefore(cell, rows[i].firstChild);
+        }
+    });
+
+    function searchHoliday() {
+    // Declare variables
+    var input, filter, table, tbody, tr, td, i, txtValue;
+    input = document.getElementById("holidaySearchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("holiday");
+    tbody = table.getElementsByTagName("tbody")[0];
+    tr = tbody.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those that don't match the search query in the first two columns
+    for (i = 0; i < tr.length; i++) {
+        var found = false;
+        // Loop through the first two td elements within each row
+        for (var j = 1; j < 3; j++) {
+            td = tr[i].cells[j];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    found = true;
+                    break; // Break if a match is found in the first two columns
+                }
+            }
+        }
+        tr[i].style.display = found ? "" : "none";
+    }
+}
+
+
+
+// --------------------------------------------------------------------------------------------
+// sort
+
+// Declare table variable globally
+var table = document.getElementById("holiday");
+
+// Function to sort the table based on the selected column
+function sortByColumn(columnIndex) {
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+        for (i = 0; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[columnIndex].innerText;
+            y = rows[i + 1].getElementsByTagName("td")[columnIndex].innerText;
+
+            if (columnIndex === 1) {
+                // Convert month names to month numbers for sorting
+                x = convertMonthNameToNumber(x);
+                y = convertMonthNameToNumber(y);
+            }
+
+            if (columnIndex === 2) {
+                // Convert years to integers for sorting
+                x = parseInt(x);
+                y = parseInt(y);
+            }
+
+            if (x > y) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+// Event listener for "Sort By Month" dropdown item
+document.getElementById("drop2").addEventListener("click", function () {
+    sortByColumn(1); // Assuming month is in the second column
+});
+
+// Event listener for "Sort By Year" dropdown item
+document.getElementById("drop3").addEventListener("click", function () {
+    sortByColumn(2); // Assuming year is in the third column
+});
+
+// Function to convert month names to month numbers for sorting
+function convertMonthNameToNumber(monthName) {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    return months.indexOf(monthName) + 1;
+}
+
+
+
+</script>
+    
+{% endblock %}

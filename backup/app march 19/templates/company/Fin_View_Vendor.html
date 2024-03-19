@@ -1,0 +1,1029 @@
+<!-- Created -- shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+<style>
+    .filterTable-column .dropdown-toggle::after{
+        content: none;
+    }
+    .filterTable-column .btn:focus{
+        box-shadow: none;
+    }
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    #logic {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #logic th, #logic td {
+        text-align: center;
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+    .submitShareEmailBtn, #commentSaveBtn {
+        background: #192d3e;
+        border: 1px solid #3a4b5a;
+        border-radius: 4px;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+    }
+    .submitShareEmailBtn:hover, #commentSaveBtn:hover {
+        background: #3a4b5a;
+    }
+    .customer_data p{
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    @media print {
+        body{
+            visibility: hidden !important;
+            background-color: white;
+        }
+
+        .printContainer {
+            visibility: visible !important;
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: medium;
+        }
+
+    }
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<div class="page-content ">
+    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_vendors' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+    <div class="card radius-15">
+        <div class="card-body" style="width:100%;">
+            <div class="card-title">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="overview()" id="overviewBtn" >Overview</a>
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="transaction()" id="transactionBtn" > Transactions</a>
+                            <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="statement()" id="statementBtn" > Statement</a>
+                        </div> 
+
+                        <div class="col-md-6 d-flex justify-content-end">
+                            {% if vendor.status == 'Inactive' %}
+                            <a href="{% url 'Fin_changeVendorStatus' vendor.id 'Active' %}" id="activeBtn" class="ml-2 fa fa-ban btn btn-outline-secondary text-grey" role="button" >&nbsp;Inactive</a> 
+                            {% else %}
+                            <a href="{% url 'Fin_changeVendorStatus' vendor.id 'Inactive' %}" id="inactiveBtn" class="ml-2 fa fa-check-circle btn btn-outline-secondary text-grey" role="button" >&nbsp;Active</a> 
+                            {% endif %}
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-table" role="button" id="exportBtn" style="display: none;" onclick="ExportToExcel('xlsx')">&nbsp;Export</a>
+                            <a href="{% url 'Fin_vendorTransactionsPdf' vendor.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-file" role="button" id="pdfBtn" style="display: none;"> &nbsp;PDF</a> 
+                            <a class="ml-2 btn btn-outline-secondary text-grey fa fa-print" role="button" id="printBtn" style="display: none; " onclick="templatePrint()">&nbsp;Print</a>
+                            <div class="dropdown p-0 nav-item"  id="shareBtn" style="display: none;">
+                                <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" data-toggle="dropdown">&nbsp;Share</li>
+                                <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                    <li style="text-align: center;" >{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
+                                    <li style="text-align: center;color: #e5e9ec; cursor: pointer;" data-toggle="modal" data-target="#shareToEmail">Email</li>
+                                </ul>
+                            </div>
+                            <a href="{% url 'Fin_editVendor' vendor.id %}" class="ml-2 fa fa-pencil btn btn-outline-secondary text-grey" id="editBtn" role="button">&nbsp;Edit</a>
+                            <a href="{% url 'Fin_deleteVendor' vendor.id %}" class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" id="deleteBtn" role="button" onclick="return confirm('Are you sure you want to delete Vendor - {{vendor.first_name}}.?')">&nbsp;Delete</a>
+                            <a href="#"  class="ml-2 btn btn-outline-secondary text-grey fa fa-comments" id="commentsBtn" role="button" data-toggle="modal" data-target="#commentModal">&nbsp;Comment</a>
+                            <a href="{% url 'Fin_vendorHistory' vendor.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                        </div>
+                    </div> 
+                </div>
+                <center>
+                    <h3 class="card-title">VENDOR OVERVIEW</h3>
+                </center>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+        <div class="card-body p-0">
+
+            <div id="overview">
+                <div class="row g-0 mx-0">
+                    <div class="col-lg-8">
+                        <div class="history_highlight pt-3 px-2 d-flex">
+                            <div class="col-12 d-flex justify-content-start align-items-center">
+                                {% if history %}{% if history.action == 'Created' %}<p class="text-success m-0" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text-warning m-0" style="font-size: 1.07rem; font-weight: 500;">Last Edited by :</p>{% endif %}{% endif %}
+                                <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{history.LoginDetails.First_name}} {{history.LoginDetails.Last_name}}</span>
+                                <span class="ml-5">{{history.date}}</span>
+                            </div>
+                        </div>
+
+                        <div class="pb-3 px-2">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <div class="row">
+                                        <div class="col mt-3">
+                                            <h2 class="mb-0">{{ vendor.title }}. {{ vendor.first_name }} {{ vendor.last_name }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Company</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.company }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Email</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.email }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Mobile</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.mobile }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Website</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.website }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Location</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.location }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Place of Supply</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.place_of_supply }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Payment Terms</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.payment_terms.term_name }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Price List</h6>
+                                    </div>
+                                    <div class="col-md-1 mt-3">
+                                        :
+                                    </div>
+                                    <div class="col-md-3 mt-3">
+                                        <p class="mb-0">{{ vendor.price_list.name }}</p>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="row ">
+                                    <div class="col-md-6" >
+                                        <div class="card-content bg-transparent border-0 ml-4" >
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5 class="ml-3" style="text-align: center;">Billing Address</h5>
+                                                    <hr>
+                                                </div>
+                                            </div><br>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3" >
+                                                    <h6 class="mb-0">Street</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.billing_street }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">City</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.billing_city }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">State</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.billing_state }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Pincode</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.billing_pincode }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Country</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.billing_country }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-content bg-transparent border-0" >
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5 class="ml-3" style="text-align: center;">Shipping Address</h5>
+                                                    <hr>
+                                                </div>
+                                            </div><br>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3" >
+                                                    <h6 class="mb-0">Street</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.ship_street }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">City</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.ship_city }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">State</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.ship_state }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Pincode</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.ship_pincode }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-0">Country</h6>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    :
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <p class="mb-0" style="text-align: right;">{{ vendor.ship_country }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey">
+
+                        <div class="px-3">
+                            <h3 class="fw-bold mb-2 mt-4 pt-1">Vendor Details</h3>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Status</h6>
+                                {% if vendor.status == 'Active' %} <i class="fa fa-check-circle text-success">&nbsp;ACTIVE</i>{% else %}<i class="fa fa-ban text-danger">&nbsp;INACTIVE</i>{% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">GST Type</h6>
+                                {{ vendor.gst_type }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">GSTIN</h6>
+                                {{ vendor.gstin|default:None }}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">PAN</h6>
+                                {{ vendor.pan_no}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Opening Bal.</h6>
+                                {{ vendor.opening_balance}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Credit Limit</h6>
+                                {{ vendor.credit_limit}}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Balance</h6>
+                                {{ vendor.current_balance}}
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="transaction" style="display: none;" >
+                <div class="row mt-3 mb-3">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <div class="row mt-3">
+                            <h3 style="margin-left: 15px;"><strong>{{vendor.title}}.{{ vendor.first_name }} {{ vendor.last_name }}</strong></h3>
+                        </div>
+                        <div class="row mt-4 mb-3">
+                            <div class="col-md-4">
+                                <p>Mobile : <strong>{{vendor.mobile}}</strong></p>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <p>GSTIN : <strong>{{vendor.gstin}}</strong></p>
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-md-4">
+                                <p>Email : <strong>{{vendor.email}}</strong></p>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <span class="font-weight-bold" style="font-size: 1.9rem;">Balance:<span id="vendorBalance" class="text-info ml-2 font-weight-bold" style="font-size: 2.2rem;">{{BALANCE}}</span></span>
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-md-4">
+                                <p>
+                                    {% if vendor.credit_limit != 0 %}
+                                        Credit Limit: <strong>{{ vendor.credit_limit }}</strong>
+                                    {% else %}
+                                        No Credit Limit Set
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4"></div>
+                        </div>
+                        <hr>
+                        <div class="row mt-4 d-flex justify-content-between">
+                            <h5 style="margin-left: 15px;"><strong>Transactions</strong></h5>
+                            <input type="text" id="search" class="form-control w-25" placeholder="Search.." autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+                <div class="row mt-4 mb-5">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <table id="dataTable" class="table tabledata  table-bordered table-hover" style="border-width: 2px;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th class="filterTable-column">Type
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-filter" style="font-size: 1rem;"></i>
+                                            </button>
+                                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuType">
+                                                <select id="typeFilterCondition" class="form-control form-control-sm">
+                                                    <option value="equals_to">Equals To</option>
+                                                </select>
+                                                <input type="text" id="typeFilter" placeholder="Type" class="form-control form-control-sm mt-1" required>
+                                                <div class="d-flex mt-1">
+                                                    <input type="button" onclick="clearSearch('typeFilter',this)" class="btn btn-sm btn-info mr-1" style="width: 49%;" value="CLEAR" />
+                                                    <input type="button" onclick="filterSearchValues(1,'typeFilter',this)" class="btn btn-sm btn-info" style="width: 49%;" value="APPLY" />
+                                                </div>
+                                            </div>
+                                        </span>                                            
+                                    </th>
+                                    <th class="filterTable-column">Number
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuNumber" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-filter" style="font-size: 1rem;"></i>
+                                            </button>
+                                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuNumber">
+                                                <select id="numberFilterCondition" class="form-control form-control-sm">
+                                                    <option value="equals_to">Equals To</option>
+                                                </select>
+                                                <input type="text" id="numberFilter" placeholder="Number" class="form-control form-control-sm mt-1" required>
+                                                <div class="d-flex mt-1">
+                                                    <input type="button" onclick="clearSearch('numberFilter',this)" class="btn btn-sm btn-info mr-1" style="width: 49%;" value="CLEAR" />
+                                                    <input type="button" onclick="filterSearchValues(2,'numberFilter',this)" class="btn btn-sm btn-info" style="width: 49%;" value="APPLY" />
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </th>
+
+                                    <th class="filterTable-column">Date
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuDate" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-filter" style="font-size: 1rem;"></i>
+                                            </button>
+                                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuDate">
+                                                <select id="dateFilterCondition" class="form-control form-control-sm">
+                                                    <option value="equals_to">Equals To</option>
+                                                </select>
+                                                <input type="date" id="dateFilter" class="form-control form-control-sm mt-1" required>
+                                                <div class="d-flex mt-1">
+                                                    <input type="button" onclick="clearSearch('dateFilter',this)" class="btn btn-sm btn-info mr-1" style="width: 49%;" value="CLEAR" />
+                                                    <input type="button" onclick="filterSearchValues(3,'dateFilter',this)" class="btn btn-sm btn-info" style="width: 49%;" value="APPLY" />
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </th>
+                                    
+                                    <th class="filterTable-column">Total
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuTotal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-filter" style="font-size: 1rem;"></i>
+                                            </button>
+                                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuTotal">
+                                                <select id="totalFilterCondition" class="form-control form-control-sm">
+                                                    <option value="equals_to">Equals To</option>
+                                                </select>
+                                                <input type="number" id="totalFilter" placeholder="Total" class="form-control form-control-sm mt-1" required>
+                                                <div class="d-flex mt-1">
+                                                    <input type="button" onclick="clearSearch('totalFilter',this)" class="btn btn-sm btn-info mr-1" style="width: 49%;" value="CLEAR" />
+                                                    <input type="button" onclick="filterAmount(4,'totalFilter',this)" class="btn btn-sm btn-info" style="width: 49%;" value="APPLY" />
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </th>
+
+                                    <th class="filterTable-column">Balance
+                                        <span class="dropdown">
+                                            <button class="btn dropdown-toggle text-white" type="button" id="dropdownMenuBalance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-filter" style="font-size: 1rem;"></i>
+                                            </button>
+                                            <div class="dropdown-menu p-2" aria-labelledby="dropdownMenuBalance">
+                                                <select id="balanceFilterCondition" class="form-control form-control-sm">
+                                                    <option value="equals_to">Equals To</option>
+                                                </select>
+                                                <input type="number" id="balanceFilter" placeholder="Balance" class="form-control form-control-sm mt-1" required>
+                                                <div class="d-flex mt-1">
+                                                    <input type="button" onclick="clearSearch('balanceFilter',this)" class="btn btn-sm btn-info mr-1" style="width: 49%;" value="CLEAR" />
+                                                    <input type="button" onclick="filterAmount(5,'balanceFilter',this)" class="btn btn-sm btn-info" style="width: 49%;" value="APPLY" />
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in combined_data %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td><strong>{{data.Type}}</strong></td>
+                                    <td>{{data.Number}}</td>
+                                    <td>{{data.Date|date:'Y-m-d'}}</td>
+                                    <td>{{data.Total}}</td>
+                                    <td>{{data.Balance}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+            </div>
+
+            <div id="statement" style="display: none;" >
+                <div class="container-fluid" >
+                    <div class="py-5">
+                        <div class="row">
+                            <div class="col-sm-12 d-flex justify-content-between align-items-center">
+                                <div class="date_range d-flex">
+                                    <div class="form-group">
+                                        <label for="from">From</label>
+                                        <input type="date" class="form-control" id="fromDate">
+                                    </div>
+                                    <div class="form-group ml-2">
+                                        <label for="from">To</label>
+                                        <input type="date" class="form-control" id="toDate">
+                                    </div>
+                                </div>
+                                <div class="run_report">
+                                    <button class="btn btn-outline-secondary text-white btn-sm ml-2">Run Report</button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mt-4">
+                            <div class="col-md-7" style="margin: auto;">
+                                <div class="card">
+                                    <div class="card-block1">
+                                        <div id="printContent" class="print-container card-body">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-sm-offset-1" style="padding:20px;">
+                                                        <div class="widget-box">
+                                                            <div class="widget-header widget-header-large py-3 px-4" style="background-color: #343a40;padding: 1.1rem 1rem;">
+                                                                <h5 class="widget-title mb-4 print-visible" style="color: white;">
+                                                                    <strong><span style="color: #fff; font-size: 1.3rem; font-weight: bold;">Statement of {{vendor.title}}. {{vendor.first_name}} {{vendor.last_name}}</span></strong>
+                                                                </h5>  
+                                                                <span id="df" style="border: none;color: #F7F7F7;background-color: #343a40;">{{vendor.date|date:'Y-m-d'}}</span> <span style="color: white;">to</span>
+                                                                <span id="dl" style="border: none; background-color: none;color: #F7F7F7;background-color: #343a40;">{% now 'Y-m-d' %}</span>
+                                                            </div>
+                                            
+                                                            <div class="widget-body bg-white" style="padding: 1rem 0.5rem;">
+                                                                <div class="widget-main">
+                                                                    <div class="row"  style="padding:20px;" >
+                                                                        <div class="col-sm-12" style="display: flex;">
+                                                                            <div class="col-6" style="width: 50%;">
+                                                                                <div style="width:20px;">
+                                                                                    {% if cmp.Image %}<img src="{{cmp.Image.url}}" style="width: 25px;">{% endif %}
+                                                                                </div>
+                                                                                <p style="color:black;"><strong>{{ cmp.Company_name }}</strong> <br>
+                                                                                    {{cmp.City}} <br>
+                                                                                    {{cmp.State}},{{cmp.Country}} <br>
+                                                                                    {{cmp.Email}}<br>
+                                                                                    {{cmp.Pincode}}<br>
+                                                                                </p>  
+                                                                            </div>
+                                                                            <div style="width: 50%;padding-top:1rem;">
+                                                                                <p style="color:black;">To,<br><strong>{{vendor.first_name}} {{vendor.last_name}}</strong><br>
+                                                                                    {{vendor.billing_street}},{{vendor.billing_city}}<br>
+                                                                                    {{vendor.billing_state}},{{vendor.billing_country}}<br>
+                                                                                    {{vendor.billing_pincode }}<br>
+                                                                                    {{vendor.email}}<br>
+                                                                                    {{vendor.mobile}}<br>
+                                                                                </p>
+                                                                            </div>
+                                                                        
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="row">
+                                                                        <div style="display: flex; width: 75%; justify-content: end;">
+                                                                            <table style="color:black;">
+                                                                                <tr>
+                                                                                    <th class="text-black">Account Summary</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th>Opening balance</th>
+                                                                                    <th>:</th>
+                                                                                    <th>{{vendor.opening_balance}}</th>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <th>Balance</th>
+                                                                                    <th>:</th>
+                                                                                    <th>{{BALANCE}}</th>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12" style="margin-bottom: 1.5rem; margin-top: 1rem;">
+                                                                    <!-- <table id="logic" class="table table-bordered" width="100%" style=" color:white; background-color: #545455;"> -->
+                                                                    <table id="logic" class="table table-hover" width="100%">
+                                                                        <thead class="" style="background: #22b8d1;">
+                                                                            <tr>
+                                                                                <th style="padding:1.2rem 0.5rem; color: black;">Date</th>
+                                                                                <th style="padding:1.2rem 0.5rem; color: black;">Type</th>
+                                                                                <th style="padding:1.2rem 0.5rem; color: black;">Number</th>
+                                                                                <th style="padding:1.2rem 0.5rem; color: black;">Total</th>
+                                                                                <th style="padding:1.2rem 0.5rem; color: black;">Balance</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {% for data in combined_data %}
+                                                                                <tr style="padding: 1.2rem 0.5rem;">
+                                                                                    <td style="padding: 1.2rem 0.5rem; color: black;">{{data.Date|date:'d-m-Y'}}</td>
+                                                                                    <td style="font-family: monospace; padding: 1.2rem 0.5rem; color: black;"><strong>{{data.Type}}</strong></td>
+                                                                                    <td style="padding: 1.2rem 0.5rem; color: black;">{{data.Number}}</td>
+                                                                                    <td style="padding: 1.2rem 0.5rem; color: black;">{{data.Total}}</td>
+                                                                                    <td style="padding: 1.2rem 0.5rem; color: black;">{{data.Balance}}</td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                            <!-- <br>
+                                                                            <tr >
+                                                                                <th style="padding:1.2rem 0.5rem;" colspan="4">BALANCE</th>
+                                                                                <th >{{BALANCE}}</th>
+                                                                            </tr> -->
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Share To Email Modal -->
+<div class="modal fade" id="shareToEmail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Share Vendor Transactions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form action="{% url 'Fin_shareVendorTransactionsToEmail' vendor.id %}" method="post" class="needs-validation" id="share_to_email_form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="emailIds">Email IDs</label>
+                            <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="item_unitname">Message(optional)</label>
+                            <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+                    <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase">SEND MAIL</button>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- Add Comments Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{% url 'Fin_addVendorComment' vendor.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <textarea type="text" class="form-control" name="comment" placeholder="Add Comments.." required></textarea>
+                    {% if not comments %}
+                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                    {% else %}
+                    <div class="container-fluid">
+                        <table class="table mt-4">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">sl no.</th>
+                                    <th class="text-center">Comment</th>
+                                    <th class="text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in comments %}
+                                <tr class="">
+                                    <td class="text-center">{{forloop.counter }}</td>
+                                    <td class="text-center">{{c.comments}}</td>
+                                    <td class="text-center"><a class="text-danger" href="{% url 'Fin_deleteVendorComment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')"><i class="fa fa-trash" style="font-size: 1.1rem;"></i></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function ($) {
+        $(".table-row").click(function () {
+            window.document.location = $(this).data("href");
+        });
+    });
+
+
+    function overview() {
+        document.getElementById('overview').style.display = 'block';
+        document.getElementById('transaction').style.display = 'none';
+        document.getElementById('statement').style.display = 'none';
+        document.getElementById('overviewBtn').style.backgroundColor='rgba(22,37,50,255)'
+        document.getElementById('transactionBtn').style.backgroundColor='transparent';
+        document.getElementById('statementBtn').style.backgroundColor='transparent';
+        $('#shareBtn').hide();
+        $('#printBtn').hide();
+        $('#pdfBtn').hide();
+        $('#editBtn').show();
+        $('#exportBtn').hide();
+        $('#deleteBtn').show();
+        $('#historyBtn').show();
+        $('#activeBtn').show();
+        $('#inactiveBtn').show();
+        $('#commentsBtn').show();
+    }
+    
+    function transaction() {
+        document.getElementById('overview').style.display = 'none';
+        document.getElementById('statement').style.display = 'none';
+        document.getElementById('transaction').style.display = 'block';
+        document.getElementById('overviewBtn').style.backgroundColor='transparent';
+        document.getElementById('statementBtn').style.backgroundColor='transparent';
+        document.getElementById('transactionBtn').style.backgroundColor='rgba(22,37,50,255)';
+        $('#shareBtn').hide();
+        $('#printBtn').hide();
+        $('#pdfBtn').hide();
+        $('#editBtn').hide();
+        $('#exportBtn').show();
+        $('#deleteBtn').hide();
+        $('#historyBtn').show();
+        $('#commentsBtn').show();
+        $('#activeBtn').hide();
+        $('#inactiveBtn').hide();
+    }
+
+    function statement() {
+        document.getElementById('overview').style.display = 'none';
+        document.getElementById('transaction').style.display = 'none';
+        document.getElementById('statement').style.display = 'block';
+        document.getElementById('overviewBtn').style.backgroundColor='transparent';
+        document.getElementById('transactionBtn').style.backgroundColor='transparent';
+        document.getElementById('statementBtn').style.backgroundColor='rgba(22,37,50,255)';
+        $('#printBtn').show();
+        $('#pdfBtn').show();
+        $('#shareBtn').show();
+        $('#deleteBtn').hide();
+        $('#editBtn').hide();
+        $('#exportBtn').hide();
+        $('#historyBtn').show();
+        $('#commentsBtn').hide();
+        $('#activeBtn').hide();
+        $('#inactiveBtn').hide();
+    }
+
+    function printSection(sectionId) {
+        document.body.style.backgroundColor = 'white';
+        $('#transaction, #transaction *').css('color', 'black');
+
+        var printContents = document.getElementById(sectionId).innerHTML;
+        var $printerDiv = $('<div class="printContainer"></div>');
+        $printerDiv.html(printContents);
+        $('body').append($printerDiv).addClass("printingContent");
+
+        window.print();
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+        $('#transaction, #transaction *').css('color', 'white');
+    
+    }
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+    
+    function ExportToExcel(type, fn, dl) {
+        $('span.dropdown').hide();
+        var elt = document.getElementById('dataTable');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        $('span.dropdown').show();
+        return dl ? XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) : XLSX.writeFile(wb, fn || ('{{vendor.first_name}}_transactions.' + (type || 'xlsx')));
+    }
+
+    var $rows = $('#dataTable tbody tr');
+    $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+        
+        $rows.show().filter(function() {
+        var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+        return !~text.indexOf(val);
+        }).hide();
+    });
+
+    function filterSearchValues(col, fieldId, ele) {
+        var table = document.getElementById("dataTable");
+        
+        var rows = table.getElementsByTagName("tr");
+        
+        var filterValue = $('#' + fieldId).val().toLowerCase();
+
+        if (filterValue !== "") {
+            for (var i = 1; i < rows.length; i++) {
+                var statusCell = rows[i].getElementsByTagName("td")[col];
+
+                if (statusCell.textContent.toLowerCase() == filterValue) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function filterAmount(col, fieldId, ele) {
+        var table = document.getElementById("dataTable");
+        
+        var rows = table.getElementsByTagName("tr");
+        
+        var filterValue = parseFloat($('#' + fieldId).val());
+
+        if (!isNaN(filterValue)) {
+            for (var i = 1; i < rows.length; i++) {
+                var statusCell = rows[i].getElementsByTagName("td")[col];
+
+                if (parseFloat(statusCell.textContent.toLowerCase()) == filterValue) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function clearSearch(fieldId,ele) {
+        var table = document.getElementById("dataTable");
+        var rows = table.getElementsByTagName("tr");
+        for (var i = 1; i < rows.length; i++) {
+            rows[i].style.display = "";
+        }
+        $('#' + fieldId).val("");
+        $(ele).closest('.dropdown').find('.dropdown-menu').removeClass('show');
+    }
+
+    function templatePrint(){
+        var contentToPrint = document.getElementById('printContent').innerHTML;
+        var printWindow = window.open('', '_blank');
+
+        // Write the HTML content to the new window
+        printWindow.document.write(contentToPrint);
+
+        // Close the document stream to finish writing the content
+        printWindow.document.close();
+        
+        printWindow.onafterprint = function () {
+            printWindow.close();
+        };
+
+        // Print the new window
+        printWindow.print();
+    }
+
+    $(document).ready(function(){
+        var date1 = "";
+        $('#fromDate').on('change',function(){
+            date1 = $(this).val()
+            $('#toDate').prop('min',date1)
+        })
+    })
+    $(document).ready(function(){
+        var date2 = "";
+        $('#toDate').on('change',function(){
+            date2 = $(this).val()
+            $('#fromDate').prop('max',date2)
+        })
+    })
+</script>
+
+{% endblock %}

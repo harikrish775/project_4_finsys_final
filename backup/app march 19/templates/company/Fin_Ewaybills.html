@@ -1,0 +1,173 @@
+<!-- CREATED BY AISWARYA! -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+<div class="page-content">
+  <div class="card radius-15 h-20">
+    <div class="row">
+      <div class="col-md-12">
+        <center><h2 class="mt-3">E-WAY BILLS</h2></center>
+        <hr/>
+      </div>
+    </div>
+  </div>
+  <div class="card radius-15">
+    <div class="card-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="d-flex">
+              <input type="text" id="search" class="form-control" placeholder="Search.." autocomplete="off"/>
+              <div class="dropdown ml-1" style="justify-content: left">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-sort"></i> Sort by</button>
+                <div class="dropdown-menu" style="background-color: black">
+                  <a class="dropdown-item" href="" style="height: 40px; font-size: 15px; color: white">All</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="sortTable(3)">Customer Name</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="sortTable(2)">E-Way Bill Number</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-5 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary text-grey" id="exportBtn"><i class="fa fa-table"></i> Export To Excel</button>
+            <div class="dropdown ml-1">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-filter"></i> filter by</button>
+              <div class="dropdown-menu" style="background-color: black">
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'all')">All</a>
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'draft')">Draft</a>
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'saved')">Saved</a>
+              </div>
+            </div>
+            <a href="{% url 'Fin_load_CreateEwaybill' %}" class="ml-1"><button type="button" class="btn btn-outline-secondary text-grey"><i class="fa fa-plus font-weight-light"></i> NEW E-WAY BILL</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-responsive-md table-hover mt-4" id="EwaybillTable" style="text-align: center">
+        <thead>
+          <tr>
+            <th>SERIAL NO.</th>
+            <th>DATE</th>
+            <!-- <th>REFERENCE NO.</th> -->
+            <th>E-WAY BILL NO.</th>
+            <th>NAME</th>
+            <th>MAIL ID</th>
+            <th>AMOUNT</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for eway in eway_bill %}
+            
+            <tr class="clickable-row" data-href="{% url 'Fin_EwayOverview' eway.Ewaybill_ID %}" style="cursor: pointer;">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ eway.Date }}</td>
+              <!-- <td>{{ eway.ReferenceNumber }}</td> -->
+              <td>{{ eway.Ewaybill_No }}</td>
+              <td>{{ eway.Customer.first_name }} {{ eway.Customer.last_name }}</td>
+              <td>{{ eway.Customer.email }}</td>
+              <td>{{ eway.GrandTotal }}</td>
+              <td>{{ eway.Status }}</td>
+             
+            </tr>
+            {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script>
+  var $rows = $('#EwaybillTable tbody tr');
+  $('#search').keyup(function() {
+    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+    
+    $rows.show().filter(function() {
+      var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+      return !~text.indexOf(val);
+    }).hide();
+  });
+  
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    const Table = document.getElementById("EwaybillTable");
+    const ws = XLSX.utils.table_to_sheet(Table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Ewaybills.xlsx");
+  });
+
+  jQuery(document).ready(function ($) {
+    $(".clickable-row").click(function () {
+      window.location = $(this).data("href");
+    });
+  });
+
+  function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("EwaybillTable");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+        y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+
+        if (x > y) {
+            shouldSwitch = true;
+            break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  function filterTable(row,filterValue) {
+    var table = document.getElementById("EwaybillTable");
+    var rows = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows.length; i++) {
+      var statusCell = rows[i].getElementsByTagName("td")[row];
+
+      if (filterValue == "all" || statusCell.textContent.toLowerCase() == filterValue) {
+        rows[i].style.display = "";
+      } else {
+        rows[i].style.display = "none";
+      }
+    }
+  }
+
+  function sortBalAsc() {
+    var table = document.getElementById("EwaybillTable");
+    var rows = Array.from(table.rows).slice(1);
+
+    rows.sort(function (a, b) {
+      var balA = parseFloat(a.cells[7].textContent);
+      var balB = parseFloat(b.cells[7].textContent);
+      return balA - balB;
+    });
+
+    // Remove existing rows from the table
+    for (var i = table.rows.length - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+
+    // Append the sorted rows back to the table
+    rows.forEach(function (row) {
+        table.tBodies[0].appendChild(row);
+    });
+  }
+</script>
+
+{% endblock %}

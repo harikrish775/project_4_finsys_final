@@ -1,0 +1,82 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+    {% load static %}
+
+
+<style>
+@media (max-width: 768px) {
+  .msg-name{
+    padding-left: 1px !important;
+  }
+}
+</style>
+<div class="body-wrapper p-3">
+    <div class="container-fluid">
+        {% if noti %}
+
+        
+        {% for i in  payment_term_notification %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                    
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h6 class="card-title mb-9 fw-semibold"><b>{{i.Title}}</b></h6>
+                            <hr>
+                        </div>
+                        <h6 class="msg-name pl-5">{{i.Discription}}<span class="msg-time float-right" style="color: gray;">{{i.date_created}} {{i.time}}</span></h6>
+                        <center><a href="{% url 'Fin_Company_Profile' %}"><input type="button" class="btn btn-danger" style="margin-top: 30px;" value="Upgrade Now"></a></center>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+        {% for i in  other_notification %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                    
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h6 class="card-title mb-9 fw-semibold"><b>{{i.Title}}</b></h6>
+                            <hr>
+                        </div>
+                        <h6 class="msg-name pl-5">{{i.Discription}}<span class="msg-time float-right" style="color: gray;">{{i.date_created}} {{i.time}}</span></h6>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        
+
+
+
+        {% else %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                   
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h5 class="card-title mb-9 fw-semibold text-center"><b> No New Notifications</b></h5>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+       
+        {% endif %}
+    </div>
+</div>            
+
+
+{% endblock %}

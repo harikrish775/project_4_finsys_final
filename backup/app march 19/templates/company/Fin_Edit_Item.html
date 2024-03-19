@@ -1,0 +1,776 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<style type="text/css">
+    select.list-dt {
+        border: none;
+        outline: 0;
+        border-bottom: 1px solid #ccc;
+        padding: 2px 5px 3px 5px;
+        margin: 2px
+    }
+
+    select.list-dt:focus {
+        border-bottom: 2px solid skyblue
+    }
+
+    .card {
+        z-index: 0;
+        border: none;
+        border-radius: 0.5rem;
+        position: relative
+    }
+
+</style>
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-lg-12 col-xl-12">
+                    <!-- <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_viewItem' item.id %}`"><i class="fa fa-times text-white" style="font-size: 1.2rem;"></i></span> -->
+                    <div class="card" style="background-color: #2a4964;">
+                        <div class="row no-gutters">
+                            <div class="col-md-2"></div>
+                            <div class="col-md-8 mt-4 mb-4">
+                                <center>
+                                    <h5 class="card-title"><h3> EDIT ITEM </h3></h5>
+                                </center>
+                            </div><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <form action="{% url 'Fin_updateItem' item.id %}" method="post" class="needs-validation"  validate>
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label for="itemName" style="color: white;">Name</label>
+                                <input type="text" id="itemName" name="name" class="form-control" value="{{item.name}}" style="background-color: #2a4964; color: white;" autocomplete="off" required>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="itemType" style="color: white;">Type</label>
+                                <select name="type" class="form-control" id="itemType" style="background-color: #2a4964; color: white;" required>
+                                    <option selected disabled value="">Choose...</option>
+                                    <option value="Goods">Goods</option>
+                                    <option value="Services">Services</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label for="itemUnit" style="color: white;">Unit</label>
+                                <div class="d-flex">
+                                    <select class="custom-select" name="unit" id="itemUnit" required style="background-color: #2a4964; color: white;">
+                                        <option selected disabled value="">Choose...</option>
+                                        {% for a in units %}
+                                        <option class="text-uppercase">{{ a.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <a href="#">
+                                        <button type="button" class="btn btn-outline-secondary ml-1" data-toggle="modal" data-target="#createNewUnit">+</button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="hsnField" style="color: white;">HSN Code</label>
+                                <input type="number" name="hsn" class="form-control" value="{{item.hsn}}" style="background-color: #2a4964; color: white;" placeholder="Enter a valid HSN code" required id="hsnField" oninput="validateHSN()">
+                                <div id="hsnError" style="color: red;"></div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3 mt-3">
+                                <label style="color: white;">Tax Reference</label>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-check mt-1">
+                                    <input class="form-check-input" name="taxref" type="radio" id="inclusive" value="taxable" onclick="showdiv()" required>
+                                    <label style="color: white;" for="inclusive">taxable</label>
+                                </div>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input class="form-check-input" name="taxref" type="radio" value="non taxable" id="check" onclick="hidediv()">
+                                <label style="color: white;" for="check">non taxable</label>
+                            </div>
+                        </div>
+                        <div class="row"  id="taxableDiv" style="display: none;">
+                            <div class="col-md-6 mt-3">
+                                <label for="intraStateTax" style="color: white;">Intra State Tax Rate</label>
+                                <select name="intra_st" class="form-control" style="background-color: #2a4964; color: white;" id="intraStateTax" >
+                                    <option value=0>GST 0 (0%)</option>
+                                    <option value=3>GST 3 (3%)</option>
+                                    <option value=5>GST 5 (5%)</option>
+                                    <option value=12>GST 12 (12%)</option>
+                                    <option value=18>GST 18 (18%)</option>
+                                    <option value=28>GST 28 (28%)</option>        
+                                </select>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="interStateTax" style="color: white;">Inter State Tax Rate</label>
+                                <select name="inter_st" class="form-control" style="background-color: #2a4964; color: white;" id="interStateTax" >
+                                    <option value=0>IGST 0 (0%)</option>
+                                    <option value=3>IGST 3 (3%)</option>
+                                    <option value=5>IGST 5 (5%)</option>
+                                    <option value=12>IGST 12 (12%)</option>
+                                    <option value=18>IGST 18 (18%)</option>
+                                    <option value=28>IGST 28 (28%)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label style="color: white;">Purchase Price</label>
+                                <div class="row">
+                                    <div class="col-md-12 d-flex">
+                                        <input type="text" class="form-control mr-1" value="INR" style="width:60px;background-color: #2a4960; color: white;">
+                                        <input type="number" name="pcost" class="form-control" id="purprice" style="background-color: #2a4964; color: white;" value="{{item.purchase_price}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label style="color: white;">Sales Price</label>
+                                <div class="row">
+                                    <div class="col-md-12 d-flex">
+                                        <input type="text" class="form-control mr-1" value="INR" style="width:60px;background-color: #2a4960; color: white;">
+                                        <input type="text" name="salesprice" class="form-control" id="saleprice" style="background-color: #2a4964; color: white;" value="{{item.selling_price}}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label for="purchaseAccount" style="color: white;">Account</label>
+                                <div class="d-flex">
+                                    <select name="pur_account" class="form-control" style="background-color: #2a4964; color: white;" id="purchaseAccount">
+                                        <option value="" selected disabled>--Choose--</option>
+                                        {% for a in accounts %}
+                                        <option value="{{ a.account_name }}">{{ a.account_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <a href="#">
+                                        <button type="button" class="btn btn-outline-secondary ml-1" data-toggle="modal" data-target="#createNewAccount">+</button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="salesAccount" style="color: white;">Account</label>
+                                <select name="sale_account" class="form-control" style="background-color: #2a4964; color: white;" id="salesAccount">
+                                    <option value="" selected disabled>--Choose--</option>
+                                    <option value="General Income">General Income</option>
+                                    <option value="Interest Income">Interest Income</option>
+                                    <option value="Late Fee Income">Late Fee Income</option>
+                                    <option value="Discount Income">Discount Income</option>
+                                    <option value="Shipping Charges">Shipping Charges</option>
+                                    <option value="Other Charges">Other Charges</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label for="purchaseDescription" style="color: white;">Description</label>
+                                <textarea class="form-control" name="pur_desc" id="purchaseDescription" style="background-color: #2a4964; color: white;">{{item.purchase_description}}</textarea>  
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <label for="salesDescription" style="color: white;">Description</label>
+                                <textarea class="form-control" name="sale_desc" id="salesDescription" style="background-color: #2a4964; color: white;">{{item.sales_description}}</textarea>
+                            </div>
+                        </div>
+                                    
+                        <div class="row mt-3" >
+                            <div class="col-md-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" onclick="ShowHideDiv(this)" type="checkbox"  id="track">
+                                    <label class="form-check-label" for="track">Track Inventory</label>
+                                </div>  
+                            </div>
+                        </div>
+                        <div class="row" id="inventorytrack" style="display: none">
+                            <div class="col-md-6 mt-3">
+                                <label style="color: white;">Inventory Account</label>
+                                <select name="invacc" class="form-control" id="inventoryAccount" style="background-color: #2a4964; color: white;">
+                                    <option selected disabled value="" >Choose...</option>
+                                    <option value="Inventory Assets">Inventory Assets</option>    
+                                </select>
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label style="color: white;">Stock on hand</label>
+                                <input type="number" name="stock" class="form-control" style="background-color: #2a4964; color: white;" value="{{item.opening_stock}}">
+                            </div>
+                            <div class="col-md-3 mt-3">
+                                <label style="color: white;">Stock Rate per Unit</label>
+                                <input type="number" name="stock_rate" class="form-control" style="background-color: #2a4964; color: white;" value="{{item.stock_unit_rate}}">
+                            </div>
+                        </div>
+
+                        <div class="row" >
+                            <div class="col-md-3 mt-3">
+                                <label style="color: white;">Minimum Stock to maintain</label>
+                                <input type="number" name="min_stock" class="form-control" style="background-color: #2a4964; color: white;" value="{{item.min_stock}}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-5 mb-5">
+                            <div class="col-md-4">
+                                <!-- <a href="{% url 'Fin_items' %}"class="btn btn-outline-info rounded-pill w-25 text-light">BACK</a> -->
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-center">
+                                <button class="btn btn-outline-secondary w-50 text-light" type="submit">UPDATE</button>
+                                <a href="{% url 'Fin_viewItem' item.id %}"class="btn btn-outline-secondary ml-1 w-25 text-light">CANCEL</a>
+                            </div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Unit Create Modal -->
+
+<div class="modal fade" id="createNewUnit">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">New Item Unit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form method="post" id="newUnitForm">
+                        {% csrf_token %}
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="name">Unit Name</label>
+                                <input name="name" id="unit_name" class="form-control text-uppercase w-100">
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-12 d-flex justify-content-center">
+                                <button class="btn btn-outline-info text-grey" data-dismiss="modal" type="submit" id="saveItemUnit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div> 
+
+
+<!-- Account Create Modal -->
+
+<div class="modal fade" id="createNewAccount">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">New Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form method="post" action="{% url 'Fin_createAccount' %}" id="newAccountForm">
+                        {% csrf_token %}
+                        <div class="row mt-2 mb-2">
+                            <div class="col-md-6">
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <label for="acctyp">Account Type</label>
+                                        <input type="text" value="Assets" id="acctype" name="acctype" hidden>
+                                        <select name="account_type" id="Account_type" class="custom-select-md form-control w-100"  onchange="AccountTypeChange(this)" required>
+                                            <!-- <optgroup label="Assets" style="background-color: rgb(47 81 111);">
+                                                <option value="Other Asset"> Other Asset </option>
+                                                <option value="Other Current Asset"> Other Current Asset </option>
+                                                <option value="Cash"> Cash </option>
+                                                <option value="Bank"> Bank </option>
+                                                <option value="Fixed Asset"> Fixed Asset </option>
+                                                <option value="Stock"> Stock</option>
+                                                <option value="Payment Clearing"> Payment Clearing</option>
+                                            </optgroup>
+                                        
+                                            <optgroup label="Liability" style="background-color: rgb(47 81 111);">
+                                                <option value="Other Current Liability">Other Current Liability </option>
+                                                <option value="Credit Card"> Credit Card </option>
+                                                <option value="Long Term Liability"> Long Term Liability </option>
+                                                <option value="Other Liability"> Other Liability </option>
+                                                <option value="Overseas Tax Payable"> Overseas Tax Payable </option>
+                                            </optgroup>
+                                        
+                                            <optgroup label="Equity" style="background-color: rgb(47 81 111);">
+                                                <option value="Equity"> Equity </option>
+                                            </optgroup>
+                                        
+                                            <optgroup label="Income" style="background-color: rgb(47 81 111);">
+                                                <option value="Income"> Income </option>
+                                                <option value="Other Income"> Other Income </option>
+                                            </optgroup> -->
+                                        
+                                            <optgroup label="Expense" style="background-color: rgb(47 81 111);">
+                                                <option value="Expense"> Expense </option>
+                                                <option value="Cost Of Goods Sold"> Cost Of Goods Sold </option>
+                                                <option value="Other Expense"> Other Expense </option>
+                                            </optgroup>
+                                        
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <label for="name">*Name</label>
+                                        <input name="account_name" id="accountName" required class="custom-select-md form-control w-100">
+                                    </div>
+                                </div>
+                                <div class="row mt-1" id="subAccountCheck" style="display: none;">
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input type="checkbox" name="subAccountCheckBox" class="form-check-input" id="subAccountCheckBox">
+                                            <label class="form-check-label" for="subAccountCheckBox">Make this a sub-account</label>
+                                            <span><i class="fa fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="Select this option if you are creating a sub-account."></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2" id="parentAccountValue" style="display: none;">
+                                    <div class="col-12">
+                                        <label for="parentAccount">Parent Account</label>
+                                        <select name="parent_account" id="parentAccount" class="custom-select-md form-control w-100">
+        
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <label for="acc_code">Account Code</label>
+                                        <input type="text" name="account_code" id="account_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <label>Description</label>
+                                        <textarea class="form-control" rows="3" id="description" name="description" placeholder="Max. 500 Characters"></textarea>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            <div class="col-md-6 mt-4"> 
+                                <div id="acnt-desc" class="form-control" name="detype" style="font-size: small;  height: fit-content;"></div>
+                            </div>
+                        </div>
+                            
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4 d-flex justify-content-center">
+                                    <button type="button" data-dismiss="modal" id="saveNewAccount" class="btn btn-outline-info">Save</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script> -->
+
+<script>
+    $(document).ready(function(){
+        document.querySelector('#itemType').value = `{{item.item_type}}`;
+        document.querySelector('#itemUnit').value = `{{item.unit}}`;
+        document.querySelector('#purchaseAccount').value = `{{item.purchase_account}}`;        
+        document.querySelector('#salesAccount').value = `{{item.sales_account}}`;
+        if(`{{item.tax_reference}}` == 'taxable'){
+            $('#inclusive').prop('checked',true);
+            $('#taxableDiv').css('display','flex');
+            document.querySelector('#intraStateTax').value = `{{item.intra_state_tax}}`;
+            document.querySelector('#interStateTax').value = `{{item.inter_state_tax}}`;
+        }else{
+            $('#check').prop('checked',true);
+        }
+        if(`{{item.inventory_account}}` == 'Inventory Assets'){
+            $('#track').prop('checked',true);
+            $('#inventorytrack').css('display','flex');
+            document.querySelector('#inventoryAccount').value = `{{item.inventory_account}}`
+        }
+    })
+    function ShowHideDiv(track) {
+        var inventorytrack = document.getElementById("inventorytrack");
+        inventorytrack.style.display = track.checked ? "flex" : "none";
+    }
+
+    function ShowHideDivi(inclusive) {
+        var inter = document.getElementById("intrastateFiled");
+        inter.style.display = inclusive.checked ? "block" : "none";
+    }
+
+    function validateForm() {
+        let x = document.forms["myForm"]["fname"].value;
+        if (x == "") {
+            alert("Name must be filled out");
+            return false;
+        }
+    }
+
+    function validateHSN() {
+        var hsnField = document.getElementById("hsnField");
+        var errorText = document.getElementById("hsnError");
+        var hsnValue = hsnField.value;
+
+        if (hsnValue.length < 6) {
+            errorText.innerText = "HSN must contain at least 6 digits";
+            hsnField.setCustomValidity("HSN must contain at least 6 digits");
+            hsnField.style.borderColor = "red";
+        } else {
+            errorText.innerText = "";
+            hsnField.setCustomValidity(""); 
+            hsnField.style.borderColor = ""; 
+        }
+    }
+
+    function showdiv() {
+        document.getElementById("taxableDiv").style.display = "flex";
+    }
+    
+    function hidediv() {
+        document.getElementById("taxableDiv").style.display = "none";
+    }
+
+    $(document).on("click","#saveItemUnit",function(){
+        var name = $("#unit_name").val();
+        if (name !=""){
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'Fin_saveItemUnit' %}",
+                data:{
+                    'name' : name,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                
+                success: function(response) {
+                    if(response.status){
+                        document.getElementById("newUnitForm").reset();
+                        reloadUnits();
+                    }else{
+                        alert(response.message)
+                    }
+                },         
+            });
+        }
+        else{
+            alert('Invalid')
+        }
+    });
+
+    function reloadUnits() {
+        $.ajax({
+        url: "{% url 'Fin_getItemUnits' %}",
+        type: "GET",
+        dataType: "json",
+        data: $(this).serialize(),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+
+        success: function(data) {
+            console.log("AJAX Success - Dropdown Data:", data);
+            var dropdown = $('#itemUnit');
+            dropdown.empty()
+            dropdown.append(`<option selected disabled value="">Choose...</option>`);
+            $.each(data, function(key, value) {
+                for(let i=0; i<value.length; i++){
+                    dropdown.append($('<option></option>').attr('class', 'text-uppercase').text(value[i].name))
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+        }
+        });
+    }
+
+    // Account add modal js
+
+    $(document).ready(function(){
+        var Acnt_desc = document.getElementById("acnt-desc");
+        Acnt_desc.innerHTML=`
+            <b>Expense</b> <br>Reflects expenses incurred for running normal business operations, such as :<br/>
+            <ul>
+                <li>1.Advertisements and Marketing</li>
+                <li>2.Business Travel Expenses</li>
+                <li>3.License Fees</li>
+                <li>4.Utility Expenses</li>
+            </ul>`;
+
+            var selectedValue = $('#Account_type').val();
+            $.ajax({
+                type : 'GET',
+                url:"{% url 'Fin_checkAccounts' %}",
+                data:{
+                    type : selectedValue,
+                },
+                
+                success: function(response) {
+                    if(response.status){
+                        $('#subAccountCheck').css('display','block');
+                        var dropdown = $('#parentAccount');
+                        dropdown.empty();
+                        dropdown.append(`<option selected disabled value="">--Choose--</option>`)
+                        $.each(response, function(key, value) {
+                            for(let i=0; i<value.length; i++){
+                                dropdown.append($('<option></option>').text(value[i].name).val(value[i].name))
+                            }
+                        });
+                    }else{
+                        
+                    }
+                },         
+            });
+    })
+    
+    function AccountTypeChange(selectBox) {
+        var selectElement = document.getElementById("Account_type");
+        var selectedValue = selectElement.value;
+        var Acnt_desc = document.getElementById("acnt-desc");
+        var acctype = document.getElementById("acctype");
+
+        switch(selectedValue) {
+            case "Expense":
+                Acnt_desc.innerHTML=`
+                    <b>Expense</b> <br>Reflects expenses incurred for running normal business operations, such as :<br/>
+                    <ul>
+                        <li>1.Advertisements and Marketing</li>
+                        <li>2.Business Travel Expenses</li>
+                        <li>3.License Fees</li>
+                        <li>4.Utility Expenses</li>
+                    </ul>`;
+                    acctype.value="Expense"
+                break;
+            case "Cost Of Goods Sold":
+                Acnt_desc.innerHTML=`
+                    <b>Expense</b> <br>This indicates the direct costs attributable to the production of the goods sold by a company such as:<br/>
+                    <ul>
+                        <li>1.Material and Labor costs</li>
+                        <li>2.Cost of obtaining raw materials</li>
+                    </ul>`;
+                    acctype.value="Expense"
+                break;
+            case "Other Expense":
+                Acnt_desc.innerHTML=`
+                    <b>Expense</b> <br>Track miscellaneous expenses incurred for activities other than primary business operations or create additional accounts to track default expenses like insurance or contribution towards charity.<br/>`;
+                    acctype.value="Expense"
+                break;
+            
+                // case "Other Asset":
+            //     Acnt_desc.innerHTML=`<b>Asset</b> <br> Track special assets like goodwill and other intangible assets<br/>`;
+            //     acctype.value="Asset";
+            //     break;
+
+            // case "Other Current Asset":
+            //     Acnt_desc.innerHTML=`
+            //         <b>Asset</b> <br> Any short term asset that can be converted into cash or cash equivalents easily<br/>
+            //         <ul>
+            //             <li>1.Prepaid expenses</li>
+            //             <li>2.Stocks and Mutual Funds</li>
+            //         </ul>`;
+            //     acctype.value="Asset";
+            //     break;
+            // case "Cash":
+            //     Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of cash and other cash equivalents like petty cash, undeposited funds, etc.<br/>`;
+            //     acctype.value="Asset";
+            //     break;
+            // case "Bank":
+            //     Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of bank accounts like Savings, Checking, and Money Market accounts<br/>`;
+            //         acctype.value="Asset";
+            //     break;
+            // case "Fixed Asset":
+            //     Acnt_desc.innerHTML=`
+            //         <b>Asset</b> <br> Any long term investment or an asset that cannot be converted into cash easily like:<br/>
+            //         <ul>
+            //             <li>1.Land and Buildings</li>
+            //             <li>2.Plant, Machinery and Equipment</li>
+            //             <li>3.Computers</li>
+            //             <li>3.Furniture</li>
+            //         </ul>`;
+            //         acctype.value="Asset";
+            //     break;
+            // case "Stock":
+            //     Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of your inventory assets.<br/>`;
+            //     acctype.value="Asset";
+            //     break;
+            // case "Payment Clearing":
+            //     Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of funds moving in and out via payment processors like Stripe, PayPal, etc.<br/>`;
+            //     acctype.value="Asset";
+            //     break;
+            // case "Other Current Liability":
+            //     Acnt_desc.innerHTML=`
+            //         <b>Liability</b> <br> Any short term liability like:<br/>
+            //         <ul>
+            //             <li>1.Customer Deposits</li>
+            //             <li>2.Tax Payable</li>
+            //         </ul>`;
+            //         acctype.value="Liability"
+            //     break;
+            // case "Credit Card":
+            //     Acnt_desc.innerHTML=`<b>Liability</b> <br>Create a trail of all your credit card transactions by creating a credit card account<br/>`;
+            //     acctype.value="Liability"
+            //     break;
+            // case "Long Term Liability":
+            //     Acnt_desc.innerHTML=`<b>Liability</b> <br> Liabilities that mature after a minimum period of one year like Notes Payable, Debentures, and Long Term Loans<br/>`;
+            //     acctype.value="Liability"
+            //     break;
+            // case "Other Liability":
+            //     Acnt_desc.innerHTML=`
+            //         <b>Liability</b> <br>Obligation of an entity arising from past transactions or events which would require repayment.<br/>
+            //         <ul>
+            //             <li>1.Tax to be paid</li>
+            //             <li>2.Loan to be Repaid</li>
+            //             <li>3.Accounts Payable etc</li>
+            //         </ul>`;
+            //         acctype.value="Liability"
+            //     break;
+            // case "Overseas Tax Payable":
+            //     Acnt_desc.innerHTML=`<b>Liability</b> <br> Track your taxes in this account if your business sells digital services to foreign customers.<br/>`;
+            //     acctype.value="Liability"
+            //     break;
+            // case "Equity":
+            //     Acnt_desc.innerHTML=`<b>Equity</b> <br>Owners or stakeholders interest on the assets of the business after deducting all the liabilities<br/>`;
+            //     acctype.value="Equity"
+            //     break;
+            // case "Income":
+            //     Acnt_desc.innerHTML=`<b>Income</b> <br>Income or Revenue earned from normal business activities like sale of goods and services to customers<br/>`;
+            //     acctype.value="Income"
+            //     break;
+            // case "Other Income":
+            //     Acnt_desc.innerHTML=`
+            //         <b>Income</b> <br>Income or revenue earned from activities not directly related to your business like :<br/>
+            //         <ul>
+            //             <li>1.Interest Earned</li>
+            //             <li>2.Dividend Earned</li>
+            //         </ul>`;
+            //         acctype.value="Income"
+            //     break;
+
+            default:
+            Acnt_desc.innerHTML=`<b>Account Type</b> <br>Select an account type..<br/>`;
+        }
+
+        if(selectedValue !=""){
+            $('#subAccountCheck').css('display','none')
+            $('#subAccountCheckBox').prop('checked', $('#subAccountCheckBox').prop('checked') ? false : false);
+            $('#parentAccountValue').css('display','none');
+
+            $.ajax({
+                type : 'GET',
+                url:"{% url 'Fin_checkAccounts' %}",
+                data:{
+                    type : selectedValue,
+                },
+                
+                success: function(response) {
+                    if(response.status){
+                        $('#subAccountCheck').css('display','block');
+                        var dropdown = $('#parentAccount');
+                        dropdown.empty();
+                        dropdown.append(`<option selected disabled value="">--Choose--</option>`)
+                        $.each(response, function(key, value) {
+                            for(let i=0; i<value.length; i++){
+                                dropdown.append($('<option></option>').text(value[i].name).val(value[i].name))
+                            }
+                        });
+                    }else{
+                        
+                    }
+                },         
+            });
+
+        }
+
+        // if(selectedValue == 'Bank'){
+        //     $('#bankAccNum').css('display','block');
+        //     $('#account_number').prop('required',true);
+        // }else{
+        //     $('#bankAccNum').css('display','none');
+        //     $('#account_number').prop('required',false);
+        // }
+
+}
+
+$(document).ready(function() {
+    $('#subAccountCheckBox').change(function() {
+        if ($(this).is(':checked')) {
+            $('#parentAccountValue').css('display','block');
+            $('#parentAccount').prop('required',true);
+        } else {
+            $('#parentAccountValue').css('display','none');
+            $('#parentAccount').prop('required',false);
+        }
+    });
+});
+
+$(document).on("click","#saveNewAccount",function(){
+    var name = $("#accountName").val();
+    var type = $("#Account_type").val();
+    var code = $("#account_code").val();
+    var desc = $("#description").val();
+    var subAcc = $("#subAccountCheckBox").prop('checked');
+    var parentAcc = $("#parentAccount").val();
+    console.log(name,type,code,desc,subAcc,parentAcc);
+
+    if(subAcc && (parentAcc =="" || parentAcc == undefined) ){
+        alert('Select a parent account.!')
+        return;
+    }
+
+    if (name !="" && type !="" ){
+        $.ajax({
+            type : 'POST',
+            url:"{% url 'Fin_createNewAccountFromItems' %}",
+            data:{
+                'account_name' : name,
+                'account_type' : type,
+                'account_code' : code,
+                'subAccountCheckBox' : subAcc,
+                'parent_account' : parentAcc,
+                'description' : desc,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            
+            success: function(response) {
+                if(response.status){
+                    document.getElementById("newAccountForm").reset();
+                    
+                    var dropdown = $('#purchaseAccount');
+                    dropdown.empty();
+                    dropdown.append(`<option value="" disabled>--Choose--<option/>`);
+                    $.each(response, function(key, value) {
+                        for(let i=0; i<value.length; i++){
+                            if(value[i].name == name){
+                                dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].name))
+                            }else{
+                                dropdown.append($('<option></option>').text(value[i].name).val(value[i].name))
+                            }   
+                        }
+                    });
+
+                }else{
+                    alert("Something went wrong.!")
+                }
+            },         
+        });
+    }
+    else{
+        alert('Account name or Type cannot be blank.!')
+    }
+});
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,631 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+<style>
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 1rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+    .vl {
+        border-left: 6px solid gray;
+    }
+    .table-row{
+    cursor:pointer;
+    }
+
+    .spaced>li {
+        color:black;
+        font-size:10px;
+    }
+
+    .table1{
+        font-size:10px;
+        width:100% ;
+        color:black;
+
+    }
+    .label-lg {
+            padding: .3em .6em .4em;
+            font-size: 12px;
+            color:black;
+            line-height: 1.1;
+            height: 24px
+    }
+    .widget-header{
+        background-color:#444;
+        color:white;
+        font-size:14px;
+    }
+    .widget-header:after,
+    .widget-header:before {
+            content: "";
+            display: table;
+            line-height: 0
+    }
+    .widget-header:after {
+            clear: right
+    }
+    .widget-box.collapsed>.widget-header {
+            border-bottom-width: 0
+        }
+        
+        .collapsed.fullscreen>.widget-header {
+            border-bottom-width: 1px
+        }
+        
+        .collapsed>.widget-body {
+            display: none
+        }
+        
+        .widget-header-flat {
+            background: #F7F7F7
+        }
+        
+        .widget-header-large {
+            min-height: 49px;
+            padding-left: 18px
+        }
+        
+
+        
+        .widget-header-small {
+            min-height: 31px;
+            padding-left: 10px
+        }
+        
+        .widget-header>.widget-title {
+            line-height: 36px;
+            padding: 0;
+            margin: 0;
+            display: inline;
+            font-size:13px;
+        }
+        .widget-toolbar {
+            display: inline-block;
+            padding: 0 10px;
+            line-height: 37px;
+            /* float: right; */
+            position: relative
+        }
+        .widget-body {
+            background-color: #FFF
+        }
+        
+        .widget-main {
+            padding: 12px
+        } 
+        .modal{
+            z-index: 9999;
+            overflow: scroll;
+        }
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-ezFjoDpKt46r5VYfoRMoGtN5QXSw2CQZfP1zpgFF4ZAtDz6By5v/zy0N5Lw6Vf6fP" crossorigin="anonymous">
+    <div class="page-content " >
+        <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_bankholder' %}`"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
+        <div class="card radius-15">
+            <div class="card-body">
+                    <center><h2 class="text-center my-4">Bank Holder Details</h2>
+                        {% if account_holder.is_active %}
+                            <h6 style="width:140px;color: green;font-weight: bold;">ACTIVE</h6>
+                        {% else %}
+                            <h6 class="blinking-text" style="color:red;width:140px;font-weight: bold;">INACTIVE</h6>
+                        {% endif %}
+                    </center>
+                    <hr>
+                    <div class="btn-group" style="float: left; ">
+                        <div>
+                            <center>
+                                <a class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="overview()" id="overviewBtn">Overview</a>
+                            </center>
+                        </div>
+                    </div>
+                    <div class="btn-group" style="float: right; ">   
+                        <div>
+                            <center>
+                                <a href="{% url 'Fin_Editbankholder' account_holder.id %}" class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;">
+                                    <i class="fa fa-pencil"></i>&nbsp;Edit
+                                </a>
+                                <a href="{% url 'Fin_Bankhistory' account_holder.id %}" class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;">
+                                    <i class="fa fa-history"></i>&nbsp;History
+                                </a>
+                                <a href="#" class="btn btn-outline-info text-grey mt-3" data-toggle="modal" data-target="#commentModal" style="border: 1px solid rgb(1, 100, 139);padding: 10px;">
+                                    <i class="fa fa-comments"></i>&nbsp;Comment
+                                </a>
+                                <button class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="printContent()">
+                                    <i class="fa fa-print"></i>&nbsp;Print 
+                                </button>
+                                {% if account_holder.is_active %}
+                                    <a href="{% url 'Fin_inactivatebankaccount' account_holder.id %}" class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;">
+                                        <i class="fa fa-check"></i>&nbsp;Active
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'Fin_activebankholder' account_holder.id %}" class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;">
+                                        <i class="fa fa-times"></i>&nbsp;Inactive
+                                    </a>
+                                {% endif %}
+
+                                <a href="{% url 'Fin_deleteholder' account_holder.id %}" class="btn btn-outline-info text-grey mt-3" style="border: 1px solid rgb(1, 100, 139);padding: 10px;" onclick="return confirm('Are you sure you want to delete this account?')">
+                                    <i class="fa fa-trash"></i>&nbsp;Delete
+                                </a> 
+                            </center>
+                        </div> 
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;"  >   
+                <div class="row">    
+                    <div class="col-md-6">
+                        <div class="p-5">
+                                <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Account Information</h5>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h7 class="mb-0" style="white-space: nowrap;">Holder Name :</h7>
+                                    </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">&nbsp; &nbsp;{{ account_holder.Holder_name }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h7 class="mb-0" style="white-space: nowrap;">Account No :</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">&nbsp; &nbsp;{{ account_holder.Account_number }}</p>
+                                </div>
+                        </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h7 class="mb-0" style="white-space: nowrap;">IFSC Code :</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">&nbsp; &nbsp;{{ account_holder.Ifsc_code  }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h7 class="mb-0" style="white-space: nowrap;">SWIFT Code :</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    {% if account_holder.Swift_code %}
+                                        <p class="mb-0">&nbsp; &nbsp;{{ account_holder.Swift_code }}</p>
+                                    {% else %}
+                                        <p class="mb-0">NIL</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h7 class="mb-0" style="white-space: nowrap;">Bank Name :</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">&nbsp; &nbsp;{{ account_holder.Bank_name}}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h7 class="mb-0" style="white-space: nowrap;">Branch Name :</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0"> &nbsp; &nbsp;{{  account_holder.Branch_name  }}</p>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3"> 
+                            </div>                        
+                    </div>
+                    <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Tax Information</h5>
+                    <div class="d-flex justify-content-between mb-4">
+                        <h6 class="">PAN/IT Number:</h6>
+                        <h6>{{ account_holder.Pan_it_number }}</h6>
+                    </div>
+                    {% if account_holder.Registration_type == "Regular" or account_holder.Registration_type == "Composition" and account_holder.Gstin_un %}
+                        <div class="d-flex justify-content-between mb-4">
+                            <h6 class="">GSTIN/UN:</h6>
+                            <h6>{{ account_holder.Gstin_un }}</h6>
+                        </div>
+                    {% else %}
+                        <div class=" justify-content-between mb-4" style="display: none;">
+                            <h6 class="">GSTIN/UN:</h6>
+                            <h6> </h6>
+                        </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between mb-4">
+                        <h6 class="">GST Type:</h6>
+                        <h6>{{ account_holder.Registration_type }}</h6>
+                    </div>
+                </div>
+                    <div class="p-5">
+                            <hr class="my-4">
+                            <div class="">
+                  <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Bank Configuration</h5>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Set Cheque Book Range:</h6>
+                                <h6>{{account_holder.Set_cheque_book_range|yesno:"Yes,No" }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                            <h6 class="">Enable Cheque Printing:</h6>
+                            
+                            <h6>  {{  account_holder.Enable_cheque_printing|yesno:"Yes,No"   }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Set Cheque Printing Configuration:</h6>
+                                <h6>{{ account_holder.Set_cheque_printing_configuration|yesno:"Yes,No" }}</h6>
+                            </div>
+                            
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6 bg-grey">
+                        <div class="p-5">
+                            <div class="history_highlight px-4 py-3 d-flex">
+                                <div class="col-8 d-flex justify-content-start">
+                                    {% if last_history_entry.action == 'Created' %}
+                                        <p class="text-success" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>
+                                    {% else %}
+                                        <p class="text-warning ml-2" style="font-size: 1.07rem; font-weight: 500; margin-left: -10px;">Last Edited by :</p>
+                                    {% endif %}
+                                    <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;">{{ last_history_entry.LoginDetails.First_name }} {{ last_history_entry.LoginDetails.Last_name }}</span>
+                                </div>
+                                <div class="col-4 d-flex justify-content-end">
+                                    <span>{{ last_history_entry.date }}</span>
+                                </div>
+                            </div>
+                            
+                            <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Bank Account Holder Information</h5>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                            <div class="col-md-2 mt-3">
+                                <h7 class="mb-0">Name</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <p class="mb-0">{{ account_holder.Holder_name }}</p>
+                            </div>
+                            <div class="col-md-2 mt-3 vl">
+                                <h7 class="mb-0">Alias</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <p class="mb-0">
+                                    {% if account_holder.Alias %}
+                                        {{ account_holder.Alias }}
+                                    {% else %}
+                                        Nil
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                            <div class="col-md-2 mt-3">
+                                <h7 class="mb-0">Phone No</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <p class="mb-0">{{ account_holder.phone_number  }}</p>
+                            </div>
+                            <div class="col-md-2 mt-3 vl">
+                                <h7 class="mb-0">Email</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <p class="mb-0">{{  account_holder.Email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                            <div class="col-md-2 mt-3">
+                                <h7 class="mb-0" style="white-space: nowrap;">Account Type</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                <p class="mb-0">{{ account_holder.Account_type}}</p>
+                            </div>
+                            <div class="col-md-2 mt-3 vl">
+                                <h7 class="mb-0">Status</h7>
+                            </div>
+                            <div class="col-md-4 mt-3">
+                                {% if account_holder.is_active %}
+                                <p class="mb-0">Active</p>
+                                {% else %}
+                                <p class="mb-0">Inactive</p>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                               
+                            </div>
+                        </div>
+                            <hr class="my-4">
+                            {% if account_holder and account_holder.Mailing_name and account_holder.Address and account_holder.Country and account_holder.State and account_holder.Pin %}
+                            <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Mailing Address</h5>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Name</h6>
+                                <h6>{{ account_holder.Mailing_name }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Address</h6>
+                                <h6> {{ account_holder.Address }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">Country</h6>
+                                <h6>{{ account_holder.Country  }}</h6>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">State</h6>
+                                <h6>{{ account_holder.State }}</h6>
+                            </div> <div class="d-flex justify-content-between mb-4">
+                                <h6 class="">PIN Code</h6>
+                                <h6>{{account_holder.Pin}}</h6>
+                            </div>
+                            {% else %}
+                            <p>No mailing address found.</p>            
+                            {% endif %}
+                           
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); ">Opening Balance</h5>
+                                </div>
+                               
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h7 class="mb-0">Amount:</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{account_holder.ArithmeticErrormount|floatformat:2 }}</p>
+                                    
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h7 class="mb-0">Date:</h7>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0">{{ account_holder.Date|date:"F j, Y"  }}</p>
+                                </div>
+                                
+                            </div>                               
+                            </div> 
+                    </div>
+                </div>
+   
+                    </div>
+                </div>
+            </div>
+            <div id="transaction" style="display: none;" >
+                <div id="printableContent">
+                    <h2 style="text-align: center;">BANKHOLDER DETAILS - {{account_holder.Holder_name}}</h2>
+
+                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Account Information</h5>
+                    <table class="table">
+                        <tr>
+                            <td>Holder Name:</td>
+                            <td>{{ account_holder.Holder_name }}</td>
+                        
+                            <td>Account No:</td>
+                            <td>{{ account_holder.Account_number }}</td>
+                        </tr>
+                        <tr>
+                            <td>IFSC Code:</td>
+                            <td>{{ account_holder.Ifsc_code }}</td>
+                        
+                            <td>SWIFT Code:</td>
+                            <td>{{ account_holder.Swift_code }}</td>
+                        </tr>
+                        <tr>
+                            <td>Bank Name:</td>
+                            <td>{{ account_holder.Bank_name }}</td>
+                        
+                            <td>Branch Name:</td>
+                            <td>{{ account_holder.Branch_name }}</td>
+                        </tr>
+                    </table>
+            
+                    <hr class="my-4">
+            
+                    <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Tax Information</h5>
+                    <table class="table">
+                        <tr>
+                            <td>PAN/IT Number:</td>
+                            <td>{{ account_holder.Pan_it_number }}</td>
+                        </tr>
+                        {% if account_holder.gstin_un %}
+                            <tr>
+                                <td>GSTIN/UN:</td>
+                                <td>{{ account_holder.Gstin_un }}</td>
+                            </tr>
+                        {% else %}
+                            <tr style="display: none;">
+                                <td>GSTIN/UN:</td>
+                                <td></td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td>GST Type:</td>
+                            <td>{{ account_holder.Registration_type }}</td>
+                        </tr>
+                    </table>
+            
+                    <hr class="my-4">
+            
+                    <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Bank Configuration</h5>
+                    <table class="table">
+                        <tr>
+                            <td>Set Cheque Book Range:</td>
+                            <td>{{ account_holder.Set_cheque_book_range|yesno:"Yes,No" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Enable Cheque Printing:</td>
+                            <td>{{ account_holder.Enable_cheque_printing|yesno:"Yes,No" }}</td>
+                        </tr>
+                        <tr>
+                            <td>Set Cheque Printing Configuration:</td>
+                            <td>{{ account_holder.Set_cheque_printing_configuration|yesno:"Yes,No" }}</td>
+                        </tr>
+                    </table>
+            
+                    <hr class="my-4">
+            
+                    <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Bank Account Holder Information</h5>
+                    <table class="table">
+                        <tr>
+                            <td>Name</td>
+                            <td>{{ account_holder.Holder_name }}</td>
+                            <td>Alias</td>
+                            <td>{{ account_holder.Alias }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone No</td>
+                            <td>{{ account_holder.phone_number }}</td>
+                            <td>Email</td>
+                            <td>{{ account_holder.Email }}</td>
+                        </tr>
+                    </table>
+
+                    <hr class="my-4">
+
+                    <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Opening Balance</h5>
+                    <table class="table">
+                        <tr>
+                            <td>Amount:</td>
+                            <td>{{ account_holder.ArithmeticErrormount|floatformat:2 }}</td>
+                            <td>Date:</td>
+                            <td>{{ account_holder.Date|date:"F j, Y" }}</td>
+                        </tr>
+                    </table>
+
+                    <hr class="my-4">
+
+                    {% if account_holder and account_holder.Mailing_name and account_holder.Address and account_holder.Country and account_holder.State and account_holder.Pin %}
+                        <h5 class="fw-bold mb-5 mt-2 pt-1" style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Mailing Address</h5>
+                        
+                        <table class="table">
+                            <tr>
+                                <td>Name:</td>
+                                <td>{{ account_holder.Mailing_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Address:</td>
+                                <td>{{ account_holder.Address }}</td>
+                            </tr>
+                            <tr>
+                                <td>Country:</td>
+                                <td>{{ account_holder.Country }}</td>
+                            </tr>
+                            <tr>
+                                <td>State:</td>
+                                <td>{{ account_holder.State }}</td>
+                            </tr>
+                            <tr>
+                                <td>PIN Code:</td>
+                                <td>{{ account_holder.Pin }}</td>
+                            </tr>
+                        </table>
+                    {% else %}
+                        <p>No mailing address found.</p>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content" style="background-color: #213b52;">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="exampleModalLabel">Add Comments</h3>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{% url 'Fin_addcomment' account_holder.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <textarea class="form-control" name="comment"></textarea>
+                                {% if not comments %}
+                                    <span class="my-2 font-weight-bold d-flex justify-content-center">No Comments.!</span>
+                                {% else %}
+                                    <div class="container-fluid">
+                                        <table class="table mt-4">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">sl no.</th>
+                                                    <th class="text-center">Comment</th>
+                                                    <th class="text-center">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for c in comments %}
+                                                    <tr class="table-row">
+                                                        <td class="text-center">{{ forloop.counter }}</td>
+                                                        <td class="text-center">{{ c.comment_text}}</td>
+                                                        <td class="text-center">
+                                                            <a class="text-danger" href="{% url 'Fin_deletecomment' c.id %}" onclick="return confirm('Are you sure you want to delete.?')">
+                                                                <i class="fa fa-trash" style="font-size: 1.1rem;"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                   
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn" id="commentSaveBtn">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <script>
+            
+                function overview() {
+                    document.getElementById('overview').style.display = 'block';
+                    document.getElementById('printBtn').style.display = 'none';
+                    document.getElementById('editBtn').style.display = 'block';
+                    document.getElementById('deleteBtn').style.display = 'block';
+                    document.getElementById('historyBtn').style.display = 'block';
+                    document.getElementById('overviewBtn').style.backgroundColor='rgba(22,37,50,255)'
+                    
+                }
+            </script>
+            <script>
+                function printContent() {
+                    var content = document.getElementById('printableContent');
+                    var popupWindow = window.open('', '_blank', 'width=600,height=600');
+                    popupWindow.document.open();
+                    popupWindow.document.write('<html><head><title>Print</title></head><body onload="window.print();">' + content.innerHTML + '</body></html>');
+                    popupWindow.document.close();
+
+                    window.focus();
+                    popupWindow.close();
+                }
+            </script>
+            
+            
+            
+            
+            
+            
+            
+{% endblock %}

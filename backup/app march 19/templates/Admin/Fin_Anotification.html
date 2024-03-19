@@ -1,0 +1,65 @@
+{% extends 'Admin/Fin_AdminBase.html' %}
+{% block body %}
+{% if user.is_authenticated %}
+
+<style>
+@media (max-width: 768px) {
+  .msg-name{
+    padding-left: 1px !important;
+  }
+}
+</style>
+<div class="body-wrapper p-3">
+    <div class="container-fluid">
+        {% if noti %}
+        {% for i in noti %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                   
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h6 class="card-title mb-9 fw-semibold"><b>{{i.Title}}</b></h6>
+                            <hr>
+                        </div>
+                        <h6 class="msg-name pl-5">{{i.Discription}}<span class="msg-time float-right" style="color: gray;">{{i.date_created}} {{i.time}}</span></h6>
+
+                        {% if i.Title != "Payment Terms Alert" %}
+                        <div class="row mt-5">
+                            <div class="col-5"></div>
+                            <div class="col-4"></div>
+                            <div class="col-3">
+                               <a class="btn btn-info btn-sm" href="{% url 'Fin_Anoti_Overview' i.id %}">View More</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="row p-3">
+            <div class="col-md-12">
+                <div class="card radius-15 p-3">
+                    
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h5 class="card-title mb-9 fw-semibold text-center"><b> No New Notifications</b></h5>
+                            
+                        </div>
+                        
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+       
+        {% endif %}
+    </div>
+</div>            
+
+{% endif %}
+{% endblock %}

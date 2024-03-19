@@ -1,0 +1,216 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+
+
+<div class="page-content">
+
+    <div class="card radius-15 p-5 ">
+      <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+      <script>
+          function goBack() {
+          window.history.back();
+          }
+      </script>
+       <center>
+        <h2> Edit Repayment Due</h2>
+     </center><br><hr>
+<form id="bankForm" method="post" action="{% url 'save_edit_loan_repayment' loan_tr.id %}">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col-md-5 p-2">PRINCIPAL AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">DATE</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2"> <input class="form-control bg-grey" type="text" name="principal" id="principal" value="{{loan_tr.loan_amount}}"> </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input type="date" name="date" class="form-control" value="{{loan_tr.loan_date | date:'Y-m-d'}}"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">INTEREST AMOUNT</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2">TOTAL AMOUNT</div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">  <input class="form-control" type="text" name="interest" id="interest" value="{{loan_tr.loan_intrest}}"></div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"><input class="form-control" type="number" value="{{loan_tr.}}" name="total" id="total" readonly></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">PAID FROM</div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 p-2">  <select   name="recieved" class="form-control  text-white" id="pay">
+            <option class="form-control bg-dark text-white" selected value="{{loan_tr.recieved_bank}}">{{loan_tr.recieved_bank}}</option>
+            <option class="form-control bg-dark text-white" value="cash"  {% if loan_tr.recieved_bank == 'cash' %}Selected{% endif %}>CASH</option>
+            <option class="form-control bg-dark text-white" value="upi"  {% if loan_tr.recieved_bank == 'upi' %}Selected{% endif %} >UPI</option>
+            <option class="form-control bg-dark text-white" value="cheque" {% if loan_tr.recieved_bank == 'Cheque' %}Selected{% endif %}>CHEQUE</option>
+
+
+            {% for i in bank %}
+            <option value="{{ i.id }}" style="background-color: #294f76;" {% if loan_tr.recieved_bank == i.id|stringformat:"s" %}Selected{% endif %} >
+                {{ i.bank_name }} ( ********  {{ "*"|stringformat:"<"|rjust:12 }}{{ i.account_number|slice:"-4:" }})
+            </option>
+        {% endfor %}
+        </select>    </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5 p-2"></div>
+    </div>
+    <div class="row">
+      {% if loan_tr.recieved_cheque %}
+        <div class="col-md-5"  id="chequedi">
+          <label class="col-form-label" >Cheque No</label>
+          <input type="text" class="form-control" name="paid_cheque_id" value="{{loan_tr.recieved_cheque}}" id="cheque_i" placeholder="Enter Cheque No">
+      </div>
+      {%else%}
+      <div class="col-md-5" style="display:none;"  id="chequedi">
+        <label class="col-form-label" >Cheque No</label>
+        <input type="text" class="form-control" name="paid_cheque_id"  id="cheque_i" placeholder="Enter Cheque No">
+    </div>
+
+
+      {%endif%}
+      {% if loan_tr.recieved_upi %}
+      <div class="col-md-5"   id="upidi">
+          <label class="col-form-label" >UPI ID</label>
+          <input type="text" class="form-control" name="paid_upi_id" value="{{loan_tr.recieved_upi}}" id="upi_i" placeholder="Enter UPI ID">
+      </div>
+      {%else%}
+      <div class="col-md-5"  style="display:none;" id="upidi">
+        <label class="col-form-label" >UPI ID</label>
+        <input type="text" class="form-control" name="paid_upi_id"  id="upi_i" placeholder="Enter UPI ID">
+    </div>
+
+      {%endif%}
+
+      {% if loan_tr.bank_acc_number %}
+      <div class="col-md-5"   id="bnkdi">
+          <label class="col-form-label" >Bank Account</label>
+          <input type="text" class="form-control" name="paid_bnk_id" id="bank_id" value="{{loan_tr.bank_acc_number}}" style="background-color: #43596c;" readonly>
+      </div>
+      {%else%}
+      <div class="col-md-5"  style="display:none;" id="bnkdi">
+        <label class="col-form-label" >Bank Account</label>
+        <input type="text" class="form-control" name="paid_bnk_id" id="bank_id"  style="background-color: #43596c;" readonly>
+    </div>
+      {%endif%}
+       </div>
+    <div class="row form-inline mt-2">
+        <div class="col-md-6">
+            <div class="row">
+                <input type="hidden" value="{{loan_id_global}}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+               
+            </div>
+          
+        </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col-md-8 mt-3"></div>
+        <div class="col-md-2 mt-3">
+            <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left"onclick=" goBack()">Close</a>
+            <script>
+              function goBack() {
+              window.history.back();
+              }
+          </script>
+        </div>
+        <div class="col-md-2 mt-3">
+          <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+            Save Loan Account
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+
+
+</form>
+
+</div>
+</div>
+<script>
+    // Get references to input elements and total input
+    const principalInput = document.getElementById('principal');
+    const interestInput = document.getElementById('interest');
+    const totalInput = document.getElementById('total');
+
+    // Add an event listener to calculate the total amount on page load
+    document.addEventListener('DOMContentLoaded', updateTotal);
+    
+    // Add event listeners to calculate the total amount dynamically
+    principalInput.addEventListener('input', updateTotal);
+    interestInput.addEventListener('input', updateTotal);
+
+    function updateTotal() {
+        const principal = parseFloat(principalInput.value) || 0;
+        const interest = parseFloat(interestInput.value) || 0;
+        const total = principal + interest;
+        totalInput.value = total.toFixed(); // Display total with 2 decimal places
+    }
+</script>
+<script>
+  $(document).ready(function() {
+    $("#pay").change(function() {
+      var x=$('#pay').val();
+      if(x==='cash'){
+        $('#chequedi').hide()
+        $('#bnkdi').hide()
+        $('#upidi').hide()
+        document.getElementById('cheque_i').value=null
+        document.getElementById('upi_i').value=null
+      }else if(x==='cheque'){
+        $('#chequedi').show()
+        $('#bnkdi').hide()
+        $('#upidi').hide()
+        document.getElementById('upi_i').value=null
+      }else if(x==='upi'){
+        $('#upidi').show()
+        $('#bnkdi').hide()
+        $('#chequedi').hide()
+        document.getElementById('cheque_i').value=null
+      }else{
+        $('#bnkdi').show()
+        $('#chequedi').hide()
+        $('#upidi').hide()
+        document.getElementById('cheque_i').value=null
+        document.getElementById('upi_i').value=null
+
+        var customer = $('#pay').val();
+          
+
+                  $.ajax({
+                  type: "GET",
+                  url: "{% url 'loan_bankdata' %}",
+                  data: {
+                  id: customer
+                  },
+                  success: function (response) {
+                  // Assuming response.days is a valid number
+                  var acc = response.acc;
+                  var name = response.name;
+
+                  console.log(acc);
+
+                  // Display the formatted expiry date in the expdateid field
+                  $("#bank_id").val(acc);
+               
+                  }
+                  });
+      }
+    });
+  });
+</script>
+{%endblock%}

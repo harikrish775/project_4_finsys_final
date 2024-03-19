@@ -1839,6 +1839,7 @@ class Fin_Recurring_Bills(models.Model):
     status = models.CharField(max_length=255,null=True,blank=True)
     repeat_every = models.ForeignKey(Fin_CompanyRepeatEvery,on_delete=models.CASCADE,null=True,blank=True)
     attachment = models.FileField(null=True,blank=True,upload_to='recurring_bill_attachments')
+    pricelist = models.ForeignKey(Fin_Price_List,on_delete=models.CASCADE,null=True,blank=True)
 
 class Fin_Recurring_Bill_Items(models.Model):
     items = models.ForeignKey(Fin_Items,on_delete=models.CASCADE,null=True,blank=True)

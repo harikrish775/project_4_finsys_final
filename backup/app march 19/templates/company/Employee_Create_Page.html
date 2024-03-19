@@ -1,0 +1,881 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+ 
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<!-- <script src="{% static 'assets/js/Employee_Create_Page.js' %}"></script> -->
+
+    <div class="page-content ">
+        <div class="card radius-15">
+            <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <script>
+                function goBack() {
+                window.history.back();
+                }
+            </script>
+            <div class=" card-body">
+                <form action="{% url 'employee_save' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+               <center> <h2>CREATE EMPLOYEE </h2></center><br>
+
+                
+                <br>
+                <!-- basic -->
+                <div class="row">
+                    <div class="col-md-6">
+                       
+                            <tr >
+                                <div class="form-group" >
+                                    <td><Label>Title</Label></td>
+                                    <td>
+                                        <select name="Title" class="form-control"   required>
+                                            <option value="">--select--</option>
+                                            <option value="Mr">Mr</option>
+                                            <option value="Mrs">Mrs</option>
+                                            <option value="Miss">Miss</option>
+                                            <option value="Ms">Ms</option>
+                                        </select>
+                                    </td>
+                                </div>
+                            </tr>
+                            <tr >
+                                <div class="form-group" >
+                                    <td><Label>First Name</Label></td>
+                                    <td><input placeholder="First Name" name="First_Name" type="text" class="form-control"></td>
+                                </div>
+                            </tr>
+                            <tr >
+                                <div class="form-group" >
+                                    <td><Label>Last Name</Label></td>
+                                    <td><input placeholder="Last Name" name="Last_Name" type="text" class="form-control"></td>
+                                </div>
+                            </tr>
+                            
+                            
+                        
+                    </div>
+
+                    <div class="col-md-4 ">
+                        <!-- <input type="file" name="Image" id="" accept="image/*" style="color: transparent ;cursor:pointer ;padding: 25% 15%;background-image: url('static/assets/images/upload.png');background-repeat: no-repeat;background-size: contain;" > -->
+                        <label for="Image" class="ml-5 mt-5" style="cursor:pointer; padding: 20% 35%; background-image: url('static/assets/images/upload.png'); background-repeat: no-repeat; background-size: contain;"></label> <br> <span class="ml-5">Upload Image</span>
+                        <input type="file" name="Image" id="Image" accept="image/*" style="display: none;">
+                    </div>
+
+                    
+                </div> <br>
+
+                <div class="row">
+                    <div class="col">
+                        <tr>
+                            <div class="form-group" >
+                                <td><Label>Alias (optional)</Label></td>
+                                <td><input placeholder="Alias" name="Alias" type="text" class="form-control"></td>
+                            </div>
+                        </tr>
+                        
+                            <tr >
+                                <div class="form-group" >
+                                    <td><Label>Date of Joining</Label></td>
+                                    <td><input placeholder="Joining Date" required name="Joining_Date" id="JoiningDate" type="date" class="form-control"></td>
+                                </div>
+                            </tr>
+                    </div>
+                    <div class="col">
+                            <tr >
+                                <div class="form-group" >
+                                    <td><Label>Salary Date</Label></td>
+                                    <td>
+                                        <select class="form-control" name="Salary_Date" id="">
+                                            <option value="">--select--</option>
+                                            <option value="1-10">1-10</option>
+                                            <option value="11-15">11-15</option>
+                                            <option value="16-31">16-31</option>
+                                        </select>
+                                    </td>
+                                </div>
+                            </tr>
+                            <tr >
+                                <div class="form-group" > 
+                                    <td><Label>Define salary details</Label></td>
+                                    <td>
+                                        <select  class="form-control" name="Salary_Type" id="salary_type">
+                                            <option value="">--select--</option>
+                                            <option value="Fixed">Fixed</option>
+                                            <option value="Temporary">Temporary</option>
+                                            <option value="Time Based">Time Based</option>
+                                        </select>
+                                    </td>
+                                </div>
+                            </tr>
+                            
+                            <div id="salary_timebase">
+                                <tr>
+                                    <div class="form-group"  >
+                                        <td><Label>Amount Per Hour</Label></td>
+                                        <td><input placeholder="Amount Per Hour" name="perhour" oninput="calculateAndSetSalary()" id="amount_perhour" type="number" class="form-control"></td>
+                                    </div>
+                                </tr>
+                                <tr>
+                                    <div class="form-group"  >
+                                        <td><Label>Total Working Hour(s)</Label></td>
+                                        <td><input placeholder="Total Working Hour(s)" name="workhour" oninput="calculateAndSetSalary()" id="working_hours" type="number" class="form-control"></td>
+                                    </div>
+                                </tr>
+                                
+                            </div>
+                            <tr>
+                                <div class="form-group" id="salary_amount" >
+                                    <td><Label>Salary Amount</Label></td>
+                                    <td><input placeholder="Salary Amount" name="Salary_Amount" id="salary_amount2" type="text" class="form-control"></td>
+                                </div>
+                            </tr>
+                    </div>
+                </div>
+                
+                <!-- basic end -->
+
+                
+
+                <!-- ---general------ -->
+                <br>
+
+                <center><p><b>General Information</b></p></center>
+                <div class="row">
+
+                    
+                        
+                            
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Employee Number</Label></td>
+                                <td><input placeholder="Employee Number" required name="Employee_Number" type="text" class="form-control"></td>
+                            </div>
+                        </tr>
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Designation</Label></td>
+                                <td><input placeholder="Designation" name="Designation" type="text" class="form-control"></td>
+                            </div>
+                        </tr>
+                        <tr>
+                            <div class="form-group col">
+                                <td><Label>Location</Label></td>
+                                <td><input placeholder="Current Location" name="Location" type="text" class="form-control"></td>
+                            </div>
+                        </tr>
+                    </div>
+                    <div class="row">
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Gender</Label></td>
+                                <td><select class="form-control" name="Gender" required>
+                                    <option value="">--select--</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    </select>
+                                </td>
+                            </div>
+                        </tr>
+                    
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Date Of Birth</Label><label style="float: right;margin-right: 50px;" for="">Age </label></td>
+                                <td> <div class="row"><div class="col-9"><input placeholder="Date Of Birth" required name="DOB" id="DOB" type="date" class="form-control"></div><div class="col-3"><input id="ageDisplay" disabled class="form-control " type="text"></div></div></td>
+                            </div>
+                           
+                        </tr>
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Blood Group</Label></td>
+                                
+                                    
+                                <div style="display: flex;">
+                                    <select name="Blood" id="bloodGroupSelect" style="width: 85%;" class="form-control col-11" >
+                                        <option value="">--select--</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">O+</option>
+                                        
+                                        {% for i in bloodgroup %}
+                                        <option value="{{i.blood_group}}">{{i.blood_group}}</option>
+                                        {% endfor %}
+                                    </select>      
+                                    <button onclick="handleBloodSelection()" class="btn btn-outline-secondary text-grey mb-2 ml-1">+</button>   
+                                </div>        
+                                  
+                                
+                            </div>
+                            <script>
+                                function handleBloodSelection() {
+                                    
+                                        $('#bloodGroupModal').modal('show');
+                                    
+                                }
+                            </script>
+                            
+                        </tr>
+                    </div>
+
+
+                    <div class="row">
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Contact Number</Label></td>
+                                <td><input placeholder="Contact Number" required name="Contact_Number" maxlength="10" type="text" pattern="^\d{10}$" class="form-control"></td>
+                            </div>
+                        </tr>
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Emergency Contact Number</Label></td>
+                                <td><input placeholder="Emergency Contact Number" name="Emergency_Contact" maxlength="10" pattern="^\d{10}$" type="text" class="form-control"></td>
+                            </div>
+                        </tr>
+                        <tr>
+                            <div class="form-group col" >
+                                <td><Label>Email</Label></td>
+                                <td><input placeholder="Email" required name="Email" type="email" class="form-control"></td>
+                            </div>
+                        </tr>
+                    </div>
+
+
+                        <div class="row">
+                            <tr>
+                                <div class="form-group col" >
+                                    <td><Label>Father's Name / Mother's Name</Label></td>
+                                    <td><input placeholder="Father's Name / Mother's Name" name="Parent" type="text" class="form-control"></td>
+                                </div>
+                            </tr>
+                            <tr>
+                                <div class="form-group col" >
+                                    <td><Label>Spouse's Name</Label></td>
+                                    <td><input placeholder="Spouse's Name" name="Spouse" type="text" class="form-control"></td>
+                                </div>
+                            </tr>
+                            <tr>
+                                <div class="form-group col" >
+                                    <td><Label>File</Label></td>
+                                    <td><input name="File" type="file" class="form-control"></td>
+                                </div>
+                            </tr>
+                        </div>
+
+                        <div class="row">
+                            
+                                <tr>
+                                    <td>
+                                        <div class="form-group col" id="perAddress">
+                                            <br>
+                                            <Label style="font-size: large;">Permanent Address</Label>
+                                            <br><br>
+                                            <div class="row">
+                                                <div class="col"><Label>Street</Label><input placeholder="street" type="text" name="street" class="form-control" id="perStreet"></div>
+                                                <div class="col"><Label>City</Label><input placeholder="city" type="text" name="city" class="form-control" id="perCity"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col"><Label>State</Label><input placeholder="state" type="text" name="state" class="form-control" id="perState"></div>
+                                                <div class="col"><Label>Pincode</Label><input placeholder="pincode" type="text" name="pincode" class="form-control" id="perPincode"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col"><Label>Country</Label><input placeholder="country" type="text" name="country" class="form-control" id="perCountry"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-group col" id="temAddress">
+                                            <br>
+                                            <Label style="font-size: large;">Temporary Address </Label>
+                                            <label style="float: right;" for=""><input id="addressCheckBox" type="checkbox"> Same as permanent address</label>
+                                            <br><br>
+                                            <div class="row">
+                                                <div class="col"><Label>Street</Label><input placeholder="street" type="text" name="tempStreet" class="form-control" id="temStreet"></div>
+                                                <div class="col"><Label>City</Label><input placeholder="city" type="text" name="tempCity" class="form-control" id="temCity"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col"><Label>State</Label><input placeholder="state" type="text" name="tempState" class="form-control" id="temState"></div>
+                                                <div class="col"><Label>Pincode</Label><input placeholder="pincode" type="text" name="tempPincode" class="form-control" id="temPincode"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col"><Label>Country</Label><input placeholder="country" type="text" name="tempCountry" class="form-control" id="temCountry"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            
+                        </div>
+
+
+                        
+                        
+                    
+
+                        <div class="row">
+                            <tr>
+                                <div class="form-group col" >
+                                    <td><Label>Provide bank Details</Label></td>
+                                    <td>
+                                        <select class="form-control" name="Bank_Details" id="bankDetails">
+                                            <option value="">--select--</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </td>
+                                </div>
+                            </tr>
+
+                            <tr> 
+                                <div class="form-group col">
+                                    <td><Label>TDS Applicable</Label></td>
+                                    <td>
+                                        <select class="form-control" name="tds_applicable" id="TDS">
+                                            <option value="">--select--</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </td>
+                                </div>
+                            </tr>
+                        </div><br>
+
+                        <div class="row">
+                            
+                                <div class="form-group col"  id="BankInfo">
+                                    <center><p><b>Banking Information</b></p></center>
+                                        
+                                        <tr >
+                                            <td><label for="">Account Number</label></td>
+                                            <td><input placeholder="Account Number" style="width: 96%;" name="Account_Number" id="accountnumber" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="">IFSC</label></td>
+                                            <td><input placeholder="SBIN0071242" style="width: 96%;" pattern="^[A-Za-z]{4}0[A-Za-z0-9]{6}$" name="IFSC" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="">Name of Bank</label></td>
+                                            <td><input placeholder="Name Of Bank" style="width: 96%;" name="BankName" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="">Branch Name</label></td>
+                                            <td><input placeholder="Branch Name" style="width: 96%;" name="BranchName" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                    
+                                    
+                                    <br>
+                                    <center><p><b>For Banking</b></p></center>
+                                    <tr>
+                                        <td><label for="">Transaction Type</label></td>
+                                        <td>
+                                            <select style="width: 96%;" class="form-control ml-4" name="Transaction_Type" >
+                                                <option value="">--select--</option>
+                                                <option value="ATM">ATM</option>
+                                                <option value="Cash">Cash</option>
+                                                <option value="Cheque">Cheque</option>
+                                            </select>    
+                                        </td>
+                                    </tr>
+                                    
+                                </div>
+                            
+
+                            
+                                <div class="form-group col" id="TDSinfo">
+                                    <center><p><b>TDS Application</b></p></center>
+                                    <tr>
+                                        <td><label for="">Percentage/Amount</label></td>
+                                        <td>
+                                            <select style="width: 96%;" class="form-control ml-4" id="TDStype" name="TDS_Type" >
+                                                <option value="">--select--</option>
+                                                <option value="Percentage">Percentage</option>
+                                                <option value="Amount">Amount</option>
+                                                
+                                            </select>    
+                                        </td>
+                                    </tr><br>
+
+                                    <div id="TDSpercentage">
+                                        <tr>
+                                            <td><label for="">Enter TDS Percentage</label></td>
+                                            <td><input placeholder="TDS Percentage" style="width: 96%;" name="TDS_Percentage" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                    </div><br>
+
+                                    <div id="TDSamount">
+                                        <tr>
+                                            <td><label for="">Enter TDS Amount</label></td>
+                                            <td><input placeholder="TDS Amount" style="width: 96%;" name="TDS_Amount" type="text" class="form-control ml-4"></td>
+                                        </tr>
+                                    </div>
+                                </div><br>
+                            
+                        </div>
+                    
+
+                    
+                
+
+                <!-- ---general end ------>
+
+
+                <!------ statutory -------->
+                <br><br>
+                    <center><p><b>Statutory Information</b></p></center><br>
+                        <div class="row">
+                            
+                            <div class="col">
+                                <div >
+                                    <tr>
+                                        <td><label for="">Income Tax Number</label></td>
+                                        <td><input placeholder="Income Tax Number"  name="Income_Tax" type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                <div >
+                                    <tr>
+                                        <td><label for="">Aadhar Number</label></td>
+                                        <td><input name="Aadhar" id="aadhar" required placeholder="12 Digit Unique Number" maxlength="14" pattern="\d{4} \d{4} \d{4}"  type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                <div >
+                                    <tr>
+                                        <td><label for="">Universal Account Number (UAN)</label></td>
+                                        <td><input placeholder="12 digit number" pattern="\d{12}" maxlength="12" name="UAN" type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                
+                            </div>
+                            <div class="col">
+                                <div >
+                                    <tr>
+                                        <td><label for="">PF Account Number</label></td>
+                                        <td><input placeholder="MH/PUN/1234567/12" name="PF" pattern="[A-Z]{2}/[A-Z0-9]{3}/[0-9]{7}/[0-9]{0,2}" type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                <div >
+                                    <tr>
+                                        <td><label for="">PAN Number</label></td>
+                                        <td><input placeholder="ABCDE1234F" name="PAN" pattern="[A-Z]{5}[0-9]{4}[A-Z]" maxlength="10" type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                <div >
+                                    <tr>
+                                        <td><label for="">PR Account Number</label></td>
+                                        <td><input placeholder="12 digit number" pattern="\d{12}" name="PR" type="text" class="form-control "></td>
+                                    </tr>
+                                </div><br>
+                                
+                            </div>
+
+                        </div><br>
+                    
+                <!------ statutory end------>
+                <center><button type="submit"class="btn btn-secondary w-50" >Save</button></center><br>
+            </form>
+            </div>
+            
+        </div>
+    </div>
+<!-- ---------------end-------------- -->
+
+<!-- Modal -->
+<div class="modal fade" id="bloodGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add New Blood Group </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Modal content goes here -->
+                <form id="bloodGroupForm" method="post">
+                    {% csrf_token %}
+
+                    <label for="">Add New Blood Group</label>
+                    <input type="text" name="bloodGroup" class="form-control" id="bloodGroupInput">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// -----------------ajax---------------------
+// save function
+
+
+// $(document).ready(function () {
+//     $('#employeeForm').submit(function (event) {
+//         event.preventDefault(); // Prevent the default form submission
+
+//         // Serialize the form data
+//         var formData = new FormData($(this)[0]);
+
+//         $.ajax({
+//             url: '{% url "employee_save" %}', // Update the URL with the correct path
+//             type: 'POST',
+//             data: formData,
+//             processData: false,
+//             contentType: false,
+//             success: function (data) {
+//                 // Handle the success response, e.g., show a success message
+//                 console.log(data);
+//             },
+//             error: function (xhr, textStatus, errorThrown) {
+//                 // Handle the error response, e.g., show an error message
+//                 console.error(errorThrown);
+//             }
+//         });
+//     });
+// });
+
+// -----------------ajax---------------------
+// blood group add
+
+$(document).ready(function() {
+    $('#bloodGroupForm').submit(function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Get the form data
+        var formData = {
+            'bloodGroup': $('#bloodGroupInput').val()
+        };
+
+        // Perform Ajax request
+        $.ajax({
+            type: 'POST',
+            url: '{% url "employee_blood_group" %}',
+            data: formData,
+            dataType: 'json',
+            headers: {
+                'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Success case: Blood group added successfully
+                    alert('Blood group added successfully!');
+                    
+                    // Update the entire section in the dropdown with the new bloodgroup data
+                    updateBloodGroupSection(response.bloodgroup);
+                } else {
+                    // Failure case: Display an error message
+                    alert('Error: ' + response.error);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle Ajax errors here
+                console.error('Ajax Error: ' + status + ' - ' + error);
+            }
+        });
+    });
+
+    // Function to update the entire section in the dropdown
+    function updateBloodGroupSection(bloodgroup) {
+        // Assuming you have a select element with the id 'bloodGroupSelect'
+        var bloodGroupSelect = $('#bloodGroupSelect');
+
+        // Remove all existing options
+        bloodGroupSelect.empty();
+
+        // Append new options based on the received data
+        bloodGroupSelect.append($('<option>', {
+            value: '',  // Default option
+            text: '--select--'
+        }));
+
+        addStaticOption('A+', 'A+');
+        addStaticOption('A-', 'A-');
+        addStaticOption('B+', 'B+');
+        addStaticOption('O+', 'O+');
+
+        for (var i = 0; i < bloodgroup.length; i++) {
+            bloodGroupSelect.append($('<option>', {
+                value: bloodgroup[i].blood_group,
+                text: bloodgroup[i].blood_group
+            }));
+        }
+
+        $('#bloodGroupModal').modal('hide');
+    }
+
+    function addStaticOption(value, text) {
+    // Assuming you have a select element with the id 'bloodGroupSelect'
+    var bloodGroupSelect = $('#bloodGroupSelect');
+
+    // Append the new static option
+    bloodGroupSelect.append($('<option>', {
+        value: value,
+        text: text
+    }));
+}
+
+});
+
+
+// -------------------------------------
+// age display
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Add change event listener to the DOB input
+    document.getElementById("DOB").addEventListener("input", function() {
+        // Get the selected date of birth
+        var dobValue = this.value;
+
+        // Calculate the age
+        var age = calculateAge(new Date(dobValue));
+
+        // Display the age in the ageDisplay input
+        document.getElementById("ageDisplay").value = age ;
+    });
+
+    // Function to calculate age based on the provided date of birth
+    function calculateAge(dob) {
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        return age;
+    }
+});
+
+
+
+
+// -------------------------------------
+// joining date = current date
+
+document.addEventListener("DOMContentLoaded", function() {
+        var currentDate = new Date();
+        var dateString = currentDate.toISOString().split('T')[0]; // Get YYYY-MM-DD format
+
+        document.getElementById("JoiningDate").value = dateString;
+    });
+
+
+
+// -------------------------------------
+// 12 digit aadhar number 
+
+ document.addEventListener('input', function (event) {
+     var input = event.target;
+
+     // Check if the input has the id "accountnumber"
+     if (input.tagName === 'INPUT' && input.type === 'text' && input.id === 'aadhar' && input.pattern) {
+         var pattern = new RegExp(input.pattern);
+
+         if (!pattern.test(input.value)) {
+             // Remove any non-digit characters
+             var digitsOnly = input.value.replace(/\D/g, '');
+
+             // Add a space after every 4 digits
+             var formattedValue = digitsOnly.replace(/(\d{4})(?=\d)/g, '$1 ');
+            // Update the input value
+            input.value = formattedValue;
+        }
+    }
+ });
+
+// display salary --------------------------------------------
+$(document).ready(function () {
+    // Initially hide the salary_amount div
+    $("#salary_amount").hide();
+    $("#salary_timebase").hide();
+
+    // Add change event listener to the salary_details dropdown
+    $("#salary_type").change(function () {
+        // Get the selected value
+        var selectedValue = $(this).val();
+
+        // Check if the selected value is "Temporary" or "Fixed"
+        if (selectedValue === "Temporary" || selectedValue === "Fixed") {
+            // Display the salary_amount div
+            $("#salary_amount").show();
+            $("#salary_timebase").hide();
+        } else if (selectedValue === 'Time Based') {
+            // Hide the salary_amount div and show salary_timebase div for other options
+            $("#salary_amount").show();
+            $("#salary_timebase").show();
+        } else {
+            // Hide the salary_amount div for other options
+            $("#salary_amount").hide();
+            $("#salary_timebase").hide();
+        }
+    });
+});
+
+
+// ----------------------------------------------------------------------------------------------
+// calculate salary amount in time base 
+function calculateAndSetSalary() {
+    // Get values from amount_perhour and working_hours
+    var firstValue = parseFloat($('#amount_perhour').val()) || 0;
+    var secondValue = parseFloat($('#working_hours').val()) || 0;
+
+    // Check if both values are greater than 0
+    if (firstValue > 0 && secondValue > 0) {
+        // Perform calculations and set the value for salary_amount2
+        var thirdValue = firstValue * secondValue;
+        $('#salary_amount2').val(thirdValue);
+    } else {
+        // Reset the value of salary_amount2 if one or both values are not greater than 0
+        $('#salary_amount2').val('');
+    }
+}
+
+// -----------------------------------------------------------------------------
+// display banking ---
+
+$(document).ready(function () {
+    // Initially hide the salary_amount div
+    $("#BankInfo").hide();
+    
+
+    // Add change event listener to the salary_details dropdown
+    $("#bankDetails").change(function () {
+        // Get the selected value
+        var selectedValue = $(this).val();
+
+        if (selectedValue === "Yes") {
+            // Display the bankinfo div
+            $("#BankInfo").show();
+        } else if (selectedValue === 'No') {
+            // Hide the BankInfo div for other options
+            $("#BankInfo").hide();
+        } else {
+            // Hide the BankInfo div for other options
+            $("#BankInfo").hide();
+        }
+    });
+});
+
+// ------------------------------------------------------------------
+// TDS display-----------
+$(document).ready(function () {
+    // Initially hide the salary_amount div
+    $("#TDSinfo").hide();
+    
+
+    // Add change event listener to the salary_details dropdown
+    $("#TDS").change(function () {
+        // Get the selected value
+        var selectedValue = $(this).val();
+
+        if (selectedValue === "Yes") {
+            // Display the bankinfo div
+            $("#TDSinfo").show();
+        } else if (selectedValue === 'No') {
+            // Hide the BankInfo div for other options
+            $("#TDSinfo").hide();
+        } else {
+            // Hide the BankInfo div for other options
+            $("#TDSinfo").hide();
+        }
+    });
+});
+// ------------------------------------------------------------------------------
+// Tds percentage/amount display
+
+$(document).ready(function () {
+    // Initially hide the salary_amount div
+    $("#TDSamount").hide();
+    $("#TDSpercentage").hide();
+
+    // Add change event listener to the salary_details dropdown
+    $("#TDStype").change(function () {
+        // Get the selected value
+        var selectedValue = $(this).val();
+
+        // Check if the selected value is "Temporary" or "Fixed"
+        if (selectedValue === "Percentage" ) {
+            // Display the salary_amount div
+            $("#TDSamount").hide();
+            $("#TDSpercentage").show();
+        } else if (selectedValue === 'Amount') {
+            // Hide the salary_amount div and show salary_timebase div for other options
+            $("#TDSamount").show();
+            $("#TDSpercentage").hide();
+        } else {
+            // Hide the salary_amount div for other options
+            $("#TDSamount").hide();
+            $("#TDSpercentage").hide();
+        }
+    });
+});
+
+// ---------------------------------------------------------------------
+// address copy 
+
+$(document).ready(function(){
+    
+    
+    // Handle checkbox click event
+    $('#addressCheckBox').on('change', function(){
+        if($(this).is(':checked')){
+            // Copy values from permanent address to temporary address
+            $('#temStreet').val($('#perStreet').val());
+            $('#temCity').val($('#perCity').val());
+            $('#temState').val($('#perState').val());
+            $('#temPincode').val($('#perPincode').val());
+            $('#temCountry').val($('#perCountry').val());
+
+            // Show temporary address
+            $('#temAddress').show();
+        } 
+    });
+});
+
+// --------------------------------------------------------------------
+// age validation
+
+document.addEventListener('DOMContentLoaded', function () {
+// Get the current date
+var currentDate = new Date();
+
+// Calculate the date 18 years ago
+var eighteenYearsAgo = new Date(currentDate);
+eighteenYearsAgo.setFullYear(currentDate.getFullYear() - 18);
+
+// Format the date to YYYY-MM-DD for the input field
+var formattedDate = eighteenYearsAgo.toISOString().split('T')[0];
+
+// Set the default value and maximum allowed date of the input field
+var dobInput = document.getElementById('DOB');
+// dobInput.value = formattedDate;
+dobInput.max = formattedDate;
+});
+
+// --------------------------------------------------------------------
+// back function
+
+function goBack() {
+    window.history.back();
+  }
+
+// --------------------------------------------------------------------
+// 
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+
+{% load static %}
+<style>
+
+</style>
+
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+
+<div class="page-content ">
+
+
+    <div id="Transaction">
+        
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+            <div class="card-body p-0">
+                <div class="card radius-15">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <h4 class="container-fluid p-2 ml-2">Transaction History</h4>
+                        </div>
+                        <div class="row">
+        
+                        </div>
+                        <div class="container-fluid">
+                            <table class="table table-responsive-md mt-4 table-hover" id="tbl_exporttable_to_xls">
+                                <thead style="background-color:#263d52;">
+                                    <tr>
+                                        <th style="text-align: center; text-transform: uppercase;">Sl No</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Action</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Date</th>
+                                        <th style="text-align: center; text-transform: uppercase;">Staff</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in bank %}
+                                    <tr class="table-row ">
+                                        <td style="text-align: center;">{{forloop.counter}}</td>
+                                        <td style="text-align: center;">{{i.action}}</td>
+                                        <td style="text-align: center;">{{i.date}}</td>
+                                        <td style="text-align: center;">{{i.login_details.First_name}} {{i.login_details.Last_name}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+           
+{% endblock %}

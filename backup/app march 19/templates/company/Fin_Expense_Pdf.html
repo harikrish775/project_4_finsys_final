@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .invoice_data {
+        font-size: 1.2rem;
+    }
+
+    .data_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .data_1, .data_2 {
+        font-weight: bold;
+    }
+
+    .data_value {
+        flex: 1;
+        text-align: right;
+    }
+
+    .balance_info{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+    .balance_info .bal_head{
+        width: 48%;
+    }
+
+    .bal_value{
+        width: 48%;
+        flex: 1;
+        text-align: right;
+    }
+
+
+
+
+
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black;">
+                        <b>
+                            <p style="font-size: 1.3rem;">EXPENSE</p>
+                        </b>
+                        <p> {{cmp.Company_name}}<br>
+                            {{cmp.Address}} <br>
+                            {{cmp.City}},
+                            {{cmp.State}}<br>
+                            {{cmp.Email}}
+                        </p>
+                    </center>
+                </div>
+                <hr>
+                <div style="width: 100%;">
+                    <div class="invoice_data">
+                        <div class="data_row">
+                            <div class="data_1 data_value">Expense No: {{expense.expense_no}}</div>
+                            <div class="data_2 data_value">Expense Date: {{expense.expense_date}}</div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_1">Tax Rate: {{expense.due_date}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_1">Payment Method: {{expense.payment_method}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        <br>
+                        <div class="data_row">
+                            <div class="data_1">Vendor:<br><b>{{expense.Vendor.title}}. {{expense.Vendor.first_name}} {{expense.Vendor.last_name}}</b><br>{{expense.vendor_address|linebreaksbr}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; text-transform:uppercase;">Expense Account</th>
+                            <th style="text-align: center; text-transform:uppercase;">Expense Type</th>
+                            {% if expense.expense_type == 'Goods' %}<th style="text-align: center; text-transform:uppercase;">HSN</th>{% else %}<th style="text-align: center; text-transform:uppercase;">Tax</th>{% endif %}
+                            <th style="text-align: center; text-transform:uppercase;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">{{expense.expense_account}}</td>
+                            <td style="text-align: center;">{{expense.expense_type}}</td>
+                            {% if expense.expense_type == 'Goods' %}<td style="text-align: center;">{{expense.hsn_number}}</td>{% else %}<td style="text-align: center;">{{expense.sac_number}}</td>{% endif %}
+                            <td style="text-align: center;">{{expense.amount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <hr>
+            <div style="width: 100%;">
+                <div class="invoice_data">
+                    <div class="data_row">
+                        <div class="data_1">Customer:<br><b>{{expense.Customer.title}}. {{expense.Customer.first_name}} {{expense.Customer.last_name}}</b><br>{{expense.customer_address|linebreaksbr}}</div>
+                        <div class="data_2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

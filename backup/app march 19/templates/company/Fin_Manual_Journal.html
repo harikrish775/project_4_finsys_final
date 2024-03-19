@@ -1,0 +1,216 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+<div class="page-content">
+  <div class="card radius-15 h-20">
+    <div class="row">
+      <div class="col-md-12">
+        <center><h2 class="mt-3">MANUAL JOURNALS</h2></center>
+        <hr/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card radius-15">
+    <div class="card-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="d-flex">
+              <input type="text" id="search" class="form-control" placeholder="Search.." autocomplete="off"/>
+              <div class="dropdown ml-1" style="justify-content: left">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-sort"></i> Sort by</button>
+                <div class="dropdown-menu" style="background-color: black">
+                  <a class="dropdown-item" href="" style="height: 40px; font-size: 15px; color: white">All</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="sortAmountAsc(5)">Amount</a>
+                  <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="sortTable(2)">Journal Number</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+          <div class="col-md-5 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary text-grey" id="exportBtn"><i class="fa fa-table"></i> Export To Excel</button>
+            <div class="dropdown ml-1">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle text-grey" data-toggle="dropdown"><i class="fa fa-filter"></i> filter by</button>
+              <div class="dropdown-menu" style="background-color: black">
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'all')">All</a>
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'draft')">Draft</a>
+                <a class="dropdown-item" style="height: 40px; font-size: 15px; color: white;cursor: pointer;" onclick="filterTable(6,'saved')">Saved</a>
+              </div>
+            </div>
+            <a href="{% url 'Fin_addJournal' %}" class="ml-1"></i><button type="button" class="btn btn-outline-secondary text-grey"><i class="fa fa-plus font-weight-light"></i> Journal</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-responsive-md table-hover mt-4 journalsTable" id="journalsTable" style="text-align: center">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>DATE</th>
+            <th>JOURNAL NO.</th>
+            <th>REFERENCE NUMBER</th>
+            <th>NOTES</th>
+            <th>AMOUNT</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in journals %}
+          <tr class="clickable-row" data-href="{% url 'Fin_viewJournal' a.id %}" style="cursor: pointer;">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ a.journal_date }}</td>
+            <td>{{ a.journal_no }}</td>
+            <td>{{ a.reference_no }}</td>
+            <td>
+              <i class="fa fa-commenting" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="{{a.notes | default:'None'}}"></i>
+            </td>
+            <td>{{ a.total_debit}}</td>
+            <td>{{ a.status }}</td>
+          </tr>
+          {% endfor %}
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<table class="journalsTable" id="journalsTableExport" hidden>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>DATE</th>
+      <th>JOURNAL NO.</th>
+      <th>REFERENCE NUMBER</th>
+      <th>NOTES</th>
+      <th>AMOUNT</th>
+      <th>STATUS</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in journals %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ a.journal_date }}</td>
+      <td>{{ a.journal_no }}</td>
+      <td>{{ a.reference_no }}</td>
+      <td>{{ a.notes | default:'None' }}</td>
+      <td>{{ a.total_debit}}</td>
+      <td>{{ a.status }}</td>
+    </tr>
+    {% endfor %}
+    
+  </tbody>
+</table>
+
+
+<!-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+<script>
+  var $rows = $('#journalsTable tbody tr');
+  $('#search').keyup(function() {
+    var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+    
+    $rows.show().filter(function() {
+      var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+      return !~text.indexOf(val);
+    }).hide();
+  });
+  
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    const Table = document.getElementById("journalsTableExport");
+    const ws = XLSX.utils.table_to_sheet(Table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Manual Journals.xlsx");
+  });
+
+  jQuery(document).ready(function ($) {
+    $(".clickable-row").click(function () {
+      window.location = $(this).data("href");
+    });
+  });
+
+  function sortTable(columnIndex) {
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("journalsTable");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+        y = rows[i + 1].getElementsByTagName("td")[columnIndex].textContent.toLowerCase();
+
+        if (x > y) {
+            shouldSwitch = true;
+            break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  function filterTable(row,filterValue) {
+    var table1 = document.getElementById("journalsTable");
+    var rows1 = table1.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows1.length; i++) {
+      var statusCell = rows1[i].getElementsByTagName("td")[row];
+
+      if (filterValue == "all" || statusCell.textContent.toLowerCase() == filterValue) {
+        rows1[i].style.display = "";
+      } else {
+        rows1[i].style.display = "none";
+      }
+    }
+
+    var table2 = document.getElementById("journalsTableExport");
+    var rows2 = table2.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows2.length; i++) {
+      var statusCell = rows2[i].getElementsByTagName("td")[row];
+
+      if (filterValue == "all" || statusCell.textContent.toLowerCase() == filterValue) {
+        rows2[i].style.display = "";
+      } else {
+        rows2[i].style.display = "none";
+      }
+    }
+  }
+
+  function sortAmountAsc(cell) {
+    var table = document.getElementById("journalsTable");
+    var rows = Array.from(table.rows).slice(1);
+
+    rows.sort(function (a, b) {
+      var amountA = parseInt(a.cells[cell].textContent);
+      var amountB = parseInt(b.cells[cell].textContent);
+      return amountA - amountB;
+    });
+
+    // Remove existing rows from the table
+    for (var i = table.rows.length - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+
+    // Append the sorted rows back to the table
+    rows.forEach(function (row) {
+        table.tBodies[0].appendChild(row);
+    });
+  }
+</script>
+
+{% endblock %}

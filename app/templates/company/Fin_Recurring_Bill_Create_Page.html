@@ -18,7 +18,7 @@
     }
 
     .sty1{
-        text-transform: uppercase;
+        text-transform: capitalize;
     }
     input:read-only, select:disabled, textarea:read-only {
         background-color: #43596c !important;
@@ -417,6 +417,7 @@ function goBack() {
                                                         <input type="text" placeholder="Purchase Order Number" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo" readonly>
                                                     </div>
                                                 </div>
+                                                
 
                                                 <div class="row ml-md-2 mr-md-2 ">
                                                     <div class="col-md-3 mt-2">
@@ -452,6 +453,40 @@ function goBack() {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="row m-md-2">
+                                                    <input class="ml-3" id="priceListCheckbox" type="checkbox">&nbsp; Price List
+                                                </div>
+                                                <div class="row m-md-2">
+                                                    <div class="col-md-3 mb-3" id="priceListDiv" style="display: none;">
+                                                        <label for="">Price List</label>
+                                                        <select name="price_list_RB" id="priceListRB" class="form-control">
+                                                            <option value="" selected>Choose</option>
+                                                            {% for l in list %}
+                                                            <option value="{{l.id}}">{{l.name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <script>
+                                                    var priceListCheckbox = document.getElementById("priceListCheckbox");
+                                                    var priceListDiv = document.getElementById("priceListDiv");
+                                                    var priceListRB = document.getElementById("priceListRB");
+                                                
+                                                    // Add an event listener to the checkbox to toggle the visibility of the select element
+                                                    priceListCheckbox.addEventListener("click", function() {
+                                                        if (this.checked) {
+                                                            // If the checkbox is checked, display the select element
+                                                            priceListDiv.style.display = "block";
+                                                            priceListRB.setAttribute("required");
+                                                        } else{
+                                                            // If the checkbox is unchecked, hide the select element
+                                                            priceListDiv.style.display = "none";
+                                                            priceListRB.removeAttribute("required");
+                                                        }
+                                                    });
+                                                </script>
+                                                
 
                                                 <br><br>
                                                 <div class="border-bottom pb-2 m-md-2"><h5 class="ml-4 ">Customer Details</h5> </div>
@@ -684,17 +719,7 @@ function goBack() {
                                                         // Get the selected payment terms (number of days)
                                                         var paymentTerms = document.getElementById("termadd2").value;
                                                         if (paymentTerms == ''){
-                                                            
-                                                            var countDays = 0; // Correctly access the countDays from the response data
-                                                                // Calculate the end date
-                                                                var endDate = new Date(startDate);
-                                                                endDate.setDate(endDate.getDate() + parseInt(countDays));
-
-                                                                // Format the end date to YYYY-MM-DD
-                                                                var formattedEndDate = endDate.toISOString().split('T')[0];
-
-                                                                // Display the calculated end date
-                                                                document.getElementById("endDate").value = formattedEndDate;
+                                                            document.getElementById("endDate").value = '';
                                                         }else{
 
                                                         $.ajax({
@@ -849,10 +874,9 @@ function goBack() {
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                
                                                                 <tr class="item-row">
                                                                     <td></td>
-                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#Items">+</button></div></td>
+                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#itemsModal">+</button></div></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
@@ -880,8 +904,8 @@ function goBack() {
                                                                         <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
                                                                         </select> -->
-                                                                        <input class="form-control mt-4" type="text" placeholder="Tax Rate" readonly>
-                                                                        <small style="color: crimson;">Select Vendor & Customer</small>
+                                                                        <input class="form-control " type="text" placeholder="Tax Rate" readonly>
+                                                                        <!-- <small style="color: crimson;">Select Vendor & Customer</small> -->
                                                                     </td>
                                                                     <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
@@ -1023,15 +1047,45 @@ function goBack() {
                                                                 success: function (data) {
                                                                     // Update the placeholder elements with the fetched details
                                                                     $row.find(".item-hsn").val(data.hsn);
-                                                                    $row.find(".item-price").val(data.price);
                                                                     $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
                                                                     $row.find(".item-stockin").html(data.current_stock);
                                                                     $row.find(".item-gst_tax").val(data.gst_tax).change();
                                                                     $row.find(".item-igst_tax").val(data.igst_tax).change();
+                                                                    console.log('4545454545',data.id);
+                                                                    plistID = document.getElementById('priceListRB').value;
+                                                                    if(plistID!=''){
+                                                                            $.ajax({
+                                                                            url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
+                                                                            type: 'GET',
+                                                                            success: function (response) {
+                                                                                console.log('09999999999999');
+                                                                                if (response.opr == 'UP'){
+                                                                                    prce = data.price*(1+(response.perc/100));
+                                                                                    $row.find(".item-price").val(prce.toFixed(2));
+                                                                                }else if(response.opr == 'DOWN'){
+                                                                                    prce = data.price*(1-(response.perc/100));
+                                                                                    $row.find(".item-price").val(prce.toFixed(2));
+                                                                                }else if(response.opr == 'Custom'){
+                                                                                    console.log('66666666666');
+                                                                                    $row.find(".item-price").val(response.customerRate);
+                                                                                }else{
+                                                                                    alert('something went wrong!')
+                                                                                }
+                                                                            },
+                                                                            error: function (error) {
+                                                                                console.log(error);
+                                                                                alert('324325243654')
+                                                                            }
+                                                                            });
+                                                                    }else{
+                                                                        console.log('7777777777777');
+                                                                        $row.find(".item-price").val(data.price);
+                                                                    }
 
                                                                     updateStockin($row);
                                                                 },
                                                                 error: function (error) {
+                                                                    console.log('888888888888888');
                                                                     console.log(error);
                                                                 }
                                                             });
@@ -1399,26 +1453,79 @@ function goBack() {
                                                             });
                                                         });
                                                     
-                                                        // Attach event listener for the "Add Row" button
-                                                        function addRow() {
+                                                    //     // Attach event listener for the "Add Row" button
+                                                    //     function addRow() {
                                                         
-                                                        var clone = itemRows[0].cloneNode(true);
-                                                        document.querySelector('tbody').appendChild(clone);
+                                                    //     var clone = itemRows[0].cloneNode(true);
+                                                    //     document.querySelector('tbody').appendChild(clone);
 
-                                                        // Reset values for the new row
-                                                        clone.querySelectorAll('input').forEach(function (input) {
-                                                            input.value = 0;
-                                                            document.querySelectorAll('.item-stockin').innerText = '0';
+                                                    //     // Reset values for the new row
+                                                    //     clone.querySelectorAll('input').forEach(function (input) {
+                                                    //         input.value = 0;
+                                                    //         document.querySelectorAll('.item-stockin').innerText = '0';
                                                             
-                                                        });
+                                                    //     });
 
-                                                        clone.querySelectorAll('.item-stockin').forEach(function (element) {
-                                                            element.innerText = '0';
-                                                        });
+                                                    //     clone.querySelectorAll('.item-stockin').forEach(function (element) {
+                                                    //         element.innerText = '0';
+                                                    //     });
                                                         
-                                                        initializeCalculations();
-                                                        
-                                                    }
+                                                    //     initializeCalculations();
+                                                    // }
+
+                                                    function addRow() {
+                                                            // Clone the default row HTML
+                                                            var clone = document.createElement('tbody');
+                                                            clone.innerHTML = defaultRowHTML;
+
+                                                            // Append the cloned row to the tbody element
+                                                            document.querySelector('table tbody').appendChild(clone.firstChild); // Append the first child of the tbody
+
+                                                            initializeCalculations();
+                                                            
+                                                        }
+
+                                                    var defaultRowHTML = `<tr class="item-row">
+                                                                    <td></td>
+                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#itemsModal">+</button></div></td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
+                                                                    <td class="border GSTtext" style="min-width: 150px;" id="GSTtext">
+                                                                        <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
+                                                                            <option value="">Select Tax</option>
+                                                                        </select> -->
+                                                                        <input class="form-control " type="text" placeholder="Tax Rate" readonly>
+                                                                        <!-- <small style="color: crimson;">Select Vendor & Customer</small> -->
+                                                                    </td>
+                                                                    <td class="border gst" style="min-width: 150px;display: none;" id="gst">
+                                                                        <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
+                                                                            <option value="0">GST 0 (0%)</option>
+                                                                            <option value="3">GST 3 (3%)</option>
+                                                                            <option value="5">GST 5 (5%)</option>
+                                                                            <option value="12">GST 12 (12%)</option>
+                                                                            <option value="18">GST 18 (18%)</option>
+                                                                            <option value="28">GST 28 (28%)</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td class="border igst" style="min-width: 150px;display: none;" id="igst">
+                                                                        <select name="igsttaxrate[]" id="IGSTcolumn" onchange="initializeCalculations()" class="form-control item-igst_tax" placeholder="Tax Rate">
+                                                                            <option value="0">IGST 0 (0%)</option>
+                                                                            <option value="3">IGST 3 (3%)</option>
+                                                                            <option value="5">IGST 5 (5%)</option>
+                                                                            <option value="12">IGST 12 (12%)</option>
+                                                                            <option value="18">IGST 18 (18%)</option>
+                                                                            <option value="28">IGST 28 (28%)</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
+                                                                    <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
+                                                                    <td class="border" style="min-width: 150px;" hidden><input type="text" class="form-control item-totaltax" id="taxTotal" value="0" ></td>
+                                                                    <td class="border" ><br> <p class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close w-80" onclick="removeRow(this)" id="minus"></p></td>
+                                                                </tr>
+                                                            `;
+
+                                                            
 
                                                     
                                                     
@@ -1761,7 +1868,7 @@ function goBack() {
                                     </div>
                                     <div class="col-md-3">
                                         <label for="vendorWebsite">Website</label>
-                                        <input type="text" class="form-control" id="vendorWebsite" required placeholder="www.finsys.com" onchange="checkWebsite(this)" name="website" style="background-color: #43596c;color: white;">
+                                        <input type="text" class="form-control" id="vendorWebsite" placeholder="www.finsys.com" onchange="checkWebsite(this)" name="website" style="background-color: #43596c;color: white;">
                                         <div id="warnweb" class="text-danger"></div>
                                     </div>
                                     <div class="col-md-3">
@@ -2187,7 +2294,7 @@ function goBack() {
                                             document.getElementById("vendorForm").reset();
                                         });
                                         } else {
-                                            alert(response.error);
+                                            alert(response.msg);
                                         }
                                     },
                                     error: function(xhr, errmsg, err) {
@@ -2732,7 +2839,7 @@ function goBack() {
                                         <label for="priceList">Price List</label>
                                         <select name="price_list" id="priceList" class="form-control">
                                             <option value="" selected>Choose</option>
-                                            {% for l in list %}
+                                            {% for l in list_s %}
                                             <option value="{{l.id}}">{{l.name}}</option>
                                             {% endfor %}
                                         </select>
@@ -2747,7 +2854,7 @@ function goBack() {
                                     </div>
                                     <div class="col-md-4">
                                         <label for="custWebsite">Website</label>
-                                        <input type="text" class="form-control" id="custWebsite" required placeholder="www.finsys.com" onchange="checkweb(this)" name="website" style="background-color: #43596c;color: white;">
+                                        <input type="text" class="form-control" id="custWebsite" placeholder="www.finsys.com" onchange="checkweb(this)" name="website" style="background-color: #43596c;color: white;">
                                         <div id="warnweb" class="text-danger"></div>
                                     </div>
                                     <div class="col-md-4">
@@ -2986,7 +3093,7 @@ function goBack() {
                                             document.getElementById("customerForm").reset();
                                         });
                                         } else {
-                                            alert(response.error);
+                                            alert(response.msg);
                                         }
                                     },
                                     error: function(xhr, errmsg, err) {
@@ -3407,7 +3514,7 @@ function goBack() {
 
 
 <!-- items modal -->
-<div class="modal fade" id="Items">
+<div class="modal fade" id="itemsModal">
     <div class="modal-dialog modal-lg" style="max-width: 1000px;" role="document">
         <div class="modal-content" style="background-color: #213b52;">
             <div class="modal-header">
@@ -3672,14 +3779,15 @@ function goBack() {
                     // Assuming each vendor has properties 'first_name', 'last_name', and 'id'
                     var fullName = item.name ;
                     dropdown.append($('<option></option>').text(fullName).val(item.id));
-                    $('#Items').modal('hide');
+                    $('#itemsModal').modal('hide');
+                    document.getElementById("itemForm").reset();
                 });
                 } else {
-                    alert(response.error);
+                    alert(response.msg);
                 }
             },
             error: function(xhr, errmsg, err) {
-                alert("Error occurred: " + errmsg);
+                alert("Error occurred: " + err);
             }
         });
     });
@@ -3871,6 +3979,7 @@ function goBack() {
             errorText.innerText = "HSN must contain at least 6 digits";
             hsnField.setCustomValidity("HSN must contain at least 6 digits");
             hsnField.style.borderColor = "red";
+
         } else {
             errorText.innerText = "";
             hsnField.setCustomValidity(""); 
@@ -3888,12 +3997,15 @@ function goBack() {
 
     $(document).on("click","#saveItemUnit",function(){
         var name = $("#unit_name").val();
+        var hsnField = document.getElementById("hsnField");
+        var hsnValue = hsnField.value;
         if (name !=""){
             $.ajax({
                 type : 'POST',
                 url:"{% url 'Fin_saveItemUnit' %}",
                 data:{
                     'name' : name,
+                    'hsn' : hsnValue,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 
