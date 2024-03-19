@@ -478,17 +478,50 @@ function goBack() {
                                                     </div>
                                                 </div>
                                                 <div class="row m-md-2">
-                                                    <input type="checkbox">Price List
-                                                    <div class="col-md-3 mb-3" style="display: none;">
+                                                    <input class="ml-3" id="priceListCheckbox" name="priceListCheckbox" {% if recur.pricelist_id != Null %} checked {% endif %} type="checkbox">&nbsp; Price List
+                                                </div>
+                                                <div class="row m-md-2">
+                                                    <div class="col-md-3 mb-3" id="priceListDiv" {% if recur.pricelist_id == Null %} style="display: none;" {% endif %} >
                                                         <label for="">Price List</label>
                                                         <select name="priceListRB" id="priceListRB" class="form-control">
                                                             <option value="" selected>Choose</option>
                                                             {% for l in list %}
+                                                            {% if recur.pricelist_id == l.id %}
+                                                            <option value="{{l.id}}" selected>{{l.name}}</option>
+                                                            {% else %}
                                                             <option value="{{l.id}}">{{l.name}}</option>
+                                                            {% endif %}
                                                             {% endfor %}
                                                         </select>
                                                     </div>
                                                 </div>
+                                                
+                                                <script>
+                                                    var priceListCheckbox = document.getElementById("priceListCheckbox");
+                                                    var priceListDiv = document.getElementById("priceListDiv");
+                                                    var priceListRB = document.getElementById("priceListRB");
+                                                
+                                                    // Add an event listener to the checkbox to toggle the visibility of the select element
+                                                    priceListCheckbox.addEventListener("click", function() {
+                                                        if (this.checked) {
+                                                            // If the checkbox is checked, display the select element
+                                                            priceListDiv.style.display = "block";
+                                                            priceListRB.required = true;
+                                                        } else{
+                                                            // If the checkbox is unchecked, hide the select element
+                                                            priceListDiv.style.display = "none";
+                                                            priceListRB.required = false;
+
+                                                            // Trigger click event and select first option
+                                                            var firstOption = document.querySelector("#priceListRB option:first-child");
+                                                            if (firstOption) {
+                                                                firstOption.selected = true; // Select the first option
+                                                                firstOption.dispatchEvent(new Event('click')); // Dispatch the click event
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
 
                                                 <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Customer Details</h5> </div>
@@ -581,11 +614,11 @@ function goBack() {
                                                             </div>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-md mb-3 mt-2">
+                                                            <div class="col-md-6 mb-3 mt-2">
                                                                 <label for="">GST Type</label>
                                                                 <input readonly type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
                                                             </div>
-                                                            <div class="col-md mb-3 mt-2" id="customerGstinDiv" style="display: none;">
+                                                            <div class="col-md-6 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
                                                                 <label class="">GST Number</label>
                                                                 <input readonly type="text" value="{{recur.customer.gstin}}" placeholder="customer gst number" id="customerGSTIN"  class="form-control">
                                                             </div>
@@ -1028,11 +1061,37 @@ function goBack() {
                                                                 success: function (data) {
                                                                     // Update the placeholder elements with the fetched details
                                                                     $row.find(".item-hsn").val(data.hsn);
-                                                                    $row.find(".item-price").val(data.price);
                                                                     $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
                                                                     $row.find(".item-stockin").html(data.current_stock);
                                                                     $row.find(".item-gst_tax").val(data.gst_tax).change();
                                                                     $row.find(".item-igst_tax").val(data.igst_tax).change();
+                                                                    console.log('4545454545',data.id);
+                                                                    plistID = document.getElementById('priceListRB').value;
+                                                                    if(plistID!=''){
+                                                                            $.ajax({
+                                                                            url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
+                                                                            type: 'GET',
+                                                                            success: function (response) {
+                                                                                if (response.opr == 'UP'){
+                                                                                    prce = data.price*(1+(response.perc/100));
+                                                                                    $row.find(".item-price").val(prce.toFixed(2));
+                                                                                }else if(response.opr == 'DOWN'){
+                                                                                    prce = data.price*(1-(response.perc/100));
+                                                                                    $row.find(".item-price").val(prce.toFixed(2));
+                                                                                }else if(response.opr == 'Custom'){
+                                                                                    $row.find(".item-price").val(response.customerRate);
+                                                                                }else{
+                                                                                    alert('something went wrong!')
+                                                                                }
+                                                                            },
+                                                                            error: function (error) {
+                                                                                console.log(error);
+                                                                                alert(error)
+                                                                            }
+                                                                            });
+                                                                    }else{
+                                                                        $row.find(".item-price").val(data.price);
+                                                                    }
 
                                                                     updateStockin($row);
                                                                 },
@@ -1040,7 +1099,15 @@ function goBack() {
                                                                     console.log(error);
                                                                 }
                                                             });
+                                                            // Add change event listener to the priceListRB dropdown
+                                                            $('#priceListRB').on('change', function () {
+                                                                // Trigger change event for each .item-select element inside #itemTable
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            });
                                                         });
+
+
+
 
                                                         // Function to check and update item-stockin based on item-qty
                                                         function updateStockin($row) {

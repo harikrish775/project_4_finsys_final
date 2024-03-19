@@ -23285,7 +23285,7 @@ def Fin_recurring_bill_create_page(request):
             else:
                 nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'AB01'
+            nxtInv = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -23341,7 +23341,7 @@ def Fin_recurring_bill_create_page(request):
             else:
                 nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'AB01'
+            nxtInv = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
         if recurringBill:
@@ -23384,6 +23384,11 @@ def Fin_recurring_bill_save(request):
             bank_account = request.POST['bankAccount'] 
         else:
             bank_account = ''
+
+        if request.POST['priceListCheckbox'] == 'on':
+            pricelist = request.POST['priceListRB']
+        else:
+            pricelist = 'Null'
         
         customer = request.POST['Customer'] 
         description = request.POST['Note']
@@ -23403,10 +23408,8 @@ def Fin_recurring_bill_save(request):
             cgst = None
             sgst = None
             taxAmount_igst = request.POST['taxAmount']
-        if request.POST['priceListRB']:
-            pricelist = request.POST['priceListRB']
-        else:
-            pricelist = None
+
+        
         sub_total = request.POST['subTotal'] 
 
         if request.POST['shippingCharge'] :
@@ -23435,22 +23438,17 @@ def Fin_recurring_bill_save(request):
             com = Fin_Staff_Details.objects.get(Login_Id = sid).company_id
 
         if Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number,purchase_order_number=purchase_order_number).exists():
-            print('11111111111')
             return JsonResponse({'messages': 'Bill Exists'})
         elif Fin_Recurring_Bills.objects.filter(company=com,recurring_bill_number=recurring_bill_number).exists():
-            print('222222222')
             return JsonResponse({'messages': 'Bill Number Exists'})
         elif request.POST['UPI'] :
             if Fin_Recurring_Bills.objects.filter(company=com,upi_id=upi_id).exists():
-                print('33333333333333')
                 return JsonResponse({'messages': 'Upi id Exists'})
         elif request.POST['Cheque']:
             if Fin_Recurring_Bills.objects.filter(company=com,cheque_number=cheque_number).exists():
-                print('4444444444444')
                 return JsonResponse({'messages': 'Cheque number Exists'})
         elif request.POST['bankAccount']:
             if Fin_Recurring_Bills.objects.filter(company=com,bank_account=bank_account).exists():
-                print('5555555555')
                 return JsonResponse({'messages': 'Bank number Exists'})
         else:
             newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
@@ -23484,7 +23482,7 @@ def Fin_recurring_bill_save(request):
                     group = zip(product, qty, discount, total, hsn, tax, price)
                     mapped=list(group)
                     for itemsNew in mapped:
-                        itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com2.id)
+                        itemsTable = Fin_Recurring_Bill_Items(items_id = int(itemsNew[0]),quantity=int(itemsNew[1]),discount=float(itemsNew[2]),total=float(itemsNew[3]),hsn=int(itemsNew[4]),tax_rate=int(itemsNew[5]),price=float(itemsNew[6]),recurring_bill_id=newBill.id,company_id=com2.id)
                         itemsTable.save()
                         print('666666666666666')
                 
@@ -23494,7 +23492,7 @@ def Fin_recurring_bill_save(request):
                     group = zip(product, qty, discount, total, hsn, tax, price)
                     mapped=list(group)
                     for itemsNew in mapped:
-                        itemsTable = Fin_Recurring_Bill_Items(items_id = itemsNew[0],quantity=itemsNew[1],discount=itemsNew[2],total=itemsNew[3],hsn=itemsNew[4],tax_rate=itemsNew[5],price=itemsNew[6],recurring_bill_id=newBill.id,company_id=com2.company_id_id)
+                        itemsTable = Fin_Recurring_Bill_Items(items_id = int(itemsNew[0]),quantity=int(itemsNew[1]),discount=float(itemsNew[2]),total=float(itemsNew[3]),hsn=int(itemsNew[4]),tax_rate=int(itemsNew[5]),price=float(itemsNew[6]),recurring_bill_id=newBill.id,company_id=com2.company_id_id)
                         itemsTable.save()
                         print('77777777777777')
             
@@ -23979,8 +23977,6 @@ def Fin_recurring_bill_edit_save(request,pk):
         recur.company_payment_terms_id = request.POST['payment_terms']
         recur.purchase_order_number = request.POST['PurchaseOrderNo']
         recur.payment_method = request.POST['paymentType']
-        if request.POST['priceListRB']:
-            recur.pricelist = request.POST['priceListRB']
 
         if len(request.POST['Cheque']) > 0:
             recur.cheque_number = request.POST['Cheque'] 
@@ -23999,9 +23995,6 @@ def Fin_recurring_bill_edit_save(request,pk):
         
         recur.customer_id = request.POST['Customer']
         recur.description = request.POST['Note']
-
-        # if request.FILES['Document']:
-        #     recur.document = request.FILES['Document']
 
         recur.sub_total = request.POST['subTotal']
 
@@ -24028,6 +24021,12 @@ def Fin_recurring_bill_edit_save(request,pk):
         cheqnum = request.POST['Cheque']
         upid = request.POST['UPI']
 
+        if request.POST['priceListCheckbox'] == 'on':
+            recur.pricelist_id = int(request.POST['priceListRB'])
+        else:
+            recur.pricelist_id = 'Null'
+        
+            
         if loginn.User_Type == 'Company':
             com2 = Fin_Company_Details.objects.get(Login_Id = sid)
         elif loginn.User_Type == 'Staff' :
@@ -24607,8 +24606,9 @@ def Fin_get_pricelist_details(request,price_id,items_id):
     plist = Fin_Price_List.objects.get(id=price_id)
 
     if plist.item_rate == "Customized individual rate":
-        lists = Fin_PriceList_Items.objects.filter(list_id=price_id,item_id=items_id)
+        lists = Fin_PriceList_Items.objects.get(list_id=price_id,item_id=items_id)
         cusRate = lists.custom_rate
+        print(cusRate)
         return JsonResponse({'opr':'Custom','customerRate':cusRate})
         
     else:

@@ -454,12 +454,12 @@ function goBack() {
                                                     </div>
                                                 </div>
                                                 <div class="row m-md-2">
-                                                    <input class="ml-3" id="priceListCheckbox" type="checkbox">&nbsp; Price List
+                                                    <input class="ml-3" name="priceListCheckbox" id="priceListCheckbox" type="checkbox">&nbsp; Price List
                                                 </div>
                                                 <div class="row m-md-2">
                                                     <div class="col-md-3 mb-3" id="priceListDiv" style="display: none;">
                                                         <label for="">Price List</label>
-                                                        <select name="price_list_RB" id="priceListRB" class="form-control">
+                                                        <select name="priceListRB" id="priceListRB" class="form-control">
                                                             <option value="" selected>Choose</option>
                                                             {% for l in list %}
                                                             <option value="{{l.id}}">{{l.name}}</option>
@@ -478,11 +478,19 @@ function goBack() {
                                                         if (this.checked) {
                                                             // If the checkbox is checked, display the select element
                                                             priceListDiv.style.display = "block";
-                                                            priceListRB.setAttribute("required");
+                                                            priceListRB.required = true;
                                                         } else{
                                                             // If the checkbox is unchecked, hide the select element
                                                             priceListDiv.style.display = "none";
-                                                            priceListRB.removeAttribute("required");
+                                                            priceListRB.required = false;
+
+                                                            // Trigger click event and select first option
+                                                            var firstOption = document.querySelector("#priceListRB option:first-child");
+                                                            if (firstOption) {
+                                                                firstOption.selected = true; // Select the first option
+                                                                firstOption.dispatchEvent(new Event('click')); // Dispatch the click event
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            }
                                                         }
                                                     });
                                                 </script>
@@ -539,11 +547,11 @@ function goBack() {
                                                             </div>
                                                         </div>
                                                         <div class="row">
-                                                            <div class="col-md mb-3 mt-2">
+                                                            <div class="col-md-6 mb-3 mt-2">
                                                                 <label for="">GST Type</label>
                                                                 <input readonly  placeholder="Customer GST Type" type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
                                                             </div>
-                                                            <div class="col-md mb-3 mt-2" id="customerGstinDiv" >
+                                                            <div class="col-md-6 mb-3 mt-2" id="customerGstinDiv" >
                                                                 <label class="">GST Number</label>
                                                                 <input readonly placeholder="Customer GST Number" type="text" id="customerGSTIN"  class="form-control">
                                                             </div>
@@ -1058,7 +1066,6 @@ function goBack() {
                                                                             url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
                                                                             type: 'GET',
                                                                             success: function (response) {
-                                                                                console.log('09999999999999');
                                                                                 if (response.opr == 'UP'){
                                                                                     prce = data.price*(1+(response.perc/100));
                                                                                     $row.find(".item-price").val(prce.toFixed(2));
@@ -1066,7 +1073,6 @@ function goBack() {
                                                                                     prce = data.price*(1-(response.perc/100));
                                                                                     $row.find(".item-price").val(prce.toFixed(2));
                                                                                 }else if(response.opr == 'Custom'){
-                                                                                    console.log('66666666666');
                                                                                     $row.find(".item-price").val(response.customerRate);
                                                                                 }else{
                                                                                     alert('something went wrong!')
@@ -1074,22 +1080,27 @@ function goBack() {
                                                                             },
                                                                             error: function (error) {
                                                                                 console.log(error);
-                                                                                alert('324325243654')
+                                                                                alert(error)
                                                                             }
                                                                             });
                                                                     }else{
-                                                                        console.log('7777777777777');
                                                                         $row.find(".item-price").val(data.price);
                                                                     }
 
                                                                     updateStockin($row);
                                                                 },
                                                                 error: function (error) {
-                                                                    console.log('888888888888888');
                                                                     console.log(error);
                                                                 }
                                                             });
+                                                            // Add change event listener to the priceListRB dropdown
+                                                            $('#priceListRB').on('change', function () {
+                                                                // Trigger change event for each .item-select element inside #itemTable
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            });
                                                         });
+
+
 
                                                         // Function to check and update item-stockin based on item-qty
                                                         function updateStockin($row) {
