@@ -69,7 +69,15 @@
         // Prevent the default form submission
         event.preventDefault();
 
-        // Get the form data
+        var isDuplicate = checkUniqueHSN();
+        var quan = checkQuantity();
+        if (isDuplicate) {
+            alert("Duplicate Items found!");
+        }else if(quan){
+            alert("quantity cannot be zero or empty !");
+        }else{
+
+            // Get the form data
         var formData = $(this).serialize();
         
 
@@ -97,6 +105,10 @@
                 // Function to be called regardless of success or failure
             }
         });
+
+        }
+
+        
     });
 });
 
@@ -251,17 +263,17 @@ function goBack() {
                                                             </script>
                                                             <div class="form-group col-md">
                                                                 <label class="" >Vendor Email</label>
-                                                                <input required value="{{recur.vendor.email}}" type="vendorEmail" placeholder="Vendor Email" id="vendorEmail" class="form-control">
+                                                                <input readonly required value="{{recur.vendor.email}}" type="vendorEmail" placeholder="Vendor Email" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
                                                                 <label class="">GST Type (Vendor)</label>
-                                                                <input type="text" value="{{recur.vendor.gst_type}}" placeholder="Vendor GST Type" id="vendorGST" class="form-control">
+                                                                <input readonly type="text" value="{{recur.vendor.gst_type}}" placeholder="Vendor GST Type" id="vendorGST" class="form-control">
                                                             </div>
                                                             <div id="vendorGstinDiv" {% if recur.vendor.gstin %} {% else %} style="display: none;" {% endif %}  class="form-group col-md">
                                                                 <label class="">GST Number</label>
-                                                                <input type="text" value="{{recur.vendor.gstin}}" placeholder="Vendor GST Number" id="vendorGSTIN"  class="form-control">
+                                                                <input readonly type="text" value="{{recur.vendor.gstin}}" placeholder="Vendor GST Number" id="vendorGSTIN"  class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -316,7 +328,7 @@ function goBack() {
                                                     </div>
                                                     <div class="form-group col-md mb-3">
                                                         <label class="">Address</label>
-                                                        <textarea  required name="address" id="vendorAddress" placeholder="Vendor Address" cols="10" rows="5" class="form-control">{{recur.vendor.billing_street}}
+                                                        <textarea readonly required name="address" id="vendorAddress" placeholder="Vendor Address" cols="10" rows="5" class="form-control">{{recur.vendor.billing_street}}
 {{recur.vendor.billing_city}},{{recur.vendor.billing_state}}
 {{recur.vendor.billing_country}}
 {{recur.vendor.billing_pincode}}
@@ -420,7 +432,7 @@ function goBack() {
                                                     </div>
                                                     <div class="col-md mb-3">
                                                         <label for="">Purchase Order No.</label>
-                                                        <input type="text" value="{{recur.purchase_order_number}}" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
+                                                        <input readonly type="text" value="{{recur.purchase_order_number}}" class="form-control" name="PurchaseOrderNo" id="PurchaseOrderNo">
                                                     </div>
                                                 </div>
 
@@ -471,99 +483,115 @@ function goBack() {
                                                 <br>
 
                                                 <div class="row m-md-2">
-                                                    <div class="col-md mb-3">
-                                                        <label for="">Customer</label>
-                                                        <!-- <div style="display: flex;">
-                                                            <select name="Customer" id="SelectCustomer" class="form-control">
-                                                                <option value="">Select Customer</option>
-                                                                {% for c in customers %}
-                                                                <option value="{{c.id}}"> {{c.first_name}} {{c.last_name}} </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                            <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
-                                                        </div> -->
-
-                                                        <div class="input-group">
-                                                            <input type="text" style="display: none;" value="{{recur.customer.id}}" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" style="text-transform: uppercase;" autocomplete="off" value="{{recur.customer.first_name}} {{recur.customer.last_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
-                                                            <div class="input-group-append">
-                                                                <div class="dropdown-menu customerDropdown" style="width:380px;">
-                                                                    {% for i in customers %}
-                                                                    <a class="dropdown-item drop2" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
-                                                                    {% endfor %}
+                                                    <div class="col-md-8">
+                                                        <div class="row">
+                                                            <div class="col-md mb-3">
+                                                                <label for="">Customer</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" style="display: none;" value="{{recur.customer.id}}" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input type="text" style="text-transform: uppercase;" autocomplete="off" value="{{recur.customer.first_name}} {{recur.customer.last_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
+                                                                    <div class="input-group-append">
+                                                                        <div class="dropdown-menu customerDropdown" style="width:380px;">
+                                                                            {% for i in customers %}
+                                                                            <a class="dropdown-item drop2" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
                                                                 </div>
-                                                            </div>
-                                                            <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
-                                                        </div>
-
-                                                        <script>
-                                                            // search
-                                                            $(document).ready(function () {
-                                                                // When a dropdown item is clicked
-                                                                $('.customerDropdown').on('click', '.drop2', function() {
-                                                                    var value = $(this).data('value');
-                                                                    $('#SelectCustomer2').val($(this).text());
-                                                                    // Handle the selected value as needed (e.g., update form fields or perform an action)
-                                                                    console.log('Selected value:', value);
-                                                                });
+        
+                                                                <script>
+                                                                    // search
+                                                                    $(document).ready(function () {
+                                                                        // When a dropdown item is clicked
+                                                                        $('.customerDropdown').on('click', '.drop2', function() {
+                                                                            var value = $(this).data('value');
+                                                                            $('#SelectCustomer2').val($(this).text());
+                                                                            // Handle the selected value as needed (e.g., update form fields or perform an action)
+                                                                            console.log('Selected value:', value);
+                                                                        });
+                                                                
+                                                                        // Add an input event listener to the search input
+                                                                        $('#SelectCustomer2').on('input', function () {
+                                                                            var searchText = $(this).val().toLowerCase();
+                                                                            $('.drop2').each(function () {
+                                                                                var itemText = $(this).text().toLowerCase();
+                                                                                // Show/hide items based on search input
+                                                                                $(this).toggle(itemText.includes(searchText));
+                                                                            });
+                                                                        });
+                                                                    });
+    
+                                                                    $(document).ready(function() {
+                                                                $('.customerDropdown').on('click', '.drop2', function() {  
+                                                                    var customerID = $(this).attr('value');
                                                         
-                                                                // Add an input event listener to the search input
-                                                                $('#SelectCustomer2').on('input', function () {
-                                                                    var searchText = $(this).val().toLowerCase();
-                                                                    $('.drop2').each(function () {
-                                                                        var itemText = $(this).text().toLowerCase();
-                                                                        // Show/hide items based on search input
-                                                                        $(this).toggle(itemText.includes(searchText));
+                                                                    // Make an AJAX request to the backend to fetch vendor details
+                                                                    $.ajax({
+                                                                        url: '/Fin_get_customer_details/' + customerID + '/',
+                                                                        type: 'GET',
+                                                                        success: function(data) {
+                                                                            // Update the placeholder elements with the fetched details
+                                                                            $("#customerEmail").val(data.email);
+                                                                            $("#customerGST").val(data.gst);
+                                                                            $("#customerGSTIN").val(data.gstin);
+                                                                            $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
+                                                                            $('#SelectCustomer').val(data.id);
+                                                                            $("#customerAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
+    
+                                                                            var placeOfSupplyDropdown = $("#PlaceOfSupplyCustomer");
+                                                                            // placeOfSupplyDropdown.empty();
+                                                                            // Append options from data.placeofsupply
+                                                                            var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                        
+                                                                            option.prop('selected', true);
+                                                                            placeOfSupplyDropdown.append(option); 
+    
+                                                                            if(data.gst == "Unregistered Business" || data.gst == 'Overseas' || data.gst == 'Consumer' ){
+                                                                                    $("#customerGstinDiv").hide();
+                                                                                }else{
+                                                                                    $("#customerGstinDiv").show();
+                                                                                    
+                                                                                }
+                                                                            
+                                                                            
+                                                                        },
+                                                                        error: function(error) {
+                                                                            console.log(error);
+                                                                        }
                                                                     });
                                                                 });
                                                             });
-                                                        </script>
+                                                                </script>
+                                                            </div>
+                                                            <div class="col-md mb-3">
+                                                                <label for="">Email</label>
+                                                                <input readonly type="email" value="{{recur.customer.email}}" placeholder="customer email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md mb-3 mt-2">
+                                                                <label for="">GST Type</label>
+                                                                <input readonly type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
+                                                            </div>
+                                                            <div class="col-md mb-3 mt-2" id="customerGstinDiv" style="display: none;">
+                                                                <label class="">GST Number</label>
+                                                                <input readonly type="text" value="{{recur.customer.gstin}}" placeholder="customer gst number" id="customerGSTIN"  class="form-control">
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <script>
-                                                        $(document).ready(function() {
-                                                            $('.customerDropdown').on('click', '.drop2', function() {  
-                                                                var customerID = $(this).attr('value');
-                                                    
-                                                                // Make an AJAX request to the backend to fetch vendor details
-                                                                $.ajax({
-                                                                    url: '/Fin_get_customer_details/' + customerID + '/',
-                                                                    type: 'GET',
-                                                                    success: function(data) {
-                                                                        // Update the placeholder elements with the fetched details
-                                                                        $("#customerEmail").val(data.email);
-                                                                        $("#customerGST").val(data.gst);
-                                                                        $("#customerGSTIN").val(data.gstin);
-                                                                        $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
-                                                                        $('#SelectCustomer').val(data.id);
+                                                    <div class="col">
+                                                        <div class="col-md">
+                                                            <label for="">Address </label>
+                                                            <textarea readonly name="cusaddress" id="customerAddress" placeholder="Customer Address " cols="10" rows="5" class="form-control">{{recur.customer.billing_street}}, {{recur.customer.billing_city}},
+{{recur.customer.billing_state}}, {{recur.customer.billing_country}}
+{{recur.customer.billing_pincode}}
 
-                                                                        var placeOfSupplyDropdown = $("#PlaceOfSupplyCustomer");
-                                                                        // placeOfSupplyDropdown.empty();
-                                                                        // Append options from data.placeofsupply
-                                                                        var option = $('<option>', { value: data.placeofsupply, text: data.placeofsupply });                                                                        
-                                                                        option.prop('selected', true);
-                                                                        placeOfSupplyDropdown.append(option); 
-
-                                                                        if(data.gst == "Unregistered Business" || data.gst == 'Overseas' || data.gst == 'Consumer' ){
-                                                                                $("#customerGstinDiv").hide();
-                                                                            }else{
-                                                                                $("#customerGstinDiv").show();
-                                                                                
-                                                                            }
-                                                                        
-                                                                        
-                                                                    },
-                                                                    error: function(error) {
-                                                                        console.log(error);
-                                                                    }
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <div class="col-md mb-3">
-                                                        <label for="">Email</label>
-                                                        <input type="email" value="{{recur.customer.email}}" placeholder="customer email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                            </textarea>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md mb-3">
+                                                </div>
+                                                <div class="row m-md-2 border-bottom pb-4">
+                                                    <div class="col-md-4 mb-3">
                                                         <label for="">Place Of Supply</label>
                                                         <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option {% if recur.customer.place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
@@ -606,19 +634,9 @@ function goBack() {
                                                             <option {% if recur.customer.place_of_supply == 'West Bengal' %}selected{% endif %} value="West Bengal">West Bengal</option>
                                                             <option {% if recur.customer.place_of_supply == 'Other Territory' %}selected{% endif %} value="Other Territory">Other Territory</option>
                                                         </select> 
-                                                    </div>                                                    
-                                                </div>
+                                                    </div>     
 
-                                                <div class="row m-md-2 border-bottom pb-4">
-                                                    <div class="col-md-4 mb-3 mt-2">
-                                                        <label for="">GST Type</label>
-                                                        <input required type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
-                                                    </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
-                                                        <label class="">GST Number</label>
-                                                        <input type="text" value="{{recur.customer.gstin}}" placeholder="customer gst number" id="customerGSTIN"  class="form-control">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3 mt-2">
+                                                    <div class="col-md-4 mb-3 ">
                                                         <label for="">Payment Type</label>
                                                         <select required name="paymentType" id="paymentType" class="form-control">
                                                             <option {% if recur.payment_method == '' %} selected {% endif %} value="">Select Payment Method</option>
@@ -626,24 +644,26 @@ function goBack() {
                                                             <option {% if recur.payment_method == 'Cheque' %} selected {% endif %} value="Cheque">Cheque</option>
                                                             <option {% if recur.payment_method == 'UPI' %} selected {% endif %} value="UPI">UPI</option>
                                                             {% for b in bank %}
-                                                            <option value="{{b.id}}">{{b.bank_name}}</option>
+                                                            <option {% if recur.payment_method == b.id %} selected {% endif %} value="{{b.id}}">{{b.bank_name}}</option>
                                                             {% endfor %}
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="bankAccount" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="bankAccount" style="display: none;">
                                                         <label for="">Bank Account</label>
                                                         <input value="{{recur.bank_account}}" id="bankInput" type="text" class="form-control" name="bankAccount" >
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="Cheque" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="Cheque" style="display: none;">
                                                         <label for="">Cheque</label>
                                                         <input value="{{recur.cheque_number}}" id="chequeInput" type="text" class="form-control" name="Cheque">
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="UPI" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="UPI" style="display: none;">
                                                         <label for="">UPI</label>
                                                         <input value="{{recur.upi_id}}" id="upiInput" type="text" class="form-control" name="UPI">
                                                     </div>
                                                      
                                                 </div>
+
+                                                
 
                                                 
 
@@ -800,6 +820,21 @@ function goBack() {
                                                             $('#bankInput').attr('required', true);
                                                             $('#chequeInput').removeAttr('required');
                                                             $('#upiInput').removeAttr('required');
+                                                            var bankId = payment;
+                                                                    // Make an AJAX request to the backend to fetch vendor details
+                                                                    $.ajax({
+                                                                        url: '/Fin_get_bank_details/' + bankId ,
+                                                                        type: 'GET',
+                                                                        success: function (data) {
+                                                                            
+                                                                            $("#bankInput").val(data.acc_number);
+                                                                            
+                                                                        },
+                                                                        error: function (error) {
+                                                                            console.log(error);
+                                                                            alert(error)
+                                                                        }
+                                                                    });
                                                         }
                                                     });
                                                     $('#paymentType').change();
@@ -873,8 +908,51 @@ function goBack() {
 
 
                                                     <script>
+                                                        // check for qty
+                                                        function checkQuantity() {
+                                                        var isValid = false;
 
-$(document).ready(function () {
+                                                        $(".item-qty").each(function() {
+                                                            var qtyValue = $(this).val().trim();
+
+                                                            if (qtyValue === '' || parseFloat(qtyValue) === 0) {
+                                                                // alert("Quantity cannot be zero or empty");
+                                                                isValid = true;
+                                                                return false; // Exit the loop if a zero or empty quantity is found
+                                                            }
+                                                        });
+
+                                                        return isValid;
+                                                    }
+
+                                                        // duplicate items check
+                                                        // ---------------------------------
+                                                        function checkUniqueHSN() {
+                                                        var hsnArray = [];
+                                                        var duplicateFound = false;
+
+                                                        // Loop through each row
+                                                        $(".item-hsn").each(function() {
+                                                            var hsn = $(this).val().trim();
+
+                                                            // Check if the HSN exists in the array
+                                                            if (hsnArray.indexOf(hsn) !== -1 && hsn !== "") {
+                                                                duplicateFound = true;
+                                                                return false; // Exit the loop if duplicate is found
+                                                            }
+
+                                                            // If not found, add to array
+                                                            hsnArray.push(hsn);
+                                                        });
+
+                                                        return duplicateFound;
+                                                    }
+
+                                                    
+
+
+                                                        // --------------------------------
+                                                        $(document).ready(function () {
                                                         // Function to check and handle visibility based on the values of 'PlaceOfSupplyCustomer' and 'sourceOFSupply'
                                                         function checkPlaceOfSupply() {
                                                             var PlaceOfSupplyCustomerValue = $('#PlaceOfSupplyCustomer').val();
@@ -968,7 +1046,7 @@ $(document).ready(function () {
                                                             var initialStockin = parseInt($row.find(".item-stockin").data("initial"));
 
                                                             // Set the maximum value for item-qty to the initial count of item-stockin
-                                                            $row.find(".item-qty").attr("max", initialStockin);
+                                                            // $row.find(".item-qty").attr("max", initialStockin);
 
                                                             // Check if item-qty is valid
                                                             if (!isNaN(qty) && qty >= 0 ) {
@@ -997,7 +1075,16 @@ $(document).ready(function () {
                                                     });
                                                     });
 
-                                                    
+$(document).ready(function() {
+    // Iterate through each item row in the #itemTable table
+    $("#itemTable .item-row").each(function() {
+        var $row = $(this); // Current row
+        var $input = $row.find('.item-select'); // Find the item-qty input field within the row
+        
+        // Trigger a custom event named "item-select" on the item-qty input field
+        $input.trigger('change');
+    });
+});
 
 
 

@@ -690,8 +690,10 @@ urlpatterns = [
     path('Fin_recurring_bill_convert/<int:pk>',views.Fin_recurring_bill_convert,name='Fin_recurring_bill_convert'),
     path('Fin_recurring_bill_usercheck',views.Fin_recurring_bill_usercheck,name='Fin_recurring_bill_usercheck'),
     path('Fin_shareRBToEmail/<int:id>',views.Fin_shareRBToEmail,name='Fin_shareRBToEmail'),
-
     path('Fin_check_recurring_bill_number_editpage/<int:pk>',views.Fin_check_recurring_bill_number_editpage,name='Fin_check_recurring_bill_number_editpage'),
+
+    path('Fin_get_bank_details/<int:bank_id>',views.Fin_get_bank_details,name="Fin_get_bank_details"),
+
     # harikrishnankb end ------------
     
     

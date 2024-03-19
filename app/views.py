@@ -23394,7 +23394,7 @@ def Fin_recurring_bill_save(request):
         source = request.POST['sourceOfSupply']
         place = request.POST['placeOfSupply']  
         if source == place:
-            cgst = request.POST['cgst'] 
+            cgst = request.POST['cgst']  
             sgst = request.POST['sgst']
             taxAmount_igst = ''
         else:
@@ -23498,8 +23498,6 @@ def Fin_recurring_bill_save(request):
             return JsonResponse({'messages': 'Bill created successfully','success':True})
     else:
         return JsonResponse()
-
-
 
 def Fin_recurring_bill_usercheck(request):
     sid = request.session['s_id']
@@ -23662,6 +23660,11 @@ def Fin_get_customer_details(request, customer_id):
                 'placeofsupply': customer.place_of_supply,
                 'gst': customer.gst_type,
                 'gstin':customer.gstin,
+                'street': customer.billing_street,
+                'city':customer.billing_city,
+                'state':customer.billing_state,
+                'pincode':customer.billing_pincode,
+                'country':customer.billing_country,
             }
             return JsonResponse(data)
             
@@ -23676,6 +23679,11 @@ def Fin_get_customer_details(request, customer_id):
                 'placeofsupply': customer.place_of_supply,
                 'gst': customer.gst_type,
                 'gstin':customer.gstin,
+                'street': customer.billing_street,
+                'city':customer.billing_city,
+                'state':customer.billing_state,
+                'pincode':customer.billing_pincode,
+                'country':customer.billing_country,
             }
             return JsonResponse(data)
         
@@ -23718,7 +23726,6 @@ def Fin_get_item_details(request, item_id):
         return JsonResponse({'error': 'customer not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
     
 def Fin_check_recurring_bill_number(request):
     if 's_id' in request.session:
@@ -24563,5 +24570,19 @@ def Fin_shareRBToEmail(request,id):
             print(e)
             messages.error(request, f'{e}')
             return redirect(Fin_recurring_bill_overview, id)
+
+
+
+def Fin_get_bank_details(request,bank_id):
+        bank = Fin_Banking.objects.get(id=bank_id)
+        data = {
+            'acc_number': bank.account_number,
+        }
+        return JsonResponse(data)
+        
+    
+        
+        
+    
 
 # harikrishnan end-------------------------

@@ -31,21 +31,35 @@
     
     $(document).ready(function() {
         $('#button1').click(function() {
+            
         $('#buttonClicked').val($(this).val()); // Set the value of the clicked button in the hidden input field
     });
 
     // Click event listener for the draft button
     $('#button2').click(function() {
+        
         $('#buttonClicked').val($(this).val()); // Set the value of the clicked button in the hidden input field
     });
+
+    
+     
+                                                        
     
     $('#rBillForm').submit(function(event) {
         // Prevent the default form submission
         event.preventDefault();
 
-        // Get the form data
+        var isDuplicate = checkUniqueHSN();
+        var quan = checkQuantity();
+        if (isDuplicate) {
+            alert("Duplicate Items found!");
+        }else if(quan){
+            alert("quantity cannot be zero or empty !");
+        }else{
+
+            // Get the form data
         var formData = $(this).serialize();
-        console.log('11111111111111');
+        console.log('1111111111');
         
 
         // Make the AJAX request
@@ -58,7 +72,7 @@
             success: function(response) {
                 // Function to be called if the request succeeds
                 console.log(response);
-                console.log('333333333333');
+                console.log('success message');
                 alert(response.messages)
                 if(response.success){
                     window.location.href = 'Fin_recurring_bill_list';
@@ -67,13 +81,16 @@
             error: function(xhr, status, error) {
                 // Function to be called if the request fails
                 console.error('Error:', error);
-                console.log('2222222222222');
+                console.log('failed message');
                 alert(error)
             },
             complete: function(xhr, status) {
                 // Function to be called regardless of success or failure
             }
         });
+
+        }
+        
     });
 });
 
@@ -441,53 +458,63 @@ function goBack() {
                                                 <br>
 
                                                 <div class="row m-md-2">
-                                                    <div class="col-md mb-3">
-                                                        <label for="">Customer</label>
-                                                        <!-- <div style="display: flex;">
-                                                            <select name="Customer" id="SelectCustomer" class="form-control">
-                                                                <option value="">Select Customer</option>
-                                                                {% for c in customers %}
-                                                                <option value="{{c.id}}"> {{c.first_name}} {{c.last_name}} </option>
-                                                                {% endfor %}
-                                                            </select>
-                                                            <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
-                                                        </div> -->
-
-                                                        <div class="input-group">
-                                                            <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                            <input type="text" autocomplete="off" required  class="form-control dropdown-toggle sty1" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
-                                                            <div class="input-group-append">
-                                                                <div class="dropdown-menu customerDropdown" style="width:380px;">
-                                                                    {% for i in customers %}
-                                                                    <a class="dropdown-item drop2" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
-                                                                    {% endfor %}
+                                                    <div class="col-md-8">
+                                                        <div class="row">
+                                                            <div class="col-md mb-3">
+                                                                <label for="">Customer</label>
+                                                                <div class="input-group">
+                                                                    <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
+                                                                    <input type="text" autocomplete="off" required  class="form-control dropdown-toggle sty1" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
+                                                                    <div class="input-group-append">
+                                                                        <div class="dropdown-menu customerDropdown" style="width:380px;">
+                                                                            {% for i in customers %}
+                                                                            <a class="dropdown-item drop2" value="{{i.id}}" style="text-transform: uppercase;">{{i.first_name}} {{i.last_name}}</a>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
                                                                 </div>
+        
+                                                                <script>
+                                                                    // search
+                                                                    $(document).ready(function () {
+                                                                        // When a dropdown item is clicked
+                                                                        $('.customerDropdown').on('click', '.drop2', function() {
+                                                                            var value = $(this).data('value');
+                                                                            $('#SelectCustomer2').val($(this).text());
+                                                                            // Handle the selected value as needed (e.g., update form fields or perform an action)
+                                                                            console.log('Selected value:', value);
+                                                                        });
+                                                                
+                                                                        // Add an input event listener to the search input
+                                                                        $('#SelectCustomer2').on('input', function () {
+                                                                            var searchText = $(this).val().toLowerCase();
+                                                                            $('.drop2').each(function () {
+                                                                                var itemText = $(this).text().toLowerCase();
+                                                                                // Show/hide items based on search input
+                                                                                $(this).toggle(itemText.includes(searchText));
+                                                                            });
+                                                                        });
+                                                                    });
+                                                                </script>
                                                             </div>
-                                                            <button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#customerModal">+</button>
+                                                            <div class="col-md mb-3">
+                                                                <label for="">Email</label>
+                                                                <input readonly type="email" placeholder="Customer Email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md mb-3 mt-2">
+                                                                <label for="">GST Type</label>
+                                                                <input readonly  placeholder="Customer GST Type" type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
+                                                            </div>
+                                                            <div class="col-md mb-3 mt-2" id="customerGstinDiv" >
+                                                                <label class="">GST Number</label>
+                                                                <input readonly placeholder="Customer GST Number" type="text" id="customerGSTIN"  class="form-control">
+                                                            </div>
                                                         </div>
 
-                                                        <script>
-                                                            // search
-                                                            $(document).ready(function () {
-                                                                // When a dropdown item is clicked
-                                                                $('.customerDropdown').on('click', '.drop2', function() {
-                                                                    var value = $(this).data('value');
-                                                                    $('#SelectCustomer2').val($(this).text());
-                                                                    // Handle the selected value as needed (e.g., update form fields or perform an action)
-                                                                    console.log('Selected value:', value);
-                                                                });
-                                                        
-                                                                // Add an input event listener to the search input
-                                                                $('#SelectCustomer2').on('input', function () {
-                                                                    var searchText = $(this).val().toLowerCase();
-                                                                    $('.drop2').each(function () {
-                                                                        var itemText = $(this).text().toLowerCase();
-                                                                        // Show/hide items based on search input
-                                                                        $(this).toggle(itemText.includes(searchText));
-                                                                    });
-                                                                });
-                                                            });
-                                                        </script>
+
                                                     </div>
                                                     <script>
                                                         $(document).ready(function() {
@@ -505,6 +532,7 @@ function goBack() {
                                                                         $("#customerGSTIN").val(data.gstin);
                                                                         $('#SelectCustomer2').val(data.firstname + ' ' + data.lastname);
                                                                         $('#SelectCustomer').val(data.id);
+                                                                        $("#customerAddress").val(data.street + ',' + data.city + '\n' + data.state + ',' + data.pincode + '\n' + data.country);
 
                                                                         var placeOfSupplyDropdown = $("#PlaceOfSupplyCustomer");
                                                                         // placeOfSupplyDropdown.empty();
@@ -529,11 +557,17 @@ function goBack() {
                                                             });
                                                         });
                                                     </script>
-                                                    <div class="col-md mb-3">
-                                                        <label for="">Email</label>
-                                                        <input readonly type="email" placeholder="Customer Email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                    <div class="col-md-4">
+                                                        <label for="">Address </label>
+                                                        <textarea readonly name="cusaddress" id="customerAddress" placeholder="Customer Address " cols="10" rows="5" class="form-control">
+                                                            
+                                                        </textarea>
                                                     </div>
-                                                    <div class="col-md mb-3">
+                                                </div>
+
+                                                <div class="row m-md-2 border-bottom pb-4">
+
+                                                    <div class="col-md-4 mb-3">
                                                         <label for="">Place Of Supply</label>
                                                         <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option value="">Select Place Of Supply</option>
@@ -576,19 +610,9 @@ function goBack() {
                                                             <option value="West Bengal">West Bengal</option>
                                                             <option value="Other Territory">Other Territory</option> 
                                                         </select> 
-                                                    </div>                                                    
-                                                </div>
-
-                                                <div class="row m-md-2 border-bottom pb-4">
-                                                    <div class="col-md-4 mb-3 mt-2">
-                                                        <label for="">GST Type</label>
-                                                        <input readonly  placeholder="Customer GST Type" type="text" name="GSTType" id="GSTTypeCustomer" class="form-control">                                                        
-                                                    </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="customerGstinDiv" >
-                                                        <label class="">GST Number</label>
-                                                        <input readonly placeholder="Customer GST Number" type="text" id="customerGSTIN"  class="form-control">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3 mt-2">
+                                                    </div> 
+                                                    
+                                                    <div class="col-md-4 mb-3 ">
                                                         <label for="">Payment Type</label>
                                                         <select required name="paymentType" id="paymentType" class="form-control">
                                                             <option value="">Select Payment Method</option>
@@ -600,18 +624,20 @@ function goBack() {
                                                             {% endfor %}
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="bankAccount" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="bankAccount" style="display: none;">
                                                         <label for="">Bank Account</label>
                                                         <input type="text" id="bankInput" class="form-control" name="bankAccount" >
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="Cheque" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="Cheque" style="display: none;">
                                                         <label for="">Cheque</label>
                                                         <input type="text" id="chequeInput" class="form-control" name="Cheque">
                                                     </div>
-                                                    <div class="col-md-4 mb-3 mt-2" id="UPI" style="display: none;">
+                                                    <div class="col-md-4 mb-3 " id="UPI" style="display: none;">
                                                         <label for="">UPI</label>
                                                         <input type="text" id="upiInput" class="form-control" name="UPI">
                                                     </div>
+
+                                                    
                                                      
                                                 </div>
 
@@ -628,6 +654,28 @@ function goBack() {
                                                     </div>                                                
                                                 </div> -->
                                                 <script>
+                                                    // get bank number
+
+                                                    // $(document).ready(function () {
+                                                    //                 $('.paymentType').on('click', '.drop3', function() {
+                                                    //                 var bankId = $(this).attr('value');
+                                                    //                 // Make an AJAX request to the backend to fetch vendor details
+                                                    //                 $.ajax({
+                                                    //                     url: '/Fin_get_bank_details/' + bankId + '/',
+                                                    //                     type: 'GET',
+                                                    //                     success: function (data) {
+                                                                            
+                                                    //                         $("#bankInput").val(data.acc_number);
+                                                                            
+                                                    //                     },
+                                                    //                     error: function (error) {
+                                                    //                         console.log(error);
+                                                    //                     }
+                                                    //                 });
+                                                    //             });
+                                                    //         });
+
+                                                    // ------------------
                                                     // Function to calculate end date
                                                     function calculateEndDate() {
                                                         // Get the selected start date
@@ -762,6 +810,22 @@ function goBack() {
                                                             $('#bankInput').attr('required', true);
                                                             $('#chequeInput').removeAttr('required');
                                                             $('#upiInput').removeAttr('required');
+
+                                                            var bankId = payment;
+                                                                    // Make an AJAX request to the backend to fetch vendor details
+                                                                    $.ajax({
+                                                                        url: '/Fin_get_bank_details/' + bankId ,
+                                                                        type: 'GET',
+                                                                        success: function (data) {
+                                                                            
+                                                                            $("#bankInput").val(data.acc_number);
+                                                                            
+                                                                        },
+                                                                        error: function (error) {
+                                                                            console.log(error);
+                                                                            alert(error)
+                                                                        }
+                                                                    });
                                                         }
                                                     });
                                                 });
@@ -833,7 +897,58 @@ function goBack() {
 
 
                                                     <script>
+                                                        // check items qty
+                                                        // --------------------------
+                                                        function checkQuantity() {
+                                                        var isValid = false;
 
+                                                        $(".item-qty").each(function() {
+                                                            var qtyValue = $(this).val().trim();
+
+                                                            if (qtyValue === '' || parseFloat(qtyValue) === 0) {
+                                                                // alert("Quantity cannot be zero or empty");
+                                                                isValid = true;
+                                                                return false; // Exit the loop if a zero or empty quantity is found
+                                                            }
+                                                        });
+
+                                                        return isValid;
+                                                    }
+
+                                                        // duplicate items check
+                                                        // ---------------------------------
+                                                        function checkUniqueHSN() {
+                                                        var hsnArray = [];
+                                                        var duplicateFound = false;
+
+                                                        // Loop through each row
+                                                        $(".item-hsn").each(function() {
+                                                            var hsn = $(this).val().trim();
+
+                                                            // Check if the HSN exists in the array
+                                                            if (hsnArray.indexOf(hsn) !== -1 && hsn !== "") {
+                                                                duplicateFound = true;
+                                                                return false; // Exit the loop if duplicate is found
+                                                            }
+
+                                                            // If not found, add to array
+                                                            hsnArray.push(hsn);
+                                                        });
+
+                                                        return duplicateFound;
+                                                    }
+
+                                                    // $(document).ready(function() {
+                                                    //     $("#checkHSN").on("click", function() {
+                                                    //         var isDuplicate = checkUniqueHSN();
+
+                                                    //         if (isDuplicate) {
+                                                    //             alert("Duplicate Items found!");
+                                                    //         } 
+                                                    //     });
+                                                    // });
+                                                        
+                                                        // -------------------------
                                                     $(document).ready(function () {
                                                         // Function to check and handle visibility based on the values of 'PlaceOfSupplyCustomer' and 'sourceOFSupply'
                                                         function checkPlaceOfSupply() {
