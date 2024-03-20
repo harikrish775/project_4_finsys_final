@@ -1,0 +1,267 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> <!-- Include jQuery -->
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> <!-- Include DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" /> <!-- Include DataTables CSS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<!-- Include xlsx library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+
+<style>
+    #tr:hover{
+        background-color: #5a7684;
+    }
+</style>
+
+    <div class="page-content ">
+        <div class="card radius-15">
+            <div class="card-body">
+                <center><h2>RECURRING BILL </h2></center><br>
+
+                <div class="row">
+                    <div class="col-3 ml-1">
+                        <input type="search" placeholder="Search..." id="employeeSearchInput" onkeyup="searchRecuringBill()" class="form-control ">                         
+                    </div>
+
+                    
+
+                    <div class="dropdown show">
+                        <a class="btn btn-outline-secondary text-grey" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-sort"></i> Sort by
+                        </a>
+                      
+                        <div class="dropdown-menu"  id="sort">
+                          <a class="dropdown-item" id="drop1" style="cursor: pointer;" onclick="sortByColumn(0)">All</a>
+                          <a class="dropdown-item" id="drop2" style="cursor: pointer;" onclick="sortByColumn(3)">Vendor Name</a>
+                          <a class="dropdown-item" id="drop3" style="cursor: pointer;" onclick="sortByColumn(2)">Recurring Bill</a>
+                        </div>
+                      </div>
+
+                    <div class="col-4 ml-auto">
+                        
+                        <button class="btn btn-outline-secondary text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
+                            <button class="btn btn-outline-secondary dropdown-toggle text-grey" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="statusFilterDropdown" >
+                                <i class="fa fa-filter"></i> filter by
+                            </button>
+                          
+                            <div class="dropdown-menu" id="statusFilterDropdownMenu">
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="All" onclick="filterTable()">All</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Save" onclick="filterTable()">Saved</a>
+                                <a class="dropdown-item" style="cursor: pointer;" data-status="Draft" onclick="filterTable()">Draft</a>
+                            </div>
+
+                            <a class="btn btn-outline-secondary text-grey" href="{% url 'Fin_recurring_bill_create_page' %}"><i class="fa fa-plus font-weight-light"></i> New </a>
+                          
+                    </div>
+                    
+                </div>
+
+                <br><br><br>
+
+                <div class="table-responsive">
+                    <table class="table " id="Bill_List">
+                        <thead>
+                            <tr>
+                                <th >#</th>
+                                <th >Date</th>
+                                <th >Reucrring Bill Number</th>
+                                <th >Vendor Name</th>
+                                <th >Vendor Mail</th>
+                                <th >Amount</th>
+                                <th >Status</th>
+                                <th >Balance</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for i in bill %}
+                            <tr id="tr" onclick="window.location.href='/Fin_recurring_bill_overview/{{ i.id }}';" style="cursor: pointer;">
+                                
+                                
+                                <td>{{i.date}}</td>
+                                <td>{{i.recurring_bill_number}}</td>
+                                <td>{{i.vendor.first_name}} {{i.vendor.last_name}}</td>
+                                <td>{{i.vendor.email}}</td>
+                                <td>{{i.grand_total}}</td>
+                                <td>{{i.status}}</td>
+                                <td>{{i.balance}}</td>  
+                                                             
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+// -------------------------------------------------------------------------------------
+// filter
+
+function filterTable() {
+        var statusFilter = event.target.getAttribute("data-status");
+        var tableRows = document.getElementById("Bill_List").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+        for (var i = 0; i < tableRows.length; i++) {
+            var statusCell = tableRows[i].getElementsByTagName("td")[6]; // 7th column (index 6)
+            var status = statusCell.textContent || statusCell.innerText;
+
+            if (statusFilter === 'All' || status === statusFilter) {
+                tableRows[i].style.display = "";
+            } else {
+                tableRows[i].style.display = "none";
+            }
+        }
+    }
+
+
+// -------------------------------------------------------------------------------------
+// index
+
+        document.addEventListener('DOMContentLoaded', function () {
+    // Get the table element
+    var table = document.getElementById('Bill_List');
+
+    // Get all rows in the table body
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    // Loop through each row and add an index number
+    for (var i = 0; i < rows.length; i++) {
+        var cell = document.createElement('td');
+        cell.textContent = i + 1; // Index starts from 1
+        rows[i].insertBefore(cell, rows[i].firstChild);
+    }
+});
+
+
+
+// ----------------------------------------------------------------
+// search function
+
+
+function searchRecuringBill() {
+    var input = document.getElementById("employeeSearchInput");
+    var filterValue = input.value.toLowerCase();
+    var tableRows = document.querySelectorAll('#Bill_List tbody tr');
+
+    tableRows.forEach(function(row) {
+        var cells = row.querySelectorAll('td');
+        var isVisible = false;
+
+        for (var i = 0; i < cells.length; i++) {
+            var cellValue = cells[i].textContent || cells[i].innerText;
+            if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                isVisible = true;
+                break;
+            }
+        }
+
+        if (isVisible) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
+// ------------------------------------------------------------------
+// sort function
+
+// Declare table variable globally
+var table = document.getElementById("Bill_List");
+
+// Function to sort the table based on the selected column
+function sortByColumn(columnIndex) {
+    var rows, switching, i, x, y, shouldSwitch;
+    switching = true;
+
+    while (switching) {
+        switching = false;
+        rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+        for (i = 0; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("td")[columnIndex].innerText;
+            y = rows[i + 1].getElementsByTagName("td")[columnIndex].innerText;
+
+            // Convert both values to lowercase for case-insensitive sorting
+            x = x.toLowerCase();
+            y = y.toLowerCase();
+
+            // Check if it's the eighth column for numeric comparison
+            if (columnIndex === 7) {
+                x = parseFloat(x) || 0; // Convert to float for numeric comparison
+                y = parseFloat(y) || 0;
+            }
+
+            if (x > y) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
+}
+
+// // Event listener for sorting by the second column (Name)
+// document.getElementById("drop2").addEventListener("click", function () {
+//     sortByColumn(1); // Assuming the second column is used for sorting
+// });
+
+// // Event listener for sorting by the eighth column (Numeric)
+// document.getElementById("drop3").addEventListener("click", function () {
+//     sortByColumn(7); // Assuming the eighth column is used for sorting
+// });
+
+// // Event listener for sorting by the first column (Numeric)
+// document.getElementById("drop1").addEventListener("click", function () {
+//     sortByColumn(0);
+// });
+
+
+
+
+// -----------------------------------------------------------------------------------
+// excel
+
+document.getElementById('exportButton').addEventListener('click', function () {
+        exportToExcel('Bill_List');
+    });
+
+    function exportToExcel(tableId) {
+        var table = document.getElementById(tableId);
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'Recurring_Bill.xlsx');
+    }
+
+    </script>
+{% endblock %}

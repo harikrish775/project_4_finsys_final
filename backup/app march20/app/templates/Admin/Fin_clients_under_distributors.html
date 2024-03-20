@@ -1,0 +1,133 @@
+{% extends 'Admin/Fin_AdminBase.html' %}
+{% block body %}
+{% if user.is_authenticated %}
+
+
+<div class="body-wrapper p-3">
+  <div class="container-fluid">
+
+    <div class="card mb-5 h-100" style="max-width: 100%;">
+      <div class="row g-0 mt-3">
+        <div class="col-md-4">
+          <div class="card-body">
+            <h5 class="text-white">Select a <span class="">Distributor</span></h5>
+            <select class="form-control mt-3 mb-3" name="distributor" id="distributor-select" style="background-color: #213b52;">
+              <option value="" hidden>Select</option>
+              {% for distributor in distributors %}
+              <option value="{{distributor.id}}" style="background-color: #213b52;">{{distributor.Login_Id.First_name}} {{distributor.Login_Id.Last_name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="card radius-15" id="clienttable" style="display: none;">
+      
+      <div class="card-body">
+        <h5 class="text-white">Clients <span class="text-warning-emphasis h6">(under this distributor)</span></h5>
+        <div class="table-responsive">
+          <table class="table mt-4 table-hover" id="client-details">
+            <thead>
+              <tr>
+                <th  style="text-align: center; text-transform: uppercase;">ID</th>
+                <th  style="text-align: center; text-transform: uppercase;">Name</th>
+                <th  style="text-align: center; text-transform: uppercase;">Email</th>
+                <th  style="text-align: center; text-transform: uppercase;">Contact</th>
+                <th  style="text-align: center; text-transform: uppercase;">Payment Terms</th>
+                <th  style="text-align: center; text-transform: uppercase;">Start Date</th>
+                <th  style="text-align: center; text-transform: uppercase;">End Date</th>
+                <th  style="text-align: center; text-transform: uppercase;">Action</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in data %}
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                  
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+  
+    </div>
+
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#distributor-select').change(function () {
+      var selectedDistributor = $(this).val();
+
+      if (selectedDistributor) {
+        // Show the table
+        $('#clienttable').show();
+
+        $.ajax({
+          type: 'GET',
+          url: '{% url "get_clients_under_distributor" %}',
+          data: {
+            'distributor_id': selectedDistributor
+          },
+          success: function (data) {
+            // Clear the table body
+            $('#client-details tbody').empty();
+
+            // Populate the table with the received data
+            for (var i = 0; i < data.details.length; i++) {
+              var company = data.details[i];
+              var comp_id= company.cmp_id;
+              console.log(comp_id);
+
+              var newRow = `
+                <tr>
+                  <td style="text-align: center;">${i + 1}</td>
+                  <td style="text-align: center;">${company.fname} ${company.lname}</td>
+                  <td style="text-align: center;">${company.email}</td>
+                  <td style="text-align: center;">${company.contact}</td>
+                  <td style="text-align: center;">${company.pterm_no} ${company.pterm_value}</td>
+                  <td style="text-align: center;">${company.sdate}</td>
+                  <td style="text-align: center;">${company.edate}</td>
+                  <td style="text-align: center;">
+                    <a class="btn btn-info btn-sm details" href="" data-comp-id="${comp_id}">Details</a>
+                  </td>
+                  
+                  
+                </tr>
+              `;
+              $('#client-details tbody').append(newRow);
+            }
+              // Add click event handler to the "Details" button
+              $('.details').on('click', function (event) {
+                event.preventDefault();
+                var compId = $(this).data('comp-id');
+                window.location.href = '{% url "distributor_client_profile_details" 0 %}'.replace('0', compId);
+              });
+          }
+        });
+      } else {
+        // If no option is selected, hide the table
+        $('#clienttable').hide();
+      }
+    });
+  });
+</script>
+
+{% endif %}
+{% endblock %}
+

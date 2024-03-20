@@ -1,0 +1,316 @@
+<!-- Created --shemeem  -->
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+    <style>
+        .selectize-input.full {
+            background-color: #43596c !important;
+            color: white !important;
+            border: 1px solid rgb(255 255 255 / 35%) !important;
+        }
+    </style>
+    <div class="page-content">
+        <!-- <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'Fin_accountOverview' account.id %}`"><i class="fa fa-times text-white" style="font-size: 1.2rem;"></i></span> -->
+        <div class="card radius-15">
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">EDIT ACCOUNT</h2></center>
+                </div>
+                <hr/>
+            </div>
+        </div>
+        <div class="card p-3">
+            <form method="post" action="{% url 'Fin_updateAccount' account.id %}" id="accountForm">
+                {% csrf_token %}
+                <div class="row mt-2 mb-2">
+                    <div class="col-md-6">
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="acctyp">Account Type</label>
+                                <input type="text" value="Assets" id="acctype" name="acctype" hidden>
+                                <select name="account_type" id="Account_type" class="custom-select-md form-control w-100"  onchange="AccountTypeChange(this)" required>
+                                    <option value="{{account.account_type}}">{{account.account_type}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="name">*Name</label>
+                                {% if account.create_status == 'default' %}
+                                <input name="account_name" id="name" readonly class="custom-select-md form-control w-100" value="{{account.account_name}}">
+                                {% else %}
+                                <input name="account_name" id="name" required class="custom-select-md form-control w-100" value="{{account.account_name}}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row mt-1" id="subAccountCheck" style="display: none;">
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input type="checkbox" name="subAccountCheckBox" class="form-check-input" id="subAccountCheckBox">
+                                    <label class="form-check-label" for="subAccountCheckBox">Make this a sub-account</label>
+                                    <span><i class="fa fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="Select this option if you are creating a sub-account."></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2" id="parentAccountValue" style="display: none;">
+                            <div class="col-12">
+                                <label for="parentAccount">Parent Account</label>
+                                <select name="parent_account" id="parentAccount" class="custom-select-md form-control w-100">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label for="acc_code">Account Code</label>
+                                <input type="text" name="account_code" id="account_code" value="{{account.account_code}}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-2" id="bankAccNum" style="display: none;">
+                            <div class="col-12">
+                                <label for="acc_code">Account Number</label>
+                                <input type="number" name="account_number" value="{{account.bank_account_no}}" id="account_number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <label>Description</label>
+                                <textarea class="form-control" rows="3" name="description" placeholder="Max. 500 Characters">{{account.description}}</textarea>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6 mt-4"> 
+                        <div id="acnt-desc" class="form-control" name="detype" style="font-size: small;  height: fit-content;"></div>
+                    </div>
+                </div>
+                    
+                <div class="row mt-5 mb-3">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-outline-secondary w-50 mr-1 text-light">UPDATE</button>
+                        <a type="button" class="btn btn-outline-secondary text-light" onclick="clearForm()">CANCEL</a>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Account_type').selectize({
+                sortField: 'text'
+            });
+        });
+        
+        $(document).ready(function(){
+            var type =  `{{account.account_type}}`;
+            var Acnt_desc = document.getElementById("acnt-desc");
+            var acctype = document.getElementById("acctype");
+
+            switch(type) {
+
+                case "Accounts Payable":
+                    Acnt_desc.innerHTML=`<b>Accounts Payable</b>`;
+                    acctype.value="Accounts Payable";
+                    break;
+                case "Accounts Receivables":
+                    Acnt_desc.innerHTML=`<b>Accounts Receivables</b>`;
+                    acctype.value="Accounts Receivables";
+                    break;
+                case "Other Asset":
+                    Acnt_desc.innerHTML=`<b>Asset</b> <br> Track special assets like goodwill and other intangible assets<br/>`;
+                    acctype.value="Asset";
+                    break;
+                case "Other Current Asset":
+                    Acnt_desc.innerHTML=`
+                        <b>Asset</b> <br> Any short term asset that can be converted into cash or cash equivalents easily<br/>
+                        <ul>
+                            <li>1.Prepaid expenses</li>
+                            <li>2.Stocks and Mutual Funds</li>
+                        </ul>`;
+                    acctype.value="Asset";
+                    break;
+                case "Cash":
+                    Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of cash and other cash equivalents like petty cash, undeposited funds, etc.<br/>`;
+                    acctype.value="Asset";
+                    break;
+                case "Bank":
+                    Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of bank accounts like Savings, Checking, and Money Market accounts<br/>`;
+                        acctype.value="Asset";
+                    break;
+                case "Fixed Asset":
+                    Acnt_desc.innerHTML=`
+                        <b>Asset</b> <br> Any long term investment or an asset that cannot be converted into cash easily like:<br/>
+                        <ul>
+                            <li>1.Land and Buildings</li>
+                            <li>2.Plant, Machinery and Equipment</li>
+                            <li>3.Computers</li>
+                            <li>3.Furniture</li>
+                        </ul>`;
+                        acctype.value="Asset";
+                    break;
+                case "Stock":
+                    Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of your inventory assets.<br/>`;
+                    acctype.value="Asset";
+                    break;
+                case "Payment Clearing":
+                    Acnt_desc.innerHTML=`<b>Asset</b> <br> To keep track of funds moving in and out via payment processors like Stripe, PayPal, etc.<br/>`;
+                    acctype.value="Asset";
+                    break;
+                case "Other Current Liability":
+                    Acnt_desc.innerHTML=`
+                        <b>Liability</b> <br> Any short term liability like:<br/>
+                        <ul>
+                            <li>1.Customer Deposits</li>
+                            <li>2.Tax Payable</li>
+                        </ul>`;
+                        acctype.value="Liability"
+                    break;
+                case "Credit Card":
+                    Acnt_desc.innerHTML=`<b>Liability</b> <br>Create a trail of all your credit card transactions by creating a credit card account<br/>`;
+                    acctype.value="Liability"
+                    break;
+                case "Long Term Liability":
+                    Acnt_desc.innerHTML=`<b>Liability</b> <br> Liabilities that mature after a minimum period of one year like Notes Payable, Debentures, and Long Term Loans<br/>`;
+                    acctype.value="Liability"
+                    break;
+                case "Other Liability":
+                    Acnt_desc.innerHTML=`
+                        <b>Liability</b> <br>Obligation of an entity arising from past transactions or events which would require repayment.<br/>
+                        <ul>
+                            <li>1.Tax to be paid</li>
+                            <li>2.Loan to be Repaid</li>
+                            <li>3.Accounts Payable etc</li>
+                        </ul>`;
+                        acctype.value="Liability"
+                    break;
+                case "Overseas Tax Payable":
+                    Acnt_desc.innerHTML=`<b>Liability</b> <br> Track your taxes in this account if your business sells digital services to foreign customers.<br/>`;
+                    acctype.value="Liability"
+                    break;
+                case "Equity":
+                    Acnt_desc.innerHTML=`<b>Equity</b> <br>Owners or stakeholders interest on the assets of the business after deducting all the liabilities<br/>`;
+                    acctype.value="Equity"
+                    break;
+                case "Income":
+                    Acnt_desc.innerHTML=`<b>Income</b> <br>Income or Revenue earned from normal business activities like sale of goods and services to customers<br/>`;
+                    acctype.value="Income"
+                    break;
+                case "Other Income":
+                    Acnt_desc.innerHTML=`
+                        <b>Income</b> <br>Income or revenue earned from activities not directly related to your business like :<br/>
+                        <ul>
+                            <li>1.Interest Earned</li>
+                            <li>2.Dividend Earned</li>
+                        </ul>`;
+                        acctype.value="Income"
+                    break;
+                case "Expense":
+                    Acnt_desc.innerHTML=`
+                        <b>Expense</b> <br>Reflects expenses incurred for running normal business operations, such as :<br/>
+                        <ul>
+                            <li>1.Advertisements and Marketing</li>
+                            <li>2.Business Travel Expenses</li>
+                            <li>3.License Fees</li>
+                            <li>4.Utility Expenses</li>
+                        </ul>`;
+                        acctype.value="Expense"
+                    break;
+                case "Cost Of Goods Sold":
+                    Acnt_desc.innerHTML=`
+                        <b>Expense</b> <br>This indicates the direct costs attributable to the production of the goods sold by a company such as:<br/>
+                        <ul>
+                            <li>1.Material and Labor costs</li>
+                            <li>2.Cost of obtaining raw materials</li>
+                        </ul>`;
+                        acctype.value="Expense"
+                    break;
+                case "Other Expense":
+                    Acnt_desc.innerHTML=`
+                        <b>Expense</b> <br>Track miscellaneous expenses incurred for activities other than primary business operations or create additional accounts to track default expenses like insurance or contribution towards charity.<br/>`;
+                        acctype.value="Expense"
+                    break;
+
+                default:
+                Acnt_desc.innerHTML=`<b>Account Type</b> <br>Select an account type..<br/>`;
+                    // }
+            }
+        });
+
+        $(document).ready(function(){
+            var value = "{{account.account_type}}"
+            if(value !=""){
+                $('#subAccountCheck').css('display','none')
+                $('#subAccountCheckBox').prop('checked', $('#subAccountCheckBox').prop('checked') ? false : false);
+                $('#parentAccountValue').css('display','none');
+
+                $.ajax({
+                    type : 'GET',
+                    url:"{% url 'Fin_checkAccounts' %}",
+                    data:{
+                        type : value,
+                    },
+                    
+                    success: function(response) {
+                        if(response.status){
+                            $('#subAccountCheck').css('display','block');
+                            var dropdown = $('#parentAccount');
+                            dropdown.empty();
+                            dropdown.append(`<option selected disabled value="">--Choose--</option>`)
+                            $.each(response, function(key, value) {
+                                for(let i=0; i<value.length; i++){
+                                    if(`{{account.parent_account}}` == value[i].name){
+                                        dropdown.append($('<option selected></option>').text(value[i].name).val(value[i].name))
+                                    }else{
+                                        dropdown.append($('<option></option>').text(value[i].name).val(value[i].name))
+                                    }
+                                }
+                            });
+                        }else{
+                            
+                        }
+                    },         
+                });
+
+            }
+
+            if(value == 'Bank'){
+                $('#bankAccNum').css('display','block');
+                $('#account_number').prop('required',true);
+            }else{
+                $('#bankAccNum').css('display','none');
+                $('#account_number').prop('required',false);
+            }
+        })
+
+        $(document).ready(function() {
+            $('#subAccountCheckBox').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#parentAccountValue').css('display','block');
+                    $('#parentAccount').prop('required',true);
+                } else {
+                    $('#parentAccountValue').css('display','none');
+                    $('#parentAccount').prop('required',false);
+                }
+            });
+        });
+
+        $(document).ready(function(){
+
+            if(`{{account.sub_account}}` == 'True'){
+                $('#subAccountCheckBox').prop('checked',true);
+                $('#parentAccountValue').css('display','block');
+                $('#parentAccount').prop('required',true);
+            }
+            
+        })
+
+        function clearForm() {
+            const form = document.getElementById('accountForm');
+            form.reset();
+            window.location.href=`{% url 'Fin_accountOverview' account.id %}`
+        }
+    </script>
+{% endblock %}

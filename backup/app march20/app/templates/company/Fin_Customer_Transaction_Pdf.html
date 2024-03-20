@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    /* .table2 {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color: rgb(221, 247, 247);
+
+    } */
+
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .customer_data {
+        font-size: 1.2rem;
+    }
+
+    .data_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .data_1, .data_2 {
+        font-weight: bold;
+    }
+
+    .data_value {
+        flex: 1;
+        text-align: right;
+    }
+
+
+
+
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black; font-size: 1.5rem;"><b>{{customer.first_name}} {{customer.last_name}} - TRANSACTIONS</b></center>
+                </div>
+                <hr>
+                <div style="width: 100%;">
+                    <div class="customer_data">
+                        <div class="data_row">
+                            <div class="data_1">Email: {{customer.email}}</div>
+                            <div class="data_2 data_value">Mobile: {{customer.mobile}}</div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_1">GSTIN: {{customer.gstin|default:None}}</div>
+                            <div class="data_2 data_value">Credit Limit: {{customer.credit_limit}}</div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_2 data_value">Balance: {{customer.current_balance}}</div>
+                            <div class="data_1">Address:<br>{{customer.billing_street}}, {{customer.billing_city}}, {{customer.billing_state}} <br>{{customer.billing_country}}-{{customer.billing_pincode}}</div>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; text-transform:uppercase;">Transaction</th>
+                            <th style="text-align: center; text-transform:uppercase;">Type</th>
+                            <th style="text-align: center; text-transform:uppercase;">Number</th>
+                            <th style="text-align: center; text-transform:uppercase;">Date</th>
+                            <th style="text-align: center; text-transform:uppercase;">Total</th>
+                            <th style="text-align: center; text-transform:uppercase;">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if customer.opening_balance != 0 %}
+                        <tr class="clickable-row" data-href="#" >
+                            <td style="text-align: center;">1</td>
+                            <td style="text-align: center;"> Opening Balance </td>
+                            <td style="text-align: center;"> - </td>
+                            <td style="text-align: center;"> {{customer.date}} </td>
+                            <td style="text-align: center;"> {{customer.opening_balance}} </td>
+                            <td style="text-align: center;"> {{customer.current_balance}} </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

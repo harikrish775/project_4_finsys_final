@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+{% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <!-- fontawesome icons -->
+     <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css" defer />
+
+</head>
+<body>
+    
+
+
+<!-- harikrishnan -->
+
+ 
+
+<style>
+    #overview123, body, #col11 label,#col22 label,#col33 label,#col44 label,h4{
+        color: black;
+    }
+    
+    label{
+        font-size: larger;
+    }
+    
+
+</style>
+
+    <div class="page-content" id="body">
+        
+        <!-- overview -->
+        <div id="overview123">
+            <div class="card radius-15" id="col33">
+                
+                    <br>
+
+                
+
+                      
+                
+                                <div class="card-body" style="width:100%;" >
+                                    <div class="card-title">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class=" col ">
+                                                    <div><label id="nameEmploy" hidden>{{employ.first_name}}_{{employ.last_name}}</label></div>
+                                                    <div class="d-flex flex-column align-items-center text-center p-3 ">{% if employ.upload_image == '' %} {% else %}<img class="rounded-circle" width="150px" height="150px" src="{{employ.upload_image.url}}"> {% endif %} <span class="font-weight-bold" style="font-size: x-large; text-transform: capitalize;">{{employ.title}}.  {{employ.first_name}} {{employ.last_name}} </span> <br> </div>
+                                                    
+                                                </div>
+                                            </div> 
+
+                                            
+
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+            </div>
+                        
+                        
+                            <div class="card card-registration card-registration-2" id="col11" style="border-radius: 15px;">
+                                <div class="card-body p-0">
+                                    
+                                        <!-- <div class="row d-flex flex-column align-items-center text-center p-3 ">{% if employ.upload_image == '' %} {% else %}<img class="rounded-circle" width="150px" height="150px" src="{{employ.upload_image.url}}"> {% endif %} <span class="font-weight-bold" style="font-size: x-large; text-transform: capitalize;">{{employ.title}}.  {{employ.first_name}} {{employ.last_name}} </span> <br> <center>{% if employ.employee_status == 'Active' %}<a href="{% url 'activate' employ.id %}" id="activeButton" class="btn btn-outline-secondary text-grey mb-2" title="Click to Deactivate">Active</a>{% else %}<a href="{% url 'activate' employ.id %}" id="activeButton" class="btn btn-outline-secondary text-grey mb-2 " title="Click to Activate">Inactive</a>{% endif %}</center></div> -->
+                                    
+                                    
+                                        <div class="row g-0"  style="margin-left: 1px; margin-right: 1px;">
+
+                                            <div class="col-lg-6" >
+                                                <div class="p-5">
+
+                                                    <center><h4>Personal Info </h4></center>
+                                                    <hr>
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Alias </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.alias}}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Employee Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.employee_number}}</p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Joining Date </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.date_of_joining}}</p>
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Designation </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.employee_designation}}</p>
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Date Of birth </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.date_of_birth}}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Gender </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.gender}} </p>
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Blood Group </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.blood_group}} </p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Contact </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.mobile}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Emergency Contact </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.emergency_contact}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Email </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.employee_mail}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Father/Mother's Name </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.fathers_name_mothers_name}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Spouse Name </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.spouse_name}}</p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Current Location </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.employee_current_location}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Permanent Address </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.street}}, {{employ.city}}, {{employ.state}}, {{employ.pincode}}, {{employ.country}} </p>
+                                                        </div> 
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Temporary Address </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.temporary_street}}, {{employ.temporary_city}}, {{employ.temporary_state}}, {{employ.temporary_pincode}}, {{employ.temporary_country}} </p>
+                                                        </div>
+                                                    </div>
+    
+                                                    
+                                                </div>
+                                            </div>
+                        
+                        
+                                            <div class="col-md-6" id="col22" style=" border-top-right-radius:2vh; border-bottom-right-radius: 2vh;">
+                                                <br>
+                                                <div class="history_highlight px-4 py-3 d-flex"  id="createdDate">
+                                                    <div class="col-8 d-flex justify-content-start">
+                                                        {% if history.action == 'Created' %}<p class="text" style="font-size: 1.07rem; font-weight: 500;">Created by :</p>{% else %}<p class="text" style="font-size: 1.07rem; font-weight: 500;">Last edited by :</p>{% endif %}
+                                                        <span class="ml-2" style="font-size: 1.15rem; font-weight: 500;text-transform: capitalize;">{{history.login.First_name}} {{history.login.Last_name}},</span>
+                                                    </div>
+                                                    <div class="col-4 d-flex justify-content-end">
+                                                        {% if history.action == 'Created' %}<span class="ml-2" style="font-size: 1rem; font-weight: 500;text-transform: capitalize;"> {{history.date}}</span>{% else %} <span class="ml-2" style="font-size: 1rem; font-weight: 500;text-transform: capitalize;"> {{history.date}}</span>{% endif %}
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="px-5">
+                                                    <center><h4>Salary Info</h4></center>
+                                                    <hr>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Salary Type </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;"> {{employ.employee_salary_type}}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {% if employ.employee_salary_type is not None %}
+                                                        {% if employ.employee_salary_type == 'Time Based' %}
+    
+                                                        <div class="row mb-3">
+                                                            <div class="col-4 d-flex justify-content-start">
+                                                                <label style="color: black;" > Total Working Hours </label>
+                                                            </div>
+                                                            <div class="col-4 d-flex justify-content-center">
+                                                                <p>:</p>
+                                                            </div>
+                                                            <div class="col-4 d-flex justify-content-start">
+                                                                <p style="color: black;font-size:15px;"> {{employ.total_working_hours}}</p>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="row mb-3">
+                                                            <div class="col-4 d-flex justify-content-start">
+                                                                <label style="color: black;" > Amount Per Hour </label>
+                                                            </div>
+                                                            <div class="col-4 d-flex justify-content-center">
+                                                                <p>:</p>
+                                                            </div>
+                                                            <div class="col-4 d-flex justify-content-start">
+                                                                <p style="color: black;font-size:15px;"> {{employ.amount_per_hour}}</p>
+                                                            </div>
+                                                        </div>
+    
+                                                        {% endif %}
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Employee Salary </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.salary_amount}}</p>
+                                                        </div>
+                                                    </div>                                                
+                                                    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Salary Date Range </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.salary_effective_from}}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > TDS Applicable </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.tds_applicable == 'Yes' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.tds_applicable}}</p>
+                                                            {% elif employ.tds_applicable == 'No' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.tds_applicable}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> None</p>
+                                                            {% endif %}
+    
+                                                        </div>
+                                                    </div>
+    
+                                                    {% if employ.tds_applicable == 'Yes' %}
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;"> TDS Type </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.tds_type}}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    {% endif %}
+    
+                                                    {% if employ.tds_type == 'Percentage' %}
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;"> TDS Percentage </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.percentage_amount}}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% elif employ.tds_type == 'Amount' %}
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;"> TDS Amount </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.percentage_amount}}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+    
+                                                    <center><h4>Statutory Info </h4></center>
+                                                    <hr>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Income Tax Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.income_tax_number != '' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.income_tax_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Aadhar Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.aadhar_number != '' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.aadhar_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                        
+                                                    <div class="row mb-5">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Universal Account Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.universal_account_number != '' %}
+                                                            <p style="color: black;font-size:15px;"> {{employ.universal_account_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>  
+                                                    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > PAN Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.pan_number != '' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.pan_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > PF Account Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.pf_account_number != '' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.pf_account_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+    
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > PR Account Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            {% if employ.pr_account_number != '' %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> {{employ.pr_account_number}}</p>
+                                                            {% else %}
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;"> - </p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+
+                                                    {% if employ.provide_bank_details == 'Yes' %}
+                                                    <center><h4>Bank Details </h4></center>
+                                                    <hr>
+                        
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Account Number </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.account_number}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > IFSC </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.ifsc}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Bank Name </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.name_of_bank}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <label style="color: black;" > Branch Name </label>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-center">
+                                                            <p>:</p>
+                                                        </div>
+                                                        <div class="col-4 d-flex justify-content-start">
+                                                            <p style="color: black;font-size:15px;text-transform:Uppercase;">{{employ.branch_name}}</p>
+                                                        </div>
+                                                    </div>
+                                                    
+
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                        
+                                        </div>
+                                    </div>
+                        
+                                   
+                                </div>
+    
+    
+    
+                            </div>
+                        </div>
+                        
+                        
+        <!-- overview end -->
+
+  
+
+<!--------------------- end --------------------------->
+
+<!-- Modal -->
+<div class="modal fade" id="EmailModalEx" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Email</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form action="{% url 'employee_profile_email' employ.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div>
+                        <label for="recipientEmail" style="text-align: left;">Recipient's Email Address:</label>
+                        <textarea id="recipientEmail" name="email_ids" cols="5" rows="3" class="form-control"></textarea>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-secondary text-grey">Send</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+               
+          
+            
+        
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+    <script>
+        function goBack() {
+        window.history.back();
+        }
+    </script>
+      <center><h2 class="mt-3">Issue Additional Loan</h2></center><br><hr>
+        <div class="card-body">
+            <div class="container-fluid">
+                <form id="bankForm" method="post" action="{% url 'additional_loan_transaction' loan.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-5 p-2">
+                                <label for="">BALANCE LOAN</label>
+                            </div>
+                            <div class="col-md-2 p-2"></div>
+                            <div class="col-md-5 p-2">
+                                <label for="">NEW LOAN</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 p-2">
+                                <input class="form-control" type="number" name="remain_loan" value="{{loan.balance}}" id="remain_loan">
+                            </div>
+                            <div class="col-md-2 p-2"></div>
+                            <div class="col-md-5 p-2">
+                                <input class="form-control" type="number" name="new" value="0" id="new" oninput="updateAmount()">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 p-2">
+                                <label for="">TOTAL LOAN </label>
+                            </div>
+                            <div class="col-md-2 p-2"></div>
+                            <div class="col-md-5 p-2">
+                                <label for="">ADJUSTMENT DATE</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 p-2">
+                                <input class="form-control" type="number" name="amount" id="amount">
+                            </div>
+                            <div class="col-md-2 p-2"></div>
+                            <div class="col-md-5 p-2">
+                                <input class="form-control" type="date" value="{{current_date}}" name="adjdate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="col-form-label">Payment Type</label>
+                                <select class="form-control my-select" id="pay_method" name="payment_method" style="background-color: #43596c;" required>
+                                    <option value="cash">Cash</option>
+                                    <option value="cheque">Cheque</option>
+                                    <option value="upi">UPI</option>
+                                                    {% for i in bank %}
+                            <option value="{{ i.id }}" style="background-color: #294f76;">
+                                {{ i.bank_name }} ( ********  {{ "*"|stringformat:"<"|rjust:12 }}{{ i.account_number|slice:"-4:" }})
+                            </option>
+                        {% endfor %}
+                        </select>
+                                            </div>
+                            <div class="col-md-3" style="display:none;"  id="chequediv">
+                                <label class="col-form-label" >Cheque No</label>
+                                <input type="text" class="form-control" name="cheque_id"  id="cheque_id" placeholder="Enter Cheque No">
+                            </div>
+                            <div class="col-md-3"  style="display:none;" id="upidiv">
+                                <label class="col-form-label" >UPI ID</label>
+                                <input type="text" class="form-control" name="upi_id"  id="upi_id" placeholder="Enter UPI ID">
+                            </div>
+                            <div class="col-md-3"  style="display:none;" id="bnkdiv">
+                                <label class="col-form-label" >Bank Account</label>
+                                <input type="text" class="form-control" name="bnk_id" id="bnk_id" style="background-color: #43596c;" readonly>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-md-8 mt-3"></div>
+                            <div class="col-md-2 mt-3">
+                                <a class="btn btn-outline-info rounded-pill w-100 text-grey pull-left" href="{%url 'loan_list' loan.id %}">Close</a>
+                            </div>
+                            <div class="col-md-2 mt-3">
+                                <button type="submit" class="btn btn-outline-info rounded-pill w-100 text-grey pull-left">
+                                    Add Loan
+                                </button>
+                            </div>
+                            <div class="col-md-1"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+$(document).ready(function() {
+  $("#pay_method").change(function() {
+    var x=$('#pay_method').val();
+    if(x==='cash'){
+      $('#chequediv').hide()
+      $('#bnkdiv').hide()
+      $('#upidiv').hide()
+      document.getElementById('cheque_id').value=null
+      document.getElementById('upi_id').value=null
+    }else if(x==='cheque'){
+      $('#chequediv').show()
+      $('#bnkdiv').hide()
+      $('#upidiv').hide()
+      document.getElementById('upi_id').value=null
+    }else if(x==='upi'){
+      $('#upidiv').show()
+      $('#bnkdiv').hide()
+      $('#chequediv').hide()
+      document.getElementById('cheque_id').value=null
+    }else{
+      $('#bnkdiv').show()
+      $('#chequediv').hide()
+      $('#upidiv').hide()
+      document.getElementById('cheque_id').value=null
+      document.getElementById('upi_id').value=null
+
+      var customer = $('#pay_method').val();
+            
+
+                    $.ajax({
+                    type: "GET",
+                    url: "{% url 'loan_bankdata' %}",
+                    data: {
+                    id: customer
+                    },
+                    success: function (response) {
+                    // Assuming response.days is a valid number
+                    var acc = response.acc;
+                    var name = response.name;
+
+                    console.log(acc);
+
+                    // Display the formatted expiry date in the expdateid field
+                    $("#bnk_id").val(acc);
+                 
+                    }
+                    });
+    }
+  });
+});
+</script>
+
+
+
+<script>
+    // Function to update the "amount" field
+    function updateAmount() {
+        var remainLoan = parseFloat(document.getElementById('remain_loan').value) || 0;
+        var newLoan = parseFloat(document.getElementById('new').value) || 0;
+        var totalLoan = remainLoan + newLoan;
+        document.getElementById('amount').value = totalLoan;
+    }
+
+    // Call the updateAmount function on page load
+    window.onload = updateAmount;
+</script>
+
+
+
+
+
+
+
+
+{%endblock%}

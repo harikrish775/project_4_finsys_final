@@ -1,0 +1,90 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <div class="page-content ">
+        <div class="card radius-15">
+            <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+        <script>
+            function goBack() {
+      window.history.back();
+    }
+        </script>
+            <form action="{% url 'holiday_add' %}" method="post">
+                {% csrf_token %}
+            <div class="card-body">
+                <center><h2 style="text-transform: capitalize;"><span id="monthName">{{month}}</span>, {{year}} History</h2></center><br>
+            <div class="container">
+                <center><br><br>
+                    
+                        <table class="table w-100">
+                            <thead>
+                                <tr style="font-size: x-large;">
+                                    <th >Action Date</th>
+                                    <th >Title</th>
+                                    <th>Start Date</th>
+                                    <th>End date</th>
+                                    <th>Action</th>
+                                    <th >Person</th>
+                                </tr>
+                                
+                                
+                            </thead>
+                            <tbody>
+                                {% for i in history %}
+                                <tr style="font-size: larger;">
+                                    <td>{{i.date}}</td>
+                                    <td>{{i.holiday_name}}</td>
+                                    <td>{{i.start_date}}</td>
+                                    <td>{{i.end_date}}</td>
+                                    <td>{{i.action}}</td>
+                                    <td style="text-transform: capitalize;">{{i.login.First_name}} {{i.login.Last_name}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        
+                    
+                </center>
+                
+
+            </div>
+            
+            </div><br><br>
+                
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the month number from the HTML element with id "monthName"
+            var monthNumber = parseInt(document.getElementById('monthName').textContent);
+        
+            // Array to map numeric values to month names
+            var monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+        
+            // Convert numeric month to month name
+            var monthName = monthNames[monthNumber - 1]; // Adjust for 0-based indexing
+        
+            // Display the month name in the HTML element with id "monthName"
+            document.getElementById('monthName').textContent = monthName;
+        });
+        </script>
+  
+
+{% endblock %}

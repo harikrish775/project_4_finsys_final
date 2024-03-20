@@ -1,0 +1,979 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load social_share %}
+{% load static %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<style type="text/css">
+    form div{
+        width: 100%;
+    }
+
+
+    .top .right1{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items:center;
+        background-color: rgba(128, 128, 128, 0.09);
+        padding: 30px;
+        
+    }
+    
+    .card {
+        z-index: 0;
+        border: none;
+        border-radius: 0.5rem;
+        position: relative
+    }
+
+    .btn:hover{
+        color: white;
+    }
+
+    .ribbon-inner {
+        text-align: center;
+        color: #fff;
+        top: -20px;
+        left: -90px;
+        width: 120px;
+        padding: 3px;
+        /* position: relative;
+        transform: rotate(-45deg); */
+    }
+    .ribbon-open {
+        background-color: #268ddd;
+        border-color: #1c72b4;
+    }
+
+    table {
+  border: 1px solid rgba(0,0,0,.4);
+}
+
+
+.rectangle {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .pcs-template-body {
+        text-align: left;
+    }
+
+    /* Add your existing styles here */
+
+    @media screen and (max-width: 768px) {
+        .rectangle {
+            width: 100%;
+            height: auto;
+        }
+    }
+
+</style>
+
+
+
+    <div class="page-content">
+        <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href='{% url 'StockAdjustment' %}'">
+        <i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i>
+        </span>
+
+        <div class="card radius-15 overview">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-12 col-xl-12">
+                        <div class="card" style="background-color: #2a4964;">
+                            <div class="row no-gutters">
+                                &nbsp;&nbsp;
+                                <div class="col-md-1 text-center w-100" style="margin-top: 2vh; ; margin-bottom: 2vh;  border-radius: 1vh;">
+                                    <h6><a class="btn text-center" style="background-color: #213b52;" onclick="overviewfun()">Overview</a></h6>
+                                </div>
+                                <div class="col-md-1 text-center  w-100" style="margin-top: 2vh; margin-bottom: 2vh; border-radius: 1vh;" >
+                                    <h6><a class="btn text-center" onclick="statementfun()">Statement</a></h6>
+                                </div>
+
+
+                                
+                                {% if stocks.status == "Draft" %}
+
+                                <div class="col-md-8 " style="margin-left: 23vh;margin-top: 2vh; margin-bottom: 2vh;">
+
+                                    <a type="submit" class="btn btn-outline-secondary pull-right fa fa-history  mx-1 text-grey " href="{% url 'Stk_adjHistory' stocks.id%}" style="font-size: 14px; ">
+                                    &nbsp;History
+                                    </a>
+                               
+                                    <a type="submit" class="btn btn-outline-secondary text-center fa fa-paperclip  mx-1 text-grey pull-right" href="" style="text-align: center;font-size: 14px;">
+                                    &nbsp;Attach File
+                                    </a>
+
+                                    <a type="submit" class="btn btn-outline-secondary fa fa-comment text-center mx-1 text-grey pull-right" aria-hidden="true" data-target="#newcomment" data-toggle="modal" style="font-size: 14px;">
+                                    &nbsp;Comment
+                                    </a>
+                                    
+                                    <a type="submit" class="btn btn-outline-secondary text-center   mx-1 text-grey pull-right fa fa-trash" href="{% url 'del_stockadj' stocks.id%}" 
+                                    onclick="return confirm('Are you sure you want to delete this item?')"  style="font-size: 14px;">
+                                    &nbsp;Delete
+                                    </a>
+
+                                    <a type="submit" class="btn btn-outline-secondary text-center mx-1 text-grey pull-right fa fa-edit" href="{% url 'edit_stockadj' stocks.id%}" style="font-size:14px;">
+                                    &nbsp;Edit
+                                    </a>
+                                    
+                                    {% if stocks.status == "Draft" %}
+                               
+                                    <a type="submit" class="btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-exchange" href="{% url 'convert_stockadj' stocks.id%}" 
+                                    onclick="return confirm('Are you sure you want to Approve this item?')" style="font-size: 14px;" aria-hidden="true">
+                                    Convert
+                                    </a>
+                            
+                                    {% endif %}
+                        
+                                   
+                                </div>
+                                   
+                                {% else %}
+
+                                    <div class="col-md-1"></div>
+
+                                    <div class="col-md-8 " style="margin-left: 9vh;margin-top: 2vh; margin-bottom: 2vh;">
+
+                                        <a type="submit" class="btn btn-outline-secondary pull-right  mx-1 text-grey fa fa-history" href="{% url 'Stk_adjHistory' stocks.id%}"  style="font-size: 14px; ">
+                                        &nbsp;History
+                                        </a>
+                               
+
+                                        <div class="dropdown" >
+                                            <li  class=" dropdown-toggle btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-paperclip" data-toggle="dropdown">&nbsp;Attach file</li>
+                                            <ul class="dropdown-menu" style="background-color: black;">
+                                                <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal"><i class=" fa fa-paperclip"></i>&nbsp;Attach file</a>
+                                                {% if stocks.attach_file != "" %}
+                                                <a class="dropdown-item " style="cursor: pointer;" download  href="{{ stocks.attach_file.url }}" ><i class="fas fa-download"></i>&nbsp;Download file</a>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                                                       
+                                        <!-- <a type="submit" class="btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-paperclip " href="" style="text-align: center;font-size: 14px;">
+                                        &nbsp;Attach File
+                                        </a>
+     -->
+                                        <a type="submit" class="btn btn-outline-secondary  text-center text-grey mx-1 pull-right fa fa-comments " data-target="#newcomment" data-toggle="modal" style="font-size: 14px;" aria-hidden="true">
+                                        &nbsp;Comment
+                                        </a>         
+                                
+                                        <a type="submit" class="btn btn-outline-secondary text-center fa fa-trash  mx-1 text-grey pull-right" href="{% url 'del_stockadj' stocks.id%}" 
+                                        onclick="return confirm('Are you sure you want to delete this item?')" style="font-size: 14px;">
+                                        &nbsp;Delete
+                                        </a>
+                                        <a type="submit" class="btn btn-outline-secondary text-center mx-1 text-grey pull-right fa fa-edit" href="{% url 'edit_stockadj' stocks.id%}" style="font-size:14px;">
+                                        &nbsp;Edit
+                                        </a>
+
+    
+                                    </div>
+                                {% endif %}
+
+
+                                <div class="col-md-12 mt-4 mb-4">
+
+                                    <center>
+                                        <h5 class="card-title"><h3 style="text-transform:Uppercase;">STOCK ADJUSTMENT VIEW</h3></h5>
+                                    </center>
+                          
+                                </div> 
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+              
+                
+
+
+
+
+              <form action="#" method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                        <div class="card" style="background-color: #2d4458;"><br>
+                          <div class="card" style="background-color:#162532; width: 75%; margin: auto;"><br>
+                            <h2 style="text-align:center;color:white">STOCK ADJUSTMENT DETAILS</h2></span>
+                        
+                            <div class="row mx-auto mt-1">
+                                <div class="col-md-6 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="font-size: large;" class="text-success">Created By:</label>
+                                </div>
+
+
+                                <div class="col-md-6 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.login_details.First_name}}</label>
+                                </div>
+                            </div>
+                                <br><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Reference Number</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.reference_no}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Reason</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.reason}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Description</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.description}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Date</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.adjusting_date}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Mode of Adjustment</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.mode_of_adjustment}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Status</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.status}}</label>
+                                </div>
+                            </div><br>
+
+                            <div class="row mx-auto">
+                                <div class="col-md-5 d-flex justify-content-end" style="margin: auto;">
+                                    <label style="color: white; font-size: large;" class="">Account</label>
+                                </div>
+
+                                <div class="col-md-1 d-flex justify-content-center" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">:</label>
+                                </div>
+
+                                <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                    <label style="color: white; font-size: large;">{{stocks.account}}</label>
+                                </div>
+                            </div><br>
+
+
+                                {% if comment %}
+                            <div class="col-md-5 d-flex justify-content-start" style="margin: auto;">
+                                {% for j in comments %}
+                                    <label style="color: white; font-size: large;">{{j.comment}}</label>
+                                {% endfor %}
+                            </div>
+                                {% endif %}
+
+
+                            <br><br>
+                             <div class="row" style="margin: auto;">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10">
+                                    <table style="width:100%;margin-top:20px;table-layout:fixed;" cellspacing="0" cellpadding="0" class="pcs-itemtable">
+                                        <thead style="background-color:rgba(0,0,0,.4)">
+                                            <tr style="height:40px;">
+                                                <td style="padding:5px 10px 5px 10px;word-wrap: break-word; text-align: center;" w class="table-head">
+                                                        Item Details
+                                                </td>
+                                                {% if stocks.mode_of_adjustment == "Quantity" %}
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        Quantity Available
+                                                    </td>
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        New Quantity on hand
+                                                    </td>
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        Quantity Adjusted
+                                                    </td>
+                                                {% else %}
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        Value Available
+                                                    </td>
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        New Stock in Value
+                                                    </td>
+                                                    <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                        Adjusted Stock in Value
+                                                    </td>
+                                                {% endif %}
+                                            </tr>
+                                        </thead>
+                
+                                        <tbody id="items-table-body">
+                                            {% if stocks.mode_of_adjustment == "Quantity" %}
+                                            {% for j in st_items %}
+                                            <tr class="row0" id="row1">
+                                            <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.item.name }}</td>
+                                              <td  style="padding: 10px 0px 10px 10px; font-size:16px; text-align: center;" class="pcs-item-row">{{ j.quantity_avail }} </td>
+                                              <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.quantity_inhand }}</td>
+                                              <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.quantity_adj }}</td>
+                                              
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            {% for j in st_items %}
+                                            <tr class="row0" id="row1">
+                                            <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.item.name }}</td>
+                                            <td  style="padding: 10px 0px 10px 10px; font-size:16px; text-align: center;" class="pcs-item-row">{{ j.current_val }} </td>
+                                            <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.changed_val }}</td>
+                                            <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.adjusted_val }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div><br> 
+                          </div><br>
+                            <div class="row mx-auto">
+                                <div class="col-md-4 mx-auto" >
+                                    <a href="{% url 'StockAdjustment'  %}" class="btn btn-outline-secondary w-100 text-light">
+                                    BACK</a>
+                                </div>
+                            </div><br>
+                        </div>
+                </form> 
+            </div>
+        </div>
+
+
+<!--################################################################   statement    ##################################################-->
+
+        <div class="card radius-15 statement" style="display: none;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-lg-12 col-xl-12">
+                        <div class="card" style="background-color: #2a4964;">
+                            <div class="row no-gutters">
+
+                                &nbsp; &nbsp;
+
+                                <div class="col-md-1 text-center" style="margin-top: 2vh; margin-bottom: 2vh; border-radius: 1vh;">
+                                    <h6><a class="btn w-100" onclick="overviewfun()">Overview</a></h6>
+                                </div>
+                                <div class="col-md-1 text-center" id ="state" style="margin-top: 2vh; margin-bottom: 2vh; border-radius: 1vh; " >
+                                    <h6><a class="btn w-100" style="background-color: #213b52;" onclick="statementfun()">Statement</a></h6>
+
+                                </div>
+
+
+
+                                <div class="col-md-8 text-center" style="margin-left: 23vh;margin-top: 2vh; margin-bottom: 2vh;">
+
+                           
+                                    <button class="btn btn-outline-secondary text-grey dropdown-toggle pull-right fa fa-share-alt font-size: 14px;font-family: Font Awesome 6 Free;" data-toggle="dropdown" aria-expanded="false">
+                                        &nbsp;Share
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" style="background-color: black;" id="listdiv">
+                                        <li style="text-align: center;">
+                                            <div class="whatsapp-this">
+                                                <!-- https://api.whatsapp.com/send?text=https%3A//infoxcore.com/Fin_view_item/36 -->
+                                                <a href="" class="" target="_blank">{% post_to_whatsapp object_or_url "WhatsApp" %}</a>
+                                            </div>
+                                        </li>
+                                        <li style="text-align: center;cursor: pointer;" class="text-light" data-toggle="modal" data-target="#shareEmail">Email</li>
+                                    </ul>
+                                   
+
+                                    <div class="dropdown" >
+                                        <li  class=" dropdown-toggle btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-paperclip" data-toggle="dropdown">&nbsp;Attach file</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal"><i class=" fa fa-paperclip"></i>&nbsp;Attach file</a>
+                                            {% if stocks.attach_file != "" %}
+                                                <a class="dropdown-item " style="cursor: pointer;" download  href="{{ stocks.attach_file.url }}" ><i class="fas fa-download"></i>&nbsp;Download file</a>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+
+                                    <button type="submit" hre class="btn btn-outline-secondary text-grey mx-1 pull-right fa fa-file-pdf-o" style="font-size: 14px;" onclick="exportToPDF()">
+                                    &nbsp;PDF
+                                    </button>
+                                    <!--  -->
+                                  
+                                    <a type="button" class="btn btn-outline-secondary mx-1 text-grey pull-right fa fa-print" style="font-size: 14px;" onclick="printSpecificArea()" >
+                                    &nbsp;Print
+                                    </a>
+                            
+                                    <a type="submit" class="btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-trash" href="{% url 'del_stockadj' stocks.id%}" 
+                                    onclick="return confirm('Are you sure you want to delete this item?')" style="font-size: 14px;">
+                                    &nbsp;Delete
+                                    </a>
+
+                                    <a type="submit" class="btn btn-outline-secondary text-center mx-1 text-grey pull-right fa fa-edit" style="font-size: 14px;" href="{% url 'edit_stockadj' stocks.id%}">
+                                    &nbsp;Edit
+                                    </a>
+
+                                   
+                                    
+                                   
+                        
+                                   
+                                </div>
+
+
+                              
+                                <div class="col-md-12 mt-4 mb-4">
+                                    <center>
+                                        <h5 class="card-title"><h3 style="text-transform:Uppercase;">STOCK ADJUSTMENT VIEW</h3></h5>
+                                    </center>
+                                    
+                                </div> 
+                                
+                                {% if a.status == "Draft" %}
+                                    <div class="col-md-3"></div>
+                                {% else %}
+                                    <div class="col-md-4"></div>
+                                {% endif %}
+                                
+
+
+                                {% if a.status == "Draft" %}
+                                <div class="col-md-1 ml-2 " style="margin-top: -2vh; margin-bottom: 2vh;">
+                                    <a type="submit" class="btn btn-outline-secondary w-100 text-grey pull-left" href="{% url 'convert_stockadj' stocks.id%}" 
+                                    onclick="return confirm('Are you sure you want to Approve this item?')">
+                                        <i class="fa fa-exchange" aria-hidden="true" style="font-size: medium;"> Convert</i>
+                                    </a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        
+                <div class="card radius-15 p-5 print-content" id="printarea" style="margin-bottom: 30px;">
+                    <div class="card-body" id="GFG">
+                        <div class="row">
+                            <div class="col-md-12">        
+                                <div  ><br>
+                                    <center>
+                                        <div class="rectangle" id="pdfs" style="color:black;  background-color: white;width: 850px;height:900px;border: 3px white;">
+                                            <div class="pcs-template-body" style="text-align:left;">
+
+                                                <div class="col-sm-12" style="margin: 0 !important; padding: 0!important;background-image: linear-gradient(#1b83e8, black); color: white;" id="colorgradient">
+                                                    <br>
+                                                    <p style="font-size: 4vh; text-align: center;">STOCK ADJUSTMENT</p>
+                                                    <p style=" text-align: center;"> {{stocks.company.Company_name}} <br>
+                                                        {{ stocks.company.City }}, <br>
+                                                        {{ stocks.company.Pincode }},
+                                                        {{ stocks.company.State }},<br>
+                                                        {{ stocks.company.Email }}
+                                                        <br>
+                                                        <br>
+                                                    </p>
+                                                </div>
+                                      
+                                                <br><br>
+
+                                                <div style="display:table;width:100%;">
+                                                    <div  class=" pcs-journal-header-section">
+                                                        <div></div>
+                                          
+                                                    </div>
+                                                </div>
+
+                                                
+                                                <div class="d-flex mb-4 "  style="margin-left: -95px;">
+                                                    <div class="col-6 text-right ">
+                                                        <h5 class="mr-auto text-dark ">Reference Number</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.reference_no }}</h6>
+                                                    </div>
+                                                  </div>
+                            
+                                                 
+                            
+                                                  <div class="d-flex mb-4 "  style="margin-left: -95px;">
+                                                    <div class="col-6 text-right text-dark">
+                                                        <h5 class="mr-auto text-dark">Reason</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.reason }}</h6>
+                                                    </div>
+                                                  </div>
+                            
+                                              
+                                                  <div class="d-flex mb-4 "   style="margin-left: -95px;">
+                                                    <div class="col-6 text-right">
+                                                        <h5 class="mr-auto text-dark">Date</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.adjusting_date }}</h6>
+                                                    </div>
+                                                  </div>
+                                                  
+                                                  <div class="d-flex mb-4   "   style="margin-left: -95px;">
+                                                    <div class="col-6 text-right ">
+                                                        <h5 class="mr-auto text-dark">Mode of Adjustment</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.mode_of_adjustment }}</h6>
+                                                    </div>
+                                                  </div>
+                                                
+                                                  <div class="d-flex mb-4 "  style="margin-left: -95px;">
+                                                    <div class="col-6 text-right">
+                                                        <h5 class="mr-auto text-dark">Status</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.status }}</h6>
+                                                    </div>
+                                                  </div>
+                            
+                                                  <div class="d-flex mb-4 "  style="margin-left: -95px;">
+                                                    <div class="col-6 text-right">
+                                                        <h5 class="mr-auto text-dark">Created By</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark">{{ stocks.login_details.First_name }}</h6>
+                                                    </div>
+                                                  </div>
+                                                  
+                                                {% if comment != "" %}
+
+                                                <div class="d-flex mb-4 "  style="margin-left: -95px;">
+                                                    <div class="col-6 text-right">
+                                                        <h5 class="mr-auto text-dark">Comment</h5>
+                                                    </div>
+                                                    <div class="col-2 text-center text-dark">
+                                                        :
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <h6 class="ml-auto mt-1 text-dark"> 
+                                                            {% for i in comment %}
+                                                           
+                                                                <li style="margin-top: -10px;"> {{ i.comment }}</li><br>
+                                                            
+                                                            
+                                                            {% endfor %}</h6>
+                                                    </div>
+                                                  </div>
+                                                {% endif %}  
+                                               
+
+                                                <br><br>
+                                                <div class="row">
+                                                    <div class="col-md-11 mx-auto">
+                                                        <table style="width:100%;margin-top:20px;table-layout:fixed;" cellspacing="0" cellpadding="0" class="pcs-itemtable border border-dark " id="print-Table">
+                                                            <thead style="background-color:#22b8d1">
+                                                                <tr style="height:40px;" class="border border-dark">
+                                                                    <td style="padding:5px 10px 5px 10px;word-wrap: break-word; text-align: center;" w class="table-head">
+                                                                            Item Details
+                                                                    </td>
+                                                                    
+
+                                                                    {% if stocks.mode_of_adjustment == "Quantity" %}
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            Quantity Available
+                                                                        </td>
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            New Quantity on hand
+                                                                        </td>
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            Quantity Adjusted
+                                                                        </td>
+                                                                    {% else %}
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            Value Available
+                                                                        </td>
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            New Stock in Value
+                                                                        </td>
+                                                                        <td  style="padding:5px 10px 5px 5px;word-wrap: break-word; text-align: center;" class="table-head">
+                                                                            Adjusted Stock in Value
+                                                                        </td>
+                                                                    {% endif %}
+                                                                </tr>
+                                                            </thead>
+                                    
+                                                            <tbody id="items-table-body">
+                                                                {% if stocks.mode_of_adjustment == "Quantity" %}
+                                                                {% for j in st_items %}
+                                                                <tr class="row0 border border-dark" id="row1">
+                                                                  <td  style="padding: 10px 0px 10px 10px; font-size:16px; text-align: center;" class="pcs-item-row">{{ j.item.name }} </td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.quantity_avail }}</td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.quantity_inhand }}</td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.quantity_adj }}</td>
+                                                                </tr>
+                                              
+                                                                {% endfor %}
+                                                                {% else %}
+                                                                {% for j in st_items %}
+                                                                <tr class="row1 border border-dark" id="row2">
+                                                                  <td style="padding: 10px 0px 10px 10px; font-size:16px; text-align: center;" class="pcs-item-row">{{ j.item.name }}</td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.current_val }}</td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.changed_val }}</td>
+                                                                  <td style="padding: 10px 10px 10px 5px;word-wrap: break-word;font-size:18px; text-align: center;">{{ j.adjusted_val }}</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                                {% endif %}
+                                                                
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                                
+                                             
+                                              
+                                               
+                                            </div>
+                                        </div><br>
+                                    </center>
+                                </div>
+                                <div class="row mr-3">
+                                    <div class="col-md-4" style="margin: auto;" id="buttonback">
+                                        <a href="{% url 'StockAdjustment' %}" class="btn btn-outline-secondary w-100 text-light">
+                                        BACK</a>
+                                    </div>
+                                </div>
+                            </div><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- --------------------------------------------- FILE MODAL ------------------------------------------------ -->
+
+      
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" > 
+            <div class="modal-dialog" role="document" >
+              <div class="modal-content">
+                <div class="modal-header" style="background-color:rgb(47, 82, 112) ;">
+                  <h5 class="modal-title" id="exampleModalLabel">Attach File</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form action="{% url 'stock_attachFile'  stocks.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                <div class="modal-body" style="background-color:rgb(47, 82, 112) ;">
+                  <input type="file" class="form-control" name="file">
+                </div>
+                <div class="modal-footer" style="background-color:rgb(47, 82, 112) ;">
+                    <button type="submit" class="btn btn-outline-secondary text-light">Save</button>
+                  <button type="button" class="btn btn-outline-secondary text-light" data-dismiss="modal">Close</button>
+                  
+                </div>
+            </form>
+              </div>
+            </div>
+          </div>
+
+
+  <!-- --------------------------------------------- FILE MODAL ------------------------------------------------ -->
+
+
+
+
+
+
+
+
+
+
+<!-- --------------------------COMMENT MODAL------------------------------ -->
+    <div class="modal fade" id="newcomment">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #213b52;">
+                <form action="{% url 'stockadj_comment' stocks.id %}" method="post" class="needs-validation" validate>
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h3 class="m-1">Add Comment</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <div class="form-check mx-auto" style="text-align: center;">
+                                <input type="text " class="form-control  mx-auto" name="comment" style="height: 70px;margin-left: -10px!important;">
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="table-responsive">
+                        <table class="table"> 
+                            <thead>
+                                <tr class="text-center">
+                                    <th scope="col">Sl No.</th>
+                                    <th scope="col">Comment</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in comment %}
+                                <tr class="text-center">
+                                    <th scope="row">{{ forloop.counter }}</td> <!-- Added a counter for Sl No. -->
+                                    <td>{{ i.comment }}</td>
+                                    <td><a href="{% url 'del_stockcmnt' i.id%}"><i class="fa fa-trash-o text-danger"></i></a></td> <!-- Add the delete button code -->
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-secondary text-light">Save</button>
+                        <button type="button" class="btn btn-outline-secondary text-light" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+ <!-- --------------------------COMMENT MODAL------------------------------ -->
+ 
+ 
+ <!-- --------------------------EMAIL MODAL------------------------------ -->
+
+
+ <div class="modal fade" id="shareEmail">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" style="background: #243e54;border-radius: 20px;">
+        <div class="modal-header" style="background: #243e54;">
+          <h5 class="m-3 text-uppercase" id="shareBillEmailLabel">Share Stock Adjustment Details Via Email</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" style="background: #243e54;">
+          <div class="card p-3 m-3">
+            <form action="{% url 'stockadjToEmail' stocks.id  %}" method="post" class="needs-validation"
+              id="share_to_email_form" autocomplete="off">
+              {% csrf_token %}
+              <input name="FromD" class="inputdate form-control"  id="date1"  type="date" hidden >
+              <input name="ToD" class="inputdate form-control"  id="date2" type="date" hidden>
+              <div class="form-group">
+                
+                <label for="emailIds">Email IDs</label>
+                <textarea class="form-control text-light" name="email_ids" id="emailIds" rows="5"
+                  placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+              </div>
+              <div class="form-group mt-2">
+                <label for="item_unitname">Message(optional)</label>
+                <textarea name="email_message" id="email_message" class=" form-control text-light" cols=""
+                  rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+              </div>
+            
+          </div>
+          <div class="modal-footer d-flex justify-content-center">
+            <input type="submit" id="generateAndSendPdf" class="submitShareEmailBtn btn btn-outline-secondary text-grey w-50 my-4 mx-3" style="" value="SEND MAIL">
+          </div>
+        </div></form>
+
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- --------------------------EMAIL MODAL------------------------------ -->
+
+
+
+ <script>
+    function exportToPDF() {
+        var content = document.getElementById("pdfs");
+        var buttonback = document.getElementById("buttonback");
+        buttonback.style.display='none'
+        var colorgradient = document.getElementById("colorgradient");
+
+
+
+        // Clone the content to apply styles without affecting the original
+        var clonedContent = content.cloneNode(true);
+
+        // Apply styles to the cloned content
+        // clonedContent.style.backgroundColor = "white";
+        clonedContent.style.color = "black";
+        clonedContent.style.marginLeft = "-8px"; // Use camel case here
+        // clonedContent.style.width = "700px";
+        clonedContent.style.border = "3px solid white";
+        clonedContent.style.marginTop = "-2px";
+        // Add more style modifications as needed
+
+        // Generate PDF from the cloned content
+        html2pdf()
+            .from(clonedContent)
+            .set({ margin: [0, 0, 0, 0] }) 
+            .save('Stock-Adjustment.pdf');
+
+
+
+    }
+</script>
+
+
+<script>
+    function overviewfun(){
+        $(".overview").show()
+        $(".statement").hide()
+    }
+
+    function statementfun(){
+        $(".overview").hide()
+        $(".statement").show()
+    }
+</script>
+<script>
+    function printSpecificArea() {
+        var buttonback = document.getElementById("buttonback");
+        buttonback.style.display = 'none';
+
+        var printContents = document.getElementById("GFG");
+        
+    
+        var style = document.createElement("style");
+        style.innerHTML = "@media print { .col-sm-12 * { color: black !important; } }";
+        document.head.appendChild(style);
+
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents.innerHTML;
+
+        window.print();
+
+      
+        document.head.removeChild(style);
+
+        document.body.innerHTML = originalContents;
+
+        buttonback.style.display = 'block';
+    }
+</script>
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+</script>
+
+{% endblock %}

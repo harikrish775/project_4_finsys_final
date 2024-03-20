@@ -1,0 +1,2155 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+    
+
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'assets/css/estimate.css' %}"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+   
+    <style>
+
+     
+    .ribbon .ribbon-inner {
+    text-align: center;
+    color: #fff;
+    top: -20px;
+    left: -90px;
+    width: 120px;
+    padding: 3px;
+    /* position: relative;
+    transform: rotate(-45deg); */
+}
+.ribbon .ribbon-open {
+    background-color: #268ddd;
+    border-color: #1c72b4;
+}
+
+:root {
+    --body-bg: rgb(204, 204, 204);
+    --white: #ffffff;
+    --darkWhite: #ccc;
+    --black: #000000;
+    --dark: #615c60;
+    --themeColor: #22b8d1;
+    --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+/* Font Include */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+body {
+    background-color: var(--body-bg);
+}
+
+.page {
+    background: var(--white);
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--pageShadow);
+}
+
+.page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    overflow: hidden;
+}
+
+.bb {
+    border-bottom: 3px solid var(--darkWhite);
+}
+
+/* Top Section */
+.top-content {
+    padding-bottom: 15px;
+}
+
+.logo img {
+    height: 60px;
+}
+
+.top-left p {
+    margin: 0;
+    color: #000000;
+}
+
+.top-left .graphic-path {
+    height: 40px;
+    position: relative;
+}
+
+.top-left .graphic-path::before {
+    content: "";
+    height: 20px;
+    background-color: var(--dark);
+    position: absolute;
+    left: 15px;
+    right: 0;
+    top: -15px;
+    z-index: 2;
+}
+
+.top-left .graphic-path::after {
+    content: "";
+    height: 22px;
+    width: 17px;
+    background: var(--black);
+    position: absolute;
+    top: -13px;
+    left: 6px;
+    transform: rotate(45deg);
+}
+
+.top-left .graphic-path p {
+    /* color: var(--white); */
+    height: 40px;
+    left: 0;
+    right: -100px;
+    text-transform: uppercase;
+    background-color: var(--themeColor);
+    font: 26px;
+    z-index: 3;
+    position: absolute;
+    padding-left: 10px;
+}
+
+/* User Store Section */
+.store-user {
+    padding-bottom: 25px;
+}
+
+.store-user p {
+    margin: 0;
+    font-weight: 600;
+    color: #000000;
+}
+
+.store-user .address {
+    font-weight: 400;
+}
+
+.store-user h5 {
+    color: var(--themeColor);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.extra-info p span {
+    font-weight: 400;
+   
+}
+
+/* Product Section */
+thead {
+    color: var(--white);
+    background: var(--themeColor);
+}
+
+.table td,
+.table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr th:first-child,
+tr td:first-child {
+    text-align: left;
+}
+
+.media img {
+    height: 60px;
+    width: 60px;
+}
+
+.media p {
+    font-weight: 400;
+    margin: 0;
+ 
+}
+
+.media p.title {
+    font-weight: 600;
+    
+}
+
+/* Balance Info Section */
+.balance-info .table td,
+.balance-info .table th {
+    padding: 0;
+    border: 0;
+}
+
+.balance-info tr td:first-child {
+    font-weight: 600;
+}
+
+tfoot {
+    border-top: 2px solid var(--darkWhite);
+}
+
+tfoot td {
+    font-weight: 600;
+}
+
+/* Cart BG */
+.cart-bg {
+    height: 250px;
+    bottom: 32px;
+    left: -40px;
+    opacity: 0.3;
+    position: absolute;
+}
+
+/* Footer Section */
+footer {
+    text-align: center;
+    position: absolute;
+    bottom: 30px;
+    left: 75px;
+}
+
+footer hr {
+    margin-bottom: -22px;
+    border-top: 3px solid var(--darkWhite);
+}
+
+footer a {
+    color: var(--themeColor);
+}
+
+footer p {
+    padding: 6px;
+    border: 3px solid var(--darkWhite);
+    background-color: var(--white);
+    display: inline-block;
+    color: #000000;
+}
+
+
+.print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+    }
+
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+
+        .equal-length-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%; /* Make the container fill the height of the column */
+            margin-left: 2vh;
+            margin-right: 2vh;
+        }
+
+        .equal-length-item {
+            flex: 1;
+            text-align: center;
+        }
+        .element {
+    background-color: orange; /* Set the background color you want */
+    clip-path: circle(80% at right -150%);
+    border-radius: 5px;
+}
+
+/* Apply clip-path to the text within the curved-background element */
+.curved-background {
+    background-clip: text;
+    -webkit-background-clip: text; /* For compatibility with some browsers */
+    color: transparent; /* Make the text transparent */
+}
+
+    </style>
+
+
+
+<script>
+
+
+    async function generatePDF() {
+        // document.getElementById("downloadButton").innerHTML = "Currently downloading, please wait";
+
+        //Downloading
+        var downloading = document.getElementById("whatToPrint");
+        var doc = new jsPDF('l', 'pt');
+
+        await html2canvas(downloading, {
+            //allowTaint: true,
+            //useCORS: true,
+            // width: 600
+            
+        }).then((canvas) => {
+            //Canvas (convert to PNG)
+            doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+        })
+
+        doc.save("Document.pdf");
+
+        //End of downloading
+
+        // document.getElementById("downloadButton").innerHTML = "Click to download";
+    }
+
+
+    function goBack() {
+      window.history.back();
+    }
+    
+</script>
+
+
+	
+	
+        <!-- modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form id="fileUploadForm" method="post" action="{% url 'Fin_recurring_bill_attach_file' pk=bill1.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="file" class="form-control" name="attachment">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="fileUploadInput" data-pk="{{ bill1.id }}" >Save</button>
+                    </div>
+                </form>
+                <script>
+                    function submitForm() {
+                        var formData = $('#fileUploadForm').serialize();
+                        var pk = document.getElementById('fileUploadInput').getAttribute('data-pk');
+                        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                        // formData.append('csrfmiddlewaretoken', csrfToken);
+                    
+                        $.ajax({
+                            url: 'Fin_recurring_bill_attach_file/' + pk + '/',
+                            type: 'POST',
+                            data: formData,
+                            contentType: false,
+                            processData: false,
+                            success: function(response) {
+                                // Handle success, e.g., show a message or update the UI
+                                alert('File uploaded successfully.');
+                                // Optionally, you can close the modal or do other actions
+                                $('#exampleModal').modal('hide');
+                            },
+                            error: function(error) {
+                                // Handle error, e.g., show an error message
+                                console.error('Failed to upload file:', error);
+                                alert('Failed to upload')
+                            }
+                        });
+                    }
+                    </script>
+              </div>
+            </div>
+          </div>
+
+
+    
+
+    <div class="page-content"  id="page-content">
+        <a class="d-flex justify-content-end p-2" href="{% url 'Fin_recurring_bill_list' %}" style="cursor: pointer;"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></a>
+        <div class="card radius-15">
+            <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
+            <div class="card-body">
+                <div class="card-title">
+                    <center><h2 class="mb-0">RECURRING BILL</h2> <h4></h4></center>
+                    <hr>
+                </div>
+                <div class="row">
+                    <div class="col-md-3" style="margin-top: 3vh; font-size: medium;">
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="showOverview()" id="overviewlink" >Overview</a>&nbsp;&nbsp;
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showTemplate()" id="templatelink" >Template</a>
+                        <a style="padding: 10px; cursor: pointer; border-radius: 1vh;" onclick="showSlip()" id="sliplink" > Slip</a>
+                    </div>
+                    <div class="col-md-9">
+                        <nav class="navbar navbar-expand-lg navbar-light" style="background-color:rgba(0,0,0,.01);">
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarScroll">
+                                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                                    <li class="nav-item mx-1" id="editLi">
+                                        <a href="{% url 'Fin_recurring_bill_edit_page' pk=bill1.id %}" role="button" class=" ml-2 btn btn-outline-secondary text-grey"> &nbsp;<i class="fa fa-edit"></i> &nbsp;Edit&nbsp;&nbsp;</a>
+                                      </li>
+                                      <li class="nav-item mx-1" id="deleteLi">
+                                        <a href="{% url 'Fin_recurring_bill_delete' 0 %}" data-bill-id="{{ bill1.id }}" role="button" class="ml-2 btn btn-outline-secondary text-grey deleteButton">
+                                            &nbsp;<i class="fa fa-trash"></i> &nbsp;Delete&nbsp;&nbsp;
+                                        </a>
+                                      </li>
+                                      <li class="nav-item active mx-1" id="printLi" >
+                                        <a class="nav-link text-light  ml-2 btn btn-outline-secondary text-grey" role="button" onclick="window.printfun()" >&nbsp;<i class="fa fa-print"></i>&nbsp;Print&nbsp;&nbsp;<span class="sr-only">(current)</span></a>
+                                        </li>
+              
+                                        <li class="nav-item mx-1" id="pdfLi">
+                                            <a class="ml-2 btn btn-outline-secondary text-grey" role="button" id="pdflink" >&nbsp;<i class="fa fa-file"></i>&nbsp;PDF&nbsp;&nbsp;</a>
+                                          </li>
+                                          <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                            var deleteButtons = document.querySelectorAll('.deleteButton');
+
+                                            deleteButtons.forEach(function (button) {
+                                                button.addEventListener('click', function (event) {
+                                                    event.preventDefault();
+
+                                                    var confirmed = confirm("Are you sure you want to delete this item?");
+                                                    if (confirmed) {
+                                                        // Get the billId from the data attribute
+                                                        var billId = button.getAttribute('data-bill-id');
+
+                                                        // Redirect to the delete URL
+                                                        window.location.href = button.getAttribute('href').replace('0', billId);
+                                                    } else {
+                                                        // User canceled the delete operation
+                                                        alert("Delete operation canceled.");
+                                                    }
+                                                });
+                                            });
+                                        });
+                                            </script>
+                                         
+                                         
+                                     {% if  bill1.status == "Draft" %}
+                                      <div class="dropdown p-0 nav-item mx-1 "  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey" data-toggle="dropdown" >Convert</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <li style="margin-left: 50px;" ><a href="{% url 'Fin_recurring_bill_convert' pk=bill1.id %}">Save</a> </li>
+                                        </ul>
+                                      </div>
+                                      {% else %}
+                                      <td></td>
+                                      {% endif %}
+        
+                                    <div class="dropdown p-0 nav-item mx-1 " id="shareLi" style="margin-top: 10px;">
+                                      <li  class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey"data-toggle="dropdown" > &nbsp;<i class="fa fa-share-alt"></i>&nbsp;Share&nbsp;&nbsp;</li>
+                                      <ul class="dropdown-menu" style="background-color: black;">
+              
+                                          <li style="margin-left: 20px; cursor: pointer;" href="#emailModal" data-toggle="modal">Email</li> 
+                                          <li style="margin-left: 20px;cursor: pointer;" onclick="sendWhatsAppLink()" >Whatsapp</li>
+                                          
+                                      </ul>
+                                    </div>
+          
+                                    <div class="dropdown p-0 nav-item mx-1 " id="attachLi"  style="margin-top: 10px;">
+                                        <li  class=" dropdown-toggle btn btn-outline-secondary text-grey"data-toggle="dropdown">&nbsp;&nbsp;Attach file&nbsp;&nbsp;</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal">Attach file</a>
+                                            {% if bill1.attachment %}
+                                            <a class="dropdown-item" download  href="{{bill1.attachment.url}}"><i class="fa fa-download"></i>&nbsp;Download File</a>
+                                            {% endif %}
+                                            
+                                        </ul>
+                                    </div>
+                                    <li id="commentLi" >
+                                        <button class="ml-2 btn btn-outline-secondary text-grey " type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa-regular fa-comment"></i> Comment</button>
+                                    </li>
+
+                                    <div class="dropdown nav-item " style="margin-top: 10px;"  >
+                                        <li id="historyLi" class=" dropdown-toggle ml-2 btn btn-outline-secondary text-grey "data-toggle="dropdown">History</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            
+                                            <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="dropdown-item" style="cursor: pointer;"  > View History </a>
+                                        </ul>
+                                    </div>
+                                    <!-- <li class="ml-1 mr-1 " >
+                                        <a href="{% url 'Fin_recurring_bill_history' pk=bill1.id %}" class="btn btn-outline-info rounded-pill text-grey p-1 " type="button" > History </a>
+                                    </li> -->
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function slipHideButtons() {
+                document.getElementById("printLi").style.display = "";
+                document.getElementById("pdfLi").style.display = "";
+                document.getElementById("shareLi").style.display = "";
+                document.getElementById("deleteLi").style.display = "none";
+                document.getElementById("attachLi").style.display = "none";
+                document.getElementById("commentLi").style.display = "none";
+                document.getElementById("historyLi").style.display = "none";
+                document.getElementById("editLi").style.display = "none";
+
+            }
+
+            function templateButtons() {
+                document.getElementById("printLi").style.display = "";
+                document.getElementById("pdfLi").style.display = "";
+                document.getElementById("shareLi").style.display = "";
+                document.getElementById("deleteLi").style.display = "none";
+                document.getElementById("attachLi").style.display = "none";
+                document.getElementById("commentLi").style.display = "none";
+                document.getElementById("historyLi").style.display = "none";
+                document.getElementById("editLi").style.display = "none";
+            }
+            // Function to hide buttons
+            function overviewButtons() {
+                document.getElementById("printLi").style.display = "none";
+                document.getElementById("pdfLi").style.display = "none";
+                document.getElementById("shareLi").style.display = "none";
+                document.getElementById("deleteLi").style.display = "";
+                document.getElementById("attachLi").style.display = "";
+                document.getElementById("commentLi").style.display = "";
+                document.getElementById("historyLi").style.display = "";
+                document.getElementById("editLi").style.display = "";
+            }
+    
+            // Call the hideButtons function when the page loads
+            window.onload = function() {
+                overviewButtons();
+            };
+        </script>
+
+        <div id="overviewdiv">
+            <input type="text" style="display: none;" value="{{bill1.id}}" id="rBillNo">
+            
+            <div id="details">
+                <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
+                    <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
+                        <h5 class="mt-3 ml-5 mb-3">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited by :</span> {% else %} <span style="color: green;">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;" class="ml-5" for="">{{lastHistory.date}}</label> </h5>
+                        <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3>
+                        <div class="p-5">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Company</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ companyName }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.vendor.email }}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 mt-3">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.vendor.mobile }}</p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.vendor.billing_street }} <br>
+                                        {{bill1.vendor.billing_city}},
+                                        {{bill1.vendor.billing_state}}
+                                        {{bill1.vendor.billing_pincode}}</p>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Billing Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Bill No</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.recurring_bill_number }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Payment Terms</h6>
+                                </div>
+                                <!-- <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">NET {{ bill1.company_payment_terms }}</p>
+                                </div> -->
+                                <div class="col-md-3 mt-3">
+                                    {% if bill1.company_payment_terms_id is Null %}
+                                        <p class="mb-0 text-right">Due on Receipt</p>
+                                    {% else %}
+                                        <p class="mb-0 text-right">{{ bill1.company_payment_terms.term_name }}</p>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Purchase Order</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.purchase_order_number }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">&nbsp;</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right"></p>
+                                </div>
+                                <!-- <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0"></h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0 text-right"></p>
+                                </div> -->
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Repeat Every</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.repeat_every.repeat_every }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Date</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.date }}</p>
+                                </div>
+                                <!-- <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">End date</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.end_date }}</p>
+                                </div> -->
+                            </div>
+                            <hr>
+                         
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-6 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Vendor Details</h5>
+                                </div>
+                                <!-- <div class="col-md-4 mt-3"></div> -->
+                                <div class="col-md-6 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
+                                </div>
+
+                                
+                                
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Vendor</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0 text-right">{{ bill1.customer.first_name }} {{ bill1.customer.last_name }}</p>
+                                </div>
+                               
+                            </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <!-- <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
+                                    </div> -->
+                        
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor Email</h6>
+                                </div>
+                               
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.vendor.email}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer Email</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.customer.email}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex flex-wrap justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3" >
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.vendor.gst_type}}</p>
+                                </div>
+
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{ bill1.customer.gst_type }}</p>
+                                </div>
+                               
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                           
+                     
+                                {% if vendor_gstin %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.vendor.gstin}}</p>
+                                </div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
+                                {% if customer_gstin %}
+                                
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0 text-right">{{ bill1.customer.gstin }}</p>
+                                </div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-12 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Items Details</h5>
+
+                                    {% for j in items  %}
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-3 mt-3">
+                                                <h6 class="mb-0">Name</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.items.name}}</p>
+                                            </div>
+
+                                            <div class="col-md-3 mt-3 vl">
+                                                <h6 class="mb-0">HSN</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.items.hsn}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-3 mt-3 ">
+                                                <h6 class="mb-0">Price</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.price}}</p>
+                                            </div>
+                                            <div class="col-md-3 mt-3 vl">
+                                                <h6 class="mb-0">Quantity</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{ j.quantity }}</p>
+                                            </div>                                            
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-start align-items-center">
+                                            <div class="col-md-3 mt-3 ">
+                                                <h6 class="mb-0">Tax Amount</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.tax_rate}} %</p>
+                                            </div>
+                                            <div class="col-md-3 mt-3 vl"> 
+                                                <h6 class="mb-0">Discount</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.discount}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4 d-flex justify-content-start align-items-center" >
+                                            <div class="col-md-3 mt-3 "> 
+                                                <h6 class="mb-0">Total</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <p class="mb-0 text-right">{{j.total}}</p>
+                                            </div><div class="col-md-3 mt-3 vl"> 
+                                                <h6 class="mb-0">&nbsp;</h6>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <!-- <p class="mb-0 text-right">{{j.total}}</p> -->
+                                            </div>
+                                        </div>
+                                        <hr class="my-4" style="width: 50%;">
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
+                        <div class="p-5">
+                          
+                            <h3 class="fw-bold mb-5 mt-2 pt-1">Recurring Bill Tax Details</h3>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Bill status</h5>
+                                <h4 {%if bill1.status == 'Save'%} style="color: green;" {% else %} style="color: red;" {% endif %} >{{ bill1.status }}</h4>
+                            </div>
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Grand Total</h5>
+                                <h6>{{ bill1.grand_total }}</h6>
+                            </div>
+                            
+                            {%if bill1.taxAmount_igst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">IGST</h5>
+                                <h6>{{ bill1.taxAmount_igst }}</h6>
+                            </div>
+                            {%endif%}
+                            {%if bill1.cgst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">CGST</h5>
+                                <h6>{{ bill1.cgst }}</h6>
+                            </div>
+                            {%endif%}
+                            {%if bill1.sgst%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">SGST</h5>
+                                <h6>{{ bill1.sgst }}</h6>
+                            </div>
+                            {%endif%}
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Tax Amount</h5>
+                                <h6>{{bill1.taxAmount_igst }}</h6>
+                            </div>
+
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Shipping Charge</h5>
+                                <h6>{{ bill1.shipping_charge}}</h6>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Adjustment</h5>
+                                <h6>{{bill1.adjustment }}</h6>
+                            </div>
+                            
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Paid Amount</h5>
+                                <h6>{{ bill1.advanceAmount_paid }}</h6>
+                            </div>
+                           
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Balance</h5>
+                                <h6>{{ bill1.balance }}</h6>
+                            </div>
+                            <!-- <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">Status</h5>
+                                <h6>{{ bill1.status }}</h6>
+                            </div> -->
+                            <hr class="my-4">
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+
+        <div id="templatediv" style="display: none; background-color: #243e54; border-radius: 2vh;" >
+            <div  id="whatToPrint" class="print-only">
+            
+                <!-- template1 -->
+                <div id="whatToPrint1" class="printTemplates template1">
+                    <div class="my-5 page" size="A4" >
+                        <div class="p-5" id="printdiv1">
+                            <div id="ember2512" class="tooltip-container ember-view  text-ellipsis ribbon"> <!-- ribbon -->
+                                <div class="ribbon-inner ribbon-open">{{bill1.status}}<!----></div></div>
+                            <section class="top-content bb d-flex justify-content-between">
+                                <div class="logo">
+                                    <img src="logo.png" alt="" class="img-fluid">
+                                    
+                                </div>
+                                <div class="top-left">
+                                    <!-- <div class="graphic-path"> -->
+                                        
+                                            <p style="font-weight: 600;">Recurring Bill</p>
+                                        
+                                    <!-- </div> -->
+                                    <div class="position-relative">
+                                        <p>Recurring Bill No. <span>{{  bill1.recurring_bill_number }}</span></p>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="store-user mt-5">
+                                <div class="col-12">
+                                    <div class="row bb pb-3">
+                                        <div class="col-7">
+                                            <p>FROM,</p>
+                                            <h5>{{ companyName }}</h5>
+                                            <p class="address " style="text-transform: capitalize;"> {{companyData.caddress}}<br>
+                                                {{companyData.city}},
+                                                {{companyData.state}}<br>
+                                                {{companyData.pincode}}<br>
+                                                phone: {{companyData.phone}}<br>
+                                                {{companyData.email}}<br>
+                                            </p>
+                                            
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">TO,</p>
+                                            <h5  style="color: #22b8d1;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</h5>
+                                            <p class="address " style="color:#000">{{bill1.vendor.email}}<br>
+                                                {% if vendor_gstin %}
+                                                  GSTIN:{{ bill1.vendor.gstin }}
+                                                {% endif %}
+                                                <p class="address "> {{bill1.vendor.billing_street}}<br>
+                                                    {{bill1.vendor.billing_city}},
+                                                    {{bill1.vendor.billing_state}}<br>
+                                                    {{bill1.vendor.billing_pincode}}<br>
+                                                </p>
+                                        </div>
+                                    </div>
+                                    <div class="row extra-info pt-3">
+                                        <div class="col-7">
+                                            <p style="color:#000">Deliver To Details: </p>
+                                            <p class="address " style="color:#000">{{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                                {{bill1.customer.email}}<br>
+                                                {% if bill1.customer.gstin %}
+                                                  GSTIN:{{ bill1.customer.gstin }}
+                                                {% endif %}</p>
+                                        </div>
+                                        <div class="col-5">
+                                            <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                            <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="product-area mt-4">
+                                <table class=" table table-hover table-bordered " id="table1">
+                                    <thead >
+                                        <tr>
+                                            <td style="text-align: center; font-weight:bold; color:black ">Items</td>
+                                            <td style="font-weight:bold; color:black">Hsn</td>
+                                            <td style="font-weight:bold; color:black ">Price</td>
+                                            <td style="font-weight:bold; color:black">Quantity</td>
+                                            <td style="font-weight:bold; color:black">Tax</td>
+                                            <td style="font-weight:bold; color:black">Discount</td>
+                                            <td style="font-weight:bold; color:black">Total</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                
+                                        {% for j in items  %}
+                                        <tr>
+                                            <td style="color:black; text-align: center;">
+                                                {{j.items.name}}                                                
+                                            </td>
+                                            <td style="color:black">{{j.hsn}}</td>
+                                            <td style="color:black">{{j.price}}</td>
+                                            <td style="color:black">{{j.quantity}}</td>
+                                            <td style="color:black">{{j.tax_rate}} %</td>
+                                            <td style="color:black">{{j.discount}} </td>
+                                            <td style="color:black">{{j.total}}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table><br><br>
+                            </section>
+                
+                            <section class="balance-info">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <p class="m-0 font-weight-bold" style="color:black"> Note: </p>
+                                        <p style="color:black">{{bill1.description}}</p>
+                                    </div>
+                                    <div class="col-5">
+                                        <table class="table border-0 table-hover">
+                                            <tr >
+                                                <td style="color:black">Sub Total :</td>
+                                                <td style="color:black">{{bill1.sub_total}}</td>
+                                            </tr>
+                                            <!-- {% if bill1.discount != "0" %}
+                                            <tr>
+                                                <td style="color:black">Discount</td>
+                                                <td style="color:black">{{bill1.discount}}</td>
+                                            </tr>
+                                            {% endif %} -->
+                                            {% if bill1.taxAmount_igst != 0 %}
+                                            <tr>
+                                                <td style="color:black">IGST :</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if bill1.cgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">CGST :</td>
+                                                <td style="color:black">{{bill1.cgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            
+                                            {% if bill1.sgst != 0 %}
+                                            <tr>
+                                                <td style="color:black">SGST :</td>
+                                                <td style="color:black">{{bill1.sgst}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td style="color:black">Total Tax :</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
+                                            </tr>
+                                            {% if bill1.shipping_charge != 0 %}
+                                            <tr>
+                                                <td style="color:black">Shipping Charge :</td>
+                                                <td style="color:black">{{bill1.shipping_charge}}</td>
+                                            </tr>
+                                            {% endif %}
+                                            {% if bill1.adjustment != 0 %}
+                                            <tr>
+                                                <td style="color:black">Adjustment :</td>
+                                                <td style="color:black">{{bill1.adjustment}}</td>
+                                            </tr>
+                                            {% endif %}
+                                           
+                                            <tfoot>
+                                                <tr>
+                                                    <td style="color:black">Grand Total:</td>
+                                                    <td style="color:black ;">{{bill1.grand_total}}</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div> 
+                                </div>
+                                <div class="row container-fluid  p-2 m-0">
+                                    <!-- <div class="col-sm-3 m-0 p-0"><label style="color: #000;"><b>Authorized Signature</b></label></div>
+                                    <div class="col-sm-4 m-0 p-0"><input type="text" id="sign"></div> -->
+                                    <div class="col-sm-4 m-0 p-0"></div>
+                                </div>
+                            </section>
+                
+                            <!-- Cart BG -->
+                            <!-- <img src="cart.jpg" class="img-fluid cart-bg" alt=""> -->
+                
+                            <!-- <footer>
+                                <hr>
+                                <p class="m-0 text-center">
+                                    View THis Recurring Bill Online At - <a href="#!"> Recurring Bill/saburbd.com/#868 </a>
+                                </p>
+                                <div class="social pt-3">
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-mobile-alt"></i>
+                                        <span>0123456789</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fas fa fa-envelope"></i>
+                                        <span>me@saburali.com</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-facebook-f"></i>
+                                        <span>/sabur.7264</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-youtube"></i>
+                                        <span>/abdussabur</span>
+                                    </span>
+                                    <span class="pr-2">
+                                        <i class="fab fa-github"></i>
+                                        <span>/example</span>
+                                    </span>
+                                </div>
+                            </footer> -->
+                        </div>
+                    </div>
+                </div>
+    
+
+                <!-- template2 -->
+                <div  id="whatToPrint2"  class="printTemplates template2" style="display: none;">
+                    <div class="my-5 page" size="A4" >
+                        <div id="printdiv2">
+                            <div class="row px-5 py-4" style="background-color:#268ddd;" >
+                                <div id="ember2512" class="col-md-4 d-flex justify-content-start tooltip-container ember-view ribbon text-ellipsis">
+                                  <div class="text-white d-flex align-items-center px-5" style="border-radius: 1vh; background-color:#999999">{{bill1.status}}<!----></div>
+                              </div>
+                              <div class="col-md-4 d-flex justify-content-center">
+                                  <center class="h3 text-white"><b>Recurring Bill</b></center>
+                              </div>  
+                              <div class="col-md-4 d-flex justify-content-end">
+                                  <div class="text-white">
+                                      <p class="mb-0 mt-2">Recurring Bill No: <b>{{bill1.recurring_bill_number }}</b></p>
+                                      {%if bill1.purchase_order_number %}
+                                      <p class="mb-0 mt-2">Order No: <b>{{bill1.purchase_order_number }}</b></p>
+                                      {% endif %}
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="px-5 py-1">
+                              <section class="store-user"><br><br>
+                                  <div class="col-12">
+                                      <div class="row bb pb-2 mt-3">
+                                          <div class="col-4 pl-0">
+                                              <label class="text-white w-100 p-1" style="background-color: #999999; border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>COMPANY ADDRESS</b></label>
+                                              <h5 class="text-secondary" style="font-weight: bold;">{{companyName}}</h5>
+                                              <p class="address" style="font-weight: bold;color: #000;">
+                                                  {{companyData.caddress}}
+                                                  <br>
+                                                  {{companyData.city}}
+                                                  <br>
+                                                  {{companyData.state}} - {{companyData.pincode}}
+                                                  <br>
+                                                  <span>Mob: </span><b>{{companyData.phone}}</b>
+                                              </p>  
+                                          </div>
+                                          <div class="col-4"></div>
+                                          <div class="col-4 pr-0">
+                                              <label class="text-white w-100 p-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #999999;" ><b>SHIPPING ADDRESS</b></label>
+                                              <h5 class="text-secondary" style="font-weight: bold;"> {{bill1.customer.first_name}} {{bill1.customer.last_name}}</h5>
+                                              <p class="address" style="font-weight: bold;color: #000;">{{ bill1.customer.billing_street | linebreaksbr}}
+                                                {{ bill1.customer.billing_city}} <br>
+                                                {{ bill1.customer.billing_state}}, {{ bill1.customer.billing_pincode}} <br>
+                                                {{ bill1.customer.billing_country }} <br>
+                                                <span>Mob: </span><b>{{ bill1.customer.mobile }}</b>
+                                                 </p>
+                                          </div>
+                                      </div>
+                                      
+                                  </div>
+                              </section>
+                  
+                              <section class="product-area mt-2">
+                                  <table class="table table-hover table-bordered  template2table" id="table2">
+                                      <thead >
+                                          <tr class="template3tablehead">
+                                              <th class="text-center bg-dark" style="color:black">Items</th>
+                                              <th class="text-center bg-dark" style="color:black">HSN</th>
+                                              <th class="text-center bg-dark" style="color:black">Quantity</th>
+                                              <th class="text-center bg-dark" style="color:black">Rate</th>
+                                              <th class="text-center bg-dark" style="color:black">Tax</th>
+                                              <th class="text-center bg-dark" style="color:black">Discount</th>
+                                              <th class="text-center bg-dark" style="color:black">Total</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody  style="background-color: #999999;">
+                                          {% for itm in items %}
+                                              <tr>
+                                                  <td class="text-center" style="color:black">{{ itm.items.name}}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.hsn }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.quantity }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.price  }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.tax_rate  }}%</td>
+                                                  <td class="text-center" style="color:black">{{ itm.discount  }}</td>
+                                                  <td class="text-center" style="color:black">{{ itm.total }}</td>
+                                              </tr>
+                                          {% endfor %} 
+                                      </tbody>
+                                  </table>
+                              </section>
+                  
+                              <section class="balance-info">
+                                  <div class="row mt-3">
+                                      <div class="col-4">
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  {% if bill1.description %}
+                                                  <tr >
+                                                      <td style="color: #000;text-align: left;">Note</td>
+                                                      <td style="color: #000;text-align: left;">:</td>
+                                                      <th style="color: #000;text-align: center;">{{bill1.description}}</th>
+                                                  </tr>
+                                                  {% endif %}
+      
+                                              </tbody>
+                                          </table>
+                                      </div>
+                                      <div class="col-4"></div>
+                                      <div class="col-4"><br><br>
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  <tr >
+                                                      <td style="color: #000;">Sub Total</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
+                                                  </tr>
+                                                  
+                                                  {% if bill1.taxAmount_igst != 0 %}
+                                                  <tr >
+                                                      <td style="color: #000;">IGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
+                                                  </tr>
+                                                  {% endif %}
+                                                  {% if bill1.cgst != 0 %}
+                                                  <tr>
+                                                      <td style="color: #000;">CGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
+                                                      
+                                                  </tr>
+                                                  {% endif %}
+                                                  {% if bill1.sgst != 0 %}
+                                                  <tr>
+                                                      <td style="color: #000;">SGST</td>
+                                                      <td style="color: #000;">:</td>
+                                                      <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
+                                                  </tr>
+                                                  {% endif %}
+                                                  <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
+                                                </tr>
+                                                {% if bill1.shipping_charge != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Shipping Charge</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.shipping_charge}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if bill1.adjustment != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.adjustment}}</td>
+                                                </tr>
+                                                {% endif %}
+                                              </tbody>
+      
+                                          </table>
+                                          <hr style="background-color: #000000;">
+                                          <table class="table table-borderless">
+                                              <tbody>
+                                                  <tr >
+                                                      <th style="color: #000;">Grand Total</th>
+                                                      <th style="color: #000;">:</th>
+                                                      <th class="text-right" style="color: #000;">{{bill1.grand_total}}</th>
+                                                  </tr>
+                                              </tbody>
+                                          </table>
+                                      </div> 
+                                  </div>
+                              </section>
+                                 
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- template3 -->
+                <div id="whatToPrint3" class="printTemplates template3" style="display: none;">
+                    <div class="my-5 page"  size="A4" >
+                        <div class="" id="printdiv3">
+                            <div class="row">
+                                <div class="col-sm-12" style="background-image: linear-gradient(#1b83e8, black); color: white;">
+                                    <p style="font-size: 4vh; text-align: center;">Recurring Bill</p>
+                                    <p style=" text-align: center;"> {{companyName}} <br>
+                                        {{companyData.caddress}} <br>
+                                        {{companyData.city}},
+                                        {{companyData.state}}<br>
+                                        {{companyData.Email}}
+                                        <br>
+                                    </p>
+                                </div>
+                                
+                                <div class="row col-12">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-5">
+                                        <br><br><br>
+                                        <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
+                                         {{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                        {{bill1.customer.billing_street|linebreaksbr }}
+                                        {{bill1.customer.billing_city }} <br>
+                                        {{bill1.customer.billing_state }},{{bill1.customer.billing_pincode }} <br>
+                                        {{bill1.customer.billing_country }} <br>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-5">
+                                        <br><br><br>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Recurring Bill No</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
+                                                </tr>
+                                                {%if bill1.recurring_bill_number %}
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Order No</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
+                                                </tr>
+                                                {% endif %}
+                                                
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Recurring Bill Date</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.date | date:'d-m-Y'}}<td>
+                                                </tr>
+ 
+                                                <!-- <tr>
+                                                    <td style="color: #000; font-weight: bold;">Shipment Date</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;"></td>
+                                                    
+                                                </tr> -->
+                                            </tbody>
+        
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10"><br>
+                                    <table class="table table-hover table-bordered  template3table" id="table3">
+                                        <thead >
+                                            <tr class="template3tablehead">
+                                                <th class="text-center bg-dark"  style="color:black">Items</th>
+                                                <th class="text-center bg-dark"  style="color:black">HSN</th>
+                                                <th class="text-center bg-dark"  style="color:black">Quantity</th>
+                                                <th class="text-center bg-dark"  style="color:black">Rate</th>
+                                                <th class="text-center bg-dark"  style="color:black">Tax</th>
+                                                <th class="text-center bg-dark"  style="color:black">Discount</th>
+                                                <th class="text-center bg-dark"  style="color:black">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for itm in items %}
+                                                <tr>
+                                                    <td class="text-center" style="color: black;">{{ itm.items.name}}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.hsn }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.quantity }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.price }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.tax_rate }}%</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.discount }}</td>
+                                                    <td class="text-center" style="color: black;">{{ itm.total }}</td>
+                                                </tr>
+                                            {% endfor %} 
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div> 
+                            <section class="balance-info">
+                                <div class="row">
+                                    <div class="col-md-7"></div>
+                                    <div class="col-md-4">
+                                        <br>
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <td style="color: #000;">Sub Total</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
+                                                </tr>
+                                                
+                                                {% if bill1.taxAmount_igst != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if bill1.cgst != 0 %}
+                                                <tr>
+                                                    <td style="color: #000;">CGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
+                                                    
+                                                </tr>
+                                                {% endif %}
+                                                {% if bill1.sgst != 0 %}
+                                                <tr>
+                                                    <td style="color: #000;">SGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                <tr >
+                                                    <td style="color: #000;">Tax Amount</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
+                                                </tr>
+                                                {% if bill1.shipping_charge != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Shipping Charge</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.shipping_charge}}</td>
+                                                </tr>
+                                                {% endif %}
+                                                {% if bill1.adjustment != 0 %}
+                                                <tr >
+                                                    <td style="color: #000;">Adjustment</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.adjustment}}</td>
+                                                </tr>
+                                                {% endif %}
+                                            </tbody>
+        
+                                        </table>
+                                        <hr style="background-color: #000000;">
+                                        <table class="table table-borderless">
+                                            <tbody>
+                                                <tr >
+                                                    <th style="color: #000;">Grand Total</th>
+                                                    <th style="color: #000;">:</th>
+                                                    <th class="text-right" style="color: #000;">{{bill1.grand_total}}</th>
+                                                </tr>
+                                                <tr >
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-light btn-sm m-2 active templateToggleButtons">1</button>
+                <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">2</button>
+                <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-light btn-sm m-2 templateToggleButtons">3</button>
+            </div>
+        </div>
+
+        <div id="slipdiv" style="background-color: #243e54; border-radius: 2vh; display: none; ">
+            <div class="p-5"  >
+                <div class="my-5 page" size="A4"  >
+                    <div class="row" style="margin-top: 20%;" id="printslip">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <div class="card bg-white" style="border: 1px dotted black;">
+                                <div class="mt-2" style="text-align: center;">
+                                    <div class="text-center" style="font-size: 3vh; color: black;">
+                                        <b>{{companyName}} </b>
+                                    </div>
+                                    <span style="font-size: x-small; color: black;">{{ companyData.caddress }} <br>
+                                        {{companyData.city}},
+                                        {{companyData.state}}
+                                        {{companyData.pincode}} <br>
+                                        {{ companyData.phone }} <br>{{ companyData.email }} 
+                                    </span>
+                                </div>
+                                <div class="ml-3 mr-3 mt-2" style="color: black;">
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Recurring Bill No:</div>
+                                        <div class="col-md-5 text-right">{{bill1.recurring_bill_number}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Customer Name:</div>
+                                        <div class="col-md-5 text-right">{{ bill1.customer.first_name}} {{ bill1.customer.last_name}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Vendor Name:</div>
+                                        <div class="col-md-5 text-right">{{ bill1.vendor.first_name}} {{ bill1.vendor.last_name}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Shipment Date :</div>
+                                        <div class="col-md-5 text-right">{{bill1.date | date:'d-m-Y'}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 text-left">Delivery Date:</div>
+                                        <div class="col-md-5 text-right">{{bill1.end_date}}</div>
+                                    </div>
+                                </div>
+                                <div><br>
+                                    <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                        <div class="equal-length-item" style=" text-align: center;">
+                                            Items
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                        </div>
+                                        <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                            HSN
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Qty
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Price
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Tax
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                            Discount
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                        <div class="equal-length-item" style=" text-align: center; ">
+                                            Total
+                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    {% for j in items %}
+                                    <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                        <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
+                                            {{j.items.name}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: right;">
+                                            {{j.hsn}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.quantity}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.price}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.tax_rate}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.discount}}
+                                        </div>
+                                        <div class="equal-length-item" style="text-align: center; ">
+                                            {{j.total}}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div><br>
+                                 
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Subtotal
+                                        </div>
+                                        <div class="col-md-7 text-right  " style="color: black;">
+                                            {{ bill1.sub_total }}
+                                        </div>
+                                    </div>
+                                    {% if bill1.taxAmount_igst != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            IGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.taxAmount_igst }}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            CGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.cgst }}
+                                        </div>
+                                    </div>
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            SGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.sgst }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Total Tax
+                                        </div>
+                                        <div class="col-md-7 text-right" style="color: black;">
+                                            {{ bill1.taxAmount_igst }}
+                                        </div>
+                                    </div>
+                                    {% if bill1.shipping_charge != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            Shipping
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.shipping_charge }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if bill1.adjustment != 0 %}
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Adjustment
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.adjustment }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if  bill1.advanceAmount_paid != 0 %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left" style=" color: black;">
+                                            Paid
+                                        </div>
+                                        <div class="col-md-7 text-right" style="color: black;">
+                                            {{ bill1.advanceAmount_paid }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                   
+                                    <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                                </div>
+
+                                <div class="mb-2">
+                                    <div class="row mr-2 ml-2">
+                                        <div class="col-md-5 text-left  " style=" font-size: large; color: black; font-weight: bold;">
+                                            Total
+                                        </div>
+                                        <div class="col-md-7 text-right" style="font-size: large; color: black; font-weight: bold;">
+                                            {{ bill1.grand_total }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+
+
+
+       
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- ---------modals ---------- -->
+
+
+    <!-- -------------------comment modal ---------------->
+    <div class="modal fade" id="commentModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color: #213b52;">
+                <div class="modal-header">
+                    <h5 class="m-3">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="commentForm" method="post">
+                    {% csrf_token %}
+                <div class="modal-body">
+                    <div >
+                        <label for="" style="float: left;">Leave A Comment : </label> <textarea name="comment" cols="5" rows="3" class="form-control"></textarea>
+                        <input type="text" name="bill_id" id="bill_id" value="{{bill1.id}}" style="display: none;">
+                        <input type="text" name="company_ID" id="company_ID" value="{{ bill1.company_id }}" style="display: none;">
+                    </div><br>
+                    <div style="text-align: left;font-size: larger;">
+                        {% if comments %}
+                        <h5 class="pb-1 mb-2" style="text-decoration: underline;text-underline-offset: 10px;">Previous Comments</h5>
+                        {% for i in comments %}
+                        <label for="">{{i.index}}. {{i.comment}} </label> <a href="{% url 'Fin_recurring_bill_comment_delete' pk=i.id id=bill1.id %}" id="deleteButton" style="color: crimson;"><i class="fa-solid fa-trash"></i></a><br>
+                        {% endfor %}
+                        {% else %}
+                        <h5 class="pb-1 mb-2" >No Comments Yet</h5>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-outline-secondary text-grey" >Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+                
+                           
+            </div>   
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+        // Attach a submit event handler to the form with id 'commentForm'
+        $('#commentForm').submit(function (e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Serialize the form data
+        var formData = $(this).serialize();
+
+        // Make an AJAX request
+        $.ajax({
+            url: '{% url "Fin_recurring_bill_comment" %}',  // Adjust the URL based on your actual URL configuration
+            type: 'POST',
+            data: formData,
+            dataType: 'json',  // Specify the expected data type
+            success: function (response) {
+                // Handle success, e.g., show a message or update the UI
+                alert('Comment saved successfully.');
+
+                // Optionally, you can handle the response data here
+                console.log(response);
+
+                // Reload or update the comments section as needed
+                
+                location.reload();
+            },
+            error: function (error) {
+                // Handle error, e.g., show an error message
+                console.error('Failed to save comment:', error);
+                alert('Failed to save comment');
+            }
+        });
+    });
+});
+
+    </script>
+
+<!-- -------------------comment modal end ---------------->
+
+    <!-- ------------email modal -------------- -->
+
+  <div class="modal fade" id="emailModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #213b52;">
+            <div class="modal-header">
+                <h5 class="m-3">Send Mail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card p-3">
+                    <form method="post" action="{% url 'Fin_shareRBToEmail' bill1.id %}" id="mailForm">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div>
+                                <label for="recipientEmail" style="text-align: left;">Recipient's Email Address:</label>
+                                <textarea id="recipientEmail" id="email_ids" name="email_ids" cols="5" rows="2" class="form-control"></textarea>
+                                <input type="text" name="bill_id_email" id="bill_id_email" value="{{bill1.id}}" style="display: none;">
+                                <input type="text" name="company_ID_email" id="company_ID_email" value="{{ bill1.company_id }}" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-4"></div>
+                            <div class="col-md-4 d-flex justify-content-center">
+                                <button class="btn btn-outline-secondary text-grey w-75" id="sendMailButton" type="submit">Send</button>
+                            </div>
+                            <div class="col-4"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>   
+    </div>
+</div>
+
+  <!-- -------------email modal end---------- -->
+
+    <!-------- modals end ----------->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function ($) { //pdf
+            $(document).on('click', '#pdflink', function (event) {
+                event.preventDefault();
+
+                print1 = document.getElementById('whatToPrint1')
+                print2 = document.getElementById('whatToPrint2')
+                print3 = document.getElementById('whatToPrint3')
+                print4 = document.getElementById('slipdiv')
+
+                if (print1.style.display !== 'none'){
+                    var element = document.getElementById('printdiv1') 
+                }
+
+                if (print2.style.display !== 'none'){
+                    var element = document.getElementById('printdiv2') 
+                }
+
+                if (print3.style.display !== 'none'){
+                    var element = document.getElementById('printdiv3') 
+                }
+
+                if (print4.style.display !== 'none'){
+                    var element = document.getElementById('printslip') 
+                }
+
+                 
+                // element.style.color = 'black';
+                // element.style.backgroundColor = 'white';
+                var recurringBillNumber = "{{ bill1.recurring_bill_number }}";
+                var opt =
+                {
+                    margin: 1,
+                    filename: 'recurringBill '+ recurringBillNumber + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+                };
+                html2pdf().set(opt).from(element).save();
+            });
+        });
+    </script>
+
+    <script>
+
+// $(document).ready(function ($) {
+//         $(document).on('submit', '#mailForm', function (event) {
+//             event.preventDefault();
+//             // Your existing code to generate the PDF
+//             var print1 = document.getElementById('whatToPrint1');
+//             var print2 = document.getElementById('whatToPrint2');
+//             var print3 = document.getElementById('whatToPrint3');
+//             var print4 = document.getElementById('slipdiv');
+            
+
+//             var newAction;
+
+//             if (print4.style.display !== 'none'){
+//                
+//             } else {
+//                 newAction = "{% url 'Fin_shareRBToEmail' bill1.id %}";
+//             }  
+
+            
+//             // Set new action URL
+//             this.action = newAction;
+
+//             // Submit the form
+//             this.submit();
+            
+//         });
+//     }); //LATEST (MARCH 15)
+
+
+        
+        // $(document).ready(function ($) { //send mail
+        //     $(document).on('submit', '#mailForm', function (event) {
+        //         event.preventDefault();
+        //         // Your existing code to generate the PDF
+        //         print1 = document.getElementById('whatToPrint1');
+        //         print2 = document.getElementById('whatToPrint2');
+        //         print3 = document.getElementById('whatToPrint3');
+        //         print4 = document.getElementById('slipdiv')
+        //         var maildiv = '0';
+
+        //         if (print1.style.display !== 'none'){
+                    
+        //         }else if (print2.style.display !== 'none'){
+        //             var element = document.getElementById('printdiv2') ;
+        //             var maildiv = '2';
+        //         }else if (print3.style.display !== 'none'){
+        //             var element = document.getElementById('printdiv3') ;
+        //             var maildiv = '3';
+        //         }else if (print4.style.display !== 'none'){
+        //             var element = document.getElementById('printslip') ;
+        //             var maildiv = '4';
+        //         }  
+        //         console.log(maildiv,'------1111111--------------11111-------')
+                
+        //         var formData = {
+                    
+        //             'email_ids': $('#email_ids').val(),
+        //             'bill_id_email': $('#bill_id_email').val(),
+        //             'company_ID_email': $('#company_ID_email').val(),
+        //             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    
+        //         }
+
+        //         // Send the PDF file to the server using an AJAX request
+        //         $.ajax({
+        //             type: 'POST',
+        //             url: '/Fin_recurring_bill_email/',
+        //             data: formData,
+        //             processData: false,
+        //             contentType: false,
+        //             success: function(response) {
+        //                 console.log(response);
+        //                 alert('Email sent successfully')
+        //             },
+        //             error: function(error) {
+        //                 console.error(error);
+        //             }
+        //         });
+        //     });
+        // });
+        
+        // --------------------------
+        // whatsapp
+        function sendWhatsAppLink() {
+            var printContents;
+            var print1 = document.getElementById('whatToPrint1');
+            var print2 = document.getElementById('whatToPrint2');
+            var print3 = document.getElementById('whatToPrint3');
+            var print4 = document.getElementById('slipdiv');
+            var rBillNoID = document.getElementById('rBillNo').value;
+
+            var pageName;
+
+            if (print4.style.display !== 'none') {
+                pageName = '/Fin_recurring_bill_slip/';
+            } else {
+                if (print1.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template1/';
+                } else if (print2.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template2/';
+                } else if (print3.style.display !== 'none') {
+                    pageName = '/Fin_recurring_bill_template3/';
+                }
+            }
+            
+              
+            var url = window.location.href;
+
+            // var domain = window.location.hostname;
+            // var url = 'http://' + domain + pageName + rBillNoID;
+
+            // Send the URL via WhatsApp
+            var whatsappLink = 'whatsapp://send?text=' + encodeURIComponent('Check out this link: ' + url);
+
+            // Create an anchor element
+            var whatsappAnchor = document.createElement('a');
+            whatsappAnchor.setAttribute('href', whatsappLink);
+
+            // Click the anchor programmatically
+            whatsappAnchor.click();
+
+            // Open the WhatsApp link
+            window.location.href = whatsappLink;
+        }
+
+
+    </script>
+
+    <script>
+        // function printfun(page) {
+        //     var printContents;
+        //     print1 = document.getElementById('whatToPrint1');
+        //     print2 = document.getElementById('whatToPrint2');
+        //     print3 = document.getElementById('whatToPrint3');
+        //     print4 = document.getElementById('slipdiv')
+
+        //     rBillNoID = document.getElementById('rBillNo').value;
+
+        //     if (print4.style.display !== 'none'){
+        //             var pageName = '/Fin_recurring_bill_slip/';
+        //     }else{
+        //         if (print1.style.display !== 'none'){
+        //             var pageName = '/Fin_recurring_bill_template1/';
+        //         }else if(print2.style.display !== 'none'){
+                    
+        //             var pageName = '/Fin_recurring_bill_template2/';
+        //         }
+        //         else if(print3.style.display !== 'none'){
+                    
+        //             var pageName = '/Fin_recurring_bill_template3/';
+        //         }
+                
+        //     }
+        //     console.log(pageName,'------pageName----------')
+        //     console.log(rBillNoID,'------rBillNoID----------')
+
+        //     // Load content of the desired HTML page
+        //     $.ajax({
+        //         url: pageName + rBillNoID, // Assuming the HTML pages are named as new1.html, new2.html, etc.
+        //         type: 'GET',
+        //         async: false, // Ensure synchronous loading for simplicity
+        //         success: function(data) {
+        //             printContents = data;
+        //         },
+        //         error: function(xhr, status, error) {
+        //             console.error('Error loading page:', error);
+        //         }
+        //     });
+            
+        //     if (!printContents) {
+        //         console.error('Failed to load page:', pageName);
+        //         return;
+        //     }
+
+        //     var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+        //     $printerDiv.html(printContents); // add the content to be printed
+        //     $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+        //     window.print(); // call print
+        //     $printerDiv.remove(); // remove the div
+        //     $('body').removeClass("printingContent");
+        // }
+        
+
+        function printfun(){
+            print1 = document.getElementById('whatToPrint1');
+            print2 = document.getElementById('whatToPrint2');
+            print3 = document.getElementById('whatToPrint3');
+            print4 = document.getElementById('slipdiv')
+            if (print4.style.display !== 'none'){
+                    var printContents = document.getElementById("slipdiv").innerHTML;
+            }else{
+                if (print1.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint1").innerHTML;
+                }else if(print2.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint2").innerHTML;
+                }
+                else if(print3.style.display !== 'none'){
+                    var printContents = document.getElementById("whatToPrint3").innerHTML;
+                }
+                
+            }
+
+            var $printerDiv = $('<div class="printContainer" style="background-color: white;border: 1px solid black;"></div>'); // create the div that will contain the stuff to be printed
+            $printerDiv.html(printContents); // add the content to be printed
+            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+            window.print(); // call print
+            $printerDiv.remove(); // remove the div
+            $('body').removeClass("printingContent");
+        }
+    </script><div style="background-color: white;border: 1px solid black;width: 100%;"></div>
+
+    <script>
+            function toggleTemplate(templateId,buttonId){
+                $('.printTemplates').css('display','none');
+                $('#'+templateId).css('display','block');
+                $('.templateToggleButtons').removeClass('active');
+                $('#'+buttonId).addClass('active');
+                $("#templatePrintButton").attr("onclick","printSection('"+templateId+"')");
+                document.getElementById('page-content').scrollIntoView();
+            }
+    </script>
+
+
+        <script>
+            function showOverview(){
+                document.getElementById('overviewdiv').style.display='block';
+                document.getElementById('templatediv').style.display='none';
+                document.getElementById('slipdiv').style.display='none';
+                document.getElementById('overviewlink').style.backgroundColor='rgba(22,37,50,255)';
+                document.getElementById('templatelink').style.backgroundColor='transparent';
+                document.getElementById('sliplink').style.backgroundColor='transparent';
+                overviewButtons()
+                
+            }
+
+            function showTemplate(){
+                document.getElementById('overviewdiv').style.display='none';
+                document.getElementById('templatediv').style.display='block';
+                document.getElementById('slipdiv').style.display='none';
+                document.getElementById('overviewlink').style.backgroundColor='transparent';
+                document.getElementById('templatelink').style.backgroundColor='rgba(22,37,50,255)';
+                document.getElementById('sliplink').style.backgroundColor='transparent';
+                templateButtons();
+                
+            }
+
+            function showSlip(){
+                document.getElementById('overviewdiv').style.display='none';
+                document.getElementById('templatediv').style.display='none';
+                document.getElementById('slipdiv').style.display='block';
+                document.getElementById('templatelink').style.backgroundColor='transparent';
+                document.getElementById('overviewlink').style.backgroundColor='transparent';
+                document.getElementById('sliplink').style.backgroundColor='rgba(22,37,50,255)';
+                slipHideButtons()
+            }
+        </script>
+
+            <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+            <script>
+                $(document).ready(function(){
+            pstate = $("#sply").html().trim();
+            cmpstate = $("#cmp").html().trim();
+            // console.log(pstate == cmpstate);
+            if(pstate == cmpstate){
+
+                $('#igstrow').hide();
+                $('#sgstrow').show();
+                $('#cgstrow').show();
+                
+
+                $("#sgst").html($("#igst").html()/2);
+                $("#cgst").html($("#igst").html()/2);
+
+              
+            }
+            else{
+               
+
+                $('#igstrow').show();
+                $('#sgstrow').hide();
+                $('#cgstrow').hide();
+            }
+        });
+        
+        $('.delete').click(function(event) {
+            var form =  $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            swal({
+                title: `Are you sure you want to delete this record?`,
+                text: "If you delete this, it will be gone forever.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    swal("Poof! Your imaginary file has been deleted!", {
+                    icon: "success" ,
+              
+                    });
+                    form.submit();
+        
+                    
+                    
+                    
+                    }
+            });
+        });
+        
+
+        // document.getElementById("deleteButton").addEventListener("click", function() {
+        //     var confirmed = confirm("Are you sure you want to delete this item?");
+        //     if (confirmed) {
+        //         var pk = document.getElementById("deleteButton").val()
+        //         // Perform the delete operation here
+        //         $.ajax({
+        //         url: 'Fin_recurring_bill_delete/' + pk + '/',
+        //         type: 'DELETE',
+        //         success: function (response) {
+        //             // Handle success, e.g., show a message or update the UI
+        //             console.log('Recurring bill deleted successfully.');
+        //             alert("Item deleted!");
+        //         },
+        //         error: function (error) {
+        //             // Handle error, e.g., show an error message
+        //             console.error('Failed to delete recurring bill:', error);
+        //             alert("Failed!");
+        //         }
+        //     });
+        //     } else {
+        //         // User canceled the delete operation
+        //         alert("Delete operation canceled.");
+        //     }
+        // });
+    </script> 
+
+
+
+    
+    {% endblock %}    

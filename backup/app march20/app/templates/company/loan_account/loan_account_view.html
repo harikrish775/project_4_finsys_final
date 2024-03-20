@@ -1,0 +1,2126 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+<style>
+    .card-registration .select-input.form-control[readonly]:not([disabled]) {
+        font-size: 2rem;
+        line-height: 2.15;
+        padding-left: .75em;
+        padding-right: .75em;
+    }
+
+    .card-registration .select-arrow {
+        top: 13px;
+    }
+
+    .bg-grey {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    @media (min-width: 992px) {
+        .card-registration-2 .bg-grey {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .card-registration-2 .bg-grey {
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+        }
+    }
+
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .table-row {
+        cursor: pointer;
+    }
+
+    /* hr {
+        border: 0;
+        clear:both;
+        display:block;
+        width: 96%;               
+        background-color:#000000;
+        height: 1px;
+      } */
+    .spaced>li {
+        color: black;
+        font-size: 20px;
+    }
+
+    .table1 {
+        font-size: 20px;
+        width: 100%;
+        color: black;
+
+    }
+
+    .label-lg {
+        padding: .3em .6em .4em;
+        font-size: 22px;
+        color: black;
+        line-height: 1.1;
+        height: 24px
+    }
+
+    .widget-header {
+        background-color: #444;
+        color: white;
+        font-size: 24px;
+    }
+
+    .widget-header:after,
+    .widget-header:before {
+        content: "";
+        display: table;
+        line-height: 0
+    }
+
+    .widget-header:after {
+        clear: right
+    }
+
+    .widget-box.collapsed>.widget-header {
+        border-bottom-width: 0
+    }
+
+    .collapsed.fullscreen>.widget-header {
+        border-bottom-width: 1px
+    }
+
+    .collapsed>.widget-body {
+        display: none
+    }
+
+    .widget-header-flat {
+        background: #F7F7F7
+    }
+
+    .widget-header-large {
+        min-height: 49px;
+        padding-left: 18px
+    }
+
+
+
+    .widget-header-small {
+        min-height: 31px;
+        padding-left: 10px
+    }
+
+    .widget-header>.widget-title {
+        line-height: 36px;
+        padding: 0;
+        margin: 0;
+        display: inline;
+        font-size: 23px;
+    }
+
+
+
+    .widget-toolbar {
+        display: inline-block;
+        padding: 0 10px;
+        line-height: 37px;
+        float: right;
+        position: relative
+    }
+
+
+
+
+
+
+
+    .widget-body {
+        background-color: #FFF
+    }
+
+    .widget-main {
+        padding: 12px
+    }
+
+    @media screen and (max-width:768px) {
+        h1 {
+            font-size: 60px !important;
+        }
+
+    }
+
+  
+
+
+        #div1{
+            /* background-color: rgb(0, 255, 21); */
+            width: 33.33%;
+            float: left;
+            height: 100px;
+            text-align: left;
+        }
+        #div2{
+            /* background-color: rgb(204, 0, 255); */
+            width: 33.33%;
+            margin: auto;
+            height: 100px;
+            text-align: left;
+        }
+        #div3{
+            /* background-color: rgb(255, 162, 0); */
+            width: 33.33%;
+            
+            float: right;
+            margin-top: -100px;
+            height: 100px;
+           
+            
+            
+        }
+        .ribbon .ribbon-inner {
+    text-align: center;
+    color: #fff;
+    top: -20px;
+    left: -90px;
+    width: 120px;
+    padding: 3px;
+    /* position: relative;
+    transform: rotate(-45deg); */
+}
+.ribbon .ribbon-open {
+    background-color: #268ddd;
+    border-color: #1c72b4;
+}
+
+:root {
+    --body-bg: rgb(204, 204, 204);
+    --white: #ffffff;
+    --darkWhite: #ccc;
+    --black: #000000;
+    --dark: #615c60;
+    --themeColor: #22b8d1;
+    --pageShadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+/* Font Include */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+body {
+    background-color: var(--body-bg);
+}
+
+.page {
+    background: var(--white);
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: var(--pageShadow);
+}
+
+.page[size="A4"] {
+    width: 21cm;
+    height: 29.7cm;
+    overflow: hidden;
+}
+
+.bb {
+    border-bottom: 3px solid var(--darkWhite);
+}
+
+/* Top Section */
+.top-content {
+    padding-bottom: 15px;
+}
+
+.logo img {
+    height: 60px;
+}
+
+.top-left p {
+    margin: 0;
+    color: #000000;
+}
+
+.top-left .graphic-path {
+    height: 40px;
+    position: relative;
+}
+
+.top-left .graphic-path::before {
+    content: "";
+    height: 20px;
+    background-color: var(--dark);
+    position: absolute;
+    left: 15px;
+    right: 0;
+    top: -15px;
+    z-index: 2;
+}
+
+.top-left .graphic-path::after {
+    content: "";
+    height: 22px;
+    width: 17px;
+    background: var(--black);
+    position: absolute;
+    top: -13px;
+    left: 6px;
+    transform: rotate(45deg);
+}
+
+.top-left .graphic-path p {
+    /* color: var(--white); */
+    height: 40px;
+    left: 0;
+    right: -100px;
+    text-transform: uppercase;
+    background-color: var(--themeColor);
+    font: 26px;
+    z-index: 3;
+    position: absolute;
+    padding-left: 10px;
+}
+
+/* User Store Section */
+.store-user {
+    padding-bottom: 25px;
+}
+
+.store-user p {
+    margin: 0;
+    font-weight: 600;
+    color: #000000;
+}
+
+.store-user .address {
+    font-weight: 400;
+}
+
+.store-user h5 {
+    color: var(--themeColor);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.extra-info p span {
+    font-weight: 400;
+   
+}
+
+/* Product Section */
+thead {
+    color: var(--white);
+    
+}
+
+.table td,
+.table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr th:first-child,
+tr td:first-child {
+    text-align: left;
+}
+
+.media img {
+    height: 60px;
+    width: 60px;
+}
+
+.media p {
+    font-weight: 400;
+    margin: 0;
+ 
+}
+
+.media p.title {
+    font-weight: 600;
+    
+}
+
+/* Balance Info Section */
+.balance-info .table td,
+.balance-info .table th {
+    padding: 0;
+    border: 0;
+}
+
+.balance-info tr td:first-child {
+    font-weight: 600;
+}
+
+tfoot {
+    border-top: 2px solid var(--darkWhite);
+}
+
+tfoot td {
+    font-weight: 600;
+}
+
+/* Cart BG */
+.cart-bg {
+    height: 250px;
+    bottom: 32px;
+    left: -40px;
+    opacity: 0.3;
+    position: absolute;
+}
+
+/* Footer Section */
+footer {
+    text-align: center;
+    position: absolute;
+    bottom: 30px;
+    left: 75px;
+}
+
+footer hr {
+    margin-bottom: -22px;
+    border-top: 3px solid var(--darkWhite);
+}
+
+footer a {
+    color: var(--themeColor);
+}
+
+footer p {
+    padding: 6px;
+    border: 3px solid var(--darkWhite);
+    background-color: var(--white);
+    display: inline-block;
+    color: #000000;
+}
+
+.print-only {
+        /* display: none; */
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+        /* box-shadow: 5px 2px 5px 2px  grey; */
+    }
+
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+    }
+  
+
+    </style>
+
+  
+
+<!-- modal -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" > 
+    <div class="modal-dialog" role="document" >
+      <div class="modal-content">
+        <div class="modal-header" style="background-color:rgb(47, 82, 112) ;">
+          <h5 class="modal-title" id="exampleModalLabel">Attach File</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'loanac_attachFile'  loan.id %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
+        <div class="modal-body" style="background-color:rgb(47, 82, 112) ;">
+          <input type="file" class="form-control" name="file">
+        </div>
+        <div class="modal-footer" style="background-color:rgb(47, 82, 112) ;">
+            <button type="submit" class="btn btn-outline-secondary text-light">Save</button>
+          <button type="button" class="btn btn-outline-secondary text-light" data-dismiss="modal">Close</button>
+          
+        </div>
+    </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+<div class="page-content ">
+
+
+    <div id="Transaction" >
+        <div class="card radius-15">
+            <div class="ml-auto">  <a style="cursor: pointer;" id="closeButton" title="Close" href="{% url 'loan_ac_listoutpage' %}" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <div class="card-body">
+                <div class="card-title">
+                  
+                    <center>
+
+                        <div class="col-md-9">
+                            <h1>TRANSACTION</h1>
+                        </div>
+                    </center>
+                    
+                    
+                    
+              <hr>
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Transaction()"> Transaction</a>
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Overview()"> Overview</a>
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey "   onclick="Statment()"> Statement</a>
+                    </div>
+                    <div class="btn-group col-md-2" style="float: right;">
+                        <a class=" ml-2 btn btn-outline-secondary text-grey  " onclick="ExportToExcel('xlsx')"><i class="fa fa-table"></i>&nbsp;Export To Excel</a>
+                    </div>
+                    <div class="btn-group col-md-2" style="float: right;">
+                        <div class="dropdown">
+                            <button type="button" class="dropdown-toggle ml-2 btn btn-outline-secondary text-grey   fa fa-filter"
+                                    data-toggle="dropdown" style="height:140% ;">MAKE PAYMENT
+                            </button>
+                                <div class="dropdown-menu" style="background-color: black;">
+                                   
+                                   <a class="dropdown-item" href="{% url 'loanaccont_trans' loan.id  %}"
+                                   style="height: 40px; font-size: 15px; color: white; text-align: center;" >REPAYMENT DUE</a>
+                               <a class="dropdown-item" href="{% url 'additional_loan_approve' loan.id %}"
+                                   style="height: 40px; font-size: 15px; color: white; text-align: center;" >ISSUE NEW LOAN</a>
+                                   
+                                </div> 
+                        </div>           
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+            <div class="card-body p-0">
+                <div class="card radius-15">
+                    <div class="card-body">
+                       
+           
+                        <div class="row">
+                            <div class="col-md-3">
+                                <input type="text" id="search" placeholder="Search..." class="form-control" autocomplete="off" 
+                                style="margin-top: 8px; background-color: #2f516f;color: white;">
+        
+                            </div> 
+                            <div class="col-md-2" style="width: 40%; margin-top: 9px;">
+                                
+                            </div>
+                            <div class="col-md-3">
+                            </div><br>
+                            
+    
+                            <div class="col-md-3 mx-5" style="width: 50%; margin-top: 8px;text-transform: capitalize;">
+    <h5>HOLDER NAME: {{loan.account_name}}</h5>
+  <!-- <h5>RECEICVED BANK:{{loan.recieced_bank}}</h5> -->
+                                
+                            </div>
+    
+                            
+    
+                        </div>
+                        <div class="row">
+                            <div class="col"><h5>ACCOUNT NUMBER: {{loan.account_number}}</h5></div>
+                            <div class="col ml-2"></div>
+                            <div class="col"><h5 class="ml-5">BALANCE : {{loan.balance}}</h5></div>
+
+                        </div>
+                        <div class="container-fluid">
+                            <table class="table table-responsive-md table-hover mt-4" id="tabletobe" >
+                                <thead >
+                                <tr>
+                                   <!-- Inside the <thead> section of your table -->
+                                    <th>SL.NO</th>
+                                    
+                                    <th>
+                            
+                                        <h6 class="e text-grey" ><b>DATE</b>
+                                        </h6>
+                                        
+                                    
+                                </th>       
+                                    <th>
+                                        <div class="dropdown">
+                                            <h6 ><b>TYPE</b></h6>
+                                            <div class="dropdown-menu mt-5" style="background-color: black;z-index: 1;">
+                                               
+            
+            
+                                                <!-- Add more options as needed -->
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <!-- Inside the <thead> section of your table -->
+                        <!-- <th>
+                            
+                                <h6 class=" text-grey" ><b>NAME</b>
+                                </h6>
+                                
+                            
+                        </th> -->
+            
+                                      
+                        <th><h6><b>AMOUNT</b></h6></th>
+                        <th><h6><b>INTEREST</b></h6></th>
+                        <th><h6><b>TOTAL AMOUNT</b></h6></th>
+                        <th><h6><b>ACTION</b></h6></th>
+                        <th style="display:none;"><h6><b><td></td></b></h6></th>
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for a in loan_tr %}
+                                    {% if a.loan_amount != 0 %}
+                            <tr >   <td>{{forloop.counter}}</td>           
+                                <td >{{ a.loan_date }}</td>
+                                {% if a.bank_type == 'PROCESSING FEE' %}
+                                            <td >{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'OPENING BAL' %}
+                                            <td >{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'EMI PAID' %}
+                                            <td >{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'ADDITIONAL LOAN ISSUED' %}
+                                            <td >{{ a.bank_type }}</td>
+
+                                            {% endif %}
+                                            <!-- <td >{{ a.loan_desc }}</td> -->
+                                            
+                                            
+                                            
+                                            <td>{{a.loan_amount}}</td>
+                                            <td>{{a.loan_intrest|default:0}}</td>
+            
+                                            <td>{{a.total}}</td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <i class="fa fa-ellipsis-v" style="font-size:24px" data-toggle="dropdown"></i>
+                                                    <div class="dropdown-menu">
+                                                        {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                            <a class="dropdown-item" href="#" onclick="showAlert('{{ a.bank_type }}')">Edit</a>
+                                                            <a class="dropdown-item delete-item" data-toggle="modal" data-target="#history" data-toggle="tooltip">History</a>
+                                                        {% elif a.bank_type == 'ADDITIONAL LOAN ISSUED' %}
+                                                        <a class="dropdown-item" href="{% url 'edit_additional_Loan' a.id %}">Edit</a>
+                                                        <a class="dropdown-item delete-item" data-toggle="modal" data-target="#history3" data-additional-id="{{ a.id }}" data-toggle="tooltip">History</a>
+
+
+                                                        {% else %}
+                                                            <a class="dropdown-item" href="{% url 'edit_loan_ac_repayment' a.id %}">Edit</a>
+                                                            <a class="dropdown-item delete-item" data-toggle="modal" data-target="#history2" data-repayment-id="{{ a.id }}" data-toggle="tooltip">History</a>
+                                                        {% endif %}
+            
+                                                        {% if a.bank_type == 'PROCESSING FEE' or a.bank_type == 'OPENING BAL' %}
+                                                            <a class="dropdown-item" href="#" onclick="shoAlert('{{ a.bank_type }}')">Delete</a>
+                                                        {% else %}
+                                                        <a class="dropdown-item delete-item" href="{% url 'delete_loanac_payment' a.id %}">Delete</a>
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                          
+                                        <script>
+                                            function showAlert(bankType) {
+                                                alert("You can't edit this transaction with bank type: " + bankType);
+                                            }
+            
+                                            function shoAlert(bankType) {
+                                                alert("You can't delete this transaction with bank type: " + bankType);
+                                            }
+                                        </script>  
+
+
+<script>
+    $('.delete-item').click(function () {
+        var repaymentId = $(this).data('repayment-id');
+    
+        $.ajax({
+            url: "{% url 'get_loanrepayment_data' %}",
+            data: {
+                repaymentId2: repaymentId,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                
+            },
+            type: "GET",
+            dataType: "json",
+           
+    
+            success: function (data) {
+                console.log("success2");
+    
+                var dropdown = $('#employeeid');
+        
+        $.each(data, function(key, value) {
+     
+          dropdown.append($('<option></option>').attr('value', key).text(value[0] + " " + value[1] + " " + value[2]));
+    
+        });
+    
+                // Clear existing table rows
+                $('#repay2 tbody').empty();
+    
+                // Update the table with the received data
+                $.each(data, function (index, value) {
+                    var newRow = "<tr>" +
+                        // "<td>" + (index + 1) + "</td>" +
+                        "<td>" + value[0] + "</td>" +
+                        "<td>" + value[1] + "</td>" +
+                        "<td>" + value[2] + "</td>" +
+                        "</tr>";
+    
+                    $('#repay2-body').append(newRow);
+                });
+            },
+              error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    });
+    
+    
+    $('.delete-item').click(function () {
+        var additionalId = $(this).data('additional-id');
+    
+        $.ajax({
+            url: "{% url 'get_loanaddition_data' %}",
+            data: {
+                additionalId2: additionalId
+            },
+            type: "GET",
+            dataType: "json",
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+    
+            success: function (data) {
+                console.log("success2");
+    
+                // Clear existing table rows
+                $('#repay1 tbody').empty();
+    
+                // Update the table with the received data
+                $.each(data, function (index, value) {
+                    var newRow = "<tr>" +
+                        // "<td>" + (index + 1) + "</td>" +
+                        "<td>" + value[0] + "</td>" +
+                        "<td>" + value[1] + "</td>" +
+                        "<td>" + value[2] + "</td>" +
+                        "</tr>";
+    
+                    $('#repay1 tbody').append(newRow);
+                });
+            },
+        });
+    });
+     
+                    //                         </script>
+
+
+
+
+
+
+
+
+
+
+                                        {% endif %}       
+            {% endfor %}
+
+
+
+            </tbody>
+                                   
+            </table>
+            
+                
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+
+
+
+
+
+   
+<script>
+        function sortTableBySalary(order) {
+        const table = document.getElementById('tbl_exporttable_to_xls');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+    
+        rows.shift(); // Remove the table header row from sorting
+    
+        rows.sort(function(a, b) {
+            const salaryA = parseFloat(a.querySelector('td:nth-child(5)').textContent);
+            const salaryB = parseFloat(b.querySelector('td:nth-child(5)').textContent);
+    
+            if (order === 'asc') {
+                return salaryA - salaryB;
+            } else if (order === 'desc') {
+                return salaryB - salaryA;
+            }
+        });
+    
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+
+
+    function sortTable(order) {
+        const table = document.getElementById('tbl_exporttable_to_xls');
+        const rows = Array.from(table.getElementsByTagName('tr'));
+
+        rows.shift(); // Remove the table header row from sorting
+
+        rows.sort(function(a, b) {
+            const bankNameA = a.querySelector('td:nth-child(2)').textContent;
+            const bankNameB = b.querySelector('td:nth-child(2)').textContent;
+
+            if (order === 'asc') {
+                return bankNameA.localeCompare(bankNameB);
+            } else if (order === 'desc') {
+                return bankNameB.localeCompare(bankNameA);
+            }
+        });
+
+        rows.forEach(function(row) {
+            table.appendChild(row);
+        });
+    }
+</script>
+
+            
+
+            <script>
+                function showAlertdelet() {
+                    alert("You Can't Delete, pls go to loan section");
+                }
+                function showAlertedit() {
+                    alert("You Can't Edit, pls go to loan section");
+                }
+                
+                </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <div id="overview" style="display: none; ">
+        <div class="card radius-15">
+            <div class="ml-auto">  <a style="cursor: pointer;" id="closeButton" title="Close" href="{% url 'loan_ac_listoutpage' %}" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <div class="card-body">
+               
+                <div class="card-title">
+                    <center>
+
+                        <div class="col-md-9">
+                            <h1>OVERVIEW</h1>
+                        </div>
+
+                    </center>
+                    <hr>
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Transaction()"> Transaction</a>
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Overview()"> Overview</a>
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey "   onclick="Statment()"> Statement</a>
+                    </div>
+                    <div class="btn-group" style="float: right; ">
+
+
+
+                        <div>
+                            <center>
+
+                                <a href="{%url 'edit_loan_account' loan.id%}"
+                                    class=" ml-2 btn btn-outline-secondary text-grey fa fa-pencil"
+                                    role="button">
+                                    Edit
+                                </a>&nbsp;&nbsp;&nbsp;
+                               {% if loan.status == 'Active' %}
+                                <a href="{% url 'inactive_status' loan.id %}"
+                                    class=" ml-2 btn btn-outline-secondary text-grey fa fa-check" 
+                                    role="button"> Active</a> 
+                                {% else %}
+                                <a href="{% url 'active_status' loan.id %}"
+                                    class=" ml-2 btn btn-outline-secondary text-grey fa fa-exclamation-triangle" 
+                                    role="button">In-Active</a>
+                            {% endif %}
+                            <a href="{% url 'Fin_LoanAccountHistory' loan.id %}"  class="ml-2 btn btn-outline-secondary text-grey fa fa-history" id="historyBtn" role="button" >&nbsp;History</a>
+                                <a href="{% url 'delet_loanaccount' loan.id %}"
+                                    class="ml-2 btn btn-outline-secondary text-grey fa fa-trash" 
+                                    role="button">&nbsp;Delete</a>
+
+                                  
+                                        <li  class=" dropdown-toggle btn btn-outline-secondary text-center  mx-1 text-grey pull-right fa fa-paperclip" data-toggle="dropdown">&nbsp;Attach</li>
+                                        <ul class="dropdown-menu" style="background-color: black;">
+                                            <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target="#exampleModal"><i class=" fa fa-paperclip"></i>&nbsp;Attach file</a>
+                                            {% if loan.attach_file != "" %}
+                                                <a class="dropdown-item " style="cursor: pointer;" download  href="{{ loan.attach_file.url }}" ><i class="fas fa-download"></i>&nbsp;Download file</a>
+                                            {% endif %}
+                                        </ul>
+                                 
+                                <!-- <a data-toggle="modal"
+                                    class=" fa fa-download btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                    data-target="#commentModal"> Download</a> -->
+
+
+
+
+                            </center>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+            <div class="card-body p-0">
+
+                <div id="details">
+                    <div class="row g-0">
+
+                        <div class="col-lg-8">
+                           
+                            <div class="p-5">
+
+                                <center>
+                                    <h1 class="fw-bold mb-0 text-black" style="text-transform: capitalize;">{{loan.account_name}}</h1>
+                                </center>                 
+
+                                <hr class="my-4">
+
+
+                                <div class="card-body">
+                                    <!-- <div class="card-title">
+                                        <div class="row">
+                                            <div class="col mt-3">
+                                                <h2 class="mb-0 text-center">Loan Details</h2>
+                                            </div>
+                                        </div>
+
+                                    </div> -->
+
+
+                                    
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-4 mt-3">
+                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Loan Details</h5>
+                                    </div>
+                                    <div class="col-md-4 mt-3"></div>
+                                    <div class="col-md-4 mt-3"></div>
+    
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Loan Status</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right"> {{ loan.status }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Loan Amount</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ loan.loan_amount }}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0">Loan Date</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ loan.date }}</p>
+                                    </div>
+                                    <div class="col-md-2 mt-3 vl">
+                                        <h6 class="mb-0">Processing Fee</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ loan.processing }}
+                                           
+                                        </p>
+                                    </div>
+
+                            </div>
+                                  
+                                    <div class="row mb-4 d-flex justify-content-between align-items-center"> 
+                                        {% if loan.paid == 'upi' %}
+                                        
+                                        <div class="col-md-2 mt-3">
+                                            <h6 class="mb-0"> Processing Fee paid </h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">UPI</p>
+                                        </div>
+                                     
+                                        {% elif loan.paid == 'cheque' %}
+                                        
+                                        <div class="col-md-2 mt-3">
+                                            <h6 class="mb-0"> Processing Fee paid </h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">cheque</p>
+                                        </div>
+                                   
+                                        {% elif loan.paid == 'cash' %}
+                                        <div class="col-md-2 mt-3">
+                                            <h6 class="mb-0"> Processing Fee paid </h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">Cash</p>
+                                        </div>
+                                      
+
+                                        {%else%}
+                                        <div class="col-md-2 mt-3">
+                                            <h6 class="mb-0"> Processing Fee paid </h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">Bank</p>
+                                        </div>
+                                        {%endif%}
+
+
+                                        {% if loan.paid == 'upi' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0"> Received Type</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> {{ loan.paid_upi }}
+                                               
+                                            </p>
+                                        </div>
+                                        {% elif loan.paid == 'cheque' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0"> Received Type</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> {{ loan.paid_cheque }}
+                                               
+                                            </p>
+                                        </div>
+                                        {% elif loan.paid == 'cash' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0"> Received Type</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> Cash
+                                               
+                                            </p>
+                                        </div>
+                                        {%else%}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0"> Received Type</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">{{ loan.paid_bank_acc_number }}
+                                               
+                                            </p>
+                                        </div>
+                                        {%endif%}
+
+         
+                                </div>
+                               
+                                    <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                        <div class="col-md-2 mt-3">
+                                            <h6 class="mb-0">Balance Loan</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">{{ loan.balance }}</p>
+                                        </div>
+                                        {% if loan.recieced_bank == 'upi' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0">Loan Recieved In</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> UPI
+                                               
+                                            </p>
+                                        </div>
+                                        {% elif loan.recieced_bank == 'cheque' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0">Loan Recieved In</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> Cheque
+                                               
+                                            </p>
+                                        </div>
+                                        {% elif loan.recieced_bank == 'cash' %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0">Loan Recieved In</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> Cash
+                                               
+                                            </p>
+                                        </div>
+                                        {%else%}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0">Loan Recieved In</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right"> Bank
+                                               
+                                            </p>
+                                        </div>
+                                            {%endif%}
+                                </div>
+                                      
+                                <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                    
+                                    {% if loan.recieced_bank == 'upi' %}
+                                    <div class="col-md-2 mt-3 ">
+                                        <h6 class="mb-0"> Received Type</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right"> {{ loan.recieved_upi }}
+                                           
+                                        </p>
+                                    </div>
+                                    {% elif loan.recieced_bank == 'cheque' %}
+                                    <div class="col-md-2 mt-3 ">
+                                        <h6 class="mb-0"> Received Type</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right"> {{ loan.recieved_cheque }}
+                                           
+                                        </p>
+                                    </div>
+                                    {% elif loan.recieced_bank == 'cash' %}
+                                    <div class="col-md-2 mt-3 ">
+                                        <h6 class="mb-0"> Received Type</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right"> Cash
+                                           
+                                        </p>
+                                    </div>
+                                    {%else%}
+                                    <div class="col-md-2 mt-3">
+                                        <h6 class="mb-0"> Received Type</h6>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <p class="mb-0 text-right">{{ loan.bank_acc_number }}
+                                           
+                                        </p>
+                                    </div>
+                                        {%endif%}
+                                        {% if loan.intrest %}
+                                        <div class="col-md-2 mt-3 vl">
+                                            <h6 class="mb-0">Intrest Amount</h6>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">   {{ loan.intrest }}
+                                               
+                                            </p>
+                                        </div>
+                                        {%endif%}
+                            </div>
+                                  
+                               
+                                    
+
+
+                               
+                                   
+                                    <div class="row">
+                                        <div class="col-md-2 mt-3 ">
+                                           
+                                                <h6 class="mb-0">Terms</h6>
+                                      
+                                        </div>
+                                        <div class="col-md-4 mt-3">
+                                            <p class="mb-0 text-right">  {{ loan.term }}</p>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="col-lg-4 bg-grey">
+                            <div class="p-5">
+
+                                <h3 class="fw-bold mb-2 mt-2 pt-1">Account Holder</h3>
+                                <hr class="my-4">
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Status</h6>
+                                    {% if loan.status == 'Active' %}
+                                        Active
+                                    {% else %}
+                                    In-Active
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex justify-content-between mb-4" style="text-transform: capitalize;">
+                                    <h6 class="" >NAME</h6>
+                                    {{ bnk_acc.Holder_name}}
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Holder No:</h6>
+                                    {{ bnk_acc.phone_number }}
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">MAIL</h6>
+                                    {{ bnk_acc.Email }}
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">Account Number</h6>
+                                    {{ bnk_acc.Account_number }}
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">ifsc_code</h6>
+                                    {{ bnk_acc.Ifsc_code }}
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h6 class="">swift_code</h6>
+                                    {{ bnk_acc.Swift_code }}
+                                </div>
+                               
+
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="statment" style="display: none; ">
+        <div class="card radius-15 ">
+            <div class="ml-auto">  <a style="cursor: pointer;" id="closeButton" title="Close" href="{% url 'loan_ac_listoutpage' %}" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+
+                        <div class="col-md-9">
+                            <h1>STATEMENT</h1>
+                        </div>
+                    </center>
+                    <hr>
+                    <div class="btn-group" style="float: left; ">
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Transaction()"> Transaction</a>
+                        <a class="ml-2 btn btn-outline-secondary text-grey " onclick="Overview()"> Overview</a>
+
+                        <a class="ml-2 btn btn-outline-secondary text-grey "   onclick="Statment()"> Statement</a>
+                    </div>
+                    <div class="btn-group" style="float: right; ">
+                        <label for="from">From</label>
+                        <div class="col" id="frdate">
+                          
+                            <input type="date" class="form-control" id="fdate" name="fdate"
+                                style="background-color:white;color: black;">
+                        </div>
+                        <label for="from">To</label>
+                        <div class="col" id="todate" >
+                           <input type="date" class="form-control" id="ldate" name="ldate"
+                                style="background-color: white;color: black;">
+                        </div>
+
+
+                        <div>
+                            <center>
+                                
+                                
+                                
+                               
+                                
+
+                                
+                               
+                                <a class="ml-2 btn btn-outline-secondary text-grey" role="button"  id="downloadButton" onclick="exportToPDF()"  ><i class="fa fa-file"></i>&nbsp;PDF</a>
+
+                                <button class="ml-2 btn btn-outline-secondary text-grey "   onclick="printfun()"><i class="fas fa-print"></i> Print </button>
+
+                                <!-- <a data-toggle="modal"
+                                class=" fa fa-download btn btn-outline-info rounded-pill text-grey mt-3 mb-3"
+                                data-target="#commentModal"> Download</a> -->
+                                
+                                    <li  class="ml-2 dropdown-toggle btn btn-outline-secondary text-grey fa fa-share-alt" onclick="uplodfile()" data-toggle="dropdown"> Share&nbsp;</li>
+                                    <ul class="dropdown-menu" style="background-color: black;">
+            
+                                        <li style="text-align: center;color: #e5e9ec; cursor: pointer;" class="ml-3 text-white" data-toggle="modal" data-target="#snd_mail">
+                                            Email
+                                        </li>
+                                        <li style="text-align: center;color: #e5e9ec; " >
+                                            <a class="dropdown-item" href=""onclick="shareViaWhatsApp()">WhatsApp</a></li>
+                                        
+                                    </ul>
+
+
+
+
+                            </center>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        
+        <div  id="whatToPrint" class="print-only">
+            
+                <div class="my-5 page" size="A4" >
+                    <div class="p-5">
+                        <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                            <div style=" text-transform: uppercase;color: #000000;" class="ribbon-inner ribbon-open">{{loan.status}}<!----></div></div>
+                        <section class="top-content bb d-flex justify-content-between">
+                            <div class="logo">
+                                <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                            </div>
+                            <div class="top-left">
+                                <div class="graphic-path">
+                                    <p style="text-transform: uppercase;color: #000000;">STATEMENT</p>
+                                </div>
+                                <div class="position-relative">
+                                    <p style=" text-transform: uppercase;color: #000000;">Loan ID. <span>{{loan.id }}</span></p>
+                                </div>
+                            </div>
+                        </section>
+            
+                        <section class="store-user mt-5">
+                            <div class="col-12">
+                                <div class="row bb pb-3">
+                                    <div class="col-7">
+                                        <p style="color: #000000;">From,<br>
+                                        {{com.Company_name }} <br>
+                                             {{com.Address}}<br>
+                                                    {{com.City}},
+                                                    {{com.State}}<br>
+                                                    {{com.Pincode}}<br>
+                                                </p>
+                                                
+                                        
+                                    </div>
+                                    <div class="col-5">
+                                        <p  style="color: #000000;" >
+                                            To,<br>{{bnk_acc.Holder_name}} <br>
+                                            {{bnk_acc.Address}} <br>
+                                            {{bnk_acc.phone_number}}
+                                            <br>
+                                            {{bnk_acc.Email}}
+                                    
+                                            <br>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </section>
+                        <section class="store-user mt-5">
+                            <div class="col-12">
+                                <div class="row bb pb-3">
+                                    
+                                    <div class="col-9">
+                                        <p style="color: #000000;">Loan Amount</p>
+                                        <h5 style="color: #000000;">{{loan.loan_amount}}</h5>
+                                        
+                                    </div>
+                                    <div class="col-3">
+                                        <p style="color: #000000;"> Balance</p>
+                                       <h5 style="color: #000000;">{{loan.balance}}</h5>
+                                        
+                                    </div>
+                               
+                                </div>
+                                
+                            </div>
+                        </section>
+            
+                        <section class="product-area mt-4">
+                            <table class="table table-responsive-md table-hover mt-4" id="tabletobe1">
+                                <thead style="background-color: #1c72b4;">
+                                <tr>
+                                   <!-- Inside the <thead> section of your table -->
+                                    <th style="color: #000000;">SL.NO</th>
+                                    <th>
+                            
+                                        <h6 style="color: #000000;"  ><b>DATE</b>
+                                        </h6>
+                                        
+                                    
+                                </th>       
+                                    <th>
+                                        <div class="dropdown">
+                                            <h6 style="color: #000000;"><b>TYPE</b></h6>
+                                         
+                                        </div>
+                                    </th>
+                                    <!-- Inside the <thead> section of your table -->
+                        <!-- <th>
+                            
+                                <h6 class=" text-grey" ><b>NAME</b>
+                                </h6>
+                                
+                            
+                        </th> -->
+            
+                                      
+                        <th style="color: #000000;"><h6 style="color: #000000;"><b>AMOUNT</b></h6></th>
+                        <th style="color: #000000;"><h6 style="color: #000000;"><b>INTEREST</b></h6></th>
+                        <th style="color: #000000;"><h6 style="color: #000000;"><b>TOTAL AMOUNT</b></h6></th>
+                        <th style="display:none;"><h6><b><td></td></b></h6></th>
+                                    
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for a in loan_tr %}
+                                    {% if a.loan_amount != 0 %}
+                            <tr >   <td  style="text-align: center;color:black;">{{forloop.counter}}</td>           
+                                <td  style="text-align: center;color:black;">{{ a.loan_date }}</td>
+                                {% if a.bank_type == 'PROCESSING FEE' %}
+                                            <td  style="text-align: center;color:black;">{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'OPENING BAL' %}
+                                            <td  style="text-align: center;color:black;">{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'EMI PAID' %}
+                                            <td  style="text-align: center;color:black;">{{ a.bank_type }}</td>
+                                            {% elif a.bank_type == 'ADDITIONAL LOAN ISSUED' %}
+                                            <td  style="text-align: center;color:black;">{{ a.bank_type }}</td>
+                                            {% endif %}
+                                            <!-- <td >{{ a.loan_desc }}</td> -->
+                                            
+                                            
+                                            
+                                            <td style="text-align: center;color:black;">{{a.loan_amount}}</td>
+                                            <td  style="text-align: center;color:black;">{{a.loan_intrest|default:0}}</td>
+            
+                                            <td  style="text-align: center;color:black;">{{a.total}}</td>
+                          
+                                            
+                                        </tr>
+                                          
+                                      
+                                        {% endif %}       
+            {% endfor %}
+            </tbody>
+                                   
+            </table>
+                        </section>
+            
+                      
+            
+                        <!-- Cart BG -->
+                        <img src="cart.jpg" class="img-fluid cart-bg" alt="">
+            
+                        <!-- <footer>
+                            <hr>
+                            <p class="m-0 text-center">
+                                View THis Invoice Online At - <a href="#!"> invoice/saburbd.com/#868 </a>
+                            </p>
+                            <div class="social pt-3">
+                                <span class="pr-2">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <span>0123456789</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>me@saburali.com</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-facebook-f"></i>
+                                    <span>/sabur.7264</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-youtube"></i>
+                                    <span>/abdussabur</span>
+                                </span>
+                                <span class="pr-2">
+                                    <i class="fab fa-github"></i>
+                                    <span>/example</span>
+                                </span>
+                            </div>
+                        </footer> -->
+                    </div>
+                </div>
+
+            </div>
+            
+        
+
+    </div>
+
+
+</div>
+
+<div class="modal fade" id="snd_mail">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-10 p-4">
+                        <h2 class="text-uppercase" style="color: white; font-weight: bolder;">Share Documents</h2>
+                    </div>
+                    <div class="col-md-2 p-3">
+                        <button type="button" class="btn close" data-dismiss="modal" aria-label="Close" style="float: right;">
+                            <span aria-hidden="true" style="color: white; font-weight: bolder;">&times;</span>
+                        </button>
+                    </div>
+                </div><br>
+                <form action="{% url 'Fin_Share_loanaccount' loan.id %}" method="post" class="needs-validation" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="date" name="fdate" id="emailfdate" hidden>
+                        <input type="date" name="ldate" id="emailedate" hidden>
+                        <label for="emailIds">Email IDs</label>
+                        <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="item_unitname">Message(optional)</label>
+                        <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with Bill details."></textarea>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                      <button type="submit" id="share_with_email" class="submitShareEmailBtn btn btn-secondary text-uppercase">SEND MAIL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="history" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"  aria-hidden="true" style="margin-top: 8vh;width: 100%;">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" style="background-color: #2f516f;">
+        <div class="modal-header">
+          <h3 class="modal-title text-light" id="exampleModalLabel">HISTORY</h3>
+          <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <div class="container " >
+          <table class="table text-light table-borderless " style="margin:3px;width: 100%;">
+            <thead>
+              <tr>
+                <th style="background-color: 2f516f;">
+                  sl
+                </th>
+                <th style="background-color: 2f516f;">
+                  Date
+                </th>
+                <th style="background-color: 2f516f;">
+                  Action
+                </th>
+                <th style="background-color: 2f516f;"> 
+                  By
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in latest_item_id %}
+              <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.date|date:'Y-m-d'}}</td>
+                <td>{{i.action}}</td>
+                <td>{{ i.login_details.title }}&nbsp;{{ i.login_details.First_name }}&nbsp;{{ i.login_details.Last_name }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-warning" data-dismiss="modal">Close</button>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="history2" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Repayment History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <select  class="form-control" name="employee" id="employeeid" style="width: 93%;">
+                    <option value="">--select Employee--</option>
+               
+            </select>     -->
+               <table class="table text-light table-borderless " id="repay2" style="margin:3px;width: 100%;">
+                  <thead>
+                    <tr>
+                   
+                      <th style="background-color: 2f516f;">
+                        Date
+                      </th>
+                      <th style="background-color: 2f516f;">
+                        Action
+                      </th>
+                      <th style="background-color: 2f516f;"> 
+                        By
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="repay2-body">
+                 
+                </tbody>
+                
+                </table>
+          
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="history3" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Additional History</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               <table class="table text-light table-borderless " id="repay1" style="margin:3px;width: 100%;">
+                  <thead>
+                    <tr>
+                    
+                      <th style="background-color: 2f516f;">
+                        Date
+                      </th>
+                      <th style="background-color: 2f516f;">
+                        Action
+                      </th>
+                      <th style="background-color: 2f516f;"> 
+                        By
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                     
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                       
+                      </tr>
+                  </tbody>
+                </table>
+          
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    function printfun(){
+  
+        
+  
+           var printContents = document.getElementById("whatToPrint").innerHTML;
+     
+  
+  
+  
+        var $printerDiv = $('<div class="printContainer"></div>'); // create the div that will contain the stuff to be printed
+        $printerDiv.html(printContents); // add the content to be printed
+        $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+  
+        window.print(); // call print
+        $printerDiv.remove(); // remove the div
+        $('body').removeClass("printingContent");
+    }
+  </script>
+    
+
+<script>
+    
+function uplodfile(){
+
+async function generatePDF() {
+    // document.getElementById("downloadButton").innerHTML = "Currently downloading, please wait";
+
+    //Downloading
+    var downloading = document.getElementById("whatToPrint");
+    var doc = new jsPDF('l', 'pt');
+
+    await html2canvas(downloading, {
+        //allowTaint: true,
+        //useCORS: true,
+        // width: 600
+        
+    }).then((canvas) => {
+        //Canvas (convert to PNG)
+        doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+    })
+
+    
+
+    data=doc.save("Document.pdf");
+
+
+    //End of downloading
+
+    // document.getElementById("downloadButton").innerHTML = "Click to download";
+}
+}
+
+</script>
+
+
+
+
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<script type="text/javascript">function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tabletobe1');
+        var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+        return dl ?
+            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }) :
+            XLSX.writeFile(wb, fn || ('Transaction_ {{loan.account_name}} .' + (type || 'xlsx')));
+    }
+    
+</script>
+
+
+    <script>
+
+        async function generatePDF() {
+            var downloading = document.getElementById("whatToPrint");
+            var doc = new jsPDF('l', 'pt');
+
+            await html2canvas(downloading, {  
+            }).then((canvas) => {
+                doc.addImage(canvas.toDataURL("image/png"), 'PNG', 15, 10, 700, 850);
+            })
+            doc.save("Document.pdf");
+        } 
+
+        state = '{{state}}'
+        if(state == '1'){
+            Overview()
+        }else{
+            Transaction()
+        }
+
+        function Transaction() {
+
+            document.getElementById('overview').style.display = 'none';
+
+            document.getElementById('statment').style.display = 'none';
+            document.getElementById('Transaction').style.display = 'block';
+
+
+
+
+            }
+        function Overview() {
+
+            document.getElementById('overview').style.display = 'block';
+
+            document.getElementById('statment').style.display = 'none';
+            document.getElementById('Transaction').style.display = 'none';
+
+
+
+
+        }
+        function Statment() {
+            document.getElementById('overview').style.display = 'none';
+
+            document.getElementById('statment').style.display = 'block';
+            document.getElementById('Transaction').style.display = 'none';
+
+
+        }
+        function dispinv() {
+
+            document.getElementById('invtable').style.display = 'block';
+
+        }
+        function dispay() {
+
+            document.getElementById('paytable').style.display = 'block';
+
+        }
+        function disest() {
+
+            document.getElementById('esttable').style.display = 'block';
+
+        }
+        function dissale() {
+
+            document.getElementById('saletable').style.display = 'block';
+
+        }
+
+    </script>
+    <script>
+
+        const tbl1 = document.querySelector('#logic');
+        const tbl2 = document.querySelector(".tab_logic");
+        tbl2.style.display = "none";
+
+
+        $(document).on('submit', '#form_post', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: {
+
+                    fd: $('#fdate').val(),
+                    ld: $('#ldate').val(),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+
+                success: function (response) {
+                    console.log(response)
+                    data = response.ct
+                    data2 = response.invoiced
+                    data3 = response.re
+                    data4 = response.sum
+                    data5 = response.df
+                    data6 = response.dl
+                    data7 = response.invitem
+                    data8 = response.st
+                    data9 = response.baldue
+                    data10 = response.opening
+
+                    data11 = response.fst
+
+
+                    $('#tab_logic tbody').append(
+
+                        `<tr>
+                    <td>${data11}</td>
+                    <td>***Opening Balance***</td>
+                    <td></td>
+                    <td>${data10}</td>
+                    <td></td>
+                    <td>${data10}</td>
+                    </tr> `
+
+
+                    )
+
+
+                    for (i = 0; i < data8.length; i++) {
+
+                        $('#tab_logic tbody').append(
+
+                            `
+                              
+                                <tr>
+                                <td>${data8[i].Date}</td>
+                                <td>${data8[i].Transactions}</td>
+                                                                            
+                                <td>
+                                    
+                                    ${data8[i].Details2} 
+                                    
+                                    </td>
+                                                                            
+                                                                            
+                                <td>
+                                
+                                ${data8[i].Amount}
+                                </td>
+                                <td>
+
+                                    ${data8[i].Payments} 
+                               
+                                
+                                </td>
+                                <td>${data8[i].Balance} 
+                                
+                                 </td>
+                                </tr>
+                                 
+                                    `
+
+                        )
+
+
+
+                    }
+
+
+
+
+                    $('#tab_logic tbody').append(`<tr>
+                        <td colspan="5">Balance Due</td>
+                        <td>${data9} </td>
+                        
+                        </tr>`)
+                    tbl1.style.display = "none";
+                    tbl2.style.display = "block";
+                    document.getElementById('invamount').value = data2
+                    document.getElementById('received').value = data3
+                    document.getElementById('due').value = data9
+                    document.getElementById('df').value = data5
+                    document.getElementById('dl').value = data6
+                    document.getElementById('open').value = data10
+
+
+
+
+                }
+
+            });
+        });
+    </script>
+
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    
+    <script>
+
+        $('.delete').click(function (event) {
+            var form = $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            swal({
+                title: `Are you sure you want to delete this record?`,
+                text: "If you delete this, it will be gone forever.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        swal("Poof! Your imaginary file has been deleted!", {
+                            icon: "success",
+
+                        });
+                        form.submit();
+
+
+
+
+                    }
+                });
+        });
+
+
+    </script>
+    <script>
+        // Function to handle the search
+        function searchTable() {
+            let input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toLowerCase();
+            table = document.getElementById("dataTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows (excluding the first row, which contains the column headers)
+            for (i = 1; i < tr.length; i++) {
+                let rowVisible = false;
+                td = tr[i].getElementsByTagName("td");
+
+                // Loop through all table cells (columns) in each row
+                for (j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        txtValue = td[j].textContent || td[j].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            rowVisible = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Show/hide the row based on the search results
+                tr[i].style.display = rowVisible ? "" : "none";
+            }
+        }
+
+        // Attach the search function to the input field's "input" event
+        document.getElementById("searchInput").addEventListener("input", searchTable);
+    </script>
+            <script>
+
+                $(document).ready(function() {
+                    var $rows = $('.table tbody tr');
+                    $('#search').keyup(function() {
+                        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                        $rows.show().filter(function() {
+                            console.log($rows.show())
+            
+                            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                            console.log(text)
+                            return !~text.indexOf(val);
+                        }).hide();
+                    });
+                });
+            </script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script>
+  function exportToPDF(){
+    var content = document.getElementById('whatToPrint');
+    content.style.height = 'auto';
+    content.style.marginRight = '-1rem';
+    html2pdf().from(content).save('LoanAccount_Statement.pdf')
+    setTimeout(function() {
+      content.style.marginRight = '1rem';
+    }, 1);
+  }
+</script>
+
+
+<script>
+    function shareViaWhatsApp() {
+      // Replace 'Hello, this is a shared message!' with your desired message
+      var url = window.location.href;
+        var text = url;
+        text = encodeURIComponent(text);
+        var whatsappUrl = "whatsapp://send?text=" + text;
+        window.location.href = whatsappUrl;
+    }
+  </script> 
+
+<script>
+    document.getElementById('fdate').addEventListener('change', updateMinDate);
+    function updateMinDate() {
+        var selectedDate = document.getElementById('fdate').value;
+        document.getElementById('ldate').min = selectedDate;
+    }
+  </script>
+
+<script>
+    function filterTableByDate() {
+      const fromDate = new Date(document.getElementById('fdate').value);
+      const toDate = new Date(document.getElementById('ldate').value);
+      const tableRows = document.querySelectorAll('#tabletobe1 tbody tr');
+  
+      tableRows.forEach(row => {
+          const dateCell = new Date(row.cells[1].innerText);
+  
+          // Extract date portions for comparison
+          const cellDate = new Date(dateCell.getFullYear(), dateCell.getMonth(), dateCell.getDate());
+          const fromDateTime = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+          const toDateTime = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  
+          if ((!fromDate || cellDate >= fromDateTime) && (!toDate || cellDate <= toDateTime)) {
+              row.style.display = '';
+          } else {
+              row.style.display = 'none';
+          }
+      });
+  }
+  
+  // Listen for changes in date inputs
+  document.getElementById('fdate').addEventListener('change', filterTableByDate);
+  document.getElementById('ldate').addEventListener('change', filterTableByDate);
+  
+  </script>
+  
+  <script>
+    $(document).ready(function () {
+      $('#fdate, #ldate').change(function () {
+        $('#emailfdate').val($('#fdate').val());
+        $('#emailedate').val($('#ldate').val());
+      
+       
+      });
+    });
+     
+  </script>
+
+{%endblock%}

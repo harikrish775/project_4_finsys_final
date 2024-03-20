@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinsYs</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<style>
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    th, td {
+    border: 1px solid #dddddd;
+    padding: 5px 2px;
+    /* text-align: left; */
+    }
+
+    th {
+    background-color: #f2f2f2;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .invoice_data {
+        font-size: 1.2rem;
+    }
+
+    .data_row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .data_1, .data_2 {
+        font-weight: bold;
+    }
+
+    .data_value {
+        flex: 1;
+        text-align: right;
+    }
+
+    .balance_info{
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+    .balance_info .bal_head{
+        width: 48%;
+    }
+
+    .bal_value{
+        width: 48%;
+        flex: 1;
+        text-align: right;
+    }
+</style>
+
+<body>
+    <div class="my-5 page" size="A4">
+        <div class="p-5">
+            <div id="ember2512" class="row tooltip-container ember-view text-ellipsis" style="display: flex; justify-content: space-between;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <center style="color: black;">
+                        <b>
+                            <p style="font-size: 1.3rem;">PURCHASE BILL - {{pbill.bill_no}}</p>
+                        </b>
+                        <p> {{ pbill.vendor.first_name }}{{ pbill.vendor.last_name }}<br>
+                            {{ pbill.vendor.billing_street }} <br>
+                            {{ pbill.vendor.billing_city }},
+                            {{ pbill.vendor.billing_state }}<br>
+                            {{pbill.vendor.email}}
+                        </p>
+                    </center>
+                </div>
+                <hr>
+                <div style="width: 100%;">
+                    <div class="invoice_data">
+                        <div class="data_row">
+                            <div class="data_1 data_value">Bill No: {{pbill.bill_no}}</div>
+                            <div class="data_2 data_value">Bill Date: {{pbill.bill_date}}</div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_1">Shipment Date: {{pbill.due_Date}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        <div class="data_row">
+                            <div class="data_1">Payment Method: {{pbill.pay_type}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        {% if pbill.pay_type == 'Cash' %}
+                        {% elif pbill.pay_type == 'Cheque' %}
+                        <div class="data_row">
+                            <div class="data_1">Cheque No: {{pbill.cheque_no}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        {% elif pbill.pay_type == 'UPI' %}
+                        <div class="data_row">
+                          <div class="data_1">UPI No: {{pbill.upi_no}}</div>
+                          <div class="data_2"></div>
+                        </div>
+                        {% else %}
+                        <div class="data_row">
+                          <div class="data_1">Bank Account No: {{pbill.bank_no}}</div>
+                          <div class="data_2"></div>
+                        </div>
+                        {% endif %}
+                        <br>
+                        {% if pbill.customer %}
+                        <div class="data_row">
+                            <div class="data_1">Customer:<br><b>{{ pbill.customer.first_name }} {{ pbill.customer.last_name }}</b><br>{{ pbill.customer.billing_street }} <br>
+                              {{ pbill.customer.billing_city }},
+                              {{ pbill.customer.billing_state }}<br>
+                              {{pbill.customer.email}}</div>
+                            <div class="data_2"></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <section class="mt-4">
+                <table class="table2">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; text-transform:uppercase;">Item</th>
+                            <th style="text-align: center; text-transform:uppercase;">HSN</th>
+                            <th style="text-align: center; text-transform:uppercase;">Price</th>
+                            <th style="text-align: center; text-transform:uppercase;">Quantity</th>
+                            <th style="text-align: center; text-transform:uppercase;">Tax</th>
+                            <th style="text-align: center; text-transform:uppercase;">Discount</th>
+                            <th style="text-align: center; text-transform:uppercase;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for itm in itms %}
+                        <tr>
+                            <td style="text-align: center;">{{itm.item.name}}</td>
+                            <td style="text-align: center;">{{itm.item.hsn}}</td>
+                            <td style="text-align: center;">{{itm.price}}</td>
+                            <td style="text-align: center;">{{itm.qty}}</td>
+                            {% if pbill.ven_psupply != pbill.cust_psupply %}
+                            <td style="text-align: center;">{{itm.tax}}% IGST</td>
+                            {% else %}
+                            <td style="text-align: center;">{{itm.tax}}% GST</td>
+                            {% endif %}
+                            <td style="text-align: center;">{{itm.discount}}</td>
+                            <td style="text-align: center;">{{itm.total}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <hr>
+            <section style="margin-top: 1rem; display: flex; justify-content: right;">
+                <div style="width: 50%;" >
+                    <div class="invoice_data">
+                        <div class="data_row">
+                            <div class="data_1 data_value">Sub Total &nbsp;&nbsp;&nbsp;: {{pbill.subtotal}}</div>
+                            <div class="data_2 data_value">TAX Amount&nbsp;&nbsp;&nbsp;: {{pbill.taxamount}}</div>
+                        </div>
+                        <div class="data_row">
+                            {% if pbill.ven_psupply != pbill.cust_psupply %}
+                            <div class="data_1 data_value">IGST&nbsp;&nbsp;&nbsp;&nbsp;: {{pbill.igst}}</div>
+                            {% else %}
+                            <div class="data_2 data_value">CGST&nbsp;&nbsp;&nbsp;&nbsp;: {{pbill.cgst}}</div>
+                            <div class="data_2 data_value">SGST&nbsp;&nbsp;&nbsp;&nbsp;: {{pbill.sgst}}</div>
+                            {% endif %}
+                        </div>
+                        <div class="data_row">
+                            {% if pbill.adjustment != 0 %}
+                            <div class="data_1 data_value">Adjustment&nbsp;&nbsp;&nbsp;: {{pbill.adjust}}</div>
+                            {% endif %}
+                            {% if pbill.shipping_charge != 0 %}
+                            <div class="data_1 data_value">Shipping  &nbsp;&nbsp;&nbsp;: {{pbill.ship_charge}}</div>
+                            {% endif %}
+                        </div>
+                        <br>
+                        <div class="data_row">
+                            <div class="data_1 data_value"><b>GRAND TOTAL</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{pbill.grandtotal}}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

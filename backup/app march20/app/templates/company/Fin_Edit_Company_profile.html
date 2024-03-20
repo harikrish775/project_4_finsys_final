@@ -1,0 +1,293 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<div class="page-content">
+    <div class="card radius-15">
+        <div class="card-body">
+            <div class="card-title">
+                <center>
+                    <h3 class="mb-0" style="font-weight: bolder;">MY PROFILE</h3>
+
+                    <form action="{% url 'Fin_Edit_Company_profile_Action' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                    
+                    {% if com.Image %}
+                    <img src="{{ com.Image.url }}"  class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%">
+                    {% else %}
+                    <img src="{% static 'assets\images\user-1.jpg'%}"  class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%" >
+                    {% endif %}
+                    
+
+
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 col-md-offset-3">
+                        <input type="file" name="img" class="form-control" style="background-color: #2f516f;color: white;" accept="image/*">
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+                </center>
+                <hr>
+                
+                    
+                    <h4 class="m-4">Personal Info</h4>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="first_name">First Name</label>
+                            <input type="text" name="first_name" id="first_name" value="{{ com.Login_Id.First_name }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" value="{{ com.Login_Id.Last_name }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;">
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="email">E-mail</label>
+                            <input type="email" name="email" id="email" value="{{ com.Email }}" pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email">Contact</label>
+                            <input type="text" name="contact" id="contact" value="{{ com.Contact }}" pattern="[0-9]{10}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        
+                        <div class="col-md-6">
+                            
+                        </div>
+                    </div>
+
+
+                    <h4 class="m-4">Company Info</h4>
+
+                    
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="cname">Company Name</label>
+                            <input type="text" name="cname" id="cname" value="{{ com.Company_name }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                        <div class="col-md-6">
+                            <label for="caddress">Company Address</label>
+                            <input type="text" name="caddress" id="caddress" value="{{ com.Address }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;">
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="city">City</label>
+                            <input type="text" name="city" id="city" value="{{ com.City }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                        <div class="col-md-6">
+                            <label for="state">State</label>
+                            <input type="text" name="state" id="state" value="{{ com.State }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;">
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="pincode">Pincode</label>
+                            <input type="text" name="pincode" id="pincode" value="{{ com.Pincode }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;">
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" name="phone" id="phone" value="{{ com.Contact }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;">
+                        </div> -->
+                    </div>
+                    
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="bname">Legal Business Name</label>
+                            <input type="text" name="bname" id="bname" value="{{ com.Business_name }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" >
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ctype">Pan Number</label>
+                            <input type="text" name="pannum" id="pannum" value="{{ com.Pan_NO}}" oninput="validatePan()"
+                                    class="form-control" style="background-color: #2f516f;color: white;" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" title="PAN Number should be in the format 'ABCDE1234A'">
+                            
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-5">
+                            <label for="industry">GST Type</label>
+                            
+                            <input type="text" class="form-control" name="gsttype" id="gsttype" style="background-color: #2f516f;color: white;" value="{{ com.GST_Type}}">
+                             
+                        </div>
+                        <div class="col-md-1">
+                            <a class=" text-warning-emphasis" data-bs-toggle="modal" data-bs-target="#gstchange"><i class="fa fa-edit"></i></a>
+                        </div>
+                        <div class="col-md-6">
+                            {% if com.GST_Type == "Registered Business - Regular" or com.GST_Type == "Registered Business - Composition" %}
+                            <label for="ctype">GST Number</label>
+                            {% if com.GST_NO %}
+                            <input type="text" name="gstnum" id="gstnum" value="{{ com.GST_NO }}" oninput="validateGST()"
+                                class="form-control " style="background-color: #2f516f;color: white;" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}" title="GST Number should be in the format '11AAAAA1111A1ZA'">
+                            {% else %}
+                            <input type="text" name="gstnum" id="gstnum" placeholder="Enter your GST number*" oninput="validateGST()"
+                                class="form-control " style="background-color: #2f516f;color: white;" pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}" title="GST Number should be in the format '11AAAAA1111A1ZA'" required>
+                            {% endif %}
+
+                            {% endif %}
+                            
+                        </div>
+                    </div>
+                    <div class="row m-3">
+                        <div class="col-md-6">
+                            <label for="industry">Your Industry</label>
+                            <!-- <input type="text" name="industry" id="industry" value="{{ com.Industry }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;" > -->
+
+                                    <select name="industry" id="industry"  required class="form-control" style="background-color: #2f516f;color: white;" >
+                                    <option value="{{ com.Industry }}">{{ com.Industry }}</option>
+                                    <option value="Accounting Services">Accounting Services</option>
+                                    <option value="Consultants, doctors, Lawyers and similar">Consultants, doctors, Lawyers and
+                                        similar
+                                    </option>
+                                    <option value="Information Tecnology">Information Tecnology</option>
+                                    <option value="Manufacturing">Manufacturing</option>
+                                    <option value="Professional Scientific and Technical Services">Professional, Scientific and
+                                        Technical Services
+                                    </option>
+                                    <option value="Restaurant/Bar and similar">Restaurant/Bar and similar</option>
+                                    <option value="Retail and Smilar">Retail and Smilar</option>
+                                    <option value="Other Finanacial Services">Other Finanacial Services</option>
+                                </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ctype">Company Type</label>
+                            <!-- <input type="text" name="ctype" id="ctype" value="{{ com.Company_Type }}"
+                                    class="form-control" style="background-color: #2f516f;color: white;"> -->
+
+                                    <select name="ctype" id="ctype" class="form-control" style="background-color: #2f516f;color: white;" required>
+                                    <option value="{{ com.Company_Type }}" hidden>{{ com.Company_Type }}</option>
+                                    <option value="Private Limited Company">Private Limited Company</option>
+                                        <option value="Public Limited Company">Public Limited Company</option>
+                                    <option value="Joint-Venture Company">Joint-Venture Company</option>
+                                    <option value="Partnership Firm Company">Partnership Firm Company</option>
+                                    <option value="One Person Company">One Person Company</option>
+                                    <option value="Branch Office Company">Branch Office Company</option>
+                                    <option value="Non Government Organization">Non Government Organization</option>
+                                    </select>
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <center><button class="btn btn-outline-info rounded-pill text-light mt-4" type="submit" style="width: 40%;">
+                        Submit
+                    </button></center>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for change gst type-->
+<div class="modal fade" id="gstchange" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content shadow p-3  rounded" style="background-color: #213b52;;border: 1px solid rgba(255, 255, 255, 0.3);">
+        <div class="modal-body">
+          <form action="{% url 'company_gsttype_change' %}" method="post">
+            {% csrf_token %}
+            <div class="row mt-3">
+                <h5 class="text-white">GST Type Change</h5>
+            </div>
+        
+            
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <h6 class="text-white mt-2">GST Type*</h6>
+                    
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="gsttype" id="gsttype" style="background-color: #2f516f;color: white;" required>
+                        <option selected hidden value="" style="background-color: #2f516f;color: white;">Select</option>
+                        <option value="Registered Business - Regular" style="background-color: #2f516f;color: white;">Registered Business - Regular
+                            <span><i>(Business that is registered under gst)</i></span>
+                        </option>
+                        <option value="Registered Business - Composition" style="background-color: #2f516f;color: white;">Registered Business - Composition
+                            (Business that is registered under composition scheme in gst)</option>
+                        <option value="unregistered Business" style="background-color: #2f516f;color: white;">Unregistered Business (Business that has not
+                            been registered under gst)</option>
+                        <option value="Overseas" style="background-color: #2f516f;color: white;">Overseas (Import/Export of supply outside india)</option>
+                        <option value="Consumer" style="background-color: #2f516f;color: white;">Consumer</option>
+
+                    </select>
+                    <input type="text" name="gstno" id="gstno" placeholder="GST Number" class="gstno form-control d-none mt-2 text-white" style="border: 1px solid rgba(255, 255, 255, 0.3);background-color: #2f516f;color: white;" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" title="GST Number should be in the format '11AAAAA1111A1ZA'">
+                </div>
+            </div>
+
+            <div class="modal-footer mt-3">
+                <button type="reset" class="btn btn-sm btn-outline-danger" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-sm btn-success">Save</button>
+            </div>
+
+          </form>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
+
+
+<script>
+    function validatePan() {
+        var panVal = $('#pannum').val();
+        var regpan = /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/;
+        if (regpan.test(panVal)) {
+            $('#pannum').css('border', '2px solid green'); 
+        } else {
+            $('#pannum').css('border', '2px solid red');
+        }
+    }
+
+    function validateGST() {
+        var gstVal = $('#gstnum').val();
+        var regGST = /^\d{2}[A-Z]{5}\d{4}[A-Z]{1}\d[Z]{1}[A-Z\d]{1}$/;
+        if (regGST.test(gstVal)) {
+            $('#gstnum').css('border', '2px solid green'); 
+        } else {
+            $('#gstnum').css('border', '2px solid red'); 
+        }
+    }
+
+
+
+
+    
+</script>
+
+<style>
+    i.fa-edit{
+        font-size: x-large;
+        margin-top: 35px;
+    }
+
+    @media only screen and (max-width: 600px) {
+        /* Define styles for mobile view */
+        i.fa-edit {
+            font-size: large; /* or any size you prefer for mobile */
+            margin-top: 10px; /* or any margin you prefer for mobile */
+        }
+    }
+</style>
+
+
+
+
+{% endblock %}

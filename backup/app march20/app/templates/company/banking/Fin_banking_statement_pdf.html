@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin sYs</title>
+   
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    
+</head>
+<style>
+    
+    
+    .table2
+    {
+        text-align: center;
+        padding-top: 6px;
+        font-size: 1.1em;
+        background-color:azure
+       
+    }
+    
+    .table-head
+    {
+        color: rgb(52, 49, 58);
+        
+       
+    }
+    .table2 .tbody tr 
+    {
+       margin-bottom: 3px;
+    }
+    .table3{
+        width:75px;
+        text-align: right;
+        font-size: 14px;
+    }
+    body{
+        font-size: 14px;
+    }
+    
+</style>
+<body>
+
+    <div class="my-5 page" size="A4" >
+        <div class="p-5">
+            <div id="ember2512" class="tooltip-container ember-view ribbon text-ellipsis">
+                <div class="ribbon-inner ribbon-open"><!----></div></div>
+            <section class="top-content bb d-flex justify-content-between">
+                <div class="logo">
+                    <!-- <img src="logo.png" alt="" class="img-fluid"> -->
+                </div>
+                <div class="row">
+                    <table>
+                        <th>
+                            <div class="col-6">
+                                <p>STATEMENT</p>
+                            </div>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <div class="col-6">
+                                {{bank.bank_status}}
+
+                            </div>
+                        </th>
+                    </table>
+                    
+                </div>
+                <div class="row">
+
+                </div>
+                 </section>
+                 <br><br><br>
+                
+            </section>
+
+            <section class="store-user mt-5 mb-5">
+                <div class="container">
+                    <div class="row">
+                        <table>
+                            <th>
+                                <div class="col-6 text-left">
+                                    <p>{{bank.bank_name }}</p>
+                                    <p>Ac/No: {{bank.account_number}}<br>
+                                        IFSC Code: {{bank.ifsc_code}}<br>
+                                        Branch: {{bank.branch_name}}<br>
+                                    </p>
+                                </div>
+                            </th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>
+                                <!-- <div class="col-6">
+                                    <p>To,<br>
+                                        {{employee.employee.firstname}}
+                                        {{employee.employee.lastname}}<br>
+                                        {{employee.employee.street}},{{employee.employee.city}}<br>
+                                        {{employee.employee.state}},{{employee.employee.country}}<br>
+                                        {{employee.employee.pincode}}<br>
+                                        {{employee.employee.email}}<br>
+                                        {{employee.employee.phone}}<br>
+                                    </p>
+                                </div> -->
+                            </th>
+                        </table>
+                        
+                    </div>
+                </div>
+                
+            </section>
+            <section>
+           <div class="row">
+
+           </div>
+            </section>
+            <br><br><br>
+            <section class="product-area mt-5">
+                <table class="table table-hover mt-5">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Sl No</th>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Date</th>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Type</th>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Name</th>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Amount</th>
+                            <th style="text-align: center; text-transform: uppercase;color:black;">Balance</th>
+
+                   
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in trans %}
+                                <tr class="table-row ">
+                                    <td style="text-align: center; color:black;">{{forloop.counter}}</td>
+                                    <td style="text-align: center; color:black;">{{i.adjustment_date|date:'Y-m-d'}}</td>
+                                    <td style="text-align: center; color:black;">{{i.transaction_type}}</td>
+                                    {% if i.transaction_type == 'From Bank Transfer' or i.transaction_type == 'Cash Withdraw' or i.adjustment_type == 'Reduce Balance' %}
+                                    <td style="text-align: center; color:black;">{{i.to_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> -{{i.amount}}</td>
+                                    {% else %}
+                                    <td style="text-align: center; color:black;">{{i.from_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> {{i.amount}}</td>
+                                    {% endif %}
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> {{i.current_balance}}</td>
+                                </tr>
+                                {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+          
+
+           
+        </div>
+    </div>
+    
+    
+</body>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+
+ 
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Statement</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="bg-white">
+
+
+    <div class="container" id="statment">
+        <div class="card radius-15 ">
+            <div class="card-body">
+                <div class="card-title">
+                    <center>
+
+                        <h2 class="mb-0">{{ bank.bank_name }} - STATEMENT</h2>
+
+                    </center>
+                    <hr class="text-black">
+
+
+                </div>
+            </div>
+
+
+            <div class="my-5 ">
+                <!-- <div class="raw p-5">
+                    <div class="col-md-6" style=" text-transform: uppercase;color: #000000;">
+                        <b>Bank Status: {{bank.bank_status}}</b>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <p style=" text-transform: uppercase;color: #000000;">Ac/No:
+                            <span><b>{{bank.account_number }}</b></span>
+                        </p>
+                    </div>
+                </div> -->
+
+                <section  >
+                    <div class="col-12" style="margin-left:1vw;margin-top: 10vh; ">
+                        <h5 style=" color: #000000;"><b>{{bank.bank_name }}</h5>
+                        <p style=" color: #000000;"><b>Ac/No: {{bank.account_number}}</b><br>
+                        <b>IFSC Code: {{bank.ifsc_code}}</b><br>
+                    <b>Branch: {{bank.branch_name}}</b><br>
+                    <b>Bank Status: {{bank.bank_status}}</b>
+
+                        </p>
+
+
+                    </div>
+                </section>
+
+                <section class="product-area" >
+                    <table class="table table-hover " style="width: 100%; margin-top: 10vh;">
+                        <thead class="bg-info">
+                            <tr>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Sl No</th>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Date</th>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Type</th>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Name</th>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Amount</th>
+                                <th style="text-align: center; text-transform: uppercase;color:black;">Balance</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in trans %}
+                            <tr class="table-row ">
+                                <td style="text-align: center; color:black;">{{forloop.counter}}</td>
+                                <td style="text-align: center; color:black;">{{i.adjustment_date|date:'Y-m-d'}}</td>
+                                <td style="text-align: center; color:black;">{{i.transaction_type}}</td>
+                                {% if i.transaction_type == 'From Bank Transfer' or i.transaction_type == 'Cash Withdraw' or i.adjustment_type == 'Reduce Balance' %}
+                                    <td style="text-align: center; color:black;">{{i.to_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> -{{i.amount}}
+                                    </td>
+                                {% else %}
+                                    <td style="text-align: center; color:black;">{{i.from_type}}</td>
+                                    <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i> {{i.amount}}
+                                    </td>
+                                {% endif %}
+                                <td style="text-align: center; color:black;"><i class="fa fa-rupee"></i>
+                                    {{i.current_balance}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+
+
+
+
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    </div>
+
+
+    </div>
+    <section>
+        <div class="row container  " style="margin-top: 4rem;">
+            <div class="col-md-12 text-right ">
+                <label style="color: #000;"><b>Authorized Signature </b></label><span class="text-dark">_____________________</span></div>
+        </div>
+    </section>
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,530 @@
+{% extends 'company/Fin_base.html' %}
+{% block body %}
+{% load static %}
+
+<!-- harikrishnan -->
+
+  <!-- fontawesome icons -->
+  <link href="{% static 'assets/fontawesome/css/fontawesome.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/brands.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/fontawesome/css/solid.css' %}" rel="stylesheet">
+
+<!-- Include FullCalendar CSS -->
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<link rel="stylesheet" href="{% static 'assets/plugins/fullcalendar/css/main.min.css' %}">
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Include xlsx library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-- pdf -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<!-- Add html2pdf library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+
+<div class="page-content ">
+
+    <div class="row radius-15">
+        <div id="calendarDiv" class="col"><center><h3><a href="" id="calendarLink" style="padding: 10px 20%;border-top-right-radius: 15px;border-top-left-radius: 15px;">Calendar</a></h3></center></div>
+        <div id="holidayListDiv" class="col"><center><h3><a href="" id="holidayListLink" style="padding: 10px 20%;border-top-right-radius: 15px;border-top-left-radius: 15px;">Holiday List</a></h3></center></div>
+    </div>
+
+    <div class="card radius-15">
+        <div class="ml-auto"><a style="cursor: pointer;" title="Close" href="{% url 'holiday_list' %}" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div>
+        <div class="card-body">
+            
+            <div class="row" id="cal">
+                <div class="col" id="calendar"></div>
+            </div>
+            
+            <div class="row" id="cal_list">
+                
+                <div class="table-responsive">
+
+                    <center>
+                        <div > 
+                            <a class="btn btn-outline-secondary mb-2 text-grey" href='{% url "holiday_history" month year %}' ><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+                            <!-- <button class="btn btn-outline-secondary mb-2 text-grey" onclick="window.location.href='/holiday_history/{{month}}/{{year}}'" ><i class="fa-solid fa-clock-rotate-left"></i> History</button> -->
+                            <button class="btn btn-outline-secondary mb-2 text-grey" id="exportButton"><i class="fa fa-table"></i> Export To Excel</button>
+                            <button class="btn btn-outline-secondary mb-2 text-grey" onclick="PrintTable()" data-employee-id="{{employ.id}}" title="Print" ><i class="fa fa-print"></i> Print</button>
+                            <button class="btn btn-outline-secondary mb-2 text-grey" onclick="ExportAsPDF()" title="Download PDF"><i class="fa fa-file-pdf"></i> PDF</button>
+                            <button class="btn btn-outline-secondary mb-2 text-grey" type="button" data-toggle="modal" data-target="#commentModal" title="Comment"><i class="fa fa-comment"></i> Comment</button>
+                        </div>
+                    </center>
+                    <!-- modal -->
+                    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Leave a Comment</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+
+                            <form action="{% url 'holiday_comment' mn=month yr=year %}" method="post">
+                                {% csrf_token %}
+                            <div class="modal-body">
+                              
+                                <div><label for="">Leave A Comment : </label> <textarea name="comment" cols="5" rows="3" class="form-control"></textarea></div><br>
+                                <div style="text-align: left;">
+                                    {% if comments %}
+                                    <h5 class="pb-1 mb-3" style="text-decoration: underline;text-underline-offset: 10px;">Previous Comments</h5>
+                                    {% for i in comments %}
+                                    <label style="font-size: large;" for="">{{i.index}}. {{i.comment}}</label> <a href="{% url 'holiday_comment_delete' pk=i.id mn=i.month yr=i.year %}" id="deleteButton" style="color: crimson;"><i class="fa-solid fa-trash"></i></a><br>
+                                    {% endfor %}
+                                    {% else %}
+                                    <h5 class="pb-1 mb-2" >No Comments Yet</h5>
+                                    {% endif %}
+                                    
+                                </div>
+                              
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-secondary">Save changes</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                            </form>
+
+                          </div>
+                        </div>
+                      </div>
+                      <!-- modal end -->
+
+                    <br><br>
+                    <table class="table ml-3" style="width: 95%;" id="holidayList">
+                        <center><h3 id="headDing"><span id="monthName">{{month}}</span>, {{year}}</h3></center><br>
+                        <thead class="thead"  >
+                            <tr style="font-size: large; " >
+                                <th>Sl No.</th>
+                                <th>NAME</th>
+                                <th>START DATE</th>
+                                <th>END DATE</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in events %}
+                            <tr style="font-size: large;">
+                                
+                                <td style="text-transform: capitalize;">{{i.holiday_name}}</td>
+                                <td>{{i.start_date}}</td>
+                                <td>{{i.end_date}}</td>
+                                <td ><form method="post" action="{% url 'holiday_delete' i.id %}"> {% csrf_token %}<a href="{% url 'holiday_edit_page' i.id month year %}"><i style="color: cyan;" class="fa-solid fa-pen-to-square"></i></a> <input type="text" name="year" value="{{year}}" hidden> <input name="month" value="{{month}}" type="text" hidden> <button type="submit" style="margin-left: 10px;background-color: transparent;border: none;" ><i style="color: crimson;" class="fa-solid fa-trash"></i></button></form></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+            
+            
+        </div>
+    
+    </div>
+</div>
+<script>
+
+// -----------------------------------------------
+// holiday history
+
+
+function redirectToHolidayHistory(arg1, arg2) {
+    // Construct the URL with the arguments
+    var url = '/holiday_history/' + arg1 + '/' + arg2;
+
+    // Redirect to the constructed URL
+    window.location.href = url;
+}
+
+
+
+// -----------------------------------------------------------------------------------
+// month number to name
+
+function numberToMonth(number) {
+    const months = [
+        'January', 'February', 'March', 'April',
+        'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ];
+
+    // Ensure the number is within a valid month range
+    if (number >= 0 && number <= 12) {
+        return months[number ];
+    } else {
+        return 'Invalid Month';
+    }
+}
+
+// Get the element with id "monthName"
+const monthNameElement = document.getElementById('monthName');
+
+// Ensure the element exists
+if (monthNameElement) {
+    const monthNumber = parseInt(monthNameElement.textContent, 10);
+
+    // Check if the content is a valid number
+    if (!isNaN(monthNumber)) {
+        const monthString = numberToMonth(monthNumber);
+        monthNameElement.textContent = monthString;
+    } else {
+        monthNameElement.textContent = 'Invalid Number';
+    }
+}
+
+
+// -----------------------------------------------
+// print
+
+
+function PrintTable() {
+    const container = document.getElementById('holidayList');
+    const heading = document.getElementById('headDing');
+
+    // Create a new window or iframe
+    const printWindow = window.open('', '_blank');
+
+    // Save the original styles
+    const originalStyles = {
+        backgroundColor: container.style.backgroundColor,
+        color: container.style.color,
+    };
+
+    // Set the container's background color to white and text color to black for specific columns
+    const headerCells = container.querySelectorAll('thead th');
+    const dataCells = container.querySelectorAll('tbody td');
+
+    headerCells.forEach(cell => {
+        cell.style.backgroundColor = 'white';
+        cell.style.color = 'black';
+    });
+
+    dataCells.forEach(cell => {
+        cell.style.backgroundColor = 'white';
+        cell.style.color = 'black';
+    });
+
+    // Identify and hide the last column from the HTML content
+    const lastColumnIndex = container.rows[0].cells.length - 1; // Assuming the table has a header row
+    Array.from(container.rows).forEach(row => {
+        row.cells[lastColumnIndex].style.display = 'none';
+    });
+
+    // Copy the heading content to the new window or iframe
+    const clonedHeading = heading.cloneNode(true);
+    clonedHeading.style.textAlign = 'center'; // Center the heading
+    printWindow.document.body.appendChild(clonedHeading);
+
+    // Copy the table content to the new window or iframe
+    const clonedTable = container.cloneNode(true);
+    clonedTable.style.marginLeft = '30px'; // Adjust the margin as needed
+    printWindow.document.body.appendChild(clonedTable);
+
+    // Apply CSS styles for proper column alignment
+    const columnCount = clonedTable.rows[0].cells.length;
+    for (let i = 0; i < columnCount; i++) {
+        const headerCell = clonedTable.rows[0].cells[i];
+        const dataCells = Array.from(clonedTable.rows).slice(1).map(row => row.cells[i]);
+
+        // Adjust column width and text alignment as needed
+        headerCell.style.width = 'auto'; // You can set a specific width if needed
+        headerCell.style.textAlign = 'left'; // Adjust alignment as needed
+
+        dataCells.forEach(cell => {
+            cell.style.width = 'auto'; // You can set a specific width if needed
+            cell.style.textAlign = 'left'; // Adjust alignment as needed
+        });
+    }
+
+    // Open the print dialog for the new window or iframe
+    printWindow.print();
+
+    // Close the new window if needed (uncomment the line below)
+    // printWindow.close();
+
+    // Display the last column again in the original container after printing
+    Array.from(container.rows).forEach(row => {
+        row.cells[lastColumnIndex].style.display = '';
+    });
+
+    // Restore the original styles for specific columns
+    headerCells.forEach(cell => {
+        cell.style.backgroundColor = '';
+        cell.style.color = originalStyles.color;
+    });
+
+    dataCells.forEach(cell => {
+        cell.style.backgroundColor = '';
+        cell.style.color = originalStyles.color;
+    });
+
+    // Restore the original styles for the container
+    container.style.backgroundColor = originalStyles.backgroundColor;
+    container.style.color = originalStyles.color;
+}
+
+
+
+
+
+
+// -------------------------------------------------------------------------------------
+// pdf
+
+function ExportAsPDF() {
+    const container = document.getElementById('holidayList');
+
+    // Save the original styles
+    const originalStyles = {
+        backgroundColor: container.style.backgroundColor,
+        color: container.style.color,
+    };
+
+    // Set the container's background color to white and text color to black for specific columns
+    const headerCells = container.querySelectorAll('thead th');
+    const dataCells = container.querySelectorAll('tbody td');
+
+    headerCells.forEach(cell => {
+        cell.style.backgroundColor = 'white';
+        cell.style.color = 'black';
+    });
+
+    dataCells.forEach(cell => {
+        cell.style.backgroundColor = 'white';
+        cell.style.color = 'black';
+    });
+
+    // Identify and hide the last column from the HTML content
+    const lastColumnIndex = container.rows[0].cells.length - 1; // Assuming the table has a header row
+    Array.from(container.rows).forEach(row => {
+        row.cells[lastColumnIndex].style.display = 'none';
+    });
+
+    // Add margin to the PDF
+    const margin = 10; // Adjust as needed
+    const pdfOptions = {
+        margin: [margin, margin, margin, margin], // top, right, bottom, left
+        filename: "profile.pdf",
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, // Adjust format and orientation
+    };
+
+    // Generate PDF from the modified container
+    html2pdf().from(container).set(pdfOptions).save().then(() => {
+        // Display the last column again after downloading the PDF
+        Array.from(container.rows).forEach(row => {
+            row.cells[lastColumnIndex].style.display = '';
+        });
+
+        // Restore the original styles for specific columns
+        headerCells.forEach(cell => {
+            cell.style.backgroundColor = '';
+            cell.style.color = originalStyles.color;
+        });
+
+        dataCells.forEach(cell => {
+            cell.style.backgroundColor = '';
+            cell.style.color = originalStyles.color;
+        });
+
+        // Restore the original styles for the container
+        container.style.backgroundColor = originalStyles.backgroundColor;
+        container.style.color = originalStyles.color;
+    });
+}
+
+
+
+
+
+// -------------------------------------------------------------------------------------
+// excel
+
+document.getElementById('exportButton').addEventListener('click', function () {
+        exportToExcel('holidayList');
+    });
+
+    function exportToExcel(tableId) {
+        var table = document.getElementById(tableId);
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        saveAs(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }), 'Holiday_Table.xlsx');
+    }
+
+
+
+// -------------------------------------------------------------------------------------
+// comment delete
+
+// $(document).ready(function() {
+//     // Attach click event to your delete button or link
+//     $('#deleteButton').click(function() {
+//         var commentId = $(this).data('comment-id');
+        
+//         // Send AJAX request
+//         $.ajax({
+//             type: 'POST',
+//             url: '/holiday_comment_delete/' + commentId + '/',
+//             success: function(data) {
+//                 if (data.success) {
+//                     // Handle success, e.g., remove the deleted comment from the page
+//                     alert(data.message);
+//                 } else {
+//                     // Handle failure, e.g., display an error message
+//                     alert(data.message);
+//                 }
+//             },
+//             error: function() {
+//                 // Handle AJAX error
+//                 alert('An error occurred during the AJAX request');
+//             }
+//         });
+//     });
+// });
+    
+
+
+// -------------------------------------------------------------------------------------
+// index
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Get the table element
+        var table = document.getElementById('holidayList');
+
+        // Get all rows in the table body
+        var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        // Loop through each row and add an index number
+        for (var i = 0; i < rows.length; i++) {
+            // Create a new cell element
+            var cell = document.createElement('td');
+
+            // Set the content of the cell to the current index plus 1
+            cell.textContent = i + 1; // Index starts from 1
+
+            // Insert the new cell as the first child of the current row
+            rows[i].insertBefore(cell, rows[i].firstChild);
+        }
+    });
+
+
+// ----------------------------------------------------------------------------------
+// calendar (ignore the error - code working fine)
+
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: [
+            {% for i in events %}
+            {   
+                
+                title: '{{i.holiday_name}}',
+                start: '{{i.start_date|date:"c"}}',
+                // Set allDay to true for one-day events
+                allDay: true,
+                // Extend the end date by one day
+                end: new Date('{{i.end_date|date:"c"}}').getTime() + (1 * 24 * 60 * 60 * 1000),
+                
+                
+            },
+            {% endfor %}
+        ],
+        eventContent: function(arg) {
+            // Customize the appearance of each event
+            var eventElement = document.createElement('div');
+            eventElement.innerHTML = arg.event.title;
+
+            // Increase width and height
+            eventElement.style.width = '120px'; // Adjust width as needed
+            eventElement.style.height = '30px'; // Adjust height as needed
+
+            // Add other style modifications as needed
+            eventElement.style.fontSize = '20px'; // Adjust font size as needed
+            eventElement.style.textTransform = 'capitalize'; // Capitalize the text
+            eventElement.style.marginLeft = '10px'; // Margin left
+
+            return { domNodes: [eventElement] };
+        },
+        
+    });
+
+    // Specify the year and month you want to open the calendar to
+    var yearToOpen = {{ year }};
+    var monthToOpen = {{ month }}; // (months are 0-indexed in JavaScript)
+
+    // Use gotoDate to open the calendar to the specified year and month
+    calendar.gotoDate(new Date(yearToOpen, monthToOpen));
+
+    
+    calendar.render();
+});
+
+
+// ----------------------------------------------------------------------------------
+// hide or show calendar
+
+
+      // Get references to the links and divs
+    var calendarLink = document.getElementById("calendarLink");
+    var holidayListLink = document.getElementById("holidayListLink");
+    var calendarDiv = document.getElementById("cal");
+    var holidayListDiv = document.getElementById("cal_list");
+    
+    holidayListDiv.style.display = "none"; // Hide the holiday list div
+    calendarLink.style.backgroundColor = '#213b52';
+
+    // Add click event listeners
+    calendarLink.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default behavior of the anchor tag
+        calendarDiv.style.display = "block"; // Show the calendar div
+        holidayListDiv.style.display = "none"; // Hide the holiday list div
+
+        // Add class to the selected div
+        calendarLink.style.backgroundColor = '#213b52';
+        holidayListLink.style.backgroundColor = 'transparent' ;
+            
+        
+        
+    });
+
+    holidayListLink.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent the default behavior of the anchor tag
+        calendarDiv.style.display = "none"; // Hide the calendar div
+        holidayListDiv.style.display = "block"; // Show the holiday list div
+
+        // Add class to the selected div
+
+        calendarLink.style.backgroundColor = 'transparent';
+        holidayListLink.style.backgroundColor = '#213b52' ;
+    });
+
+
+// ----------------------------------
+// back function
+    function goBack() {
+      window.history.back();
+    }
+
+  </script>
+            
+
+
+{% endblock %}
