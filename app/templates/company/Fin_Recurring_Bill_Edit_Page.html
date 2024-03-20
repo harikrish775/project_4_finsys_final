@@ -134,7 +134,9 @@ function goBack() {
                         
                             <div class="card card-registration card-registration-2" id="col11" style="border-radius: 15px;">
                                 <div class="card-body p-0">
-                                            
+
+                                    <!-- company place -->
+                                    <input type="text" name="companyPlace" value="{{companyDetails.State}}" id="companyPlace" style="display: none;" >
 
                                 <div class="ml-4 mr-4">
 
@@ -397,25 +399,34 @@ function goBack() {
                                                             $(document).on('change','#RecurringBillNo', function() {
                                                             $('#recuringErr').text('');
                                                             var inv_num = $(this).val();
+
+                                                            if(inv_num != ''){
+                                                                var pattern = /^rb\d+$/i;
+                                                                if (!pattern.test(inv_num)) {
+                                                                    alert("Wrong Format. Please use the code 'RB' only ");
+                                                                    $(this).val('');
+                                                                    return;
+                                                                }
+                                                            }
+                                                            
                                                             
                                                             if(inv_num != ""){
-                                                                console.log(inv_num);
-                                                                
-                                                                    $.ajax({
+                                                                $.ajax({
                                                                     type: "GET",
-                                                                    url: "{% url 'Fin_check_recurring_bill_number_editpage' recur.id %}",
+                                                                    url: "{% url 'Fin_check_recurring_bill_number' %}",
                                                                     data: {
                                                                         'invNum' : inv_num,
                                                                     },
                                                                     success: function (response) {
                                                                         if (response.status){
                                                                             $('#recuringErr').text('');
+                                                                            
                                                                         }else{
                                                                             $('#recuringErr').text(response.message);
+                                                                            
                                                                         }
                                                                     }
                                                                 })
-                                                                
                                                             }
                                                         });
                                                         </script>
@@ -500,6 +511,7 @@ function goBack() {
                                                     var priceListCheckbox = document.getElementById("priceListCheckbox");
                                                     var priceListDiv = document.getElementById("priceListDiv");
                                                     var priceListRB = document.getElementById("priceListRB");
+                                                    var previousSelection = document.getElementById("priceListRB").value;
                                                 
                                                     // Add an event listener to the checkbox to toggle the visibility of the select element
                                                     priceListCheckbox.addEventListener("click", function() {
@@ -507,6 +519,15 @@ function goBack() {
                                                             // If the checkbox is checked, display the select element
                                                             priceListDiv.style.display = "block";
                                                             priceListRB.required = true;
+
+                                                            if (previousSelection !== null) {
+                                                            var option = document.querySelector("#priceListRB option[value='" + previousSelection + "']");
+                                                            if (option) {
+                                                                option.selected = true; // Select the previous option
+                                                                option.dispatchEvent(new Event('click')); // Dispatch the click event
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            }
+                                                        }
                                                         } else{
                                                             // If the checkbox is unchecked, hide the select element
                                                             priceListDiv.style.display = "none";
@@ -638,7 +659,7 @@ function goBack() {
                                                 <div class="row m-md-2 border-bottom pb-4">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Place Of Supply</label>
-                                                        <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
+                                                        <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option {% if recur.customer.place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
                                                             <option {% if recur.customer.place_of_supply == 'Andaman and Nicobar Islands' %}selected{% endif %} value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
                                                             <option {% if recur.customer.place_of_supply == 'Andhra Pradesh' %}selected{% endif %} value="Andhra Pradesh">Andhra Pradesh</option>
@@ -990,11 +1011,11 @@ function goBack() {
                                                         $(document).ready(function () {
                                                         // Function to check and handle visibility based on the values of 'PlaceOfSupplyCustomer' and 'sourceOFSupply'
                                                         function checkPlaceOfSupply() {
-                                                            var PlaceOfSupplyCustomerValue = $('#PlaceOfSupplyCustomer').val();
+                                                            var companyPlaceValue = $('#companyPlace').val();
                                                             var sourceOFSupplyValue = $('#sourceOFSupply').val();
 
                                                             // Check if 'PlaceOfSupplyCustomer' and 'sourceOFSupply' have the same value
-                                                            if (PlaceOfSupplyCustomerValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            if (companyPlaceValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && companyPlaceValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'gst' and hide 'igst'
                                                                 $('.gst').show();
                                                                 $('.igst').hide();
@@ -1004,7 +1025,7 @@ function goBack() {
                                                                 $('#ifOR').hide();
                                                                 $('#GST1').show();
                                                                 $('#GST2').show();
-                                                            } else if ( PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            } else if ( companyPlaceValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'igst' and hide 'gst'
                                                                 $('.gst').hide();
                                                                 $('.GSTtext').hide();
@@ -1026,10 +1047,10 @@ function goBack() {
                                                         }
                                                         
                                                         // Event listener for change in 'PlaceOfSupplyCustomer' or 'sourceOFSupply'
-                                                        $('#PlaceOfSupplyCustomer, #sourceOFSupply').on('change', checkPlaceOfSupply);
+                                                        $('#sourceOFSupply').on('change', checkPlaceOfSupply);
 
                                                         // Trigger the change event on page load to initialize the visibility
-                                                        $('#PlaceOfSupplyCustomer, #sourceOFSupply').change();
+                                                        $('#sourceOFSupply').change();
 
                                                         $('#SelectCustomer2, #select_vendor2').on('click', function () {
                                                             setTimeout(function () {

@@ -120,6 +120,8 @@ function goBack() {
                             <div class="card card-registration card-registration-2" id="col11" style="border-radius: 15px;">
                                 <div class="card-body p-0">
                                             
+                                    <!-- company place -->
+                                    <input type="text" name="companyPlace" value="{{companyDetails.State}}" id="companyPlace" style="display: none;" >
 
                                 <div class="ml-4 mr-4">
 
@@ -285,7 +287,7 @@ function goBack() {
                                                             <option value="Goa">Goa</option>
                                                             <option value="Gujarat">Gujarat</option>
                                                             <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
                                                             <option value="Jammu and Kashmir">Jammu and Kashmir</option>
                                                             <option value="Jharkhand">Jharkhand</option>
                                                             <option value="Karnataka">Karnataka</option>
@@ -377,13 +379,24 @@ function goBack() {
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
                                                         <label for="">Recurring Bill No.</label> <small style="color: orangered;" id="recuringErr"></small>
-                                                        <input type="text"  required class="form-control" placeholder="{{nxtRB}}" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
+                                                        <input style="text-transform: uppercase;" type="text" required class="form-control" placeholder="{{nxtRB}}" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
+                                                        
                                                         <script>
                                                             $(document).on('change','#RecurringBillNo', function() {
                                                             $('#recuringErr').text('');
                                                             var inv_num = $(this).val();
+                                                            
+                                                            if(inv_num != ''){
+                                                                var pattern = /^rb\d+$/i;
+                                                                if (!pattern.test(inv_num)) {
+                                                                    alert("Wrong Format. Please use the code 'RB' only ");
+                                                                    $(this).val('');
+                                                                    return;
+                                                                }
+                                                            }
+                                                            
+                                                            
                                                             if(inv_num != ""){
-                                                                console.log(inv_num);
                                                                 $.ajax({
                                                                     type: "GET",
                                                                     url: "{% url 'Fin_check_recurring_bill_number' %}",
@@ -393,8 +406,10 @@ function goBack() {
                                                                     success: function (response) {
                                                                         if (response.status){
                                                                             $('#recuringErr').text('');
+                                                                            
                                                                         }else{
                                                                             $('#recuringErr').text(response.message);
+                                                                            
                                                                         }
                                                                     }
                                                                 })
@@ -479,6 +494,8 @@ function goBack() {
                                                             // If the checkbox is checked, display the select element
                                                             priceListDiv.style.display = "block";
                                                             priceListRB.required = true;
+                                                            
+
                                                         } else{
                                                             // If the checkbox is unchecked, hide the select element
                                                             priceListDiv.style.display = "none";
@@ -507,7 +524,7 @@ function goBack() {
                                                                 <label for="">Customer</label>
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input type="text" autocomplete="off" required  class="form-control dropdown-toggle sty1" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
+                                                                    <input type="text" autocomplete="off" class="form-control dropdown-toggle sty1" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu customerDropdown" style="width:380px;">
                                                                             {% for i in customers %}
@@ -612,7 +629,7 @@ function goBack() {
 
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Place Of Supply</label>
-                                                        <select required name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
+                                                        <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
                                                             <option value="">Select Place Of Supply</option>
                                                             <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
                                                             <option value="Andhra Predhesh">Andhra Predhesh</option>
@@ -627,7 +644,7 @@ function goBack() {
                                                             <option value="Goa">Goa</option>
                                                             <option value="Gujarat">Gujarat</option>
                                                             <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Predesh">Himachal Predesh</option>
+                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
                                                             <option value="Jammu and Kashmir">Jammu and Kashmir</option>
                                                             <option value="Jharkhand">Jharkhand</option>
                                                             <option value="Karnataka">Karnataka</option>
@@ -984,11 +1001,11 @@ function goBack() {
                                                     $(document).ready(function () {
                                                         // Function to check and handle visibility based on the values of 'PlaceOfSupplyCustomer' and 'sourceOFSupply'
                                                         function checkPlaceOfSupply() {
-                                                            var PlaceOfSupplyCustomerValue = $('#PlaceOfSupplyCustomer').val();
+                                                            var companyPlaceValue = $('#companyPlace').val();
                                                             var sourceOFSupplyValue = $('#sourceOFSupply').val();
 
                                                             // Check if 'PlaceOfSupplyCustomer' and 'sourceOFSupply' have the same value
-                                                            if (PlaceOfSupplyCustomerValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            if (companyPlaceValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && companyPlaceValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'gst' and hide 'igst'
                                                                 $('.gst').show();
                                                                 $('.igst').hide();
@@ -998,7 +1015,7 @@ function goBack() {
                                                                 $('#ifOR').hide();
                                                                 $('#GST1').show();
                                                                 $('#GST2').show();
-                                                            } else if ( PlaceOfSupplyCustomerValue !== '' && sourceOFSupplyValue !== '' ) {
+                                                            } else if ( companyPlaceValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'igst' and hide 'gst'
                                                                 $('.gst').hide();
                                                                 $('.GSTtext').hide();
@@ -1020,10 +1037,10 @@ function goBack() {
                                                         }
                                                         
                                                         // Event listener for change in 'PlaceOfSupplyCustomer' or 'sourceOFSupply'
-                                                        $('#PlaceOfSupplyCustomer, #sourceOFSupply').on('change', checkPlaceOfSupply);
+                                                        $('#sourceOFSupply').on('change', checkPlaceOfSupply);
 
                                                         // Trigger the change event on page load to initialize the visibility
-                                                        $('#PlaceOfSupplyCustomer, #sourceOFSupply').change();
+                                                        $('#sourceOFSupply').change();
 
                                                         $('#SelectCustomer2, #select_vendor2').on('click', function () {
                                                             setTimeout(function () {
@@ -1120,7 +1137,7 @@ function goBack() {
                                                                 // Display "Out of Stock" message if item-stockin is 0
                                                                 
                                                             } else {
-                                                                // Handle invalid item-qty (e.g., display an error message)
+                                                                // Handle priceListCheckbox item-qty (e.g., display an error message)
                                                                 alert("Invalid quantity");
                                                                 // Reset item-qty to a valid value (you can modify this based on your requirements)
                                                                 $row.find(".item-qty").val(0);
