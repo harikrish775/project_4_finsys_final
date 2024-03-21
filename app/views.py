@@ -23218,6 +23218,7 @@ def checkitem(request):
         return JsonResponse(data7)
 #End
 
+
 # harikrishnan-------------------------
 
 def Fin_recurring_bill_list(request):
@@ -23226,19 +23227,18 @@ def Fin_recurring_bill_list(request):
     
     if loginn.User_Type == 'Company':
         com = Fin_Company_Details.objects.get(Login_Id = sid)
-        allmodules = Fin_Modules_List.objects.get(company_id = com.id)
-        # bill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
+        allmodules = Fin_Modules_List.objects.get(company_id = com.id,status = 'New')
         bill = Fin_Recurring_Bills.objects.filter(company_id=com.id)   
     elif loginn.User_Type == 'Staff' :
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
-        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
-        # bill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)   
+        allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id,status = 'New')
         bill = Fin_Recurring_Bills.objects.filter(company_id=com.company_id_id)     
-    return render(request,'company/Fin_Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill})
+    return render(request,'company/Fin_Recurring_Bill_List.html',{'allmodules':allmodules,'bill':bill,'com':com,'data':loginn})
 
 def Fin_recurring_bill_create_page(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
+    todayDate = date.today().strftime("%Y-%m-%d")
     
     if loginn.User_Type == 'Company':
         com = Fin_Company_Details.objects.get(Login_Id = sid)
@@ -23254,39 +23254,19 @@ def Fin_recurring_bill_create_page(request):
         pricelist_p = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.id,type='Sales')
         bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
-
-        # Finding next invoice number w r t last invoic number if exists.
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
+        
+        nxtRb = ""
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
             
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
-
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'RB01'
+            nxtRb = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -23313,37 +23293,18 @@ def Fin_recurring_bill_create_page(request):
         bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Sales')
 
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
+        nxtRb = ""
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
             
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
-
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'RB01'
+            nxtRb = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
         if recurringBill:
@@ -23356,13 +23317,19 @@ def Fin_recurring_bill_create_page(request):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'companyDetails':companyDetails,'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist_p,'list_s':pricelist_s,'nxtRB':nxtInv,'bank':bank})
+    return render(request,'company/Fin_Recurring_Bill_Create_Page.html',{'todayDate':todayDate,'companyDetails':companyDetails,'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'list':pricelist_p,'list_s':pricelist_s,'nxtRB':nxtRb,'bank':bank,'com':com,'data':loginn})
 
 def Fin_recurring_bill_save(request):
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     if request.method == 'POST':
         vendor = request.POST['select_vendor']
+        vendor_name = request.POST['vendorName']
+        vendor_email = request.POST['vendorEmail']
+        vendor_billing_address = request.POST['venaddress']
+        vendor_gst_type = request.POST['vendorGstType']
+        vendor_gst_number = request.POST['vendorGstNumber']
+        vendor_place_of_supply = request.POST['sourceOfSupply']
         recurring_bill_number = request.POST['RecurringBillNo'].upper()
         profile_namee = request.POST['ProfileName']
         reference_number = request.POST['ReferenceNo']
@@ -23392,6 +23359,12 @@ def Fin_recurring_bill_save(request):
         
         
         customer = request.POST['Customer'] 
+        customer_name = request.POST['customerName']
+        customer_email = request.POST['customerEmail']
+        customer_billing_address = request.POST['cusaddress']
+        customer_gst_type = request.POST['GSTType']
+        customer_gst_number = request.POST['customerGstNumber']
+        customer_place_of_supply = request.POST['placeOfSupply']
         description = request.POST['Note']
 
         # if request.FILES['Document'] :
@@ -23404,7 +23377,7 @@ def Fin_recurring_bill_save(request):
         if source == 'Kerala' and place == 'Kerala':
             cgst = request.POST['cgst']  
             sgst = request.POST['sgst']
-            taxAmount_igst = None
+            taxAmount_igst = request.POST['taxAmount']
         else:
             cgst = None
             sgst = None
@@ -23459,7 +23432,10 @@ def Fin_recurring_bill_save(request):
                                             sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
                                             status = status,grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
                                             company=com,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
-                                            repeat_every_id=repeat_every,pricelist_id=pricelist)
+                                            repeat_every_id=repeat_every,pricelist_id=pricelist,vendor_name=vendor_name,vendor_email=vendor_email,vendor_billing_address=vendor_billing_address,
+                                            vendor_gst_type=vendor_gst_type,vendor_gst_number=vendor_gst_number,vendor_place_of_supply=vendor_place_of_supply,customer_name=customer_name,
+                                            customer_email=customer_email,customer_billing_address=customer_billing_address,customer_gst_type=customer_gst_type,
+                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply)
                 
             else: 
                 newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
@@ -23468,7 +23444,10 @@ def Fin_recurring_bill_save(request):
                                             sgst = sgst,taxAmount_igst = taxAmount_igst,shipping_charge = shipping_charge,adjustment = adjustment,
                                             status = status,grand_total = grand_total,advanceAmount_paid = advanceAmount_paid,balance = balance,customer_id = customer,
                                             company=com,profile_name=profile_namee,date = startdate,company_payment_terms_id = company_payment_terms,
-                                            repeat_every_id=repeat_every)
+                                            repeat_every_id=repeat_every,vendor_name=vendor_name,vendor_email=vendor_email,vendor_billing_address=vendor_billing_address,
+                                            vendor_gst_type=vendor_gst_type,vendor_gst_number=vendor_gst_number,vendor_place_of_supply=vendor_place_of_supply,customer_name=customer_name,
+                                            customer_email=customer_email,customer_billing_address=customer_billing_address,customer_gst_type=customer_gst_type,
+                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply)
                
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company=com,login_details_id = sid,recurring_bill_id =newBill.id)
@@ -23497,7 +23476,7 @@ def Fin_recurring_bill_save(request):
                     for itemsNew in mapped:
                         itemsTable = Fin_Recurring_Bill_Items(items_id = int(itemsNew[0]),quantity=int(itemsNew[1]),discount=float(itemsNew[2]),total=float(itemsNew[3]),hsn=int(itemsNew[4]),tax_rate=int(itemsNew[5]),price=float(itemsNew[6]),recurring_bill_id=newBill.id,company_id=com2.id)
                         itemsTable.save()
-                        print('666666666666666')
+                        
                 
             elif loginn.User_Type == 'Staff' :
                 com2 = Fin_Staff_Details.objects.get(Login_Id = sid)
@@ -23608,7 +23587,7 @@ def Fin_recurring_bill_overview(request,pk):
             'phone':com.company_id.Contact,
             'email':com.company_id.Email
         }
-    return render(request,'company/Fin_Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory})
+    return render(request,'company/Fin_Recurring_Bill_Overview.html',{'allmodules':allmodules,'bill1':bill1,'companyName':companyName,'companyData':companyData,'items':items,'comments':comments,'lastHistory':lastHistory,'com':com,'data':loginn})
 
 def Fin_get_vendor_details(request, vendor_id):
 
@@ -23751,43 +23730,23 @@ def Fin_check_recurring_bill_number(request):
             com = Fin_Company_Details.objects.get(Login_Id = s_id)
         else:
             com = Fin_Staff_Details.objects.get(Login_Id = s_id).company_id        
-        invNo = request.GET['invNum'].upper()
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company = com).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
-            
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
+        RBNo = request.GET['invNum'].upper()
+        nxtRb = ""
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
 
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
-
-        if Fin_Recurring_Bills.objects.filter(company = com, recurring_bill_number__iexact = invNo).exists():
-            return JsonResponse({'status':False, 'message':'Recurring Bill No already Exists.!'})
-        elif nxtInv != "" and invNo != nxtInv:
-            return JsonResponse({'status':False, 'message':'Bill No is not continuous.!'})
+        if Fin_Recurring_Bills.objects.filter(company = com, recurring_bill_number__iexact = RBNo).exists():
+            return JsonResponse({'status':False, 'message':'Recurring Bill No. already Exists.!'})
+        elif nxtRb != "" and RBNo != nxtRb:
+            return JsonResponse({'status':False, 'message':'Recurring Bill No. is not continuous.!'})
         else:
-            return JsonResponse({'status':True, 'message':'Number is okay.!'})
+            return JsonResponse({'status':True})
     else:
        return JsonResponse()
 
@@ -23799,40 +23758,26 @@ def Fin_check_recurring_bill_number_editpage(request,pk):
             com = Fin_Company_Details.objects.get(Login_Id = s_id)
         else:
             com = Fin_Staff_Details.objects.get(Login_Id = s_id).company_id        
-        invNo = request.GET['invNum'].upper()
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company = com).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
-            
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
+        RBNo = request.GET['RbNum'].upper()
+        nxtRb = ""
+        RB = Fin_Recurring_Bills.objects.get(id=pk)
+        curRb = RB.recurring_bill_number
+        print(curRb,'currentrecuringbilllll')
+        print(RBNo,'inout nummm')
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
 
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
-
-        if Fin_Recurring_Bills.objects.filter(company = com, recurring_bill_number__iexact = invNo).exclude(id=pk).exists():
+        if Fin_Recurring_Bills.objects.filter(company = com, recurring_bill_number__iexact = RBNo).exclude(id=pk).exists():
             return JsonResponse({'status':False, 'message':'Recurring Bill No already Exists.!'})
-        elif nxtInv != "" and invNo != nxtInv:
+        elif curRb == RBNo:
+            return JsonResponse({'status':True, 'message':'Number is okay.!'})
+        elif nxtRb != "" and RBNo != nxtRb:
             return JsonResponse({'status':False, 'message':'Bill No is not continuous.!'})
         else:
             return JsonResponse({'status':True, 'message':'Number is okay.!'})
@@ -23937,39 +23882,18 @@ def Fin_recurring_bill_edit_page(request,pk):
         bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.id,type='Sales')
 
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
+        nxtRb = ""
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
             
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
-
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'RB01'
-        
-        
+            nxtRb = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
         if recurringBill:
@@ -23996,37 +23920,18 @@ def Fin_recurring_bill_edit_page(request,pk):
         bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Sales')
 
-        nxtInv = ""
-        lastInv = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
-        if lastInv:
-            inv_no = str(lastInv.recurring_bill_number)
-            numbers = []
-            stri = []
-            for word in inv_no:
-                if word.isdigit():
-                    numbers.append(word)
-                else:
-                    stri.append(word)
+        nxtRb = ""
+        lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
+        if lastRb:
+            rb_no = str(lastRb.recurring_bill_number)
+            prefix = ''.join(filter(str.isalpha, rb_no))  # Extract prefix letters
+            num_part = ''.join(filter(str.isdigit, rb_no))  # Extract numeric part
+            rb_num = int(num_part) + 1 
+            padded_rb_num = str(rb_num).zfill(len(num_part))
+            nxtRb = prefix + padded_rb_num
             
-            num=''
-            for i in numbers:
-                num +=i
-            
-            st = ''
-            for j in stri:
-                st = st+j
-
-            inv_num = int(num)+1
-
-            if num[0] == '0':
-                if inv_num <10:
-                    nxtInv = st+'0'+ str(inv_num)
-                else:
-                    nxtInv = st+ str(inv_num)
-            else:
-                nxtInv = st+ str(inv_num)
         else:
-            nxtInv = 'RB01'
+            nxtRb = 'RB01'
 
         recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
         if recurringBill:
@@ -24039,7 +23944,7 @@ def Fin_recurring_bill_edit_page(request,pk):
                         'referenceID': 1
                     }
 
-    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'companyDetails':companyDetails,'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist_p,'list_s':pricelist_s,'bank':bank,'nxtRB':nxtInv})
+    return render(request,'company/Fin_Recurring_Bill_Edit_Page.html',{'companyDetails':companyDetails,'allmodules':allmodules,'vendors':vendors,'pTerms':payment_terms,'items':items,'customers':customers,'refData':data,'accounts':acc,'units':units,'RepeatEvery':repeat,'recur':recur,'itemTable':itemTable,'list':pricelist_p,'list_s':pricelist_s,'bank':bank,'nxtRB':nxtRb,'com':com,'data':loginn})
 
 def Fin_recurring_bill_edit_save(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
@@ -24053,6 +23958,12 @@ def Fin_recurring_bill_edit_save(request,pk):
         recur.company_payment_terms_id = request.POST['payment_terms']
         recur.purchase_order_number = request.POST['PurchaseOrderNo']
         recur.payment_method = request.POST['paymentType']
+        recur.vendor_name = request.POST['vendorName']
+        recur.vendor_email = request.POST['vendorEmail']
+        recur.vendor_billing_address = request.POST['venaddress']
+        recur.vendor_gst_type = request.POST['vendorGstType']
+        recur.vendor_gst_number = request.POST['vendorGstNumber']
+        recur.vendor_place_of_supply = request.POST['sourceOfSupply']
 
         if request.POST['RecurringBillNo']:
             recur.recurring_bill_number = request.POST['RecurringBillNo']
@@ -24072,6 +23983,12 @@ def Fin_recurring_bill_edit_save(request,pk):
         
         
         recur.customer_id = request.POST['Customer']
+        recur.customer_name = request.POST['customerName']
+        recur.customer_email = request.POST['customerEmail']
+        recur.customer_billing_address = request.POST['cusaddress']
+        recur.customer_gst_type = request.POST['GSTType']
+        recur.customer_gst_number = request.POST['customerGstNumber']
+        recur.customer_place_of_supply = request.POST['placeOfSupply']
         recur.description = request.POST['Note']
 
         recur.sub_total = request.POST['subTotal']
@@ -24079,15 +23996,11 @@ def Fin_recurring_bill_edit_save(request,pk):
         source = request.POST['placeOfSupply']
         place = request.POST['companyPlace']
 
-        if source == 'Kerala' and place == 'Kerala':
-            recur.taxAmount_igst = None
-            recur.cgst = request.POST['cgst']
-            recur.sgst = request.POST['sgst']
-        else:
-            recur.taxAmount_igst = request.POST['taxAmount']
-            recur.cgst = None
-            recur.sgst = None
-
+        
+        recur.taxAmount_igst = request.POST['taxAmount']
+        recur.cgst = request.POST['cgst']
+        recur.sgst = request.POST['sgst']
+        
         recur.shipping_charge = request.POST['shippingCharge'] 
         recur.adjustment = request.POST['adjustment'] 
         recur.grand_total = request.POST['grandTotal'] 
@@ -24598,7 +24511,7 @@ def Fin_recurring_bill_history(request,pk):
         com = Fin_Staff_Details.objects.get(Login_Id = sid)
         allmodules = Fin_Modules_List.objects.get(company_id = com.company_id_id)
 
-    return render(request,'company/Fin_Recurring_Bill_History.html',{'history':history,'RB':RB,'allmodules':allmodules})
+    return render(request,'company/Fin_Recurring_Bill_History.html',{'history':history,'RB':RB,'allmodules':allmodules,'com':com,'data':loginn})
 
 def Fin_recurring_bill_convert(request,pk):
     recurBill = Fin_Recurring_Bills.objects.get(id=pk)
@@ -24700,7 +24613,6 @@ def Fin_get_pricelist_details(request,price_id,items_id):
             perc = int(plist.percentage)
             return JsonResponse({'opr':'DOWN','perc':perc
             })
-
 
 
 

@@ -693,8 +693,17 @@ urlpatterns = [
     path('Fin_check_recurring_bill_number_editpage/<int:pk>',views.Fin_check_recurring_bill_number_editpage,name='Fin_check_recurring_bill_number_editpage'),
     path('Fin_check_hsn_RB',views.Fin_check_hsn_RB,name="Fin_check_hsn_RB"),
     path('Fin_get_pricelist_details/<int:price_id>/<int:items_id>/',views.Fin_get_pricelist_details,name='Fin_get_pricelist_details'),
-
     path('Fin_get_bank_details/<str:bankNum>',views.Fin_get_bank_details,name="Fin_get_bank_details"),
+
+    
+    # path('abe',views.abe,name="abe"),
+    # path('abe',views.abe,name="abe"),
+    # path('abe',views.abe,name="abe"),
+    # path('abe',views.abe,name="abe"),
+
+
+
+
     # harikrishnankb end ------------
     
     

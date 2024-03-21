@@ -329,7 +329,7 @@ footer p {
         <!-- modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
-              <div class="modal-content">
+              <div class="modal-content" style="background-color: #213b52;">
                 <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">Add File</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -342,8 +342,8 @@ footer p {
                         <input type="file" class="form-control" name="attachment">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="fileUploadInput" data-pk="{{ bill1.id }}" >Save</button>
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                        <button type="submit" class="btn btn-secondary" id="fileUploadInput" data-pk="{{ bill1.id }}" >Save</button>
                     </div>
                 </form>
                 <script>
@@ -586,13 +586,13 @@ footer p {
                             <hr class="my-4">
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-4 mt-3">
-                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Billing Details</h5>
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Recurring Bill Details</h5>
                                 </div>
                                 <div class="col-md-4 mt-3"></div>
                                 <div class="col-md-4 mt-3"></div>
 
                                 <div class="col-md-3 mt-3">
-                                    <h6 class="mb-0">Bill No</h6>
+                                    <h6 class="mb-0">Recurring Bill No</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
                                     <p class="mb-0 text-right">{{ bill1.recurring_bill_number }}</p>
@@ -778,7 +778,7 @@ footer p {
                                         </div>
                                         <div class="row mb-4 d-flex justify-content-start align-items-center">
                                             <div class="col-md-3 mt-3 ">
-                                                <h6 class="mb-0">Tax Amount</h6>
+                                                <h6 class="mb-0">Tax Rate</h6>
                                             </div>
                                             <div class="col-md-3 mt-3">
                                                 <p class="mb-0 text-right">{{j.tax_rate}} %</p>
@@ -823,22 +823,23 @@ footer p {
                                 <h6>{{ bill1.grand_total }}</h6>
                             </div>
                             
-                            {%if bill1.taxAmount_igst%}
-                            <div class="d-flex justify-content-between mb-4">
-                                <h5 class="">IGST</h5>
-                                <h6>{{ bill1.taxAmount_igst }}</h6>
-                            </div>
-                            {%endif%}
-                            {%if bill1.cgst%}
+                            {%if bill1.vendor_place_of_supply == 'Kerala' and bill1.company.State == 'Kerala' %}
+                                
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">CGST</h5>
                                 <h6>{{ bill1.cgst }}</h6>
                             </div>
-                            {%endif%}
-                            {%if bill1.sgst%}
+                            
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">SGST</h5>
                                 <h6>{{ bill1.sgst }}</h6>
+                            </div>
+
+                            {% else %}
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <h5 class="">IGST</h5>
+                                <h6>{{ bill1.taxAmount_igst }}</h6>
                             </div>
                             {%endif%}
                             <div class="d-flex justify-content-between mb-4">
@@ -947,6 +948,7 @@ footer p {
                                         </div>
                                         <div class="col-5">
                                             <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                            <p style="color:#000">Payment Type : <span>{{ bill1.payment_method }}</span></p>
                                             <!-- <p style="color:#000">End Date : <span> {{ bill1.end_date}}</span></p> -->
                                            
                                         </div>
@@ -1004,23 +1006,21 @@ footer p {
                                                 <td style="color:black">{{bill1.discount}}</td>
                                             </tr>
                                             {% endif %} -->
-                                            {% if bill1.taxAmount_igst != 0 %}
-                                            <tr>
-                                                <td style="color:black">IGST :</td>
-                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
-                                            </tr>
-                                            {% endif %}
-                                            {% if bill1.cgst != 0 %}
+                                            {%if bill1.vendor_place_of_supply == 'Kerala' and bill1.company.State == 'Kerala' %}
+                                            
                                             <tr>
                                                 <td style="color:black">CGST :</td>
                                                 <td style="color:black">{{bill1.cgst}}</td>
                                             </tr>
-                                            {% endif %}
                                             
-                                            {% if bill1.sgst != 0 %}
                                             <tr>
                                                 <td style="color:black">SGST :</td>
                                                 <td style="color:black">{{bill1.sgst}}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td style="color:black">IGST :</td>
+                                                <td style="color:black">{{bill1.taxAmount_igst}}</td>
                                             </tr>
                                             {% endif %}
                                             <tr>
@@ -1144,6 +1144,10 @@ footer p {
                                       
                                   </div>
                               </section>
+                                <section >
+                                <p style="color:#000">Date : <span>{{ bill1.date | date:'d-m-Y' }}</span></p>
+                                <p style="color:#000">Payment Type : <span>{{ bill1.payment_method }}</span></p>
+                                </section>
                   
                               <section class="product-area mt-2">
                                   <table class="table table-hover table-bordered  template2table" id="table2">
@@ -1200,29 +1204,26 @@ footer p {
                                                       <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
                                                   </tr>
                                                   
-                                                  {% if bill1.taxAmount_igst != 0 %}
-                                                  <tr >
-                                                      <td style="color: #000;">IGST</td>
-                                                      <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
-                                                  </tr>
-                                                  {% endif %}
-                                                  {% if bill1.cgst != 0 %}
+                                                  {%if bill1.vendor_place_of_supply == 'Kerala' and bill1.company.State == 'Kerala' %}
+                                                  
                                                   <tr>
-                                                      <td style="color: #000;">CGST</td>
-                                                      <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
-                                                      
-                                                  </tr>
-                                                  {% endif %}
-                                                  {% if bill1.sgst != 0 %}
-                                                  <tr>
-                                                      <td style="color: #000;">SGST</td>
-                                                      <td style="color: #000;">:</td>
-                                                      <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
-                                                  </tr>
-                                                  {% endif %}
+                                                    <td style="color: #000;">CGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="color: #000;">SGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
+                                                </tr>
+                                                  {% else %}
                                                   <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
+                                                </tr>
+                                                  {% endif %}
+                                                <tr>
                                                     <td style="color: #000;">Tax Amount</td>
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
@@ -1280,18 +1281,20 @@ footer p {
                                 </div>
                                 
                                 <div class="row col-12">
-                                    <div class="col-md-1"></div>
-                                    <div class="col-5">
-                                        <br><br><br>
-                                        <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
-                                         {{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
+                                    <div class="col-1"></div>
+                                    <div class="col-4">
+                                        <br><br><br><br>
+                                        <p style="color:black;font-size: large;"> <span style=" font-weight: bold;">To: </span><br>
+                                         <span >
+                                        {{bill1.customer.first_name}} {{bill1.customer.last_name}}<br>
                                         {{bill1.customer.billing_street|linebreaksbr }}
                                         {{bill1.customer.billing_city }} <br>
                                         {{bill1.customer.billing_state }},{{bill1.customer.billing_pincode }} <br>
                                         {{bill1.customer.billing_country }} <br>
+                                         </span>
                                         </p>
                                     </div>
-                                    <div class="col-md-1"></div>
+                                    <div class="col-1"></div>
                                     <div class="col-5">
                                         <br><br><br>
                                         <table class="table table-borderless">
@@ -1301,18 +1304,17 @@ footer p {
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
                                                 </tr>
-                                                {%if bill1.recurring_bill_number %}
-                                                <tr >
-                                                    <td style="color: #000; font-weight: bold;">Order No</td>
-                                                    <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{ bill1.recurring_bill_number }}</td>
-                                                </tr>
-                                                {% endif %}
                                                 
                                                 <tr >
-                                                    <td style="color: #000; font-weight: bold;">Recurring Bill Date</td>
+                                                    <td style="color: #000; font-weight: bold;">Date</td>
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{bill1.date | date:'d-m-Y'}}<td>
+                                                </tr>
+
+                                                <tr >
+                                                    <td style="color: #000; font-weight: bold;">Payment Type</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{ bill1.payment_method }}</td>
                                                 </tr>
  
                                                 <!-- <tr>
@@ -1369,22 +1371,19 @@ footer p {
                                                     <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
                                                 </tr>
                                                 
-                                                {% if bill1.taxAmount_igst != 0 %}
+                                                {%if bill1.cgst is None or bill1.cgst == ''  %}
                                                 <tr >
                                                     <td style="color: #000;">IGST</td>
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                 </tr>
-                                                {% endif %}
-                                                {% if bill1.cgst != 0 %}
+                                                {% else %}
                                                 <tr>
                                                     <td style="color: #000;">CGST</td>
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{bill1.cgst}}</td>
                                                     
                                                 </tr>
-                                                {% endif %}
-                                                {% if bill1.sgst != 0 %}
                                                 <tr>
                                                     <td style="color: #000;">SGST</td>
                                                     <td style="color: #000;">:</td>
@@ -1548,16 +1547,8 @@ footer p {
                                             {{ bill1.sub_total }}
                                         </div>
                                     </div>
-                                    {% if bill1.taxAmount_igst != 0 %}
-                                    <div class="row  mr-2 ml-2">
-                                        <div class="col-md-5 text-left " style=" color: black;">
-                                            IGST
-                                        </div>
-                                        <div class="col-md-7 text-right " style="color: black;">
-                                            {{ bill1.taxAmount_igst }}
-                                        </div>
-                                    </div>
-                                    {% else %}
+                                    {%if bill1.vendor_place_of_supply == 'Kerala' and bill1.company.State == 'Kerala' %}
+                                    
                                     <div class="row  mr-2 ml-2">
                                         <div class="col-md-5 text-left" style=" color: black;">
                                             CGST
@@ -1572,6 +1563,15 @@ footer p {
                                         </div>
                                         <div class="col-md-7 text-right " style="color: black;">
                                             {{ bill1.sgst }}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="row  mr-2 ml-2">
+                                        <div class="col-md-5 text-left " style=" color: black;">
+                                            IGST
+                                        </div>
+                                        <div class="col-md-7 text-right " style="color: black;">
+                                            {{ bill1.taxAmount_igst }}
                                         </div>
                                     </div>
                                     {% endif %}
@@ -1675,7 +1675,7 @@ footer p {
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-outline-secondary text-grey" >Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
                 </div>
                 </form>
                 

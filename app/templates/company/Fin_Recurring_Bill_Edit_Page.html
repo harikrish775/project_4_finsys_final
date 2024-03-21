@@ -121,6 +121,48 @@ function goBack() {
 
 
     <div class="page-content" id="body">
+        <table id="table2" style="display: none;">
+            <tbody>
+                <tr class="item-row">
+                    <td></td>
+                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#itemsModal">+</button></div></td>
+                    <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
+                    <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
+                    <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
+                    <td class="border gst" style="min-width: 150px;display: none;" id="gst">
+                        <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
+                            <option value="0">GST 0 (0%)</option>
+                            <option value="3">GST 3 (3%)</option>
+                            <option value="5">GST 5 (5%)</option>
+                            <option value="12">GST 12 (12%)</option>
+                            <option value="18">GST 18 (18%)</option>
+                            <option value="28">GST 28 (28%)</option>
+                        </select>
+                    </td>
+                    <td class="border igst" style="min-width: 150px;display: none;" id="igst">
+                        <select name="igsttaxrate[]" id="IGSTcolumn" onchange="initializeCalculations()" class="form-control item-igst_tax" placeholder="Tax Rate">
+                            <option value="0">IGST 0 (0%)</option>
+                            <option value="3">IGST 3 (3%)</option>
+                            <option value="5">IGST 5 (5%)</option>
+                            <option value="12">IGST 12 (12%)</option>
+                            <option value="18">IGST 18 (18%)</option>
+                            <option value="28">IGST 28 (28%)</option>
+                        </select>
+                    </td>
+                    <td class="border GSTtext" style="min-width: 150px;" id="GSTtext">
+                        <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
+                            <option value="">Select Tax</option>
+                        </select> -->
+                        <input class="form-control " type="text" placeholder="Tax Rate" readonly>
+                        <!-- <small style="color: crimson;">Select Vendor & Customer</small> -->
+                    </td>
+                    <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
+                    <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
+                    <td class="border" style="min-width: 150px;" hidden><input type="text" class="form-control item-totaltax" id="taxTotal" value="0" ></td>
+                    <td class="border" ><br> <p class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close w-80" onclick="removeRow(this)" id="minus"></p></td>
+                </tr>
+            </tbody>
+        </table>  
         <span class="d-flex justify-content-end p-2" style="cursor: pointer;"  onclick="goBack()"><i class="fa fa-times-circle text-white" style="font-size: 1.2rem;"></i></span>
         <form action="{% url 'Fin_recurring_bill_edit_save' recur.id %}" id="rBillForm" enctype="multipart/form-data" method="post">
             {% csrf_token %}
@@ -166,7 +208,7 @@ function goBack() {
 
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" value="{{recur.vendor.id}}" class="form-control dropdown-toggle" name="select_vendor" id="select_vendor" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input required type="text" autocomplete="off" style="text-transform: capitalize;" value="{{recur.vendor.first_name}} {{recur.vendor.last_name}}" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search Vendors" aria-haspopup="true" aria-expanded="false">
+                                                                    <input required name="vendorName" type="text" autocomplete="off" style="text-transform: capitalize;" value="{{recur.vendor_name}}" class="form-control dropdown-toggle" id="select_vendor2" data-toggle="dropdown" placeholder="Search Vendors" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu vendorDropdown" style="width:280px;">
                                                                             {% for i in vendors %}
@@ -265,17 +307,17 @@ function goBack() {
                                                             </script>
                                                             <div class="form-group col-md">
                                                                 <label class="" >Vendor Email</label>
-                                                                <input readonly required value="{{recur.vendor.email}}" type="vendorEmail" placeholder="Vendor Email" id="vendorEmail" class="form-control">
+                                                                <input readonly name="vendorEmail" required value="{{recur.vendor_email}}" type="vendorEmail" placeholder="Vendor Email" id="vendorEmail" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="form-group col-md-6">
-                                                                <label class="">GST Type (Vendor)</label>
-                                                                <input readonly type="text" value="{{recur.vendor.gst_type}}" placeholder="Vendor GST Type" id="vendorGST" class="form-control">
+                                                                <label class="">GST Type </label>
+                                                                <input readonly name="vendorGstType" type="text" value="{{recur.vendor_gst_type}}" placeholder="Vendor GST Type" id="vendorGST" class="form-control">
                                                             </div>
                                                             <div id="vendorGstinDiv" {% if recur.vendor.gstin %} {% else %} style="display: none;" {% endif %}  class="form-group col-md">
                                                                 <label class="">GST Number</label>
-                                                                <input readonly type="text" value="{{recur.vendor.gstin}}" placeholder="Vendor GST Number" id="vendorGSTIN"  class="form-control">
+                                                                <input readonly name="vendorGstNumber" type="text" value="{{recur.vendor_gst_number}}" placeholder="Vendor GST Number" id="vendorGSTIN"  class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -286,55 +328,51 @@ function goBack() {
                                                     <div class="col-md-3">
                                                         <label class=" ">Place Of Supply</label>
                                                         <select aria-placeholder="Select Place of Supply" required class="form-control source_of_supply_vendor" name="sourceOfSupply" id="sourceOFSupply" >
-                                                            <option {% if recur.vendor.place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Andaman and Nicobar Islands' %}selected{% endif %} value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Andhra Pradesh' %}selected{% endif %} value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Arunachal Pradesh' %}selected{% endif %} value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Assam' %}selected{% endif %} value="Assam">Assam</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Bihar' %}selected{% endif %} value="Bihar">Bihar</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Chandigarh' %}selected{% endif %} value="Chandigarh">Chandigarh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Chhattisgarh' %}selected{% endif %} value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Dadra and Nagar Haveli' %}selected{% endif %} value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Daman and Diu' %}selected{% endif %} value="Daman and Diu">Daman and Diu</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Delhi' %}selected{% endif %} value="Delhi">Delhi</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Goa' %}selected{% endif %} value="Goa">Goa</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Gujarat' %}selected{% endif %} value="Gujarat">Gujarat</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Haryana' %}selected{% endif %} value="Haryana">Haryana</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Himachal Pradesh' %}selected{% endif %} value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Jammu and Kashmir' %}selected{% endif %} value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Jharkhand' %}selected{% endif %} value="Jharkhand">Jharkhand</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Karnataka' %}selected{% endif %} value="Karnataka">Karnataka</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Kerala' %}selected{% endif %} value="Kerala">Kerala</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Ladakh' %}selected{% endif %} value="Ladakh">Ladakh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Lakshadweep' %}selected{% endif %} value="Lakshadweep">Lakshadweep</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Madhya Pradesh' %}selected{% endif %} value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Maharashtra' %}selected{% endif %} value="Maharashtra">Maharashtra</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Manipur' %}selected{% endif %} value="Manipur">Manipur</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Meghalaya' %}selected{% endif %} value="Meghalaya">Meghalaya</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Mizoram' %}selected{% endif %} value="Mizoram">Mizoram</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Nagaland' %}selected{% endif %} value="Nagaland">Nagaland</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Odisha' %}selected{% endif %} value="Odisha">Odisha</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Puducherry' %}selected{% endif %} value="Puducherry">Puducherry</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Punjab' %}selected{% endif %} value="Punjab">Punjab</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Rajasthan' %}selected{% endif %} value="Rajasthan">Rajasthan</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Sikkim' %}selected{% endif %} value="Sikkim">Sikkim</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Tamil Nadu' %}selected{% endif %} value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Telangana' %}selected{% endif %} value="Telangana">Telangana</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Tripura' %}selected{% endif %} value="Tripura">Tripura</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Uttar Pradesh' %}selected{% endif %} value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Uttarakhand' %}selected{% endif %} value="Uttarakhand">Uttarakhand</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'West Bengal' %}selected{% endif %} value="West Bengal">West Bengal</option>
-                                                            <option {% if recur.vendor.place_of_supply == 'Other Territory' %}selected{% endif %} value="Other Territory">Other Territory</option>
+                                                            <option {% if recur.vendor_place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Andaman and Nicobar Islands' %}selected{% endif %} value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Andhra Pradesh' %}selected{% endif %} value="Andhra Pradesh">Andhra Pradesh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Arunachal Pradesh' %}selected{% endif %} value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Assam' %}selected{% endif %} value="Assam">Assam</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Bihar' %}selected{% endif %} value="Bihar">Bihar</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Chandigarh' %}selected{% endif %} value="Chandigarh">Chandigarh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Chhattisgarh' %}selected{% endif %} value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Dadra and Nagar Haveli' %}selected{% endif %} value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Daman and Diu' %}selected{% endif %} value="Daman and Diu">Daman and Diu</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Delhi' %}selected{% endif %} value="Delhi">Delhi</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Goa' %}selected{% endif %} value="Goa">Goa</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Gujarat' %}selected{% endif %} value="Gujarat">Gujarat</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Haryana' %}selected{% endif %} value="Haryana">Haryana</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Himachal Pradesh' %}selected{% endif %} value="Himachal Pradesh">Himachal Pradesh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Jammu and Kashmir' %}selected{% endif %} value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Jharkhand' %}selected{% endif %} value="Jharkhand">Jharkhand</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Karnataka' %}selected{% endif %} value="Karnataka">Karnataka</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Kerala' %}selected{% endif %} value="Kerala">Kerala</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Ladakh' %}selected{% endif %} value="Ladakh">Ladakh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Lakshadweep' %}selected{% endif %} value="Lakshadweep">Lakshadweep</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Madhya Pradesh' %}selected{% endif %} value="Madhya Pradesh">Madhya Pradesh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Maharashtra' %}selected{% endif %} value="Maharashtra">Maharashtra</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Manipur' %}selected{% endif %} value="Manipur">Manipur</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Meghalaya' %}selected{% endif %} value="Meghalaya">Meghalaya</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Mizoram' %}selected{% endif %} value="Mizoram">Mizoram</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Nagaland' %}selected{% endif %} value="Nagaland">Nagaland</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Odisha' %}selected{% endif %} value="Odisha">Odisha</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Puducherry' %}selected{% endif %} value="Puducherry">Puducherry</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Punjab' %}selected{% endif %} value="Punjab">Punjab</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Rajasthan' %}selected{% endif %} value="Rajasthan">Rajasthan</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Sikkim' %}selected{% endif %} value="Sikkim">Sikkim</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Tamil Nadu' %}selected{% endif %} value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Telangana' %}selected{% endif %} value="Telangana">Telangana</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Tripura' %}selected{% endif %} value="Tripura">Tripura</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Uttar Predesh' %}selected{% endif %} value="Uttar Pradesh">Uttar Pradesh</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Uttarakhand' %}selected{% endif %} value="Uttarakhand">Uttarakhand</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'West Bengal' %}selected{% endif %} value="West Bengal">West Bengal</option>
+                                                            <option {% if recur.vendor_place_of_supply == 'Other Territory' %}selected{% endif %} value="Other Territory">Other Territory</option>
                                                             
                                                         </select>
                                                     </div>
                                                     <div class="form-group col-md mb-3">
                                                         <label class="">Address</label>
-                                                        <textarea readonly required name="address" id="vendorAddress" placeholder="Vendor Address" cols="10" rows="5" class="form-control">{{recur.vendor.billing_street}}
-{{recur.vendor.billing_city}},{{recur.vendor.billing_state}}
-{{recur.vendor.billing_country}}
-{{recur.vendor.billing_pincode}}
-                                                        </textarea>
+                                                        <textarea readonly required name="venaddress" id="vendorAddress" placeholder="Vendor Address" cols="10" rows="5" class="form-control">{{recur.vendor_billing_address}}</textarea>
                                                     </div>
                                                 </div>
 
@@ -388,21 +426,21 @@ function goBack() {
                                                 </div>
 
                                                 <br><br>
-                                                <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Bill Details</h5> </div>
+                                                <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Recurring Bill Details</h5> </div>
                                                 <br>
 
                                                 <div class="row m-md-2">
                                                     <div class="col-md mb-3">
                                                         <label for="">Recurring Bill No.</label> <small style="color: orangered;" id="recuringErr"></small>
-                                                        <input  type="text" value="{{recur.recurring_bill_number}}" required class="form-control" placeholder="{{nxtRB}}" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
+                                                        <input style="text-transform: uppercase;"  type="text" value="{{recur.recurring_bill_number}}" required class="form-control" placeholder="{{nxtRB}}" name="RecurringBillNo" id="RecurringBillNo" pattern="[A-Za-z]{2}\d*">
                                                         <script>
                                                             $(document).on('change','#RecurringBillNo', function() {
                                                             $('#recuringErr').text('');
-                                                            var inv_num = $(this).val();
+                                                            var rb_num = $(this).val();
 
-                                                            if(inv_num != ''){
+                                                            if(rb_num != ''){
                                                                 var pattern = /^rb\d+$/i;
-                                                                if (!pattern.test(inv_num)) {
+                                                                if (!pattern.test(rb_num)) {
                                                                     alert("Wrong Format. Please use the code 'RB' followed by digits");
                                                                     $(this).val('');
                                                                     return;
@@ -410,12 +448,12 @@ function goBack() {
                                                             }
                                                             
                                                             
-                                                            if(inv_num != ""){
+                                                            if(rb_num != ""){
                                                                 $.ajax({
                                                                     type: "GET",
-                                                                    url: "{% url 'Fin_check_recurring_bill_number' %}",
+                                                                    url: "{% url 'Fin_check_recurring_bill_number_editpage' recur.id %}",
                                                                     data: {
-                                                                        'invNum' : inv_num,
+                                                                        'RbNum' : rb_num,
                                                                     },
                                                                     success: function (response) {
                                                                         if (response.status){
@@ -488,61 +526,7 @@ function goBack() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row m-md-2">
-                                                    <input class="ml-3" id="priceListCheckbox" name="priceListCheckbox" {% if recur.pricelist_id != Null %} checked {% endif %} type="checkbox">&nbsp; Price List
-                                                </div>
-                                                <div class="row m-md-2">
-                                                    <div class="col-md-3 mb-3" id="priceListDiv" {% if recur.pricelist_id == Null %} style="display: none;" {% endif %} >
-                                                        <label for="">Price List</label>
-                                                        <select name="priceListRB" id="priceListRB" class="form-control">
-                                                            <option value="" selected>Choose</option>
-                                                            {% for l in list %}
-                                                            {% if recur.pricelist_id == l.id %}
-                                                            <option value="{{l.id}}" selected>{{l.name}}</option>
-                                                            {% else %}
-                                                            <option value="{{l.id}}">{{l.name}}</option>
-                                                            {% endif %}
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
                                                 
-                                                <script>
-                                                    var priceListCheckbox = document.getElementById("priceListCheckbox");
-                                                    var priceListDiv = document.getElementById("priceListDiv");
-                                                    var priceListRB = document.getElementById("priceListRB");
-                                                    var previousSelection = document.getElementById("priceListRB").value;
-                                                
-                                                    // Add an event listener to the checkbox to toggle the visibility of the select element
-                                                    priceListCheckbox.addEventListener("click", function() {
-                                                        if (this.checked) {
-                                                            // If the checkbox is checked, display the select element
-                                                            priceListDiv.style.display = "block";
-                                                            priceListRB.required = true;
-
-                                                            if (previousSelection !== null) {
-                                                            var option = document.querySelector("#priceListRB option[value='" + previousSelection + "']");
-                                                            if (option) {
-                                                                option.selected = true; // Select the previous option
-                                                                option.dispatchEvent(new Event('click')); // Dispatch the click event
-                                                                $("#itemTable .item-select").trigger("change");
-                                                            }
-                                                        }
-                                                        } else{
-                                                            // If the checkbox is unchecked, hide the select element
-                                                            priceListDiv.style.display = "none";
-                                                            priceListRB.required = false;
-
-                                                            // Trigger click event and select first option
-                                                            var firstOption = document.querySelector("#priceListRB option:first-child");
-                                                            if (firstOption) {
-                                                                firstOption.selected = true; // Select the first option
-                                                                firstOption.dispatchEvent(new Event('click')); // Dispatch the click event
-                                                                $("#itemTable .item-select").trigger("change");
-                                                            }
-                                                        }
-                                                    });
-                                                </script>
 
                                                 <br><br>
                                                 <div class="border-bottom pb-4 m-md-2"><h5 class="ml-4 ">Customer Details</h5> </div>
@@ -555,7 +539,7 @@ function goBack() {
                                                                 <label for="">Customer</label>
                                                                 <div class="input-group">
                                                                     <input type="text" style="display: none;" value="{{recur.customer.id}}" class="form-control dropdown-toggle" name="Customer" id="SelectCustomer" data-toggle="dropdown" placeholder="Search" aria-haspopup="true" aria-expanded="false">
-                                                                    <input type="text" style="text-transform: capitalize;" autocomplete="off" value="{{recur.customer.first_name}} {{recur.customer.last_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
+                                                                    <input type="text" name="customerName" style="text-transform: capitalize;" autocomplete="off" value="{{recur.customer_name}}" required class="form-control dropdown-toggle" id="SelectCustomer2" data-toggle="dropdown" placeholder="Search Customer" aria-haspopup="true" aria-expanded="false">
                                                                     <div class="input-group-append">
                                                                         <div class="dropdown-menu customerDropdown" style="width:380px;">
                                                                             {% for i in customers %}
@@ -631,28 +615,24 @@ function goBack() {
                                                             </div>
                                                             <div class="col-md mb-3">
                                                                 <label for="">Email</label>
-                                                                <input readonly type="email" value="{{recur.customer.email}}" placeholder="customer email" required class="form-control" name="customerEmail" id="customerEmail">
+                                                                <input readonly type="email" value="{{recur.customer_email}}" placeholder="customer email" required class="form-control" name="customerEmail" id="customerEmail">
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-md-6 mb-3 mt-2">
                                                                 <label for="">GST Type</label>
-                                                                <input readonly type="text" value="{{recur.customer.gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
+                                                                <input readonly type="text" value="{{recur.customer_gst_type}}" placeholder="customer gst type" name="GSTType" id="customerGST" class="form-control">                                                        
                                                             </div>
                                                             <div class="col-md-6 mb-3 mt-2" id="customerGstinDiv" style="display: none;">
                                                                 <label class="">GST Number</label>
-                                                                <input readonly type="text" value="{{recur.customer.gstin}}" placeholder="customer gst number" id="customerGSTIN"  class="form-control">
+                                                                <input readonly name="customerGstNumber" type="text" value="{{recur.customer_gst_number}}" placeholder="customer gst number" id="customerGSTIN"  class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col">
                                                         <div class="col-md">
                                                             <label for="">Address </label>
-                                                            <textarea readonly name="cusaddress" id="customerAddress" placeholder="Customer Address " cols="10" rows="5" class="form-control">{{recur.customer.billing_street}}, {{recur.customer.billing_city}},
-{{recur.customer.billing_state}}, {{recur.customer.billing_country}}
-{{recur.customer.billing_pincode}}
-
-                                                            </textarea>
+                                                            <textarea readonly name="cusaddress" id="customerAddress" placeholder="Customer Address " cols="10" rows="5" class="form-control">{{recur.customer_billing_address}}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -660,45 +640,45 @@ function goBack() {
                                                     <div class="col-md-4 mb-3">
                                                         <label for="">Place Of Supply</label>
                                                         <select name="placeOfSupply" id="PlaceOfSupplyCustomer" class="form-control place_of_supply_customer">
-                                                            <option {% if recur.customer.place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Andaman and Nicobar Islands' %}selected{% endif %} value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Andhra Pradesh' %}selected{% endif %} value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Arunachal Pradesh' %}selected{% endif %} value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Assam' %}selected{% endif %} value="Assam">Assam</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Bihar' %}selected{% endif %} value="Bihar">Bihar</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Chandigarh' %}selected{% endif %} value="Chandigarh">Chandigarh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Chhattisgarh' %}selected{% endif %} value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Dadra and Nagar Haveli' %}selected{% endif %} value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Daman and Diu' %}selected{% endif %} value="Daman and Diu">Daman and Diu</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Delhi' %}selected{% endif %} value="Delhi">Delhi</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Goa' %}selected{% endif %} value="Goa">Goa</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Gujarat' %}selected{% endif %} value="Gujarat">Gujarat</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Haryana' %}selected{% endif %} value="Haryana">Haryana</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Himachal Pradesh' %}selected{% endif %} value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Jammu and Kashmir' %}selected{% endif %} value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Jharkhand' %}selected{% endif %} value="Jharkhand">Jharkhand</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Karnataka' %}selected{% endif %} value="Karnataka">Karnataka</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Kerala' %}selected{% endif %} value="Kerala">Kerala</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Ladakh' %}selected{% endif %} value="Ladakh">Ladakh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Lakshadweep' %}selected{% endif %} value="Lakshadweep">Lakshadweep</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Madhya Pradesh' %}selected{% endif %} value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Maharashtra' %}selected{% endif %} value="Maharashtra">Maharashtra</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Manipur' %}selected{% endif %} value="Manipur">Manipur</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Meghalaya' %}selected{% endif %} value="Meghalaya">Meghalaya</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Mizoram' %}selected{% endif %} value="Mizoram">Mizoram</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Nagaland' %}selected{% endif %} value="Nagaland">Nagaland</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Odisha' %}selected{% endif %} value="Odisha">Odisha</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Puducherry' %}selected{% endif %} value="Puducherry">Puducherry</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Punjab' %}selected{% endif %} value="Punjab">Punjab</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Rajasthan' %}selected{% endif %} value="Rajasthan">Rajasthan</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Sikkim' %}selected{% endif %} value="Sikkim">Sikkim</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Tamil Nadu' %}selected{% endif %} value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Telangana' %}selected{% endif %} value="Telangana">Telangana</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Tripura' %}selected{% endif %} value="Tripura">Tripura</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Uttar Pradesh' %}selected{% endif %} value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Uttarakhand' %}selected{% endif %} value="Uttarakhand">Uttarakhand</option>
-                                                            <option {% if recur.customer.place_of_supply == 'West Bengal' %}selected{% endif %} value="West Bengal">West Bengal</option>
-                                                            <option {% if recur.customer.place_of_supply == 'Other Territory' %}selected{% endif %} value="Other Territory">Other Territory</option>
+                                                            <option {% if recur.customer_place_of_supply == '' %}selected{% endif %} value="" class="text-grey">Select Place of Supply</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Andaman and Nicobar Islands' %}selected{% endif %} value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Andhra Pradesh' %}selected{% endif %} value="Andhra Pradesh">Andhra Pradesh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Arunachal Pradesh' %}selected{% endif %} value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Assam' %}selected{% endif %} value="Assam">Assam</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Bihar' %}selected{% endif %} value="Bihar">Bihar</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Chandigarh' %}selected{% endif %} value="Chandigarh">Chandigarh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Chhattisgarh' %}selected{% endif %} value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Dadra and Nagar Haveli' %}selected{% endif %} value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Daman and Diu' %}selected{% endif %} value="Daman and Diu">Daman and Diu</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Delhi' %}selected{% endif %} value="Delhi">Delhi</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Goa' %}selected{% endif %} value="Goa">Goa</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Gujarat' %}selected{% endif %} value="Gujarat">Gujarat</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Haryana' %}selected{% endif %} value="Haryana">Haryana</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Himachal Pradesh' %}selected{% endif %} value="Himachal Pradesh">Himachal Pradesh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Jammu and Kashmir' %}selected{% endif %} value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Jharkhand' %}selected{% endif %} value="Jharkhand">Jharkhand</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Karnataka' %}selected{% endif %} value="Karnataka">Karnataka</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Kerala' %}selected{% endif %} value="Kerala">Kerala</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Ladakh' %}selected{% endif %} value="Ladakh">Ladakh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Lakshadweep' %}selected{% endif %} value="Lakshadweep">Lakshadweep</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Madhya Pradesh' %}selected{% endif %} value="Madhya Pradesh">Madhya Pradesh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Maharashtra' %}selected{% endif %} value="Maharashtra">Maharashtra</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Manipur' %}selected{% endif %} value="Manipur">Manipur</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Meghalaya' %}selected{% endif %} value="Meghalaya">Meghalaya</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Mizoram' %}selected{% endif %} value="Mizoram">Mizoram</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Nagaland' %}selected{% endif %} value="Nagaland">Nagaland</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Odisha' %}selected{% endif %} value="Odisha">Odisha</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Puducherry' %}selected{% endif %} value="Puducherry">Puducherry</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Punjab' %}selected{% endif %} value="Punjab">Punjab</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Rajasthan' %}selected{% endif %} value="Rajasthan">Rajasthan</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Sikkim' %}selected{% endif %} value="Sikkim">Sikkim</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Tamil Nadu' %}selected{% endif %} value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Telangana' %}selected{% endif %} value="Telangana">Telangana</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Tripura' %}selected{% endif %} value="Tripura">Tripura</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Uttar Predesh' %}selected{% endif %} value="Uttar Pradesh">Uttar Pradesh</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Uttarakhand' %}selected{% endif %} value="Uttarakhand">Uttarakhand</option>
+                                                            <option {% if recur.customer_place_of_supply == 'West Bengal' %}selected{% endif %} value="West Bengal">West Bengal</option>
+                                                            <option {% if recur.customer_place_of_supply == 'Other Territory' %}selected{% endif %} value="Other Territory">Other Territory</option>
                                                         </select> 
                                                     </div>     
 
@@ -901,9 +881,66 @@ function goBack() {
 
                                                 </script>
 
-                                                <div class="row m-md-2 pb-3 table-responsive">
+                                                <div class="row m-md-2">
+                                                    <input class="ml-3" id="priceListCheckbox" name="priceListCheckbox" {% if recur.pricelist_id != Null %} checked {% endif %} type="checkbox">&nbsp; Price List
+                                                </div>
+                                                <div class="row m-md-2">
+                                                    <div class="col-md-3 mb-3" id="priceListDiv" {% if recur.pricelist_id == Null %} style="display: none;" {% endif %} >
+                                                        <!-- <label for="">Price List</label> -->
+                                                        <select name="priceListRB" id="priceListRB" class="form-control">
+                                                            <option value="" selected>Choose</option>
+                                                            {% for l in list %}
+                                                            {% if recur.pricelist_id == l.id %}
+                                                            <option value="{{l.id}}" selected>{{l.name}}</option>
+                                                            {% else %}
+                                                            <option value="{{l.id}}">{{l.name}}</option>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <script>
+                                                    var priceListCheckbox = document.getElementById("priceListCheckbox");
+                                                    var priceListDiv = document.getElementById("priceListDiv");
+                                                    var priceListRB = document.getElementById("priceListRB");
+                                                    var previousSelection = document.getElementById("priceListRB").value;
+
+                                                    // Add an event listener to the checkbox to toggle the visibility of the select element
+                                                    priceListCheckbox.addEventListener("click", function() {
+                                                        if (this.checked) {
+                                                            // If the checkbox is checked, display the select element
+                                                            priceListDiv.style.display = "block";
+                                                            priceListRB.required = true;
+
+                                                            if (previousSelection !== null) {
+                                                            var option = document.querySelector("#priceListRB option[value='" + previousSelection + "']");
+                                                            if (option) {
+                                                                option.selected = true; // Select the previous option
+                                                                option.dispatchEvent(new Event('click')); // Dispatch the click event
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            }
+                                                        }
+                                                        } else{
+                                                            // If the checkbox is unchecked, hide the select element
+                                                            priceListDiv.style.display = "none";
+                                                            priceListRB.required = false;
+
+                                                            // Trigger click event and select first option
+                                                            var firstOption = document.querySelector("#priceListRB option:first-child");
+                                                            if (firstOption) {
+                                                                firstOption.selected = true; // Select the first option
+                                                                firstOption.dispatchEvent(new Event('click')); // Dispatch the click event
+                                                                $("#itemTable .item-select").trigger("change");
+                                                            }
+                                                        }
+                                                    });
+                                                </script>
+
+
+                                                <div class="row m-md-2 pb-3 mt-5 table-responsive">
                                                     
-                                                        <table class="table border" id="itemTable">
+                                                        <table class="table border mt-3" id="itemTable">
                                                             <thead>
                                                                 <tr class="border">
                                                                     <th class="border">#</th>
@@ -925,7 +962,7 @@ function goBack() {
                                                                     <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" value="{{itm.hsn}}" id="itemHSN"></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="{{itm.quantity}}"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
                                                                     <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" value="{{itm.price}}" placeholder="Enter price" id="itemPrice"></td>
-                                                                    <td class="border gst" style="min-width: 150px;" id="gst">
+                                                                    <td class="border gst" style="min-width: 150px;display: none;" id="gst">
                                                                         <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
                                                                             <option {% if itm.tax_rate == 0 %} selected {% endif %}value="0">GST 0 (0%)</option>
                                                                             <option {% if itm.tax_rate == 3 %} selected {% endif %}value="3">GST 3 (3%)</option>
@@ -945,7 +982,7 @@ function goBack() {
                                                                             <option {% if itm.tax_rate == 28 %} selected {% endif %}value="28">IGST 28 (28%)</option>
                                                                         </select> 
                                                                     </td>
-                                                                    <td class="border GSTtext" style="min-width: 150px;display: none;" id="GSTtext">
+                                                                    <td class="border GSTtext" style="min-width: 150px;" id="GSTtext">
                                                                         <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
                                                                             <option value="">Select Tax</option>
                                                                         </select> -->
@@ -971,7 +1008,7 @@ function goBack() {
                                                         function checkQuantity() {
                                                         var isValid = false;
 
-                                                        $(".item-qty").each(function() {
+                                                        $("#itemTable .item-qty").each(function() {
                                                             var qtyValue = $(this).val().trim();
 
                                                             if (qtyValue === '' || parseFloat(qtyValue) === 0) {
@@ -1012,11 +1049,14 @@ function goBack() {
 
                                                         // --------------------------------
                                                         $(document).ready(function () {
+                                                            setInterval(checkPlaceOfSupply, 1000);
                                                         // Function to check and handle visibility based on the values of 'PlaceOfSupplyCustomer' and 'sourceOFSupply'
                                                         function checkPlaceOfSupply() {
                                                             var companyPlaceValue = $('#companyPlace').val();
                                                             var sourceOFSupplyValue = $('#sourceOFSupply').val();
-
+                                                            console.log('11111111111',companyPlaceValue)
+                                                            console.log('22222222222',sourceOFSupplyValue)
+                                                            
                                                             // Check if 'PlaceOfSupplyCustomer' and 'sourceOFSupply' have the same value
                                                             if (companyPlaceValue === 'Kerala' && sourceOFSupplyValue === 'Kerala' && companyPlaceValue !== '' && sourceOFSupplyValue !== '' ) {
                                                                 // Display 'gst' and hide 'igst'
@@ -1227,6 +1267,8 @@ $(document).ready(function() {
                                                     </script>
                                                 </div>
 
+                                                 
+
                                                 <div class="row ">
                                                     <div class="col-md-6 mt-4">
                                                         <label for="">Note</label>
@@ -1362,16 +1404,16 @@ $(document).ready(function() {
                                                             var igst_tax = parseFloat(row.querySelector('.item-igst_tax').value) || 0;
                                                             var discount = parseFloat(row.querySelector('.item-discount').value) || 0;
                                                             var source = document.querySelector('.source_of_supply_vendor').value;
-                                                            var place = document.querySelector('.place_of_supply_customer').value;
+                                                            var place = document.getElementById('companyPlace').value;
                                                             
                                                             console.log('source',source)
                                                             console.log('place',place)
-                                                            if (source === place && source !== '' && place !== ''){
+                                                            if (source === 'Kerala' && place === 'Kerala' && source !== '' && place !== ''){
                                                                 var total = qty * price * (1 + gst_tax / 100) - discount;
                                                                 var taxtotal = qty * price * (gst_tax / 100);
                                                                 row.querySelector('.item-total').value = total.toFixed(2);
                                                                 row.querySelector('.item-totaltax').value = taxtotal.toFixed(2);
-                                                            }else if (source !== place && source !== '' && place !== ''){
+                                                            }else if (source !== '' && place !== ''){
                                                                 var total = qty * price * (1 + igst_tax / 100) - discount;
                                                                 var taxtotal = qty * price * (igst_tax / 100);
                                                                 row.querySelector('.item-total').value = total.toFixed(2);
@@ -1434,7 +1476,7 @@ $(document).ready(function() {
                                                         // Iterate over all rows and sum up the individual totals
                                                         var allRows = document.querySelectorAll('.item-row');
                                                         var source = document.querySelector('.source_of_supply_vendor').value;
-                                                        var place = document.querySelector('.place_of_supply_customer').value;
+                                                        var place = document.getElementById('companyPlace').value;
                                                         var grandTotalElement = document.getElementById('grandTotal');
                                                         var shipping = parseFloat(document.getElementById('shippingCharge').value) || 0;
                                                         var adjustment = parseFloat(document.getElementById('adjustment').value) || 0;
@@ -1522,56 +1564,17 @@ $(document).ready(function() {
                                                     // }
 
                                                     function addRow() {
-                                                            // Clone the default row HTML
-                                                            var clone = document.createElement('tbody');
-                                                            clone.innerHTML = defaultRowHTML;
+                                                    var defaultRow = document.querySelector('#table2 tr');
+                                                    // Clone the default row HTML
+                                                    var clone = defaultRow.cloneNode(true); // true to clone all child elements as well
 
-                                                            // Append the cloned row to the tbody element
-                                                            document.querySelector('table tbody').appendChild(clone.firstChild); // Append the first child of the tbody
+                                                    // Append the cloned row to the tbody element
+                                                    document.querySelector('#itemTable tbody').appendChild(clone); 
 
-                                                            initializeCalculations();
-                                                            
-                                                        }
+                                                    initializeCalculations();
+                                                }
 
-                                                    var defaultRowHTML = `<tr class="item-row">
-                                                                    <td></td>
-                                                                    <td class="border w-25" style="min-width: 150px;"><div style="display: flex;"><select style="text-transform: capitalize;" name="Item[]" id="selectItems" class="form-control item-select"><option value="">Select Item</option>{% for i in items %}<option value="{{i.id}}">{{i.name}}</option>{% endfor %}</select><button type="button" class="btn btn-outline-secondary text-grey ml-1" data-toggle="modal" data-target="#itemsModal">+</button></div></td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="hsn[]" type="text" class="form-control item-hsn" placeholder="Enter HSN" id="itemHSN"></td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="qty[]" type="number" class="form-control item-qty mt-4" value="0"><small class="item-stockinlabel">Available Quantity : </small><small class="item-stockin">0</small></td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="price[]" type="text" class="form-control item-price" placeholder="Enter price" id="itemPrice"></td>
-                                                                    <td class="border GSTtext" style="min-width: 150px;" id="GSTtext">
-                                                                        <!-- <select name="taxrate[]" id="" class="form-control item-tax mt-4" placeholder="Tax Rate">
-                                                                            <option value="">Select Tax</option>
-                                                                        </select> -->
-                                                                        <input class="form-control " type="text" placeholder="Tax Rate" readonly>
-                                                                        <!-- <small style="color: crimson;">Select Vendor & Customer</small> -->
-                                                                    </td>
-                                                                    <td class="border gst" style="min-width: 150px;display: none;" id="gst">
-                                                                        <select name="gsttaxrate[]" id="GSTcolumn" onchange="initializeCalculations()" class="form-control item-gst_tax" placeholder="Tax Rate">
-                                                                            <option value="0">GST 0 (0%)</option>
-                                                                            <option value="3">GST 3 (3%)</option>
-                                                                            <option value="5">GST 5 (5%)</option>
-                                                                            <option value="12">GST 12 (12%)</option>
-                                                                            <option value="18">GST 18 (18%)</option>
-                                                                            <option value="28">GST 28 (28%)</option>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td class="border igst" style="min-width: 150px;display: none;" id="igst">
-                                                                        <select name="igsttaxrate[]" id="IGSTcolumn" onchange="initializeCalculations()" class="form-control item-igst_tax" placeholder="Tax Rate">
-                                                                            <option value="0">IGST 0 (0%)</option>
-                                                                            <option value="3">IGST 3 (3%)</option>
-                                                                            <option value="5">IGST 5 (5%)</option>
-                                                                            <option value="12">IGST 12 (12%)</option>
-                                                                            <option value="18">IGST 18 (18%)</option>
-                                                                            <option value="28">IGST 28 (28%)</option>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="discount[]" type="text" class="form-control item-discount" value="0"></td>
-                                                                    <td class="border" style="min-width: 150px;"><input name="total[]" type="text" class="form-control item-total" value="0" ></td>
-                                                                    <td class="border" style="min-width: 150px;" hidden><input type="text" class="form-control item-totaltax" id="taxTotal" value="0" ></td>
-                                                                    <td class="border" ><br> <p class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close w-80" onclick="removeRow(this)" id="minus"></p></td>
-                                                                </tr>
-                                                            `;
+                                                    
                                                                                                         
                                                         // Attach event listener for the "Remove Row" button
                                                         
@@ -1651,7 +1654,7 @@ $(document).ready(function() {
                                                     <div class="col-md-4 mb-3 ">
                                                         <div class="row">
                                                             <div class="col-md mb-3"><button type="submit" class="ml-2 btn btn-outline-secondary text-grey form-control " id="button1" value="Save">Save</button></div>
-                                                            <div class="col-md mb-3"><button type="submit" class="ml-2 btn btn-outline-secondary text-grey form-control " id="button2" value="Draft">Draft</button></div>
+                                                            <!-- <div class="col-md mb-3"><button type="submit" class="ml-2 btn btn-outline-secondary text-grey form-control " id="button2" value="Draft">Draft</button></div> -->
                                                         </div>                                                        
                                                     </div>
                                                 </div><br><br>
@@ -3693,7 +3696,7 @@ $(document).ready(function() {
                                 <div class="row">
                                     <div class="col-md-12 d-flex">
                                         <input type="text" class="form-control mr-1" value="INR" style="width:60px;background-color: #2a4960; color: white;">
-                                        <input type="text" name="salesprice" class="form-control" id="saleprice" style="background-color: #2a4964; color: white;" value="0">
+                                        <input type="number" name="salesprice" class="form-control" id="saleprice" style="background-color: #2a4964; color: white;" value="0">
                                     </div>
                                 </div>
                             </div>
