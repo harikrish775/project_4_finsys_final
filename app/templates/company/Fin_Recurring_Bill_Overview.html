@@ -339,7 +339,7 @@ footer p {
                 <form id="fileUploadForm" method="post" action="{% url 'Fin_recurring_bill_attach_file' pk=bill1.id %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body">
-                        <input type="file" class="form-control" name="attachment">
+                        <input type="file" class="form-control" required name="attachment">
                     </div>
                     <div class="modal-footer">
                         <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
@@ -347,33 +347,68 @@ footer p {
                     </div>
                 </form>
                 <script>
-                    function submitForm() {
-                        var formData = $('#fileUploadForm').serialize();
-                        var pk = document.getElementById('fileUploadInput').getAttribute('data-pk');
-                        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                //     $(document).ready(function() {
+                //     $('#fileUploadForm').on('submit', function(e) {
+                //         e.preventDefault();
+                //         var formData = new FormData(this);
+                //         var pk = $('#fileUploadButton').data('pk');
 
-                        // formData.append('csrfmiddlewaretoken', csrfToken);
+                //         $.ajax({
+                //             type: 'POST',
+                //             url: $(this).attr('action'),
+                //             data: formData,
+                //             processData: false,
+                //             contentType: false,
+                //             success: function(response) {
+                //                 if (response.success) {
+                //                     $('#exampleModal').modal('hide');
+                //                     alert(response.message); // Display success message
+                //                 } else {
+                //                     $('#exampleModal').modal('hide');
+                //                     alert(response.message); // Display error message
+                //                 }
+                //             },
+                //             error: function(xhr, status, error) {
+                //                 alert('An error occurred while processing your request.');
+                //             }
+                //         });
+                //     });
+                // });
+
+                </script>
+
+                
+
+                <script>
+                    // function submitForm() {
+                    //     var formData = $('#fileUploadForm').serialize();
+                    //     var pk = document.getElementById('fileUploadInput').getAttribute('data-pk');
+                    //     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    //     // formData.append('csrfmiddlewaretoken', csrfToken);
                     
-                        $.ajax({
-                            url: 'Fin_recurring_bill_attach_file/' + pk + '/',
-                            type: 'POST',
-                            data: formData,
-                            contentType: false,
-                            processData: false,
-                            success: function(response) {
-                                // Handle success, e.g., show a message or update the UI
-                                alert('File uploaded successfully.');
-                                // Optionally, you can close the modal or do other actions
-                                $('#exampleModal').modal('hide');
-                            },
-                            error: function(error) {
-                                // Handle error, e.g., show an error message
-                                console.error('Failed to upload file:', error);
-                                alert('Failed to upload')
-                            }
-                        });
-                    }
+                    //     $.ajax({
+                    //         url: 'Fin_recurring_bill_attach_file/' + pk + '/',
+                    //         type: 'POST',
+                    //         data: formData,
+                    //         contentType: false,
+                    //         processData: false,
+                    //         success: function(response) {
+                    //             // Handle success, e.g., show a message or update the UI
+                    //             alert('File uploaded successfully.');
+                    //             // Optionally, you can close the modal or do other actions
+                    //             $('#exampleModal').modal('hide');
+                    //         },
+                    //         error: function(error) {
+                    //             // Handle error, e.g., show an error message
+                    //             console.error('Failed to upload file:', error);
+                    //             alert('Failed to upload')
+                    //         }
+                    //     });
+                    // }
                     </script>
+                    
+                    
               </div>
             </div>
           </div>
@@ -386,10 +421,10 @@ footer p {
         <div class="card radius-15">
             <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
             <div class="card-body">
-                <div class="card-title">
+                <!-- <div class="card-title">
                     <center><h2 class="mb-0">RECURRING BILL</h2> <h4></h4></center>
                     <hr>
-                </div>
+                </div> -->
                 <div class="row">
                     <div class="col-md-3" style="margin-top: 3vh; font-size: medium;">
                         <a style="padding: 10px; cursor: pointer; border-radius: 1vh; background-color: rgba(22,37,50,255);" onclick="showOverview()" id="overviewlink" >Overview</a>&nbsp;&nbsp;
@@ -493,6 +528,11 @@ footer p {
                         </nav>
                     </div>
                 </div>
+                <div class="card-title">
+                    <center><h2 class="mt-5">RECURRING BILL - {{bill1.recurring_bill_number}}</h2> </center>
+                    <center><h5 {%if bill1.status == 'Save'%} style="color: rgb(8, 160, 8);" {% else %} style="color: red;" {% endif %}>{{bill1.status}}</h5></center>
+                    
+                </div>
             </div>
         </div>
         
@@ -543,9 +583,72 @@ footer p {
             <div id="details">
                 <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
                     <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
-                        <h5 class="mt-3 ml-5 mb-3">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited by :</span> {% else %} <span style="color: green;">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;" class="ml-5" for="">{{lastHistory.date}}</label> </h5>
-                        <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3>
+                        
+                        <!-- <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3> -->
+
+                        
+
                         <div class="p-5">
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Vendor Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Vendor Name</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Vendor Email</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.vendor.email}}</p>
+                                </div>
+                                
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Vendor Address</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.vendor_billing_address}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Vendor GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3" >
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.vendor_gst_type}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                {% if bill1.vendor_gst_number %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Vendor GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.vendor_gst_number}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">&nbsp;</div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
+                                <!-- <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">End date</h6>
+                                </div>
+                                <div class="col-md-2 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.end_date }}</p>
+                                </div> -->
+                            </div>
+                            
+                            <hr class="my-4">
+
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-4 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Company Details</h5>
@@ -563,28 +666,33 @@ footer p {
                                     <h6 class="mb-0">Email</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ bill1.vendor.email }}</p>
+                                    <p class="mb-0 text-right">{{ bill1.company.Email }}</p>
                                 </div>
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                <div class="col-md-2 mt-3">
-                                    <h6 class="mb-0">Mobile</h6>
-                                </div>
-                                <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ bill1.vendor.mobile }}</p>
-                                </div>
-                                <div class="col-md-2 mt-3 vl">
+                                <div class="col-md-2 mt-3 ">
                                     <h6 class="mb-0">Address</h6>
                                 </div>
                                 <div class="col-md-4 mt-3">
-                                    <p class="mb-0 text-right">{{ bill1.vendor.billing_street }} <br>
-                                        {{bill1.vendor.billing_city}},
-                                        {{bill1.vendor.billing_state}}
-                                        {{bill1.vendor.billing_pincode}}</p>
+                                    <p class="mb-0 text-right">{{ bill1.company.Address }} <br>
+                                        {{bill1.company.City}},
+                                        {{bill1.company.State}} <br>
+                                        {{bill1.company.Pincode}}, 
+                                        {{bill1.company.Country}} <br>
+
+                                    </p>
+                                </div>
+                                <div class="col-md-2 mt-3 vl">
+                                    <h6 class="mb-0">Mobile</h6>
+                                </div>
+                                <div class="col-md-4 mt-3">
+                                    <p class="mb-0 text-right">{{ bill1.company.Contact }}</p>
                                 </div>
                             </div>
                             <hr class="my-4">
+                            
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                
                                 <div class="col-md-4 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Recurring Bill Details</h5>
                                 </div>
@@ -617,13 +725,17 @@ footer p {
                                     <h6 class="mb-0">Purchase Order</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
+                                    {% if bill1.purchase_order_number == '' %}
+                                    <p class="mb-0 text-right">None</p>
+                                    {% else %}
                                     <p class="mb-0 text-right">{{ bill1.purchase_order_number }}</p>
+                                    {% endif %}
                                 </div>
                                 <div class="col-md-3 mt-3 vl">
-                                    <h6 class="mb-0">&nbsp;</h6>
+                                    <h6 class="mb-0">Repeat Every</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right"></p>
+                                    <p class="mb-0 text-right">{{ bill1.repeat_every.repeat_every }}</p>
                                 </div>
                                 <!-- <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0"></h6>
@@ -633,18 +745,129 @@ footer p {
                                 </div> -->
                             </div>
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                <div class="col-md-3 mt-3">
-                                    <h6 class="mb-0">Repeat Every</h6>
-                                </div>
-                                <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right">{{ bill1.repeat_every.repeat_every }}</p>
-                                </div>
-                                <div class="col-md-3 mt-3 vl">
+                                
+                                <div class="col-md-3 mt-3 ">
                                     <h6 class="mb-0">Date</h6>
                                 </div>
                                 <div class="col-md-3 mt-3">
                                     <p class="mb-0 text-right">{{ bill1.date }}</p>
                                 </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Due Date</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.expected_shipment_date}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                {% if bill1.payment_method == '' or bill1.payment_method == 'Cash' %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Payment Type</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">{{ bill1.payment_method }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">&nbsp;</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right"></p>
+                                </div>
+                                {% elif bill1.payment_method == 'Cheque' %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Payment Type</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">{{ bill1.payment_method }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Cheque Number</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.cheque_number}}</p>
+                                </div>
+                                {% elif bill1.payment_method == 'UPI' %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Payment Type</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">{{ bill1.payment_method }}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Upi Number</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.upi_id}}</p>
+                                </div>
+                                {% else %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Payment Type</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">Bank</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Account Number</h6>
+                                </div>
+                                <div class="col-md-3 mt-3 ">
+                                    <p class="mb-0 text-right">{{bill1.bank_account}}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+
+                            <hr class="my-4">
+                            
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-4 mt-3">
+                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
+                                </div>
+                                <div class="col-md-4 mt-3"></div>
+                                <div class="col-md-4 mt-3"></div>
+
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Customer Name</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right" style="text-transform: capitalize;">{{bill1.customer_name}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer Email</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.customer.email}}</p>
+                                </div>
+                                
+                                
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                <div class="col-md-3 mt-3">
+                                    <h6 class="mb-0">Customer Address</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.customer_billing_address}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">
+                                    <h6 class="mb-0">Customer GST Treatment</h6>
+                                </div>
+                                <div class="col-md-3 mt-3" >
+                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.customer_gst_type}}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                {% if bill1.customer_gst_number %}
+                                <div class="col-md-3 mt-3 ">
+                                    <h6 class="mb-0">Customer GSTIN</h6>
+                                </div>
+                                <div class="col-md-3 mt-3">
+                                    <p class="mb-0 text-right">{{bill1.customer_gst_number}}</p>
+                                </div>
+                                <div class="col-md-3 mt-3 vl">&nbsp;</div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%else%}
+                                <div class="col-md-3 mt-3 "></div>
+                                <div class="col-md-3 mt-3 "></div>
+                                {%endif%}
                                 <!-- <div class="col-md-2 mt-3 vl">
                                     <h6 class="mb-0">End date</h6>
                                 </div>
@@ -653,95 +876,7 @@ footer p {
                                 </div> -->
                             </div>
                             <hr>
-                         
-                            <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                <div class="col-md-6 mt-3">
-                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Vendor Details</h5>
-                                </div>
-                                <!-- <div class="col-md-4 mt-3"></div> -->
-                                <div class="col-md-6 mt-3">
-                                    <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
-                                </div>
-
-                                
-                                
-
-                                <div class="col-md-3 mt-3">
-                                    <h6 class="mb-0">Vendor</h6>
-                                </div>
-                                <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right">{{bill1.vendor.first_name}} {{bill1.vendor.last_name}}</p>
-                                </div>
-                                <div class="col-md-3 mt-3 vl">
-                                    <h6 class="mb-0">Customer</h6>
-                                </div>
-                                <div class="col-md-3 mt-3 ">
-                                    <p class="mb-0 text-right">{{ bill1.customer.first_name }} {{ bill1.customer.last_name }}</p>
-                                </div>
-                               
-                            </div>
-                                <div class="row mb-4 d-flex justify-content-between align-items-center">
-                                    <!-- <div class="col-md-4 mt-3">
-                                        <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
-                                    </div> -->
-                        
-                                <div class="col-md-3 mt-3 ">
-                                    <h6 class="mb-0">Vendor Email</h6>
-                                </div>
-                               
-                                <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right">{{bill1.vendor.email}}</p>
-                                </div>
-                                <div class="col-md-3 mt-3 vl">
-                                    <h6 class="mb-0">Customer Email</h6>
-                                </div>
-                                <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right">{{bill1.customer.email}}</p>
-                                </div>
-                            </div>
-                            <div class="row mb-4 d-flex flex-wrap justify-content-between align-items-center">
-                                <div class="col-md-3 mt-3 ">
-                                    <h6 class="mb-0">Vendor GST Treatment</h6>
-                                </div>
-                                <div class="col-md-3 mt-3" >
-                                    <p class="mb-0 text-right overflow-wrap-wrap">{{bill1.vendor.gst_type}}</p>
-                                </div>
-
-                                <div class="col-md-3 mt-3 vl">
-                                    <h6 class="mb-0">Customer GST Treatment</h6>
-                                </div>
-                                <div class="col-md-3 mt-3 ">
-                                    <p class="mb-0 text-right overflow-wrap-wrap">{{ bill1.customer.gst_type }}</p>
-                                </div>
-                               
-                            </div>
-                            <div class="row mb-4 d-flex justify-content-between align-items-center">
-                           
-                     
-                                {% if vendor_gstin %}
-                                <div class="col-md-3 mt-3 ">
-                                    <h6 class="mb-0">Vendor GSTIN</h6>
-                                </div>
-                                <div class="col-md-3 mt-3">
-                                    <p class="mb-0 text-right">{{bill1.vendor.gstin}}</p>
-                                </div>
-                                {%else%}
-                                <div class="col-md-3 mt-3 "></div>
-                                <div class="col-md-3 mt-3 "></div>
-                                {%endif%}
-                                {% if customer_gstin %}
-                                
-                                <div class="col-md-3 mt-3 vl">
-                                    <h6 class="mb-0">Customer GSTIN</h6>
-                                </div>
-                                <div class="col-md-3 mt-3 ">
-                                    <p class="mb-0 text-right">{{ bill1.customer.gstin }}</p>
-                                </div>
-                                {%else%}
-                                <div class="col-md-3 mt-3 "></div>
-                                <div class="col-md-3 mt-3 "></div>
-                                {%endif%}
-                            </div>
+                            
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-12 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Items Details</h5>
@@ -809,14 +944,15 @@ footer p {
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);">
+                    <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);border-top-right-radius: 13px;border-bottom-right-radius: 13px;">
+                        <h6 class="mt-5 ml-5 mb-1">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited :</span> {% else %} <span style="color: rgb(8, 160, 8);">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;"  for="">{{lastHistory.date}}</label> </h6>
                         <div class="p-5">
-                          
+                            
                             <h3 class="fw-bold mb-5 mt-2 pt-1">Recurring Bill Tax Details</h3>
                             <hr class="my-4">
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Bill status</h5>
-                                <h4 {%if bill1.status == 'Save'%} style="color: green;" {% else %} style="color: red;" {% endif %} >{{ bill1.status }}</h4>
+                                <h5 {%if bill1.status == 'Save'%} style="color: rgb(8, 160, 8);" {% else %} style="color: red;" {% endif %} >{{bill1.status}}</h5>
                             </div>
                             <div class="d-flex justify-content-between mb-4">
                                 <h5 class="">Grand Total</h5>
@@ -1371,13 +1507,7 @@ footer p {
                                                     <td class="text-right" style="color: #000;">{{bill1.sub_total}}</td>
                                                 </tr>
                                                 
-                                                {%if bill1.cgst is None or bill1.cgst == ''  %}
-                                                <tr >
-                                                    <td style="color: #000;">IGST</td>
-                                                    <td style="color: #000;">:</td>
-                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
-                                                </tr>
-                                                {% else %}
+                                                {%if bill1.vendor_place_of_supply == 'Kerala' and bill1.company.State == 'Kerala' %}
                                                 <tr>
                                                     <td style="color: #000;">CGST</td>
                                                     <td style="color: #000;">:</td>
@@ -1388,6 +1518,13 @@ footer p {
                                                     <td style="color: #000;">SGST</td>
                                                     <td style="color: #000;">:</td>
                                                     <td class="text-right" style="color: #000;">{{bill1.sgst}}</td>
+                                                </tr>
+                                                
+                                                {% else %}
+                                                <tr >
+                                                    <td style="color: #000;">IGST</td>
+                                                    <td style="color: #000;">:</td>
+                                                    <td class="text-right" style="color: #000;">{{bill1.taxAmount_igst}}</td>
                                                 </tr>
                                                 {% endif %}
                                                 <tr >
@@ -1993,33 +2130,65 @@ footer p {
         // }
         
 
-        function printfun(){
-            print1 = document.getElementById('whatToPrint1');
-            print2 = document.getElementById('whatToPrint2');
-            print3 = document.getElementById('whatToPrint3');
-            print4 = document.getElementById('slipdiv')
-            if (print4.style.display !== 'none'){
-                    var printContents = document.getElementById("slipdiv").innerHTML;
-            }else{
-                if (print1.style.display !== 'none'){
-                    var printContents = document.getElementById("whatToPrint1").innerHTML;
-                }else if(print2.style.display !== 'none'){
-                    var printContents = document.getElementById("whatToPrint2").innerHTML;
-                }
-                else if(print3.style.display !== 'none'){
-                    var printContents = document.getElementById("whatToPrint3").innerHTML;
-                }
+        // function printfun(){
+        //     print1 = document.getElementById('whatToPrint1');
+        //     print2 = document.getElementById('whatToPrint2');
+        //     print3 = document.getElementById('whatToPrint3');
+        //     print4 = document.getElementById('slipdiv')
+        //     if (print4.style.display !== 'none'){
+        //             var printContents = document.getElementById("slipdiv").innerHTML;
+        //     }else{
+        //         if (print1.style.display !== 'none'){
+        //             var printContents = document.getElementById("whatToPrint1").innerHTML;
+        //         }else if(print2.style.display !== 'none'){
+        //             var printContents = document.getElementById("whatToPrint2").innerHTML;
+        //         }
+        //         else if(print3.style.display !== 'none'){
+        //             var printContents = document.getElementById("whatToPrint3").innerHTML;
+        //         }
                 
-            }
+        //     }
 
-            var $printerDiv = $('<div class="printContainer" style="background-color: white;border: 1px solid black;"></div>'); // create the div that will contain the stuff to be printed
-            $printerDiv.html(printContents); // add the content to be printed
-            $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+        //     var $printerDiv = $('<div class="printContainer" style="background-color: white;border: 1px solid black;"></div>'); // create the div that will contain the stuff to be printed
+        //     $printerDiv.html(printContents); // add the content to be printed
+        //     $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
 
-            window.print(); // call print
-            $printerDiv.remove(); // remove the div
-            $('body').removeClass("printingContent");
-        }
+        //     window.print(); // call print
+        //     $printerDiv.remove(); // remove the div
+        //     $('body').removeClass("printingContent");
+        // } //working
+
+        function printfun() {
+    var printContents;
+
+    if (document.getElementById('slipdiv').style.display !== 'none') {
+        printContents = document.getElementById("slipdiv").innerHTML;
+    } else if (document.getElementById('whatToPrint1').style.display !== 'none') {
+        printContents = document.getElementById("whatToPrint1").innerHTML;
+    } else if (document.getElementById('whatToPrint2').style.display !== 'none') {
+        printContents = document.getElementById("whatToPrint2").innerHTML;
+    } else if (document.getElementById('whatToPrint3').style.display !== 'none') {
+        printContents = document.getElementById("whatToPrint3").innerHTML;
+    }
+
+    var $printerDiv = $('<div class="printContainer" style="background-color: white;border: 1px solid black;"></div>'); // create the div that will contain the stuff to be printed
+    $printerDiv.html(printContents); // add the content to be printed
+    $('body').append($printerDiv).addClass("printingContent"); // add the div to body, and make the body aware of printing (we apply a set of css styles to the body to hide its contents)
+
+    // CSS media query to define the page size and ensure content fits within a single page
+    var styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `@media print { .printContainer { page-break-after: always; } @page :first { background-color: white; } }`;
+    document.head.appendChild(styleSheet);
+
+    window.print(); // call print
+    $printerDiv.remove(); // remove the div
+    $('body').removeClass("printingContent");
+    document.head.removeChild(styleSheet); // remove the media query after printing
+}
+
+        
+
     </script><div style="background-color: white;border: 1px solid black;width: 100%;"></div>
 
     <script>

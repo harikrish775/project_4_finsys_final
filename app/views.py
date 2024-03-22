@@ -23127,8 +23127,6 @@ def Fin_convertdebit(request,id):
         est.save()
         return redirect(Fin_debit_overview, id)
 
-
-
 def checkitem(request):
     sid = request.session['s_id']
     login = Fin_Login_Details.objects.get(id=sid)
@@ -23335,7 +23333,7 @@ def Fin_recurring_bill_save(request):
         reference_number = request.POST['ReferenceNo']
         startdate = request.POST['startDate']
         company_payment_terms = request.POST['payment_terms']
-        # expected_shipment_date = request.POST['']
+        expected_shipment_date = request.POST['endDate']
         purchase_order_number = request.POST['PurchaseOrderNo']
         payment_method = request.POST['paymentType']
 
@@ -23366,11 +23364,12 @@ def Fin_recurring_bill_save(request):
         customer_gst_number = request.POST['customerGstNumber']
         customer_place_of_supply = request.POST['placeOfSupply']
         description = request.POST['Note']
-
-        # if request.FILES['Document'] :
-        #     document = request.FILES['Document']
+        
+        # if request.FILES['recurringBillDocument'] != '':
+        #     RBDocument = request.FILES['recurringBillDocument']
         # else: 
-        #     document = ''
+        #     RBDocument = ''
+        
 
         source = request.POST['sourceOfSupply']
         place = request.POST['companyPlace']  
@@ -23379,8 +23378,8 @@ def Fin_recurring_bill_save(request):
             sgst = request.POST['sgst']
             taxAmount_igst = request.POST['taxAmount']
         else:
-            cgst = None
-            sgst = None
+            cgst = 0
+            sgst = 0
             taxAmount_igst = request.POST['taxAmount']
 
         
@@ -23397,6 +23396,7 @@ def Fin_recurring_bill_save(request):
             adjustment = 0
 
         grand_total = request.POST['grandTotal'] 
+        
         if request.POST['paidAmount'] :
             advanceAmount_paid = request.POST['paidAmount'] 
         else:
@@ -23435,7 +23435,7 @@ def Fin_recurring_bill_save(request):
                                             repeat_every_id=repeat_every,pricelist_id=pricelist,vendor_name=vendor_name,vendor_email=vendor_email,vendor_billing_address=vendor_billing_address,
                                             vendor_gst_type=vendor_gst_type,vendor_gst_number=vendor_gst_number,vendor_place_of_supply=vendor_place_of_supply,customer_name=customer_name,
                                             customer_email=customer_email,customer_billing_address=customer_billing_address,customer_gst_type=customer_gst_type,
-                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply)
+                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply,expected_shipment_date=expected_shipment_date)
                 
             else: 
                 newBill = Fin_Recurring_Bills(vendor_id = vendor,recurring_bill_number = recurring_bill_number,reference_number = reference_number,
@@ -23447,7 +23447,7 @@ def Fin_recurring_bill_save(request):
                                             repeat_every_id=repeat_every,vendor_name=vendor_name,vendor_email=vendor_email,vendor_billing_address=vendor_billing_address,
                                             vendor_gst_type=vendor_gst_type,vendor_gst_number=vendor_gst_number,vendor_place_of_supply=vendor_place_of_supply,customer_name=customer_name,
                                             customer_email=customer_email,customer_billing_address=customer_billing_address,customer_gst_type=customer_gst_type,
-                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply)
+                                            customer_gst_number=customer_gst_number,customer_place_of_supply=customer_place_of_supply,expected_shipment_date=expected_shipment_date)
                
             newBill.save()
             history = Fin_Recurring_Bill_History(date=date.today(),action='Created',company=com,login_details_id = sid,recurring_bill_id =newBill.id)
@@ -23490,7 +23490,6 @@ def Fin_recurring_bill_save(request):
             return JsonResponse({'messages': 'Bill created successfully','success':True})
     else:
         return JsonResponse()
-
 
 def Fin_recurring_bill_usercheck(request):
     sid = request.session['s_id']
@@ -23855,11 +23854,29 @@ def Fin_recurring_bill_delete(request,pk):
 def Fin_recurring_bill_attach_file(request,pk):
     recurBill = Fin_Recurring_Bills.objects.get(id=pk)
     if request.method == 'POST':
-        file = request.FILES['attachment']
-        recurBill.attachment = file
-        recurBill.save()
-        return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+        if request.FILES['attachment']:
+            file = request.FILES['attachment']
+            recurBill.attachment = file
+            recurBill.save()
+            return redirect(reverse('Fin_recurring_bill_overview', kwargs={'pk': pk}))
+        else:
+            messages.error(request, 'Please attach a file!')
+            return render(request, 'Fin_recurring_bill_overview.html', {'pk': pk})
+        
     return redirect('Fin_recurring_bill_list')
+
+# def Fin_recurring_bill_attach_file(request, pk):
+#     recurBill = Fin_Recurring_Bills.objects.get(id=pk)
+#     if request.method == 'POST':
+#         file = request.FILES.get('attachment')
+#         if file:
+#             recurBill.attachment = file
+#             recurBill.save()
+#             return JsonResponse({'success': True, 'message': 'File attached successfully'})
+#         else:
+#             return JsonResponse({'success': False, 'message': 'Please attach a file'}, status=400)
+
+#     return JsonResponse({'success': False, 'message': 'Method not allowed'}, status=405)
 
 def Fin_recurring_bill_edit_page(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
@@ -23950,7 +23967,6 @@ def Fin_recurring_bill_edit_save(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
-    
     if request.method == 'POST':
         recur.vendor_id = request.POST['select_vendor']
         recur.profile_name = request.POST['ProfileName']
@@ -23964,22 +23980,29 @@ def Fin_recurring_bill_edit_save(request,pk):
         recur.vendor_gst_type = request.POST['vendorGstType']
         recur.vendor_gst_number = request.POST['vendorGstNumber']
         recur.vendor_place_of_supply = request.POST['sourceOfSupply']
-
+        recur.expected_shipment_date = request.POST['endDate']
+        
         if request.POST['RecurringBillNo']:
             recur.recurring_bill_number = request.POST['RecurringBillNo']
-
-        if len(request.POST['Cheque']) > 0:
-            recur.cheque_number = request.POST['Cheque'] 
-        else:
-            recur.cheque_number = ''
-
-        if len(request.POST['UPI']) > 0:
-            recur.upi_id = request.POST['UPI'] 
-        else:
+            
+        if recur.payment_method == '' or recur.payment_method == 'Cash':
             recur.upi_id = ''
+            recur.bank_account = ''
+            recur.cheque_number = ''
+        elif recur.payment_method == 'UPI':
+            recur.upi_id = request.POST['UPI'] 
+            recur.bank_account = ''
+            recur.cheque_number = ''
+        elif recur.payment_method == 'Cheque':
+            recur.cheque_number = request.POST['Cheque'] 
+            recur.upi_id = ''
+            recur.bank_account = ''
+        else:
+            recur.bank_account = request.POST['bankAccount'] 
+            recur.upi_id = ''
+            recur.cheque_number = ''
+            
 
-        
-        recur.bank_account = request.POST['bankAccount'] 
         
         
         recur.customer_id = request.POST['Customer']
@@ -23993,7 +24016,7 @@ def Fin_recurring_bill_edit_save(request,pk):
 
         recur.sub_total = request.POST['subTotal']
 
-        source = request.POST['placeOfSupply']
+        source = request.POST['sourceOfSupply']
         place = request.POST['companyPlace']
 
         
@@ -24006,7 +24029,6 @@ def Fin_recurring_bill_edit_save(request,pk):
         recur.grand_total = request.POST['grandTotal'] 
         recur.advanceAmount_paid = request.POST['paidAmount'] 
         recur.balance = request.POST['balanceDue']
-        recur.status = request.POST['button'] 
         recur.repeat_every_id = request.POST['RepeatEvery']
 
         rbnumber = request.POST['RecurringBillNo']
@@ -24014,29 +24036,29 @@ def Fin_recurring_bill_edit_save(request,pk):
         banknum = request.POST['bankAccount']
         cheqnum = request.POST['Cheque']
         upid = request.POST['UPI']
-
+        
         if request.POST.get('priceListCheckbox') == 'on':
             recur.pricelist_id = int(request.POST.get('priceListRB'))
         else:
             recur.pricelist_id = None
         
-            
+        
         if loginn.User_Type == 'Company':
             com2 = Fin_Company_Details.objects.get(Login_Id = sid)
         elif loginn.User_Type == 'Staff' :
             com2 = Fin_Staff_Details.objects.get(Login_Id = sid).company_id
-
+        
         if Fin_Recurring_Bills.objects.filter(company=com2,recurring_bill_number=rbnumber,purchase_order_number=ponumber).exclude(id=pk).exists():
+            print('1111111111')
             return JsonResponse({'messages': 'Recurring Bill Exists'})
         elif Fin_Recurring_Bills.objects.filter(company=com2,recurring_bill_number=rbnumber).exclude(id=pk).exists():
+            print('22222222')
             return JsonResponse({'messages': 'Recurring Bill Number Exists'})
         # elif Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(purchase_order_number='') & Q(purchase_order_number=purchase_order_number)).exclude(id=pk).exists():
         #     return JsonResponse({'messages': 'Purchase order number Exists'})
-        elif request.POST['UPI'] :
-            if Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(upi_id='') & Q(upi_id=upid)).exclude(id=pk).exists():
+        elif Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(upi_id='') & Q(upi_id=upid)).exclude(id=pk).exists():
                 return JsonResponse({'messages': 'Upi id Exists'})
-        elif request.POST['Cheque']:
-            if Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(cheque_number= '') & Q(cheque_number=cheqnum)).exclude(id=pk).exists():
+        elif Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(cheque_number= '') & Q(cheque_number=cheqnum)).exclude(id=pk).exists():
                 return JsonResponse({'messages': 'Cheque number Exists'})
         # elif request.POST['bankAccount']:
         #     if Fin_Recurring_Bills.objects.filter(Q(company=com2) & ~Q(bank_account='') & Q(bank_account=banknum)).exclude(id=pk).exists():
@@ -24098,7 +24120,7 @@ def Fin_recurring_bill_edit_save(request,pk):
                         itemsTable.save()
                     
             return JsonResponse({'messages':'successfully edited','relo':True})
-    return JsonResponse({'messages':'failed '})
+    return JsonResponse({'messages':'failed'})
        
 def Fin_createVendor_modal(request):
     if 's_id' in request.session:

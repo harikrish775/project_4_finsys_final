@@ -214,7 +214,7 @@ function goBack() {
                                                                             var value = $(this).data('value');
                                                                             $('#select_vendor2').val($(this).text());
                                                                             // Handle the selected value as needed (e.g., update form fields or perform an action)
-                                                                            console.log('Selected value:', value);
+                                                                            
                                                                         });
                                                                 
                                                                         // Add an input event listener to the search input
@@ -545,7 +545,7 @@ function goBack() {
                                                                             var value = $(this).data('value');
                                                                             $('#SelectCustomer2').val($(this).text());
                                                                             // Handle the selected value as needed (e.g., update form fields or perform an action)
-                                                                            console.log('Selected value:', value);
+                                                                            
                                                                         });
                                                                 
                                                                         // Add an input event listener to the search input
@@ -682,7 +682,7 @@ function goBack() {
                                                             <option value="Cheque">Cheque</option>
                                                             <option value="UPI">UPI</option>
                                                             {% for b in bank %}
-                                                            <option value="{{b.account_number}}">{{b.bank_name}}</option>
+                                                            <option value="{{b.account_number}}">{{b.bank_name}} ({{b.account_number}})</option>
                                                             {% endfor %}
                                                         </select>
                                                     </div>
@@ -1111,62 +1111,124 @@ function goBack() {
                                                         // table row fill
                                                         $(document).ready(function () {
                                                         // Use event delegation on the table
-                                                        $("#itemTable").on("change", ".item-select", function () {
-                                                            var $select = $(this);
-                                                            var $row = $select.closest('.item-row'); // Find the closest row
+                                                        // $("#itemTable").on("change", ".item-select", function () {
+                                                        //     var $select = $(this);
+                                                        //     var $row = $select.closest('.item-row'); // Find the closest row
 
-                                                            var itemsId = $select.val();
+                                                        //     var itemsId = $select.val();
 
-                                                            // Make an AJAX request to the backend to fetch item details
-                                                            $.ajax({
-                                                                url: '/Fin_get_item_details/' + itemsId + '/',
-                                                                type: 'GET',
-                                                                success: function (data) {
-                                                                    // Update the placeholder elements with the fetched details
-                                                                    $row.find(".item-hsn").val(data.hsn);
-                                                                    $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
-                                                                    $row.find(".item-stockin").html(data.current_stock);
-                                                                    $row.find(".item-gst_tax").val(data.gst_tax).change();
-                                                                    $row.find(".item-igst_tax").val(data.igst_tax).change();
-                                                                    console.log('4545454545',data.id);
-                                                                    plistID = document.getElementById('priceListRB').value;
-                                                                    if(plistID!=''){
-                                                                            $.ajax({
-                                                                            url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
-                                                                            type: 'GET',
-                                                                            success: function (response) {
-                                                                                if (response.opr == 'UP'){
-                                                                                    prce = data.price*(1+(response.perc/100));
-                                                                                    $row.find(".item-price").val(prce.toFixed(2));
-                                                                                }else if(response.opr == 'DOWN'){
-                                                                                    prce = data.price*(1-(response.perc/100));
-                                                                                    $row.find(".item-price").val(prce.toFixed(2));
-                                                                                }else if(response.opr == 'Custom'){
-                                                                                    $row.find(".item-price").val(response.customerRate);
-                                                                                }else{
-                                                                                    alert('something went wrong!')
-                                                                                }
-                                                                            },
-                                                                            error: function (error) {
-                                                                                console.log(error);
-                                                                                alert(error)
-                                                                            }
-                                                                            });
-                                                                    }else{
-                                                                        $row.find(".item-price").val(data.price);
-                                                                    }
+                                                        //     // Make an AJAX request to the backend to fetch item details
+                                                        //     $.ajax({
+                                                        //         url: '/Fin_get_item_details/' + itemsId + '/',
+                                                        //         type: 'GET',
+                                                        //         success: function (data) {
+                                                        //             // Update the placeholder elements with the fetched details
+                                                        //             $row.find(".item-hsn").val(data.hsn);
+                                                        //             $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
+                                                        //             $row.find(".item-stockin").html(data.current_stock);
+                                                        //             $row.find(".item-gst_tax").val(data.gst_tax).change();
+                                                        //             $row.find(".item-igst_tax").val(data.igst_tax).change();
+                                                        //             console.log('4545454545',data.id);
+                                                        //             plistID = document.getElementById('priceListRB').value;
+                                                        //             if(plistID!=''){
+                                                        //                     $.ajax({
+                                                        //                     url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
+                                                        //                     type: 'GET',
+                                                        //                     success: function (response) {
+                                                        //                         if (response.opr == 'UP'){
+                                                        //                             prce = data.price*(1+(response.perc/100));
+                                                        //                             $row.find(".item-price").val(prce.toFixed(2));
+                                                        //                         }else if(response.opr == 'DOWN'){
+                                                        //                             prce = data.price*(1-(response.perc/100));
+                                                        //                             $row.find(".item-price").val(prce.toFixed(2));
+                                                        //                         }else if(response.opr == 'Custom'){
+                                                        //                             $row.find(".item-price").val(response.customerRate);
+                                                        //                         }else{
+                                                        //                             alert('something went wrong!')
+                                                        //                         }
+                                                        //                     },
+                                                        //                     error: function (error) {
+                                                        //                         console.log(error);
+                                                        //                         alert(error)
+                                                        //                     }
+                                                        //                     });
+                                                        //             }else{
+                                                        //                 $row.find(".item-price").val(data.price);
+                                                        //             }
 
-                                                                    updateStockin($row);
-                                                                },
-                                                                error: function (error) {
-                                                                    console.log(error);
-                                                                }
-                                                            });
+                                                        //             updateStockin($row);
+                                                        //         },
+                                                        //         error: function (error) {
+                                                        //             console.log(error);
+                                                        //         }
+                                                        //     });
                                                             
-                                                        });
+                                                        // });
+
+
+function changePrice(itemsId, $row, data) {
+    var plistID = document.getElementById('priceListRB').value;
+    if (plistID != '') {
+        $.ajax({
+            url: '/Fin_get_pricelist_details/' + plistID + '/' + itemsId + '/',
+            type: 'GET',
+            success: function (response) {
+                if (response.opr == 'UP') {
+                    prce = data.price * (1 + (response.perc / 100));
+                    $row.find(".item-price").val(prce.toFixed(2));
+                } else if (response.opr == 'DOWN') {
+                    prce = data.price * (1 - (response.perc / 100));
+                    $row.find(".item-price").val(prce.toFixed(2));
+                } else if (response.opr == 'Custom') {
+                    $row.find(".item-price").val(response.customerRate);
+                } else {
+                    alert('something went wrong!')
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                alert(error)
+            }
+        });
+    } else {
+        $row.find(".item-price").val(data.price);
+    }
+}
+
+$("#itemTable").on("change", ".item-select", function () {
+    var $select = $(this);
+    var $row = $select.closest('.item-row'); // Find the closest row
+
+    var itemsId = $select.val();
+
+    // Make an AJAX request to the backend to fetch item details
+    $.ajax({
+        url: '/Fin_get_item_details/' + itemsId + '/',
+        type: 'GET',
+        success: function (data) {
+            // Update the placeholder elements with the fetched details
+            $row.find(".item-hsn").val(data.hsn);
+            $row.find(".item-stockin").data("initial", data.current_stock); // Store the initial value
+            $row.find(".item-stockin").html(data.current_stock);
+            $row.find(".item-gst_tax").val(data.gst_tax).change();
+            $row.find(".item-igst_tax").val(data.igst_tax).change();
+            console.log('4545454545', data.id);
+
+            changePrice(itemsId, $row, data);
+
+            updateStockin($row);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+});
 
 
 
+$("#priceListRB").on("click", function() {
+    $("#itemTable").find(".item-select").trigger("change");
+});
 
 
 
@@ -1265,7 +1327,7 @@ function goBack() {
                                                     <div class="col-md-6 mt-4">
                                                         <label for="">Note</label>
                                                         <textarea name="Note" id="" class="form-control" cols="30" rows="5"></textarea><br>
-                                                        <input type="file" class="form-control" name="Document" id="">
+                                                        <input type="file" class="form-control" name="recurringBillDocument">
                                                     </div>
 
                                                     <div class="col-md-1 mb-5"></div>

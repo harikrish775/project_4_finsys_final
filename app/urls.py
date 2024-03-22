@@ -695,7 +695,7 @@ urlpatterns = [
     path('Fin_get_pricelist_details/<int:price_id>/<int:items_id>/',views.Fin_get_pricelist_details,name='Fin_get_pricelist_details'),
     path('Fin_get_bank_details/<str:bankNum>',views.Fin_get_bank_details,name="Fin_get_bank_details"),
 
-    
+
     # path('abe',views.abe,name="abe"),
     # path('abe',views.abe,name="abe"),
     # path('abe',views.abe,name="abe"),
