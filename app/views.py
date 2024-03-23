@@ -23880,7 +23880,6 @@ def Fin_recurring_bill_attach_file(request,pk):
 
 def Fin_recurring_bill_edit_page(request,pk):
     recur = Fin_Recurring_Bills.objects.get(id=pk)
-    itemTable = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk)
     sid = request.session['s_id']
     loginn = Fin_Login_Details.objects.get(id=sid)
     
@@ -23898,6 +23897,7 @@ def Fin_recurring_bill_edit_page(request,pk):
         pricelist_p = Fin_Price_List.objects.filter(Company_id=com.id,type='Purchase')
         bank = Fin_Banking.objects.filter(company_id=com.id,bank_status = 'Active')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.id,type='Sales')
+        itemTable = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk,company_id=com.id)
 
         nxtRb = ""
         lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.id).last()
@@ -23936,6 +23936,7 @@ def Fin_recurring_bill_edit_page(request,pk):
         pricelist_p = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Purchase')
         bank = Fin_Banking.objects.filter(company_id=com.company_id_id,bank_status = 'Active')
         pricelist_s = Fin_Price_List.objects.filter(Company_id=com.company_id_id,type='Sales')
+        itemTable = Fin_Recurring_Bill_Items.objects.filter(recurring_bill_id=pk,company_id=com.company_id_id)
 
         nxtRb = ""
         lastRb = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id).last()
