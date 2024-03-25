@@ -422,7 +422,8 @@ footer p {
             <!-- <div class="ml-auto"><a style="cursor: pointer;" title="Close" onclick="goBack()" ><i class="fa-solid fa-circle-xmark fa-2xl"></i></a></div> -->
             <div class="card-body">
                 <div class="card-title">
-                    <center><h2 class="mt-1">RECURRING BILL - {{bill1.recurring_bill_number}}</h2> </center>
+                    <!-- <center><h2 class="mt-1">RECURRING BILL - {{bill1.recurring_bill_number}}</h2> </center> -->
+                    <center><h2 class="mt-1">RECURRING BILL</h2> </center>
                     <center><h5 {%if bill1.status == 'Save'%} style="color: rgb(8, 160, 8);" {% else %} style="color: red;" {% endif %}>{{bill1.status}}</h5></center>
                     
                 </div>
@@ -585,9 +586,12 @@ footer p {
             <div id="details">
                 <div class="row g-0" style="margin-left: 1px; margin-right: 1px;">
                     <div class="col-lg-8" style="background-color: #243e54; border-top-left-radius: 2vh; border-bottom-left-radius: 2vh;">
+                        <h6 class="mt-5 ml-5 mb-1">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited :</span> {% else %} <span style="color: rgb(8, 160, 8);">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;"  for="">{{lastHistory.date}}</label> </h6>
+                        <div>
+                            <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3>
+                            
+                        </div>
                         
-                        <!-- <h3 class="mt-2 ml-5">#{{bill1.recurring_bill_number}}</h3> -->
-
                         
 
                         <div class="p-5">
@@ -819,7 +823,7 @@ footer p {
                             
 
                             <hr class="my-4">
-                            
+                            {% if bill1.customer != None %}
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-4 mt-3">
                                     <h5 style="border-bottom: 1px solid rgba(128, 128, 128, 0.6); width: fit-content;">Customer Details</h5>
@@ -878,6 +882,7 @@ footer p {
                                 </div> -->
                             </div>
                             <hr>
+                            {% endif %}
                             
                             <div class="row mb-4 d-flex justify-content-between align-items-center">
                                 <div class="col-md-12 mt-3">
@@ -947,7 +952,7 @@ footer p {
                         </div>
                     </div>
                     <div class="col-lg-4 bg-grey" style="background-color: rgba(0, 0, 0, 0.4);border-top-right-radius: 13px;border-bottom-right-radius: 13px;">
-                        <h6 class="mt-5 ml-5 mb-1">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited :</span> {% else %} <span style="color: rgb(8, 160, 8);">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;"  for="">{{lastHistory.date}}</label> </h6>
+                        <!-- <h6 class="mt-5 ml-5 mb-1">{% if lastHistory.action == 'Edited' %} <span style="color: yellow;">Last edited :</span> {% else %} <span style="color: rgb(8, 160, 8);">Created by :</span> {% endif %} <label style="text-transform: capitalize;" for="">{{lastHistory.login_details.First_name}} {{lastHistory.login_details.Last_name}}</label> <label class="ml-5" for=""></label>  <label style="font-size: small;"  for="">{{lastHistory.date}}</label> </h6> -->
                         <div class="p-5">
                             
                             <h3 class="fw-bold mb-5 mt-2 pt-1">Recurring Bill Tax Details</h3>
