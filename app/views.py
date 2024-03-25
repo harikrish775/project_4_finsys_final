@@ -23266,7 +23266,7 @@ def Fin_recurring_bill_create_page(request):
         else:
             nxtRb = 'RB01'
 
-        recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.id)
+        recurringBill = Fin_Recurring_Bill_Reference.objects.filter(company_id = com.id)
         if recurringBill:
             recurringBillLatest = recurringBill.latest('id')
             data = {
@@ -23304,7 +23304,7 @@ def Fin_recurring_bill_create_page(request):
         else:
             nxtRb = 'RB01'
 
-        recurringBill = Fin_Recurring_Bills.objects.filter(company_id = com.company_id_id)
+        recurringBill = Fin_Recurring_Bill_Reference.objects.filter(company_id = com.company_id_id)
         if recurringBill:
             recurringBillLatest = recurringBill.latest('id')
             data = {
